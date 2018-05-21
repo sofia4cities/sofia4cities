@@ -25,11 +25,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.indracompany.sofia2.config.model.Token;
-import com.indracompany.sofia2.config.model.UserApi;
 import com.indracompany.sofia2.config.services.apimanager.ApiManagerService;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
-import com.indracompany.sofia2.controlpanel.controller.apimanager.UserApiDTO;
-import com.indracompany.sofia2.controlpanel.controller.management.ManagementRestServices;
+import com.indracompany.sofia2.controlpanel.controller.management.ApiOpsRestServices;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import io.swagger.annotations.Api;
@@ -40,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(value = "Device Management")
 @RestController
 @Slf4j
-public class DeviceManagementController extends ManagementRestServices {
+public class DeviceManagementController extends ApiOpsRestServices {
 
 	@Autowired
 	ClientPlatformService clientPlatformService;
@@ -69,39 +67,4 @@ public class DeviceManagementController extends ManagementRestServices {
 
 	}
 
-	@ApiOperation(value = "Authorize user for api")
-	@RequestMapping(value = "/authorize/api/{apiId}/user/{userId}", method = RequestMethod.GET)
-	public ResponseEntity<?> authorize(
-			@ApiParam(value = "Api Id  ", required = true) @PathVariable("apiId") String apiId,
-			@ApiParam(value = "User", required = true) @PathVariable(name = "userId") String userId) {
-
-		List<com.indracompany.sofia2.config.model.Api> apis = this.apiManagerService.loadAPISByFilter(apiId, "",
-				utils.getUserId(), utils.getUserId());
-		UserApi userApi = null;
-		if (!apis.isEmpty()) {
-			for (com.indracompany.sofia2.config.model.Api api : apis) {
-				userApi = this.apiManagerService.updateAuthorization(api.getId(), userId);
-			}
-			if (userApi != null) {
-				UserApiDTO userApiDTO = new UserApiDTO(userApi);
-				return new ResponseEntity<UserApiDTO>(userApiDTO, HttpStatus.CREATED);
-			}
-		}
-		return new ResponseEntity<UserApiDTO>(HttpStatus.BAD_REQUEST);
-
-	}
-
-	@ApiOperation(value = "Authorize user for api")
-	@RequestMapping(value = "/deauthorize/api/{apiId}/user/{userId}", method = RequestMethod.GET)
-	public ResponseEntity<?> deauthorize(
-			@ApiParam(value = "Api Id ", required = true) @PathVariable("apiId") String apiId,
-			@ApiParam(value = "User", required = true) @PathVariable(name = "userId") String userId) {
-		if (!this.apiManagerService.loadAPISByFilter(apiId, "", this.utils.getUserId(), this.utils.getUserId())
-				.isEmpty()) {
-			this.apiManagerService.removeAuthorizationByApiAndUser(apiId, userId);
-			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
-		} else
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
-
-	}
 }
