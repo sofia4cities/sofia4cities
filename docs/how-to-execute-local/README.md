@@ -58,7 +58,7 @@ This paragraph show you how to install the platform development environment in a
 	2. You can access IoTBroker REST Gatway at  [http://localhost:19000/iotbroker/].
 
 6. **To execute APIManager**:
-	1. From a console created with S:\start.bat go to **S:\sources\sofia4cities\modules\api-manager\** and execute >**mvn spring-boot:run**.
+	1. From a console created with S:\start.bat go to **S:\sources\sofia4cities\modules\api-manager\** and execute **mvn spring-boot:run**.
 	2. You can access API Manager Index Page at  [http://localhost:19100/api-manager/].
 
 7. That´s all! Try it!!!
