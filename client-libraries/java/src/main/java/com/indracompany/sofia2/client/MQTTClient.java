@@ -109,7 +109,7 @@ public class MQTTClient {
 
 		try {
 			// Connect client MQTT
-			this.client = new MqttClient(brokerURI, clientPlatform, persistence);
+			this.client = new MqttClient(brokerURI, clientPlatformInstance, persistence);
 			// Unsecure connection
 			if (this.sslConfig == null) {
 				log.info("Connecting to broker MQTT without secure connection");

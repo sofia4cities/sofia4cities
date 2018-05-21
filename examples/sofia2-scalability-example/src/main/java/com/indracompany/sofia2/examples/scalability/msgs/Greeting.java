@@ -12,10 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.client;
+package com.indracompany.sofia2.examples.scalability.msgs;
 
-public interface SubscriptionListener {
+import lombok.Getter;
+import lombok.Setter;
+
+public class Greeting {
+
+	@Getter
+	@Setter
+	private String msg;
 	
-	public void onMessageArrived(String message);
-
+	
 }

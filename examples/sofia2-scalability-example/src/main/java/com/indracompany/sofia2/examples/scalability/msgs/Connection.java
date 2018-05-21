@@ -12,10 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.client;
+package com.indracompany.sofia2.examples.scalability.msgs;
 
-public interface SubscriptionListener {
-	
-	public void onMessageArrived(String message);
+import lombok.Getter;
+import lombok.Setter;
 
+public class Connection {
+
+	@Setter @Getter private String token;
+	@Setter @Getter private String clientPlatform;
+	@Setter @Getter private String clientPlatformInstance;
+	@Setter @Getter private String ontology;
+	@Setter @Getter private String restURL;
+	@Setter @Getter private String mqttURL;
 }
