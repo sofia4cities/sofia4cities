@@ -133,6 +133,10 @@ var ApiCustomOpsController = function() {
         newInputCustomsqlParam.id="customsqlParamType_" + param;
         newInputCustomsqlParam.style.cssFloat="right";
 
+        var optionObject = document.createElement( 'option' );
+        optionObject.value = "object"; 
+        optionObject.text = "OBJECT";
+        newInputCustomsqlParam.add(optionObject);
         var optionString = document.createElement( 'option' );
         optionString.value = "string"; 
         optionString.text = "STRING";

@@ -2,7 +2,7 @@ version: "3"
 
 services:  
   zookeeper:
-    image: sofia2/zookeeper-secured:4.1.0
+    image: sofia2/zookeeper-secured:latest
     container_name: zookeeper  
     ports:
      - "2181:2181"
@@ -10,7 +10,7 @@ services:
        ZOOKEEPER_CLIENT_PORT: "2181"
     network_mode: host
   kafka:
-    image: sofia2/kafka-secured:4.1.0
+    image: sofia2/kafka-secured:latest
     container_name: kafka    
     ports:
      - "9093:9093"

@@ -21,6 +21,24 @@ buildImage()
 	mvn clean package docker:build -Dmaven.test.skip=true
 }
 
+deleteImage()
+{
+	echo "Delete Sofia2 image locally, module: "$1  
+	docker rmi -f $(docker images | grep sofia2/$1 |  awk '{print $3}' | uniq)		
+}
+
+deleteUntaggedImages()
+{
+	echo "Remove all untagged images"
+	docker rmi $(docker images -f dangling=true -q)
+}
+
+removeOrphanVolumes()
+{
+	echo "Remove containers orphan volumes"
+	docker volume rm $(docker volume ls -qf dangling=true)
+}
+
 buildConfigDB()
 {
 	echo "ConfigDB image generation with Docker CLI: "
@@ -39,9 +57,9 @@ buildRealTimeDB()
 	docker build -t sofia2/realtimedb:$1 .
 }
 
-buildElasticDB() 
+buildElasticSearchDB()
 {
-	echo "ElasticDB image generation with Docker CLI: "
+	echo "ElasticSearchDB image generation with Docker CLI: "
 	docker build -t sofia2/elasticdb:$1 .
 }
 
@@ -65,55 +83,19 @@ buildQuasar()
 
 prepareNodeRED()
 {
-	cp $homepath/../tools/Flow-Engine-Manager/*.zip $homepath/../modules/flow-engine/docker/nodered.zip
-	cd $homepath/../modules/flow-engine/docker
+	cp $homepath/../../tools/Flow-Engine-Manager/*.zip $homepath/../../modules/flow-engine/docker/nodered.zip
+	cd $homepath/../../modules/flow-engine/docker
 	unzip nodered.zip		
-	cp -f $homepath/dockerfiles/nodered/proxy-nodered.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/
-	cp -f $homepath/dockerfiles/nodered/sofia2-config-nodes-config.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/config/sofia2-config.js
-	cp -f $homepath/dockerfiles/nodered/sofia2-config-public-config.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/public/config/sofia2-config.js	
+	cp -f $homepath/../dockerfiles/nodered/proxy-nodered.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/
+	cp -f $homepath/../dockerfiles/nodered/sofia2-config-nodes-config.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/config/sofia2-config.js
+	cp -f $homepath/../dockerfiles/nodered/sofia2-config-public-config.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/public/config/sofia2-config.js	
 }
 
 removeNodeRED()
 {
-	cd $homepath/../modules/flow-engine/docker
+	cd $homepath/../../modules/flow-engine/docker
 	rm -rf Flow-Engine-Manager
 	rm nodered.zip		
-}
-
-buildPersistence()
-{
-	echo "++++++++++++++++++++ Persistence layer generation..."
-	
-	# Generates images only if they are not present in local docker registry
-	if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/configdb
-		buildConfigDB latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/schedulerdb
-		buildSchedulerDB latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/realtimedb
-		buildRealTimeDB latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/quasar
-		buildQuasar latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/elasticsearch
-		buildElasticDB latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
-		cd $homepath/../config/init/
-		buildImage "Config Init"
-	fi		
 }
 
 echo "##########################################################################################"
@@ -126,39 +108,69 @@ echo "#  | |__| | (_) | (__|   <  __/ |                                         
 echo "#  |_____/ \___/ \___|_|\_\___|_|                                                        #"                
 echo "#                                                                                        #"
 echo "# Sofia2 Docker Image generation                                                         #"
-echo "# arg1 (opt) --> -1 if only want to create images for modules layer (skip persistence)   #"
+echo "# arg1 (opt) --> string represents the name of module to deploy image                    #"
 echo "#                                                                                        #"
 echo "##########################################################################################"
 
 homepath=$PWD
 
-# Only create persistence layer
-if [ -z "$1" ]; then
-	# Generates images only if they are not present in local docker registry
-	if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/control-panel/
-		buildImage "Control Panel"
-	fi	
-	
-	if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
-		buildImage "IoT Broker"
-	fi
-	
-	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
-		cd $homepath/../modules/api-manager/	
-		buildImage "API Manager"
-	fi	
-	
-	# Persistence layer image generation
-	buildPersistence		
+if [[ "$1" == "controlpanel" ]]; then
+	cd $homepath/../../modules/control-panel/
+	buildImage "Control Panel"
 fi
 
-if [ ! -z "$1" ]; then
-	# Persistence layer image generation
-	buildPersistence
+if [[ "$1" == "iotbroker" ]]; then
+	cd $homepath/../../modules/iotbroker/sofia2-iotbroker-boot/	
+	buildImage "IoT Broker"
+fi
+
+if [[ "$1" == "apimanager" ]]; then
+	cd $homepath/../../modules/api-manager/	
+	buildImage "API Manager"
+fi
+
+if [[ "$1" == "digitaltwin" ]]; then
+	cd $homepath/../../modules/digitaltwin-broker/	
+	buildImage "Digital Twin"
+fi
+
+if [[ "$1" == "dashboard" ]]; then
+	cd $homepath/../../modules/dashboard-engine/
+	buildImage "Dashboard Engine"
+fi
+
+if [[ "$1" == "devicesimulator" ]]; then
+	cd $homepath/../../modules/device-simulator/
+	buildImage "Device Simulator" 
+fi
+
+if [[ "$1" == "monitoringui" ]]; then
+	cd $homepath/../../modules/monitoring-ui/
+	buildImage "Monitoring UI"
+fi
+
+if [[ "$1" == "flowengine" ]]; then
+	prepareNodeRED		
+	
+	cd $homepath/../../modules/flow-engine/
+	buildImage "Flow Engine"
+	
+	removeNodeRED
+fi
+
+if [[ "$1" == "nginx" ]]; then
+	cd $homepath/../dockerfiles/nginx
+	buildNginx latest
+fi
+
+if [[ "$1" == "configinit" ]]; then
+	cd $homepath/../../config/init/
+	buildImage "Config Init"
 fi
 
 echo "Docker images successfully generated!"
+
+deleteUntaggedImages
+removeOrphanVolumes
 
 exit 0

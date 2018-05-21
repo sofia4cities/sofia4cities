@@ -37,6 +37,7 @@ import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,6 +54,9 @@ public class KafkaOntologyConsumer {
 
 	@Autowired
 	OntologyDataService ontologyDataService;
+	
+	@Autowired
+	RouterService routerService;
 
 	ObjectMapper mapper = new ObjectMapper();
 
@@ -144,10 +148,15 @@ public class KafkaOntologyConsumer {
 			NotificationModel modelNotification = new NotificationModel();
 
 			modelNotification.setOperationModel(model);
+			
+			try {
+				routerService.insert(modelNotification);
+				ack.acknowledge();
+				latch.countDown();
+			} catch (Exception e) {
+				log.error("Cannot process insert model into router from Kafka",e);
+			}
 
-			sendMessage(modelNotification);
-			ack.acknowledge();
-			latch.countDown();
 		}
 
 		log.info("end of batch receive");

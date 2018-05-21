@@ -33,6 +33,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.indracompany.sofia2.android.healthcheckapp.LoginActivity" />
         </activity>
+        <activity android:name=".MainHealthActivity" />
+        <activity android:name=".FormActivity" />
+        <activity android:name=".HistActivity" />
+        <activity android:name=".FeedbackActivity" />
+        <activity android:name=".SpecialistActivity"></activity>
     </application>
 
 </manifest>
