@@ -20,34 +20,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-
 public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	@Bean
-    public FilterRegistrationBean corsFilterOauth() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return bean;
-    }
+	public FilterRegistrationBean corsFilterOauth() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowCredentials(true);
+		config.addAllowedOrigin("*");
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("*");
+		source.registerCorsConfiguration("/**", config);
+		FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		return bean;
+	}
 
 	@Autowired
 	private TokenStore tokenStore;
@@ -62,12 +58,15 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 		resources.tokenStore(tokenStore);
 	}
 
-	/*@Override
-	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/oauth-api/", "/oauth-api/**", "/oauth-api/user/", "/oauth-api/user/**","/management/login/", "/management/login/**").permitAll().anyRequest().authenticated().and().headers().frameOptions().disable();
-		http.headers().frameOptions().disable();
-	}*/
-	
+	/*
+	 * @Override public void configure(HttpSecurity http) throws Exception {
+	 * http.authorizeRequests().antMatchers("/oauth-api/", "/oauth-api/**",
+	 * "/oauth-api/user/", "/oauth-api/user/**","/management/login/",
+	 * "/management/login/**").permitAll().anyRequest().authenticated().and().
+	 * headers().frameOptions().disable(); http.headers().frameOptions().disable();
+	 * }
+	 */
+
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().anyRequest().authenticated();

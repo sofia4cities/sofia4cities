@@ -16,7 +16,6 @@ package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -28,19 +27,25 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "notebook")
-public class Notebook extends AuditableEntityWithUUID  {
+public class Notebook extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = -424404777731521676L;
 
-    @Column(name = "IDENTIFICATION", length = 100,nullable = false)
-    @Getter @Setter private String identification;
-	
-    @ManyToOne
-	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable=false)
-	@Getter @Setter private User user;
-	
-	@Column(name = "IDZEP", length = 100,nullable = false)
-	@Getter	@Setter private String idzep;
+	@Column(name = "IDENTIFICATION", length = 100, nullable = false)
+	@Getter
+	@Setter
+	private String identification;
+
+	@ManyToOne
+	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
+	@Getter
+	@Setter
+	private User user;
+
+	@Column(name = "IDZEP", length = 100, nullable = false)
+	@Getter
+	@Setter
+	private String idzep;
 
 	@Override
 	public int hashCode() {
@@ -79,5 +84,4 @@ public class Notebook extends AuditableEntityWithUUID  {
 		return true;
 	}
 
-   
 }
