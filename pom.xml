@@ -98,7 +98,7 @@
         <module>libraries/social</module>
         <module>libraries/flow-engine-services</module>
         <module>libraries/audit</module>
-        <module>libraries/streaming</module>
+        
 
 		<!--CONFIG -->
 		<module>config/model</module>
@@ -112,6 +112,7 @@
 		<module>security/oauth/security-jwt-core-ri</module>
 		<module>security/oauth/security-jwt-jdbc-core-ri</module>
 		<module>security/oauth/security-jwt-authorization-ri</module>
+		<module>security/kafka-login</module>
 		
 		<!--PERSISTENCE-->
 		<module>persistence/interfaces</module>	

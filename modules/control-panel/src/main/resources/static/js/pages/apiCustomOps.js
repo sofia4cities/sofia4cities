@@ -133,6 +133,10 @@ var ApiCustomOpsController = function() {
         newInputCustomsqlParam.id="customsqlParamType_" + param;
         newInputCustomsqlParam.style.cssFloat="right";
 
+        var optionObject = document.createElement( 'option' );
+        optionObject.value = "object"; 
+        optionObject.text = "OBJECT";
+        newInputCustomsqlParam.add(optionObject);
         var optionString = document.createElement( 'option' );
         optionString.value = "string"; 
         optionString.text = "STRING";
@@ -353,9 +357,12 @@ var ApiCustomOpsController = function() {
             loadParamsQueryValues(operation.querystrings);
             if (operation.postprocess!=null && operation.postprocess!=""){
             	myCodeMirrorJs.setValue(operation.postprocess);
+            	$('#postProcessCheckbox').prop('checked', true);
+            	$('#portletBody').css('display') == "none" ? $('#portletToolPostProcess').click():null;
             	$('#id_postprocess_op_customsql').show();
             } else {
             	$('#id_postprocess_op_customsql').hide();
+            	$('#portletBody').css('display') == "block" ? $('#portletToolPostProcess').click():null;
             }
             
             $('#id_name_op_customsql').prop('disabled', true);
@@ -367,6 +374,9 @@ var ApiCustomOpsController = function() {
         	loadParamsFromQuery("", "");
         	
         	myCodeMirrorJs.setValue("");
+    		$('#postProcessCheckbox').prop('checked', false);
+    		$('#portletBody').css('display') == "block" ? $('#portletToolPostProcess').click():null;
+    		
 
             $('#id_name_op_customsql').prop('disabled', false);
 

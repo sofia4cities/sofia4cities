@@ -174,6 +174,28 @@ public class ApiManagerService {
 		}
 		return null;
 	}
+	
+	public ApiOperation getCustomSQLDefault(String pathInfo, Api api, String operation) {
+
+		final String apiIdentifier = this.getApiIdentifier(pathInfo);
+
+		String opIdentifier = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
+		
+		final List<ApiOperation> operaciones = apiOperationRepository.findByApiOrderByOperationDesc(api);
+
+		String match = apiIdentifier + "_" + operation;
+
+		if (!opIdentifier.equals("")) {
+			match += "_" + opIdentifier;
+		}
+
+		for (final ApiOperation operacion : operaciones) {
+			if (operacion.getIdentification().equals(opIdentifier)) {
+				return operacion;
+			}
+		}
+		return null;
+	}
 
 	public HashMap<String, String> getCustomParametersValues(HttpServletRequest request, String body,
 			HashSet<ApiQueryParameter> queryParametersCustomQuery) {

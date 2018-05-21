@@ -56,6 +56,7 @@ public final class OperationFIQL {
 		operacionDTO.setIdentification(operacion.getIdentification());
 		operacionDTO.setOperation(operacion.getOperation());
 		operacionDTO.setPath(operacion.getPath());
+		operacionDTO.setPostProcess(operacion.getPostProcess());
 		
 		// Se copian los headers
 		operacionDTO.setHeaders(HeaderFIQL.toHeaderDTO(operacion.getApiheaders()));
@@ -78,7 +79,7 @@ public final class OperationFIQL {
 		operacion.setIdentification(operacionDTO.getIdentification());
 		operacion.setOperation(operacionDTO.getOperation());
 		operacion.setPath(operacionDTO.getPath());
-		
+		operacion.setPostProcess(operacionDTO.getPostProcess());
 		
 		return operacion;
 	}

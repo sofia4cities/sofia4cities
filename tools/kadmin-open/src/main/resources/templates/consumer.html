@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Kadmin @ BetterCloud</title>
+        <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+        <link th:href="@{/favicon.ico}" rel="icon" />
+        <style>
+            body {
+                background-color: #dddddd;
+            }
+            .container {
+                background-color: #ffffff;
+                margin-top: 1em;
+                margin-bottom: 4em;
+                padding-top: 1em;
+                padding-bottom: 1em;
+            }
+            #main-content {
+                min-height: 60vh;
+            }
+            .header-row {
+                margin-bottom: 2em;
+            }
+            #message-list {
+                min-height: 400px;
+            }
+            pre {
+                padding: 5px;
+                margin: 5px;
+            }
+            .string { color: #1A1AA6; }
+            .number { color: rgb(0, 0, 205); }
+            .boolean { color: rgb(88, 92, 246); }
+            .null { color: black; }
+            .key { color: rgb(49, 132, 149); }
+
+            .copy-btn, .collapse-btn {
+                float: right;
+            }
+            .raw-message {
+                display: none;
+            }
+            .footer {
+                padding: 1em;
+                border-top: 1px solid lightgray;
+                margin-top: 1em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header-row">
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a th:href="@{/}" style="padding: 0 15px;"><img th:src="@{/logo.png}" style="height: 3em;" /></a></li>
+                    <li role="presentation" th:if="${producerEnabled}"><a th:href="@{/basicproducer}">Basic Producer</a></li>
+                    <li role="presentation" th:if="${producerEnabled}"><a th:href="@{/producer}">Avro Producer</a></li>
+                    <li role="presentation" class="active"><a th:href="@{/consumer}">Consumer</a></li>
+                    <li role="presentation"><a th:href="@{/manager}">Manager</a></li>
+                </ul>
+            </div>
+            <div id="main-content"></div>
+            <div class="footer">
+                Kadmin 0.9.0 - BetterCloud 2016
+                (<a href="mailto:david.esposito@bettercloud.com">david.esposito@bettercloud.com</a>)
+            </div>
+        </div>
+
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var App = {
+                customUrls: [[${customKafkaUrlEnabled}]],
+                defaultTopic: [[${defaultTopicName}]],
+                des: {
+                    id: [[${deserializerId}]],
+                    name: [[${deserializerName}]]
+                },
+                contextPath: [[${contextPath}]],
+                messageTemplateLoaded: false,
+                mainTemplateLoaded: false,
+                pageLoaded: false,
+                consumer: {}
+            };
+
+            /*]]>*/
+        </script>
+        <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/underscore-min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/moment.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/clipboard.min.js}"></script>
+        <script type="text/javascript" th:src="@{/consumer/main.js}"></script>
+        <script type="application/javascript">
+            var App = _.extend(App, {
+            });
+
+            $.get(App.contextPath + "/consumer/main.html", function (html) {
+                $('#main-content').html(html);
+                App.mainTemplateLoaded = true;
+                if (!!App.customUrls) {
+                    $("#custom-url-form-row").removeClass("hidden");
+                }
+                initMain();
+            });
+
+            $.get(App.contextPath + "/consumer/message-tile-template.html", function (html) {
+                App.consumer.messageTemplate = _.template(html);
+                App.messageTemplateLoaded = true;
+                initMain();
+            });
+
+            $(document).ready(function() {
+                App.pageLoaded = true;
+                initMain();
+            });
+        </script>
+    </body>
+</html>

@@ -57,4 +57,8 @@ public interface DashboardService {
 
 	boolean hasUserViewPermission(String id, String userId);
 
+	byte[] getImgBytes(String id);
+
+	String deleteDashboardAccess(String dashboardId, String userId);
+
 }

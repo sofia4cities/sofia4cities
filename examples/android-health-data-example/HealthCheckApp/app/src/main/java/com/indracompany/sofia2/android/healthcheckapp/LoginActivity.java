@@ -240,8 +240,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 Uri.Builder builder = new Uri.Builder()
                         .appendQueryParameter("grant_type", "password")
-                        .appendQueryParameter("username", "citizenHealth")
-                        .appendQueryParameter("password", "changeIt!");
+                        .appendQueryParameter("username", mUsername)
+                        .appendQueryParameter("password", mPassword);
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();
@@ -267,7 +267,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                     JSONObject jsonJOIN = new JSONObject(responseOutput.toString());
 
-                    Intent firstIntent = new Intent(getApplicationContext(),MainActivity.class);
+                    Intent firstIntent;
+                    if(mUsername.contentEquals("citizenHealth")){
+                        firstIntent = new Intent(getApplicationContext(),MainHealthActivity.class);
+                    }
+                    else{
+                        firstIntent = new Intent(getApplicationContext(),SpecialistActivity.class);
+                    }
+
                     firstIntent.putExtra("accessToken",jsonJOIN.getString("access_token"));
                     firstIntent.putExtra("username",mUsername);
                     startActivity(firstIntent);

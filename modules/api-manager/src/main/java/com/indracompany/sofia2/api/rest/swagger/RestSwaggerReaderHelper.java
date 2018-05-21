@@ -99,7 +99,8 @@ public class RestSwaggerReaderHelper {
                         }
                     }
                     if (dataType.equalsIgnoreCase("date") || 
-                    		dataType.equalsIgnoreCase("date-time") || 
+                    		dataType.equalsIgnoreCase("date-time") ||
+                    		dataType.equalsIgnoreCase("object") || 
                     		dataType.equalsIgnoreCase("password") ||
                     		dataType.equalsIgnoreCase("byte") || 
                     		dataType.equalsIgnoreCase("binary") || 

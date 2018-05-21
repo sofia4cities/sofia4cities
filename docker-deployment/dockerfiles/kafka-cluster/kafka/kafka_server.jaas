@@ -1,0 +1,12 @@
+KafkaServer{
+   authentication.PlainLoginModule required
+   username="admin"
+   password="admin-secret";
+};
+
+//Zookeper config
+Client {
+   authentication.PlainLoginModule required
+   username="admin"
+   password="admin-secret";
+};
