@@ -73,7 +73,7 @@ public class ApiCamelLoadRoutesEventListener {
 			context.startAllRoutes();
 			log.info("Route Definition Loaded: "+ routes);
 		} catch (Exception e) {
-			log.error("Something happens loading routes ",e);
+			log.error("Something happens loading routes ");
 		}
 	}
 

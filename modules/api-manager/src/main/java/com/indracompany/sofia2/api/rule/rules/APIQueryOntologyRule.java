@@ -85,7 +85,9 @@ public class APIQueryOntologyRule extends DefaultRuleBase {
 			ODataDTO odata=null;
 			
 			ApiOperation customSQL = apiManagerService.getCustomSQL(pathInfo, api,method);
-			
+			if (customSQL==null) {
+				 customSQL = apiManagerService.getCustomSQLDefault(pathInfo, api,method);
+			}
 			
 			String objectId=apiManagerService.getObjectidFromPathQuery(pathInfo);
 			if (!objectId.equals("") && (queryType.equals("") || queryType.equals("NONE") )) {

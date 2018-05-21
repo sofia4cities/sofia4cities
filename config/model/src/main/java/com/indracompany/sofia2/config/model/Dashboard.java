@@ -20,8 +20,10 @@
 
 package com.indracompany.sofia2.config.model;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -37,40 +39,64 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name= "DASHBOARD")
+@Table(name = "DASHBOARD")
 @Configurable
 
-public class Dashboard extends AuditableEntityWithUUID{
-		
-	@Column(name = "IDENTIFICATION", length = 100,nullable = false)
-    @NotNull
-    @Getter @Setter private String identification;
-	
-	@Column(name = "DESCRIPTION", length = 100,nullable = false)
-    @NotNull
-    @Getter @Setter private String description;
-	
+public class Dashboard extends AuditableEntityWithUUID {
+
+	@Column(name = "IDENTIFICATION", length = 100, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String identification;
+
+	@Column(name = "DESCRIPTION", length = 100, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String description;
+
 	@ManyToOne
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
-	@Getter @Setter private User user;
-	
+	@Getter
+	@Setter
+	private User user;
+
 	@Column(name = "JSON18N")
 	@Lob
-    @Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String jsoni18n;
-	
+	@Type(type = "org.hibernate.type.TextType")
+	@Getter
+	@Setter
+	private String jsoni18n;
+
 	@Column(name = "CUSTOMCSS")
-    @Getter @Setter private String customcss;
-	
+	@Getter
+	@Setter
+	private String customcss;
+
 	@Column(name = "CUSTOMJS")
-    @Getter @Setter private String customjs;
-	
-		
+	@Getter
+	@Setter
+	private String customjs;
+
 	@Column(name = "PUBLIC")
-    @Getter @Setter private boolean isPublic;
-	
+	@Getter
+	@Setter
+	private boolean isPublic;
+
 	@Column(name = "MODEL")
 	@Lob
-    @Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String model;
+	@Type(type = "org.hibernate.type.TextType")
+	@Getter
+	@Setter
+	private String model;
+
+	@Basic(fetch = FetchType.LAZY)
+	@Column(name = "IMAGE", length = 100000)
+	@Lob
+	@Type(type = "org.hibernate.type.BinaryType")
+	@Getter
+	@Setter
+	private byte[] image;
+
 }

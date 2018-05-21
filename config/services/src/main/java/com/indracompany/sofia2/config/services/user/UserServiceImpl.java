@@ -31,6 +31,7 @@ import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.repository.UserTokenRepository;
 import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
+import com.indracompany.sofia2.config.services.usertoken.UserTokenService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,6 +49,9 @@ public class UserServiceImpl implements UserService {
 	private TokenRepository tokenRepository;
 	@Autowired
 	private ClientPlatformRepository clientPlatformRepository;
+	
+	@Autowired
+	private UserTokenService userTokenService;
 
 	@Override
 	public boolean isUserAdministrator(User user) {
@@ -138,7 +142,12 @@ public class UserServiceImpl implements UserService {
 			log.debug("User no exist, creating...");
 			user.setRole(this.roleRepository.findByName(user.getRole().getName()));
 			this.userRepository.save(user);
-
+			
+			try {
+				this.userTokenService.generateToken(user);
+			} catch (Exception e) {
+				log.debug("Error creating userToken");
+			}
 		} else {
 			throw new UserServiceException("User already exists in Database");
 		}

@@ -13,11 +13,14 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.dashboard;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -64,6 +68,8 @@ public class DashboardController {
 	@Autowired
 	private AppWebUtils utils;
 
+	private final String BLOCK_PRIOR_LOGIN = "block_prior_login";
+
 	@RequestMapping(value = "/list", produces = "text/html")
 	public String list(Model uiModel, HttpServletRequest request,
 			@RequestParam(required = false, name = "identification") String identification,
@@ -88,6 +94,30 @@ public class DashboardController {
 
 	}
 
+	@RequestMapping(value = "/viewerlist", produces = "text/html")
+	public String viewerlist(Model uiModel, HttpServletRequest request,
+			@RequestParam(required = false, name = "identification") String identification,
+			@RequestParam(required = false, name = "description") String description) {
+
+		// Scaping "" string values for parameters
+		if (identification != null) {
+			if (identification.equals(""))
+				identification = null;
+		}
+		if (description != null) {
+			if (description.equals(""))
+				description = null;
+		}
+
+		List<DashboardDTO> dashboard = this.dashboardService
+				.findDashboardWithIdentificationAndDescription(identification, description, utils.getUserId());
+
+		uiModel.addAttribute("dashboards", dashboard);
+
+		return "dashboards/viewerlist";
+
+	}
+
 	@GetMapping(value = "/create")
 	public String create(Model model) {
 		model.addAttribute("dashboard", new DashboardCreateDTO());
@@ -107,7 +137,7 @@ public class DashboardController {
 
 	@PostMapping(value = { "/create" })
 	public String createDashboard(Model model, @Valid DashboardCreateDTO dashboard, BindingResult bindingResult,
-			RedirectAttributes redirect) {
+			MultipartHttpServletRequest request, RedirectAttributes redirect) {
 		if (bindingResult.hasErrors()) {
 			utils.addRedirectMessage("dashboard.validation.error", redirect);
 			return "redirect:/dashboards/create";
@@ -124,8 +154,8 @@ public class DashboardController {
 		}
 	}
 
-	@PutMapping(value = { "/dashboardconf/{id}" })
-	public String saveUpdateDashboard(Model model, @Valid DashboardCreateDTO dashboard, @PathVariable("id") String id,
+	@PostMapping(value = { "/dashboardconf/{id}" })
+	public String saveUpdateDashboard(@PathVariable("id") String id, DashboardCreateDTO dashboard,
 			BindingResult bindingResult, RedirectAttributes redirect) {
 		if (bindingResult.hasErrors()) {
 			utils.addRedirectMessage("dashboard.validation.error", redirect);
@@ -160,6 +190,12 @@ public class DashboardController {
 			dashBDTO.setId(id);
 			dashBDTO.setIdentification(dashboard.getIdentification());
 			dashBDTO.setDescription(dashboard.getDescription());
+			if (null != dashboard.getImage()) {
+				dashBDTO.setHasImage(Boolean.TRUE);
+			} else {
+				dashBDTO.setHasImage(Boolean.FALSE);
+			}
+			// dashBDTO.setImage(dashboard.getImage().getBytes());
 			dashBDTO.setPublicAccess(dashboard.isPublic());
 			List<DashboardUserAccess> userAccess = dashboardService.getDashboardUserAccesses(id);
 			if (userAccess != null && userAccess.size() > 0) {
@@ -210,11 +246,17 @@ public class DashboardController {
 	}
 
 	@GetMapping(value = "/view/{id}", produces = "text/html")
-	public String viewerDashboard(Model model, @PathVariable("id") String id) {
-		model.addAttribute("dashboard", dashboardService.getDashboardById(id, utils.getUserId()));
-		model.addAttribute("credentials", dashboardService.getCredentialsString(utils.getUserId()));
-		model.addAttribute("edition", false);
-		return "dashboards/view";
+	public String viewerDashboard(Model model, @PathVariable("id") String id, HttpServletRequest request) {
+		if (dashboardService.hasUserViewPermission(id, utils.getUserId())) {
+			model.addAttribute("dashboard", dashboardService.getDashboardById(id, utils.getUserId()));
+			model.addAttribute("credentials", dashboardService.getCredentialsString(utils.getUserId()));
+			model.addAttribute("edition", false);
+			request.getSession().removeAttribute(BLOCK_PRIOR_LOGIN);
+			return "dashboards/view";
+		} else {
+			request.getSession().setAttribute(BLOCK_PRIOR_LOGIN, request.getRequestURI());
+			return "redirect:/403";
+		}
 	}
 
 	@PutMapping(value = "/save/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -238,8 +280,30 @@ public class DashboardController {
 
 	@DeleteMapping("/{id}")
 	public String delete(Model model, @PathVariable("id") String id) {
-		this.dashboardService.deleteDashboard(id, utils.getUserId());
+		if (dashboardService.hasUserEditPermission(id, utils.getUserId())) {
+			this.dashboardService.deleteDashboardAccess(id, utils.getUserId());
+			this.dashboardService.deleteDashboard(id, utils.getUserId());
+		}
 		return "redirect:/dashboards/list/";
+	}
+
+	@RequestMapping(value = "/{id}/getImage")
+	public void showImg(@PathVariable("id") String id, HttpServletResponse response) {
+		byte[] buffer = this.dashboardService.getImgBytes(id);
+		if (buffer.length > 0) {
+			OutputStream output = null;
+			try {
+				output = response.getOutputStream();
+				response.setContentLength(buffer.length);
+				output.write(buffer);
+			} catch (Exception e) {
+			} finally {
+				try {
+					output.close();
+				} catch (IOException e) {
+				}
+			}
+		}
 	}
 
 }

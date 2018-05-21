@@ -17,7 +17,7 @@
         <artifactId>sofia2-select4cities-theme</artifactId>
         <packaging>jar</packaging>
 
-        <name>Open platform Select4Cities theme</name>
+        <name>onesait platform Select4Cities theme</name>
         <description>A theme for Select4Cities project</description>
         
 </project>

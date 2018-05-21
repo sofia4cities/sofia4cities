@@ -36,65 +36,66 @@ public class KafkaConsumerConfig {
 
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.host:localhost}")
 	private String kafkaHost;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.port:9092}")
 	private String kafkaPort;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.partitions:1}")
 	int partitions;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.replication:1}")
 	short replication;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.prefix:ontology_}")
 	private String ontologyPrefix;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.group:ontologyGroup}")
 	private String ontologyGroup;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.consumer.maxPollRecords:5000}")
 	private String maxPollRecords;
-	
-	
-    public ConsumerFactory<String, String> consumerFactory(String groupId) {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost+":"+kafkaPort);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
-        return new DefaultKafkaConsumerFactory<>(props);
-    }
-    
-    public ConsumerFactory<String, String> consumerFactoryManualAck(String groupId) {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost+":"+kafkaPort);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-        return new DefaultKafkaConsumerFactory<>(props);
-    }
 
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory(ontologyGroup));
-        
-        return factory;
-    }
-    
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactoryBatch() {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        ContainerProperties props = factory.getContainerProperties();
-        props.setAckMode(AckMode.MANUAL);
-        factory.setConsumerFactory(consumerFactoryManualAck(ontologyGroup));
-        factory.setBatchListener(true);
-        return factory;
-    }
+	public ConsumerFactory<String, String> consumerFactory(String groupId) {
+		Map<String, Object> props = new HashMap<>();
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
+		props.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, maxPollRecords);
 
-  
-   
+		return new DefaultKafkaConsumerFactory<>(props);
+	}
+
+	public ConsumerFactory<String, String> consumerFactoryManualAck(String groupId) {
+		Map<String, Object> props = new HashMap<>();
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
+		props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+		props.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, maxPollRecords);
+
+		return new DefaultKafkaConsumerFactory<>(props);
+	}
+
+	@Bean
+	public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(consumerFactory(ontologyGroup));
+
+		return factory;
+	}
+
+	@Bean
+	public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactoryBatch() {
+		ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		ContainerProperties props = factory.getContainerProperties();
+		props.setAckMode(AckMode.MANUAL);
+		factory.setConsumerFactory(consumerFactoryManualAck(ontologyGroup));
+		factory.setBatchListener(true);
+		return factory;
+	}
+
 }

@@ -12,7 +12,7 @@
 	
 	<properties>	
 		<sofia2.version>5.2.0-SNAPSHOT</sofia2.version>
-		<docker.image.username>onesait</docker.image.username>
+		<docker.image.username>sofia2</docker.image.username>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -98,7 +98,7 @@
         <module>libraries/social</module>
         <module>libraries/flow-engine-services</module>
         <module>libraries/audit</module>
-        <module>libraries/streaming</module>
+        
 
 		<!--CONFIG -->
 		<module>config/model</module>
@@ -112,6 +112,7 @@
 		<module>security/oauth/security-jwt-core-ri</module>
 		<module>security/oauth/security-jwt-jdbc-core-ri</module>
 		<module>security/oauth/security-jwt-authorization-ri</module>
+		<module>security/kafka-login</module>
 		
 		<!--PERSISTENCE-->
 		<module>persistence/interfaces</module>	
@@ -125,6 +126,7 @@
 		<!--THEMES -->
 		<module>themes/openplatform</module>
 		<module>themes/select4cities</module>
+		<module>themes/sofia2</module>
 
 		<!--MODULES-->
 		<module>modules/iotbroker</module>		

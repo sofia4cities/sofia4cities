@@ -162,8 +162,14 @@
 											        <h4 class="modal-title">New Ontology</h4>
 											      </div>		
 											      <div class="modal-body">
-											      <input type="text" id="ontologyIdentification" placeholder="Ontology Identification"/>
-											      <input type="text" id="ontologyDescription" placeholder="Ontology Description"/>
+											      <div class="form-group">
+												      <input class="form-control no-remove" type="text" id="ontologyIdentification" placeholder="Ontology Identification"/>
+												      <input class="form-control no-remove" type="text" id="ontologyDescription" placeholder="Ontology Description"/>
+												      
+													  <select id="datasource" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{json2ont.rtdbdatasource}">
+														<option th:each="datasource :${datasources}" th:value="${datasource}" th:text="${datasource}" ></option>																
+													</select>
+												  </div>
 											      </div>									      
 											      <div class="modal-footer">
 											        <button type="button" class="btn btn-success" data-dismiss="modal" onclick="createOntology()">Submit</button>
@@ -421,6 +427,7 @@
 	
 
 	var modalOntology = function() {
+		generateSchema();
 		$('#ontologyData').modal("show");
 	};
 	
@@ -431,7 +438,7 @@
 			$('#response').text(invalidSchema);
 			$('#returnAction').modal("show");
 		}
-		jQuery.post('/controlpanel/jsontool/createontology',{'ontologyDescription':$('#ontologyDescription').val(),'ontologyIdentification':$('#ontologyIdentification').val(),'instance': myCodeMirror.getValue(),'schema': myCodeMirrorSchema.getValue()}, function(data){
+		jQuery.post('/controlpanel/jsontool/createontology',{'ontologyDescription':$('#ontologyDescription').val(),'ontologyIdentification':$('#ontologyIdentification').val(),'instance': myCodeMirror.getValue(),'schema': myCodeMirrorSchema.getValue(), 'datasource' : $('#datasource').val()}, function(data){
 			if(data=='ok'){
 				$('#response').text(ontologyCreated);
 			}else{

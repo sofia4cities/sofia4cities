@@ -63,4 +63,12 @@ public class DashboardDTO extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String userAccessType;
+
+	@Getter
+	@Setter
+	private byte[] image;
+
+	@Getter
+	@Setter
+	private Boolean hasImage;
 }

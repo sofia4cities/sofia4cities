@@ -1,56 +1,69 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.indracompany.sofia2.controlpanel.controller.management.device;
 
-import static com.indracompany.sofia2.controlpanel.controller.management.device.DeviceManagementUrl.OP_DEVICES;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.indracompany.sofia2.controlpanel.config.BaseRestServices;
-import com.indracompany.sofia2.controlpanel.controller.management.model.ErrorServiceResponse;
-import com.indracompany.sofia2.controlpanel.controller.management.model.ResponseGeneric;
+import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.services.apimanager.ApiManagerService;
+import com.indracompany.sofia2.config.services.client.ClientPlatformService;
+import com.indracompany.sofia2.controlpanel.controller.management.ApiOpsRestServices;
+import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(value="Device Management")
+@Api(value = "Device Management")
 @RestController
 @Slf4j
-public class DeviceManagementController extends BaseRestServices {
-	
-	
-	@ApiOperation(value = "Devices Management")
-	@GetMapping(OP_DEVICES)
-	
-	public ResponseEntity<ResponseGeneric> devices() {
+public class DeviceManagementController extends ApiOpsRestServices {
 
-		ResponseGeneric response = new ResponseGeneric();
-		try {
-			log.info(OP_DEVICES + " Request: Sin Entrada");
-			
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			log.info(authentication.toString());
-			
-		
+	@Autowired
+	ClientPlatformService clientPlatformService;
+	@Autowired
+	ApiManagerService apiManagerService;
+	@Autowired
+	AppWebUtils utils;
 
-		} catch (Exception e) {
-			response = new ResponseGeneric();
-			e.printStackTrace();
-			ErrorServiceResponse errorResponseService = processError(e);
-			response.setErrorResponse(errorResponseService);
+	@ApiOperation(value = "validate clientPlatform id with token")
+	@RequestMapping(value = "/validate/device/{clientPlatformId}/token/{token}", method = RequestMethod.GET)
+	public ResponseEntity<?> validate(
+			@ApiParam(value = "ClientPlatform Id  ", required = true) @PathVariable("clientPlatformId") String clientPlatformId,
+			@ApiParam(value = "Token", required = true) @PathVariable(name = "token") String token) {
 
-			response.setErrorCode("500");
-			response.setErrorDescription(errorResponseService.getDescription());
-			log.error(OP_DEVICES + " Error: " + e.getMessage(),e);
-			log.error(OP_DEVICES + " Error: " + e.getStackTrace());
-			return new ResponseEntity<ResponseGeneric>(response, HttpStatus.OK);
+		List<Token> tokens = clientPlatformService.getTokensByClientPlatformId(clientPlatformId);
 
-		}
-		return new ResponseEntity<ResponseGeneric> (response, HttpStatus.OK);
+		if (tokens == null || tokens.size() == 0)
+			return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
+
+		Token result = tokens.stream().filter(x -> token.equals(x.getToken())).findAny().orElse(null);
+
+		if (result == null)
+			return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
+		else
+			return new ResponseEntity<>("VALID", HttpStatus.OK);
 
 	}
 

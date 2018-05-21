@@ -58,8 +58,8 @@ public class RoleTypeRepositoryIntegrationTest {
 
 	@Test
 	public void given_SomeRoleTypesExist_When_TheyAreCounted_Then_TheCorrectNumberIsObtained() {
-		Assert.assertTrue(this.repository.findAll().size() == 8);
-		Assert.assertTrue(this.repository.count() == 8);
+		Assert.assertTrue(this.repository.findAll().size() == 9);
+		Assert.assertTrue(this.repository.count() == 9);
 	}
 
 	@Test
