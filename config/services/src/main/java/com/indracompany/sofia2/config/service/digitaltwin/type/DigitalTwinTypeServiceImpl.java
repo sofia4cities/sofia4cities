@@ -140,10 +140,15 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 	@Override
 	public void createDigitalTwinType(DigitalTwinType digitalTwinType, HttpServletRequest httpServletRequest) {
 		try {
+			log.error("1- entro en createDigitalTwinType");
 			String[] properties = httpServletRequest.getParameterValues("propiedades");
+			log.error("2- entro en createDigitalTwinType");
 			String[] actions = httpServletRequest.getParameterValues("acciones");
+			log.error("3- entro en createDigitalTwinType");
 			String[] events = httpServletRequest.getParameterValues("eventos");
+			log.error("4- entro en createDigitalTwinType");
 			String logic = httpServletRequest.getParameter("logic");
+			log.error("5- entro en createDigitalTwinType");
 			
 			Set<PropertyDigitalTwinType> propertyDigitalTwinTypes = new HashSet<>();
 			Set<ActionsDigitalTwinType> actionDigitalTwinTypes = new HashSet<>();
@@ -152,10 +157,13 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 			
 			JSONObject json;
 			
+			log.error("6- obteniendo user");
 			User user = userService.getUser(digitalTwinType.getUser().getUserId());
+			log.error("7- obteniendo user");
 			if (user != null) {
 				digitalTwinType.setUser(user);
 				
+				log.error("8- PING");
 				//Add PING and REGISTER events by default
 				EventsDigitalTwinType ping = new EventsDigitalTwinType();
 				ping.setName("ping");
@@ -165,6 +173,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 				ping.setTypeId(digitalTwinType);
 				eventDigitalTwinTypes.add(ping);
 				
+				log.error("9- REGISTER");
 				EventsDigitalTwinType register = new EventsDigitalTwinType();
 				register.setDescription("REGISTER");
 				register.setName("register");
@@ -175,6 +184,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 				eventDigitalTwinTypes.add(register);
 				
 				if(properties !=null && !properties[0].equals("")) {
+					log.error("10- Recorre array de propiedades");
 					for(String prop : properties) {
 						json = new JSONObject(prop);
 						PropertyDigitalTwinType p = new PropertyDigitalTwinType();
@@ -186,9 +196,11 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 						p.setTypeId(digitalTwinType);
 						propertyDigitalTwinTypes.add(p);
 					}
+					log.error("11- Recorre array de propiedades");
 				}
 				
 				if(actions!=null && !actions[0].equals("")) {
+					log.error("12- Recorre array de actions");
 					for(String action : actions) {
 						ActionsDigitalTwinType act = new ActionsDigitalTwinType();
 						json = new JSONObject(action);
@@ -197,9 +209,11 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 						act.setTypeId(digitalTwinType);
 						actionDigitalTwinTypes.add(act);
 					}
+					log.error("13- Recorre array de actions");
 				}
 				
 				if(events != null && !events[0].equals("")) {
+					log.error("14- Recorre array de eventos");
 					for(String event : events) {
 						EventsDigitalTwinType evt = new EventsDigitalTwinType();
 						json = new JSONObject(event);
@@ -210,20 +224,27 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 						evt.setTypeId(digitalTwinType);
 						eventDigitalTwinTypes.add(evt);
 					}
+					log.error("15- Recorre array de eventos");
 				}
 				
 				if(logic!=null) {
+					log.error("16- entra en IF");
 					LogicDigitalTwinType l = new LogicDigitalTwinType();
 					l.setTypeId(digitalTwinType);
+					log.error("17- era lógico, pero al parecer no lo era tanto, y claro, SE ROMPIÓ!");
 					l.setLogic(logic.replace("\\n", System.getProperty("line.separator")).substring(1, logic.length()-1).replace("\\r", "").replace("\\t", "   "));
+					log.error("18- CONTRA TODO PRONÓSTICO SIGO VIVO");
 					logicDigitalTwinTypes.add(l);
 				}
 				
+				log.error("19- Persistencia en bd");
 				digitalTwinType.setPropertyDigitalTwinTypes(propertyDigitalTwinTypes);
 				digitalTwinType.setActionDigitalTwinTypes(actionDigitalTwinTypes);
 				digitalTwinType.setEventDigitalTwinTypes(eventDigitalTwinTypes);
 				digitalTwinType.setLogicDigitalTwinTypes(logicDigitalTwinTypes);
+				log.error("20- Persistencia en bd");
 				this.digitalTwinTypeRepo.save(digitalTwinType);
+				log.error("21- Persistencia en bd");
 			} else {
 				log.error("Invalid user");
 			}				
