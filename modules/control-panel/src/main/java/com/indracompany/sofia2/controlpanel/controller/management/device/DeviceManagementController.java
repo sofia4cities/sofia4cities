@@ -51,21 +51,25 @@ public class DeviceManagementController extends ApiOpsRestServices {
 			@ApiParam(value = "identification  ", required = true) @PathVariable("identification") String identification,
 			@ApiParam(value = "Token", required = true) @PathVariable(name = "token") String token) {
 
-		ClientPlatform cp = clientPlatformService.getByIdentification(identification);
+		try {
+			ClientPlatform cp = clientPlatformService.getByIdentification(identification);
 
-		String clientPlatformId = cp.getId();
+			String clientPlatformId = cp.getId();
 
-		List<Token> tokens = clientPlatformService.getTokensByClientPlatformId(clientPlatformId);
+			List<Token> tokens = clientPlatformService.getTokensByClientPlatformId(clientPlatformId);
 
-		if (tokens == null || tokens.size() == 0)
+			if (tokens == null || tokens.size() == 0)
+				return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
+
+			Token result = tokens.stream().filter(x -> token.equals(x.getToken())).findAny().orElse(null);
+
+			if (result == null)
+				return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
+			else
+				return new ResponseEntity<>("VALID", HttpStatus.OK);
+		} catch (Exception e) {
 			return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
-
-		Token result = tokens.stream().filter(x -> token.equals(x.getToken())).findAny().orElse(null);
-
-		if (result == null)
-			return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
-		else
-			return new ResponseEntity<>("VALID", HttpStatus.OK);
+		}
 
 	}
 

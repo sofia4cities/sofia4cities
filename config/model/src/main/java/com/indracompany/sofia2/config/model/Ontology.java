@@ -182,6 +182,17 @@ public class Ontology extends AuditableEntityWithUUID {
 	@Setter
 	private boolean allowsCypherFields;
 
+	@Column(name = "ALLOW_CREATE_TOPIC", nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private boolean allowsCreateTopic = false;
+
+	@Column(name = "TOPIC", length = 256)
+	@Getter
+	@Setter
+	private String topic;
+
 	public void addOntologyUserAccess(OntologyUserAccess ontologyUserAccess) {
 		ontologyUserAccess.setOntology(this);
 		ontologyUserAccesses.add(ontologyUserAccess);
