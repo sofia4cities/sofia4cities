@@ -228,7 +228,7 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 				.findByClientPlatform(clientPlatform);
 
 		if (cpoList != null && cpoList.size() > 0) {
-			for (Iterator iterator = cpoList.iterator(); iterator.hasNext();) {
+			for (Iterator<ClientPlatformOntology> iterator = cpoList.iterator(); iterator.hasNext();) {
 				ClientPlatformOntology clientPlatformOntology = (ClientPlatformOntology) iterator.next();
 				this.clientPlatformOntologyRepository.delete(clientPlatformOntology.getId());
 			}
@@ -321,8 +321,9 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 	public Ontology getDeviceLogOntology(ClientPlatform client) {
 		return this.ontologyRepository
 				.findByIdentification((LOG_ONTOLOGY_PREFIX + client.getIdentification()).replaceAll(" ", ""));
+
 	}
-	
+
 	public List<Token> getTokensByClientPlatformId(String clientPlatformId) {
 		ClientPlatform clientPlatform = clientPlatformRepository.findById(clientPlatformId);
 		return tokenService.getTokens(clientPlatform);

@@ -125,7 +125,7 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 			}
 			List<ClientConnection> cc = this.clientConnectionRepository.findByClientPlatform(client);
 			if (cc != null && cc.size() > 0) {
-				for (Iterator iterator = cc.iterator(); iterator.hasNext();) {
+				for (Iterator<ClientConnection> iterator = cc.iterator(); iterator.hasNext();) {
 					ClientConnection clientConnection = (ClientConnection) iterator.next();
 					this.clientConnectionRepository.delete(clientConnection);
 				}

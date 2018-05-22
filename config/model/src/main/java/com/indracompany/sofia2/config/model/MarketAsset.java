@@ -39,7 +39,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
@@ -52,54 +51,52 @@ import lombok.Setter;
 public class MarketAsset extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public static enum MarketAssetState {
 		PENDING, APPROVED, REJECTED;
 	}
-	
+
 	public static enum MarketAssetType {
 		API, DOCUMENT, WEBPROJECT, APPLICATION, URLAPPLICATION;
 	}
-	
+
 	public static enum MarketAssetPaymentMode {
 		FREE;
 	}
-	
 
 	@Column(name = "IDENTIFICATION", length = 50, unique = true, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	private String identification;
-	
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
 	@Getter
 	@Setter
 	private User user;
-	
-	
+
 	@Column(name = "IS_PUBLIC", nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	private boolean isPublic;
-	
+
 	@Column(name = "STATE", length = 20, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	@Enumerated(EnumType.STRING)
 	private MarketAssetState state;
-	
+
 	@Column(name = "MARKETASSET_TYPE", length = 50, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	@Enumerated(EnumType.STRING)
 	private MarketAssetType marketAssetType;
-	
+
 	@Column(name = "PAYMENT_MODE", length = 50, nullable = false)
 	@NotNull
 	@Getter
@@ -108,20 +105,20 @@ public class MarketAsset extends AuditableEntityWithUUID {
 	private MarketAssetPaymentMode paymentMode;
 
 	@Basic(fetch = FetchType.LAZY)
-	@Column(name = "IMAGE", length=100000)
+	@Column(name = "IMAGE", length = 100000)
 	@Lob
 	@Type(type = "org.hibernate.type.BinaryType")
 	@Getter
 	@Setter
 	private byte[] image;
-	
+
 	@Column(name = "IMAGE_TYPE", length = 20)
 	@Getter
 	@Setter
 	private String imageType;
-	
+
 	@Basic(fetch = FetchType.LAZY)
-	@Column(name = "CONTENT", length=100000000)
+	@Column(name = "CONTENT", length = 100000000)
 	@Lob
 	@Type(type = "org.hibernate.type.BinaryType")
 	@Getter
@@ -139,18 +136,18 @@ public class MarketAsset extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String jsonDesc;
-	
+
 	@Basic(fetch = FetchType.LAZY)
 	@Column(name = "REJECTION_REASON", length = 500)
 	@Lob
 	@Getter
 	@Setter
 	private String rejectionReason;
-	
-	@Column(name = "DELETED_AT",nullable = true)
+
+	@Column(name = "DELETED_AT", nullable = true)
 	@Temporal(TemporalType.TIMESTAMP)
 	@Getter
-	@Setter  
+	@Setter
 	private Date deletedAt;
 
 }

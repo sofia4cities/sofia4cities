@@ -7,23 +7,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.indracompany.sofia2.android.healthcheckapp.HealthFrameFragment.OnListFragmentInteractionListener;
-import com.indracompany.sofia2.android.healthcheckapp.dummy.DummyContent.DummyItem;
+
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
+
 public class MyHealthFrameRecyclerViewAdapter extends RecyclerView.Adapter<MyHealthFrameRecyclerViewAdapter.ViewHolder> {
 
     private final List<HealthData> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    //private final OnListFragmentInteractionListener mListener;
 
-    public MyHealthFrameRecyclerViewAdapter(List<HealthData> items, OnListFragmentInteractionListener listener) {
+    public MyHealthFrameRecyclerViewAdapter(List<HealthData> items) {
         mValues = items;
-        mListener = listener;
+        //mListener = listener;
     }
 
     @Override
@@ -36,12 +32,14 @@ public class MyHealthFrameRecyclerViewAdapter extends RecyclerView.Adapter<MyHea
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(String.valueOf(mValues.get(position).getWeight()));
-        holder.mContentView.setText(mValues.get(position).getComments());
+        holder.mWeightView.setText(String.valueOf(mValues.get(position).getWeight()));
+        holder.mCommentsView.setText(mValues.get(position).getComments());
         holder.mHeightView.setText(String.valueOf(mValues.get(position).getHeight()));
         holder.mTimestampView.setText(mValues.get(position).getTimestamp());
+        holder.mSysPressureView.setText(String.valueOf(mValues.get(position).getSysPressure()));
+        holder.mDiaPressureView.setText(String.valueOf(mValues.get(position).getDiaPressure()));
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        /*holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
@@ -50,7 +48,7 @@ public class MyHealthFrameRecyclerViewAdapter extends RecyclerView.Adapter<MyHea
                     mListener.onListFragmentInteraction(holder.mItem);
                 }
             }
-        });
+        });*/
     }
 
     @Override
@@ -60,24 +58,28 @@ public class MyHealthFrameRecyclerViewAdapter extends RecyclerView.Adapter<MyHea
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
         public final TextView mHeightView;
+        public final TextView mWeightView;
+        public final TextView mSysPressureView;
+        public final TextView mDiaPressureView;
         public final TextView mTimestampView;
-        public final TextView mContentView;
+        public final TextView mCommentsView;
         public HealthData mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id_tv);
-            mContentView = (TextView) view.findViewById(R.id.content_tv);
+            mWeightView = (TextView) view.findViewById(R.id.weight_tv);
             mHeightView = (TextView) view.findViewById(R.id.height_tv);
+            mSysPressureView = (TextView) view.findViewById(R.id.sys_pressure_tv);
+            mDiaPressureView = (TextView) view.findViewById(R.id.dia_pressure_tv);
+            mCommentsView = (TextView) view.findViewById(R.id.comments_tv);
             mTimestampView= (TextView) view.findViewById(R.id.timestamp_tv);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mCommentsView.getText() + "'";
         }
     }
 

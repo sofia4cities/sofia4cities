@@ -53,6 +53,18 @@ buildElasticSearchDB()
 	docker build -t $USERNAME/elasticdb:$1 .
 }
 
+buildKafka() 
+{
+	echo "KAFKA image generation with Docker CLI: "
+	docker build -t sofia2/kafka-secured:$1 .
+}
+
+buildZookeeper() 
+{
+	echo "KAFKA image generation with Docker CLI: "
+	docker build -t sofia2/zookeeper-secured:$1 .
+}
+
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
@@ -259,6 +271,16 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 		cd $homepath/../dockerfiles/elasticsearch
 		buildElasticSearchDB latest
 	fi
+	
+	if [[ "$(docker images -q sofia2/kafka-secured 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/kafka-cluster/kafka
+		#buildKafka latest
+	fi	
+
+		if [[ "$(docker images -q sofia2/zookeeper-secured 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/kafka-cluster/zookeeper
+		#buildZookeeper latest
+	fi	
 	
 	if [[ "$(docker images -q $USERNAME/nginx 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/nginx

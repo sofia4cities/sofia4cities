@@ -108,7 +108,7 @@ buildPersistence()
 	if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
 		cd $homepath/dockerfiles/elasticsearch
 		buildElasticDB latest
-	fi	
+	fi
 	
 	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
 		cd $homepath/../config/init/

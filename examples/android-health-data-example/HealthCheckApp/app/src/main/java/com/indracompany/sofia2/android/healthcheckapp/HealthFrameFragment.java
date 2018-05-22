@@ -10,22 +10,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.indracompany.sofia2.android.healthcheckapp.dummy.DummyContent;
-import com.indracompany.sofia2.android.healthcheckapp.dummy.DummyContent.DummyItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -92,6 +86,9 @@ public class HealthFrameFragment extends Fragment {
             } else {
                 mRV.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+            /*RecyclerView.ItemDecoration itemDecoration = new
+                    DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+            mRV.addItemDecoration(itemDecoration);*/
             //recyclerView.setAdapter(new MyHealthFrameRecyclerViewAdapter(DummyContent.ITEMS, mListener));
         }
 
@@ -215,6 +212,7 @@ public class HealthFrameFragment extends Fragment {
             }
             else{
                 Toast.makeText(getActivity(),"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
+
             }
         }
     }
@@ -246,6 +244,6 @@ public class HealthFrameFragment extends Fragment {
     }
 
     public void loadHealthData(){
-        mRV.setAdapter(new MyHealthFrameRecyclerViewAdapter(mHealthData,mListener));
+        //mRV.setAdapter(new MyHealthFrameRecyclerViewAdapter(mHealthData,mListener));
     }
 }

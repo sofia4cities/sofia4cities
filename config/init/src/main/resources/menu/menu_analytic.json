@@ -2,51 +2,39 @@
 	"menu": "Sofia4Cities",
 	"rol": "ROLE_DEVELOPER",
 	"noSession": "/console/login",
-	"navigation": [
+	"navigation": [	
 		{
 			"title": {
-				"EN": "SHARE & USE",
-				"ES": "COMPARTE Y USA"
+				"EN": "ANALYTICS TOOLS",
+				"ES": "HERR. ANALYTICS"
 			},
-			"icon": "flaticon-cart",
+			"icon": "flaticon-analytics",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "My Market",
-						"ES": "Mi Market"
+						"EN": "Data Import Tools",
+						"ES": "Herramientas de importación"
 					},
 					"icon": "",
-					"url": "/controlpanel/marketasset/list"
+					"url": "/controlpanel/jsontool/tools"
 				},
-			    {
+				{
 					"title": {
-						"EN": "My Web Projects",
-						"ES": "Mis Proyectos Web"
+						"EN": "My DataFlows",
+						"ES": "Mis Flujos de Proceso"
 					},
 					"icon": "",
-					"url": "/controlpanel/webprojects/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "",
-				"ES": ""
-			},
-			"icon": "flaticon-more-v3",
-			"url": "",
-			"submenu": [
-			]
-		},
-		{
-			"title": {
-				"EN": "DATA MODELLING",
-				"ES": "MODELADO DE DATOS"
-			},
-			"icon": "flaticon-network",
-			"url": "",
-			"submenu": [
+					"url": "/controlpanel/flows/list"
+				},
+				{
+					"title": {
+						"EN": "My Notebooks",
+						"ES": "Mis Notebooks"
+					},
+					"icon": "",
+					"url": "/controlpanel/notebooks/list"
+				},				
 				{	
 					"title": {
 						"EN": "My Ontologies",
@@ -54,66 +42,30 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/ontologies/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "DEVICES",
-				"ES": "DISPOSITIVOS"
-			},
-			"icon": "flaticon-share",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "My Devices",
-						"ES": "Mis Dispositivos"
-					},
-					"icon": "",
-					"url": "/controlpanel/devices/list"
 				},
 				{
 					"title": {
-						"EN": "My Simulations",
-						"ES": "Mis Simulaciones"
+						"EN": "My APIs",
+						"ES": "Mis APIs"
 					},
 					"icon": "",
-					"url": "/controlpanel/devicesimulation/list"
+					"url": "/controlpanel/apimanager/list"
 				},
 				{
 					"title": {
-						"EN": "Status of My Devices",
-						"ES": "Estado de mis Dispositivos"
+						"EN": "Query Tool",
+						"ES": "Herramienta Queries"
 					},
 					"icon": "",
-					"url": "/controlpanel/devices/management/show"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "INGEST & PROCESS",
-				"ES": "INGESTA Y PROCESADO"
-			},
-			"icon": "flaticon-car",
-			"url": "",
-			"submenu": [	
-				{
+					"url": "/controlpanel/querytool/show"
+				},				
+			    {
 					"title": {
-						"EN": "My DataFlows",
-						"ES": "Mis Flujos de Datos"
+						"EN": "My Web Projects",
+						"ES": "Mis Proyectos Web"
 					},
 					"icon": "",
-					"url": "/controlpanel/flows/list"
-				},
-				{
-					"title": {
-						"EN": "My Twitter Listenings",
-						"ES": "Mis Escuchas en Twitter"
-					},
-					"icon": "",
-					"url": "/controlpanel/twitter/scheduledsearch/list"
+					"url": "/controlpanel/webprojects/list"
 				}
 			]
 		},
@@ -161,61 +113,63 @@
 		},
 		{
 			"title": {
-				"EN": "API MANAGER",
-				"ES": "API MANAGER"
+				"EN": "",
+				"ES": ""
 			},
-			"icon": "flaticon-multimedia",
+			"icon": "flaticon-more-v3",
+			"url": "",
+			"submenu": [
+			]
+		},
+		{
+			"title": {
+				"EN": "SHARE & USE",
+				"ES": "COMPARTE Y USA"
+			},
+			"icon": "flaticon-cart",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "My APIs",
-						"ES": "Mis APIs"
+						"EN": "My Market",
+						"ES": "Mi Market"
 					},
 					"icon": "",
-					"url": "/controlpanel/apimanager/list"
-				},
-				{
-					"title": {
-						"EN": "My API-Tokens",
-						"ES": "Mis API-Tokens"
-					},
-					"icon": "",
-					"url": "/controlpanel/apimanager/token/list"
+					"url": "/controlpanel/marketasset/list"
 				}
 			]
 		},
 		{
 			"title": {
-				"EN": "DIGITAL TWIN",
-				"ES": "DIGITAL TWIN"
+				"EN": "DEVICES",
+				"ES": "DISPOSITIVOS"
 			},
-			"icon": "flaticon-medical",
+			"icon": "flaticon-share",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "My Digital Twin Types",
-						"ES": "Mis Definiciones de Digital Twin"
+						"EN": "My Devices",
+						"ES": "Mis Dispositivos"
 					},
 					"icon": "",
-					"url": "/controlpanel/digitaltwintypes/list"
+					"url": "/controlpanel/devices/list"
 				},
 				{
 					"title": {
-						"EN": "My Digital Twins",
-						"ES": "Mis Digital Twins"
+						"EN": "My Simulations",
+						"ES": "Mis Simulaciones"
 					},
 					"icon": "",
-					"url": "/controlpanel/digitaltwindevices/list"
+					"url": "/controlpanel/devicesimulation/list"
 				},
 				{
 					"title": {
-						"EN": "Digital Twin Status",
-						"ES": "Estado de mis Digital Twins"
+						"EN": "Status of My Devices",
+						"ES": "Estado de mis Dispositivos"
 					},
 					"icon": "",
-					"url": "/controlpanel/digitaltwindisplay/show"
+					"url": "/controlpanel/devices/management/show"
 				}
 			]
 		},
@@ -242,40 +196,6 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/audit/show"
-				},
-				{
-					"title": {
-						"EN": "My Planned Tasks",
-						"ES": "Mis Tareas Planificadas"
-					},
-					"icon": "",
-					"url": "/controlpanel/planner/list"
-				},
-				{
-					"title": {
-						"EN": "Data Import Tools",
-						"ES": "Herramientas de importación"
-					},
-					"icon": "",
-					"url": "/controlpanel/jsontool/tools"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "Analytics",
-				"ES": "Analytics"
-			},
-			"icon": "flaticon-analytics",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "My Notebooks",
-						"ES": "Mis Notebooks"
-					},
-					"icon": "",
-					"url": "/controlpanel/notebooks/list"
 				}
 			]
 		}

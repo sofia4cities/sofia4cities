@@ -17,7 +17,6 @@ package com.indracompany.sofia2.persistence.elasticsearch.api;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,49 +40,49 @@ public class ESInsertService {
 
 	@Autowired
 	ESBaseApi connector;
-	
-	
+
 	private void fixPosibleNonCapitalizedGeometryPoint(String s) {
 		try {
 			JsonObject o = new JsonParser().parse(s).getAsJsonObject();
-			JsonObject geometry = (JsonObject)o.get("geometry");
+			JsonObject geometry = (JsonObject) o.get("geometry");
 			JsonElement type = geometry.get("type");
 			String value = type.getAsString();
 			geometry.addProperty("type", value.toLowerCase());
-			
-		} catch (Exception e) {}
-		
+
+		} catch (Exception e) {
+		}
+
 	}
 
 	public List<BulkWriteResult> load(String index, String type, List<String> jsonDoc) {
 
 		List<BulkWriteResult> listResult = new ArrayList<BulkWriteResult>();
-		
+
 		List<Index> list = new ArrayList<Index>();
 		for (String s : jsonDoc) {
-			
+
 			s = s.replaceAll("\\n", "");
 			s = s.replaceAll("\\r", "");
-			
+
 			fixPosibleNonCapitalizedGeometryPoint(s);
-			
+
 			Index i = new Index.Builder(s).index(index).type(type).build();
 			list.add(i);
 		}
-			
+
 		Bulk bulk = new Bulk.Builder().addAction(list).build();
 		BulkResult result;
 		try {
 			result = connector.getHttpClient().execute(bulk);
 			JsonArray object = result.getJsonObject().get("items").getAsJsonArray();
-			
-			for (int i=0; i < object.size(); i++) {
+
+			for (int i = 0; i < object.size(); i++) {
 				JsonElement element = object.get(i);
 				JsonObject o = element.getAsJsonObject();
-				JsonObject the= o.get("index").getAsJsonObject();
-				String id =  the.get("_id").getAsString();
-				String created =  the.get("result").getAsString();
-				
+				JsonObject the = o.get("index").getAsJsonObject();
+				String id = the.get("_id").getAsString();
+				String created = the.get("result").getAsString();
+
 				BulkWriteResult bulkr = new BulkWriteResult();
 				bulkr.setId(id);
 				bulkr.setErrorMessage(created);
@@ -92,26 +91,25 @@ public class ESInsertService {
 
 			}
 		} catch (Exception e) {
-			log.error("Error Loading document "+e.getMessage());
+			log.error("Error Loading document " + e.getMessage());
 		}
-		
+
 		log.info("Documents has been inserted..." + listResult.size());
 
 		return listResult;
-		
 
 	}
-	
+
 	public static List<String> readLines(File file) throws Exception {
 		if (!file.exists()) {
 			return new ArrayList<String>();
 		}
 
-		BufferedReader reader=null;
+		BufferedReader reader = null;
 		List<String> results = new ArrayList<String>();
 		try {
 			reader = new BufferedReader(new FileReader(file));
-			
+
 			String line = reader.readLine();
 			while (line != null) {
 				results.add(line);
@@ -121,7 +119,8 @@ public class ESInsertService {
 		} catch (Exception e) {
 			return new ArrayList<String>();
 		} finally {
-			if (reader!=null)reader.close();
+			if (reader != null)
+				reader.close();
 		}
 
 	}

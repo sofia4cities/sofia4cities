@@ -129,7 +129,7 @@ public class Sofia2TokenController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/sofia2-oauth/tokenInfo")
+	@RequestMapping(method = RequestMethod.POST, value = "/sofia2-oauth/tokenInfo")
 	@ResponseBody
 	public Sofia2ResponseToken info(@RequestBody String tokenId) {
 		try {
@@ -138,8 +138,7 @@ public class Sofia2TokenController {
 			
 			OAuth2Authentication authentication = sofia2CustomTokenService.loadAuthentication(tokenId);
 
-			String ip = ((OAuth2Authentication) authentication).getOAuth2Request().getRefreshTokenRequest()
-					.getRequestParameters().get("ip");
+			
 
 			OAuth2AccessToken token = sofia2CustomTokenService.getAccessToken((OAuth2Authentication) authentication);
 
@@ -151,7 +150,7 @@ public class Sofia2TokenController {
 
 			r.setExpirationFormatted(dateFormat.format(token.getExpiration()));
 			r.setToken(token.getValue());
-			r.setIp(ip);
+			
 			
 			log.info("Leaving Info Token with response = "+r);
 
