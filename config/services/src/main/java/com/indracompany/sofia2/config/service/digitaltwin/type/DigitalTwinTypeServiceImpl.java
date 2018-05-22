@@ -253,6 +253,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 			}				
 			
 		} catch (Exception e) {
+			log.error("SE HA TOTO: " + e.printStackTrace());
 			throw new DigitalTwinServiceException("Problems creating the digital twin type", e);
 		}
 	}
