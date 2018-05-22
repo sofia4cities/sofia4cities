@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.services.apimanager.ApiManagerService;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
@@ -44,11 +45,15 @@ public class DeviceManagementController extends ApiOpsRestServices {
 	@Autowired
 	ApiManagerService apiManagerService;
 
-	@ApiOperation(value = "validate clientPlatform id with token")
-	@RequestMapping(value = "/validate/device/{clientPlatformId}/token/{token}", method = RequestMethod.GET)
+	@ApiOperation(value = "validate Device id with token")
+	@RequestMapping(value = "/validate/device/{identification}/token/{token}", method = RequestMethod.GET)
 	public ResponseEntity<?> validate(
-			@ApiParam(value = "ClientPlatform Id  ", required = true) @PathVariable("clientPlatformId") String clientPlatformId,
+			@ApiParam(value = "identification  ", required = true) @PathVariable("identification") String identification,
 			@ApiParam(value = "Token", required = true) @PathVariable(name = "token") String token) {
+
+		ClientPlatform cp = clientPlatformService.getByIdentification(identification);
+
+		String clientPlatformId = cp.getId();
 
 		List<Token> tokens = clientPlatformService.getTokensByClientPlatformId(clientPlatformId);
 
