@@ -100,7 +100,7 @@ spring: ## General Config
       # template-resolver-order:
       # view-names:
    datasource: ## JPA Config
-      url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      url: jdbc:mysql://localhost:3306/sofia2_s4c?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
       password: changeIt!
       # Number of ms to wait before throwing an exception if no connection is available.
@@ -109,6 +109,10 @@ spring: ## General Config
       tomcat.max-active: 50
       # Validate the connection before borrowing it from the pool.
       tomcat.test-on-borrow: true
+      driver-class-name: com.mysql.jdbc.Driver
+      test-while-idle: true
+      test-on-borrow: true
+      validation-query: SELECT 1      
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
@@ -133,10 +137,13 @@ spring.elasticsearch.jest.read-timeout: ${sofia2.database.elasticsearch.sql.conn
         
 quartz:      
    datasource:
-      url: jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      url: jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
       password: changeIt!
       driver-class-name: com.mysql.jdbc.Driver
+      test-while-idle: true
+      test-on-borrow: true
+      validation-query: SELECT 1
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database

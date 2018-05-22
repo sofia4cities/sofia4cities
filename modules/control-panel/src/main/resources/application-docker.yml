@@ -18,8 +18,7 @@ sofia2:
 
 spring:
    datasource:  
-      url: jdbc:mysql://configdb:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false            
-      password: changeIt!
+      url: jdbc:mysql://configdb:3306/sofia2_s4c?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
    boot.admin: #Spring Boot Admin Config    
       url: http://monitoringuiservice:18100/monitoring    
       client.service-url: http://${SERVER_NAME}${server.contextPath}/ 
@@ -29,8 +28,7 @@ spring:
       uris: http://elasticdb:9200                   
 quartz:
     datasource:
-      url: jdbc:mysql://schedulerdb:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
-      password: changeIt!
+      url: jdbc:mysql://schedulerdb:3306/sofia2_s4c_scheduler?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
 ## LOGGING CONF
 logging:
    path: /var/log/logs-s4c 
