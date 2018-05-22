@@ -47,6 +47,12 @@ buildRealTimeDB()
 	docker build -t $USERNAME/realtimedb:$1 .
 }
 
+buildMongoExpress()
+{
+	echo "MongoExpress image generation with Docker CLI: "
+	docker build -t $USERNAME/mongoexpress:$1 .
+}
+
 buildElasticSearchDB()
 {
 	echo "ElasticSearchDB image generation with Docker CLI: "
@@ -266,6 +272,11 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 		cd $homepath/../dockerfiles/realtimedb
 		buildRealTimeDB latest
 	fi
+	
+	if [[ "$(docker images -q $USERNAME/mongoexpress 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/mongoexpress
+		buildMongoExpress latest
+	fi	
 	
 	if [[ "$(docker images -q $USERNAME/elasticdb 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/elasticsearch
