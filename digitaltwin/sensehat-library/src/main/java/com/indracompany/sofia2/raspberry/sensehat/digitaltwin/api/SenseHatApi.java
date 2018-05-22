@@ -81,12 +81,33 @@ public class SenseHatApi implements JavascriptAPI {
 		Color e = new Color(0, 0, 0);
 		Color w = new Color(150, 150, 150);
 
-		if (text.equalsIgnoreCase("Right")) {
+		if (text.equalsIgnoreCase("Up")) {
 
 			Color[] pixels = new Color[] { e, e, e, w, w, e, e, e, e, e, w, w, w, w, e, e, e, w, e, w, w, e, w, e, w, e,
 					e, w, w, e, e, w, e, e, e, w, w, e, e, e, e, e, e, w, w, e, e, e, e, e, e, w, w, e, e, e, e, e, e,
 					w, w, e, e, e };
 			senseHat.ledMatrix.setPixels(pixels);
+		} else if (text.equalsIgnoreCase("Right")) {
+
+			Color[] pixels = new Color[] { e, e, e, e, w, e, e, e, e, e, e, e, e, w, e, e, e, e, e, e, e, e, w, e, w, w,
+					w, w, w, w, w, w, w, w, w, w, w, w, w, w, e, e, e, e, e, e, w, e, e, e, e, e, e, w, e, e, e, e, e,
+					e, w, e, e, e };
+			senseHat.ledMatrix.setPixels(pixels);
+			;
+		} else if (text.equalsIgnoreCase("Down")) {
+
+			Color[] pixels = new Color[] { e, e, e, w, w, e, e, e, e, e, e, w, w, e, e, e, e, e, e, w, w, e, e, e, e, e,
+					e, w, w, e, e, e, w, e, e, w, w, e, e, w, e, w, e, w, w, e, w, e, e, e, w, w, w, w, e, e, e, e, e,
+					w, w, e, e, e };
+			senseHat.ledMatrix.setPixels(pixels);
+			;
+		} else if (text.equalsIgnoreCase("Left")) {
+
+			Color[] pixels = new Color[] { e, e, e, w, e, e, e, e, e, e, w, e, e, e, e, e, e, w, e, e, e, e, e, e, w, w,
+					w, w, w, w, w, w, w, w, w, w, w, w, w, w, e, w, e, e, e, e, e, e, e, e, w, e, e, e, e, e, e, e, e,
+					w, e, e, e, e };
+			senseHat.ledMatrix.setPixels(pixels);
+			;
 		} else {
 			senseHat.ledMatrix.showMessage(text);
 		}

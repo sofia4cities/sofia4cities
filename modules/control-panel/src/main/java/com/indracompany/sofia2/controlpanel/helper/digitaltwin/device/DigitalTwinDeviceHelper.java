@@ -67,6 +67,7 @@ public class DigitalTwinDeviceHelper {
 	private Template pomTemplate;
 	private Template deviceApplicationTemplate;
 	private Template deviceConfigurationTemplate;
+	private Template swaggerConfigTemplate;
 
 	@PostConstruct
 	public void init() {
@@ -79,12 +80,13 @@ public class DigitalTwinDeviceHelper {
 			pomTemplate = cfg.getTemplate("pomTemplate.ftl");
 			deviceApplicationTemplate = cfg.getTemplate("DeviceApplicationTemplate.ftl");
 			deviceConfigurationTemplate = cfg.getTemplate("applicationPropertiesTemplate.ftl");
+			swaggerConfigTemplate = cfg.getTemplate("swaggerConfigTemplate.ftl");
 		} catch (IOException e) {
 			log.error("Error configuring the template loader.", e);
 		}
 	}
 
-	public File generateProject(String identificacion, Boolean compile) {
+	public File generateProject(String identificacion, Boolean compile, Boolean sensehat) {
 
 		List<PropertiesDTO> properties = new ArrayList<PropertiesDTO>();
 		List<PropertiesDTO> statusProperties = new ArrayList<PropertiesDTO>();
@@ -137,23 +139,26 @@ public class DigitalTwinDeviceHelper {
 		dataStatusMap.put("mapClass", cls);
 
 		Map<String, Object> dataApplicationPropertiesMap = new HashMap<String, Object>();
-		dataApplicationPropertiesMap.put("serverPort", "10000");
+		dataApplicationPropertiesMap.put("serverPort", device.getPort());
 		dataApplicationPropertiesMap.put("serverContextPath", device.getContextPath());
 		dataApplicationPropertiesMap.put("applicationName", identificacion);
 		dataApplicationPropertiesMap.put("apiKey", device.getDigitalKey());
 		dataApplicationPropertiesMap.put("deviceId", device.getIdentification());
 		dataApplicationPropertiesMap.put("deviceRestLocalSchema", device.getUrlSchema());
-		dataApplicationPropertiesMap.put("deviceRestLocalIp", device.getIp());
+		dataApplicationPropertiesMap.put("deviceLocalInterface", device.getIntrface());
+		dataApplicationPropertiesMap.put("deviceIpv6", device.getIpv6());
 		dataApplicationPropertiesMap.put("sofia2BrokerEndpoint", device.getUrl());
 
 		// pom.xml Template properties
 		Map<String, Object> dataPomMap = new HashMap<String, Object>();
 		dataPomMap.put("projectName", identificacion);
+		dataPomMap.put("sensehat", sensehat);
 
 		Writer writerDeviceApplication = null;
 		Writer writerTwinStatus = null;
 		Writer writerApplicationProperties = null;
 		Writer writerPom = null;
+		Writer writerSwagger = null;
 		PrintWriter outLogic = null;
 		PrintWriter outWot = null;
 		File zipFile = null;
@@ -214,8 +219,14 @@ public class DigitalTwinDeviceHelper {
 			pomTemplate.process(dataPomMap, writerPom);
 			writerPom.flush();
 
+			// Create SwaggerConfig.java
+			writerSwagger = new FileWriter(fileJava + File.separator + "SwaggerConfig.java");
+			Map<String, Object> dataSwaggerMap = new HashMap<String, Object>();
+			swaggerConfigTemplate.process(dataSwaggerMap, writerSwagger);
+			writerSwagger.flush();
+
 		} catch (Exception e) {
-			log.error("Error generating class DigitalTwinStatus.java", e);
+			log.error("Error generating Digital Twin project", e);
 		} finally {
 			try {
 				if (null != writerDeviceApplication) {
@@ -244,6 +255,14 @@ public class DigitalTwinDeviceHelper {
 			try {
 				if (null != writerPom) {
 					writerPom.close();
+				}
+			} catch (Exception e) {
+				log.error("Error closing File object", e);
+			}
+
+			try {
+				if (null != writerSwagger) {
+					writerSwagger.close();
 				}
 			} catch (Exception e) {
 				log.error("Error closing File object", e);

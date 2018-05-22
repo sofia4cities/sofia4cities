@@ -22,6 +22,23 @@
 			<artifactId>sofia2-digital-twin-library</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		<dependency>
+		    <groupId>io.springfox</groupId>
+		    <artifactId>springfox-swagger2</artifactId>
+		    <version>2.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.8.0</version>
+		</dependency>
+		<#if sensehat == true>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sensehat-python-library</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		</#if>
 	</dependencies>
 	<repositories>
 		<repository>

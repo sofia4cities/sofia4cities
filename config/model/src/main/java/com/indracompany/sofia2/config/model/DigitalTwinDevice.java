@@ -74,7 +74,13 @@ public class DigitalTwinDevice extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	@NotNull
-	private String interface;
+	private String intrface;
+
+	@Column(name = "IPV6", length = 512, nullable = false)
+	@Getter
+	@Setter
+	@NotNull
+	private Boolean ipv6;
 
 	@Column(name = "PORT", nullable = false)
 	@Getter

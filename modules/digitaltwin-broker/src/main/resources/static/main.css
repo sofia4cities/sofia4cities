@@ -36,3 +36,10 @@ body {
     top: 272px;
     left: 309px;
 }
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
