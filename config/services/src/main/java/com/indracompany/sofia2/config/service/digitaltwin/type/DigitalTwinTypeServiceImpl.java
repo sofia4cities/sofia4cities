@@ -228,19 +228,23 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 				}
 				
 				if(logic!=null) {
+					log.error("16- entra en IF");
 					LogicDigitalTwinType l = new LogicDigitalTwinType();
 					l.setTypeId(digitalTwinType);
+					log.error("17- era lógico, pero al parecer no lo era tanto, y claro, SE ROMPIÓ!");
 					l.setLogic(logic.replace("\\n", System.getProperty("line.separator")).substring(1, logic.length()-1).replace("\\r", "").replace("\\t", "   "));
+					log.error("18- CONTRA TODO PRONÓSTICO SIGO VIVO");
 					logicDigitalTwinTypes.add(l);
 				}
 				
+				log.error("19- Persistencia en bd");
 				digitalTwinType.setPropertyDigitalTwinTypes(propertyDigitalTwinTypes);
 				digitalTwinType.setActionDigitalTwinTypes(actionDigitalTwinTypes);
 				digitalTwinType.setEventDigitalTwinTypes(eventDigitalTwinTypes);
 				digitalTwinType.setLogicDigitalTwinTypes(logicDigitalTwinTypes);
-				log.error("16- Persistencia en bd");
+				log.error("20- Persistencia en bd");
 				this.digitalTwinTypeRepo.save(digitalTwinType);
-				log.error("17- Persistencia en bd");
+				log.error("21- Persistencia en bd");
 			} else {
 				log.error("Invalid user");
 			}				
