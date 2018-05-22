@@ -125,7 +125,6 @@ public class NodeRedLauncher {
 
 			CommandLine commandLine = new CommandLine(this.nodePath);
 			commandLine.addArgument(this.launcherJob);
-
 			DefaultExecutor executor = new DefaultExecutor();
 			executor.setExitValue(0);
 			executor.setWorkingDirectory(new File(this.workingPath));

@@ -220,7 +220,7 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 				.findByClientPlatform(clientPlatform);
 
 		if (cpoList != null && cpoList.size() > 0) {
-			for (Iterator iterator = cpoList.iterator(); iterator.hasNext();) {
+			for (Iterator<ClientPlatformOntology> iterator = cpoList.iterator(); iterator.hasNext();) {
 				ClientPlatformOntology clientPlatformOntology = (ClientPlatformOntology) iterator.next();
 				this.clientPlatformOntologyRepository.delete(clientPlatformOntology.getId());
 			}
@@ -265,18 +265,18 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 					uDevice.getClientPlatformOntologies(), new TypeReference<List<ClientPlatformOntology>>() {
 					})));
 		} catch (JsonParseException e) {
-			log.error("Exception reached "+e.getMessage(),e);
+			log.error("Exception reached " + e.getMessage(), e);
 		} catch (JsonMappingException e) {
-			log.error("Exception reached "+e.getMessage(),e);
+			log.error("Exception reached " + e.getMessage(), e);
 		} catch (IOException e) {
-			log.error("Exception reached "+e.getMessage(),e);
+			log.error("Exception reached " + e.getMessage(), e);
 		}
 
 	}
 
 	@Override
 	public void createOntologyRelation(Ontology ontology, ClientPlatform clientPlatform) {
-		
+
 		final ClientPlatformOntology relation = new ClientPlatformOntology();
 		relation.setClientPlatform(clientPlatform);
 		relation.setAccess(AccessType.ALL.name());
@@ -286,10 +286,9 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 				clientPlatform.getIdentification()) == null) {
 			this.clientPlatformOntologyRepository.save(relation);
 		}
-		
-	
+
 	}
-	
+
 	public List<Token> getTokensByClientPlatformId(String clientPlatformId) {
 		ClientPlatform clientPlatform = clientPlatformRepository.findById(clientPlatformId);
 		return tokenService.getTokens(clientPlatform);

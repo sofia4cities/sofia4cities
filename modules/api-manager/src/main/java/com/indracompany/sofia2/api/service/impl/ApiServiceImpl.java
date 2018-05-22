@@ -15,9 +15,7 @@ package com.indracompany.sofia2.api.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -71,7 +69,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 
 	@Autowired
 	private RouterOperationsServiceFacade facade;
-	
+
 	private Invocable invocable;
 
 	@SuppressWarnings("unchecked")
@@ -113,7 +111,6 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 				exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
 			}
 
-			
 			String messageError = generateErrorMessage(REASON_TYPE, "Stopped Execution, Found Stop State", REASON);
 			exchange.getIn().setHeader("content-type", "text/plain");
 			exchange.getIn().setHeader(ApiServiceInterface.STATUS, "STOP");
@@ -125,7 +122,8 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			exchange.getIn().setHeader(ApiServiceInterface.QUERY, (String) data.get(ApiServiceInterface.QUERY));
 			exchange.getIn().setHeader(ApiServiceInterface.USER, (User) data.get(ApiServiceInterface.USER));
 			exchange.getIn().setHeader(ApiServiceInterface.ONTOLOGY, (Ontology) data.get(ApiServiceInterface.ONTOLOGY));
-			//exchange.getIn().setHeader(ApiServiceInterface.BODY, (String) dataFact.get(ApiServiceInterface.BODY));
+			// exchange.getIn().setHeader(ApiServiceInterface.BODY, (String)
+			// dataFact.get(ApiServiceInterface.BODY));
 		} else {
 			exchange.getIn().setHeader(ApiServiceInterface.STATUS, "FOLLOW");
 			exchange.getIn().setBody(data);
@@ -179,69 +177,71 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 
 		if (result != null) {
 			if ("ERROR".equals(result.getResult())) {
-				
+
 				exchange.getIn().setHeader("content-type", "text/plain");
 				exchange.getIn().setHeader(ApiServiceInterface.STATUS, "STOP");
-				String messageError = generateErrorMessage("ERROR Output from Router Processing", "Stopped Execution, Error from Router", result.getMessage() );
+				String messageError = generateErrorMessage("ERROR Output from Router Processing",
+						"Stopped Execution, Error from Router", result.getMessage());
 				exchange.getIn().setHeader(ApiServiceInterface.REASON, messageError);
-			}
-			else {
+			} else {
 				OUTPUT = result.getResult();
 				data.put(ApiServiceInterface.OUTPUT, OUTPUT);
-				
+
 			}
-			
-		}
-		else {
+
+		} else {
 			exchange.getIn().setHeader(ApiServiceInterface.STATUS, "STOP");
-			String messageError = generateErrorMessage("ERROR Output from Router Processing", "Stopped Execution", "Null Result From Router" );
+			String messageError = generateErrorMessage("ERROR Output from Router Processing", "Stopped Execution",
+					"Null Result From Router");
 			exchange.getIn().setHeader(ApiServiceInterface.REASON, messageError);
 		}
 
 		return data;
 	}
-	
+
 	@PrometheusTimeMethod(name = "postProcess", help = "postProcess")
 	@Timed
 	public Map<String, Object> postProcess(Map<String, Object> data, Exchange exchange) throws Exception {
 		String error = "";
-		ApiOperation apiOperation = ((ApiOperation)data.get(ApiServiceInterface.API_OPERATION));
-		
-		if (apiOperation!=null) {
+		ApiOperation apiOperation = ((ApiOperation) data.get(ApiServiceInterface.API_OPERATION));
+
+		if (apiOperation != null) {
 			String postProcessScript = apiOperation.getPostProcess();
-			if (postProcessScript!=null && !"".equals(postProcessScript)) {
+			if (postProcessScript != null && !"".equals(postProcessScript)) {
 				ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
 				this.invocable = (Invocable) engine;
 				try {
 
 					String scriptPostprocessFunction = "function postprocess(data){ " + postProcessScript + " }";
-					
-					ByteArrayInputStream scriptInputStream = new ByteArrayInputStream(scriptPostprocessFunction.getBytes(StandardCharsets.UTF_8));
-					
+
+					ByteArrayInputStream scriptInputStream = new ByteArrayInputStream(
+							scriptPostprocessFunction.getBytes(StandardCharsets.UTF_8));
+
 					engine.eval(new InputStreamReader(scriptInputStream));
-				
+
 					Invocable inv = (Invocable) engine;
-					
+
 					Object result;
 					result = inv.invokeFunction("postprocess", data.get(ApiServiceInterface.OUTPUT));
 					data.put(ApiServiceInterface.OUTPUT, result);
-				}catch(ScriptException e) {
+				} catch (ScriptException e) {
 					log.error("Execution logic for postprocess error", e);
 					exchange.getIn().setHeader(ApiServiceInterface.STATUS, "STOP");
-					String messageError = generateErrorMessage("ERROR from Scripting Post Process", "Execution logic for Postprocess error", e.getCause().getMessage());
+					String messageError = generateErrorMessage("ERROR from Scripting Post Process",
+							"Execution logic for Postprocess error", e.getCause().getMessage());
 					exchange.getIn().setHeader(ApiServiceInterface.REASON, messageError);
-					
-				}catch (Exception e) {
+
+				} catch (Exception e) {
 					exchange.getIn().setHeader(ApiServiceInterface.STATUS, "STOP");
-					String messageError = generateErrorMessage("ERROR from Scripting Post Process", "Exception detected", e.getCause().getMessage());
+					String messageError = generateErrorMessage("ERROR from Scripting Post Process",
+							"Exception detected", e.getCause().getMessage());
 					exchange.getIn().setHeader(ApiServiceInterface.REASON, messageError);
 
 				}
-			
+
 			}
 		}
-	
-		
+
 		return data;
 	}
 
@@ -410,9 +410,9 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		}
 		return retval + "\n";
 	}
-	
+
 	private static String generateErrorMessage(String cause, String error, String message) {
-		return  "{\"result\":\""+cause+"\", \"message\":\""+error+"\", \"details\":\"" + message + "\"}";
+		return "{\"result\":\"" + cause + "\", \"message\":\"" + error + "\", \"details\":\"" + message + "\"}";
 	}
 
 }

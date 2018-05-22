@@ -17,8 +17,6 @@ package com.indracompany.sofia2.controlpanel.controller.management;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.indracompany.sofia2.controlpanel.controller.management.model.ErrorServiceResponse;
-
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -26,7 +24,4 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("api-ops")
 public class ApiOpsRestServices extends BaseRestServices {
 
-
-
-	
 }

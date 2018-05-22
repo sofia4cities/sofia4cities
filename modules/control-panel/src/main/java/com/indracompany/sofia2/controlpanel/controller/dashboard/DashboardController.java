@@ -199,8 +199,8 @@ public class DashboardController {
 			dashBDTO.setPublicAccess(dashboard.isPublic());
 			List<DashboardUserAccess> userAccess = dashboardService.getDashboardUserAccesses(id);
 			if (userAccess != null && userAccess.size() > 0) {
-				ArrayList list = new ArrayList();
-				for (Iterator iterator = userAccess.iterator(); iterator.hasNext();) {
+				ArrayList<DashboardAccessDTO> list = new ArrayList<DashboardAccessDTO>();
+				for (Iterator<DashboardUserAccess> iterator = userAccess.iterator(); iterator.hasNext();) {
 					DashboardUserAccess dua = (DashboardUserAccess) iterator.next();
 					DashboardAccessDTO daDTO = new DashboardAccessDTO();
 					daDTO.setAccesstypes(dua.getDashboardUserAccessType().getName());

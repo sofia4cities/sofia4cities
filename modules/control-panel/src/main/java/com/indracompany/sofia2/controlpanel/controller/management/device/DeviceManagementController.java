@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.services.apimanager.ApiManagerService;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.controlpanel.controller.management.ApiOpsRestServices;
 
@@ -33,34 +35,38 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(value="Device Management")
+@Api(value = "Device Management")
 @RestController
 @Slf4j
 public class DeviceManagementController extends ApiOpsRestServices {
-	
+
 	@Autowired
 	ClientPlatformService clientPlatformService;
-	
-	@ApiOperation(value = "validate clientPlatform id with token")
-	@RequestMapping(value="/validate/device/{clientPlatformId}/token/{token}", method=RequestMethod.GET)
-	public ResponseEntity<?> list(
-			@ApiParam(value = "ClientPlatform Id  ", required = true) @PathVariable("clientPlatformId") String clientPlatformId,
-			@ApiParam(value = "Token", required=true) @PathVariable(name="token") String token) {
+	@Autowired
+	ApiManagerService apiManagerService;
 
-	
+	@ApiOperation(value = "validate Device id with token")
+	@RequestMapping(value = "/validate/device/{identification}/token/{token}", method = RequestMethod.GET)
+	public ResponseEntity<?> validate(
+			@ApiParam(value = "identification  ", required = true) @PathVariable("identification") String identification,
+			@ApiParam(value = "Token", required = true) @PathVariable(name = "token") String token) {
+
+		ClientPlatform cp = clientPlatformService.getByIdentification(identification);
+
+		String clientPlatformId = cp.getId();
+
 		List<Token> tokens = clientPlatformService.getTokensByClientPlatformId(clientPlatformId);
-		
-		if (tokens==null || tokens.size()==0) return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
-		
-		Token result = tokens.stream()                        
-	                .filter(x -> token.equals(x.getToken()))       
-	                .findAny()                                     
-	                .orElse(null);   
-		
-		if (result==null) return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
-		else return new ResponseEntity<>("VALID", HttpStatus.OK);
-		
-	
+
+		if (tokens == null || tokens.size() == 0)
+			return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
+
+		Token result = tokens.stream().filter(x -> token.equals(x.getToken())).findAny().orElse(null);
+
+		if (result == null)
+			return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
+		else
+			return new ResponseEntity<>("VALID", HttpStatus.OK);
+
 	}
 
 }

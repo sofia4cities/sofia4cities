@@ -23,6 +23,7 @@ public class PlainSaslServer implements SaslServer {
 	private final CallbackHandler callbackHandler;
 	private boolean complete;
 	private String authorizationId;
+	public static String URL = "";
 
 	public PlainSaslServer(PlainServerCallbackHandler callbackHandler) {
 		this.callbackHandler = callbackHandler;
@@ -30,16 +31,16 @@ public class PlainSaslServer implements SaslServer {
 
 	/**
 	 * @throws SaslAuthenticationException
-	 *             if username/password combination is invalid or if the
-	 *             requested authorization id is not the same as username.
+	 *             if username/password combination is invalid or if the requested
+	 *             authorization id is not the same as username.
 	 *             <p>
 	 *             <b>Note:</b> This method may throw
 	 *             {@link SaslAuthenticationException} to provide custom error
-	 *             messages to clients. But care should be taken to avoid
-	 *             including any information in the exception message that
-	 *             should not be leaked to unauthenticated clients. It may be
-	 *             safer to throw {@link SaslException} in some cases so that a
-	 *             standard error message is returned to clients.
+	 *             messages to clients. But care should be taken to avoid including
+	 *             any information in the exception message that should not be
+	 *             leaked to unauthenticated clients. It may be safer to throw
+	 *             {@link SaslException} in some cases so that a standard error
+	 *             message is returned to clients.
 	 *             </p>
 	 */
 	@Override
@@ -47,13 +48,13 @@ public class PlainSaslServer implements SaslServer {
 		/*
 		 * Message format (from https://tools.ietf.org/html/rfc4616):
 		 *
-		 * message = [authzid] UTF8NUL authcid UTF8NUL passwd authcid = 1*SAFE ;
-		 * MUST accept up to 255 octets authzid = 1*SAFE ; MUST accept up to 255
-		 * octets passwd = 1*SAFE ; MUST accept up to 255 octets UTF8NUL = %x00
-		 * ; UTF-8 encoded NUL character
+		 * message = [authzid] UTF8NUL authcid UTF8NUL passwd authcid = 1*SAFE ; MUST
+		 * accept up to 255 octets authzid = 1*SAFE ; MUST accept up to 255 octets
+		 * passwd = 1*SAFE ; MUST accept up to 255 octets UTF8NUL = %x00 ; UTF-8 encoded
+		 * NUL character
 		 *
-		 * SAFE = UTF1 / UTF2 / UTF3 / UTF4 ;; any UTF-8 encoded Unicode
-		 * character except NUL
+		 * SAFE = UTF1 / UTF2 / UTF3 / UTF4 ;; any UTF-8 encoded Unicode character
+		 * except NUL
 		 */
 
 		String[] tokens;
@@ -142,6 +143,14 @@ public class PlainSaslServer implements SaslServer {
 		@Override
 		public SaslServer createSaslServer(String mechanism, String protocol, String serverName, Map<String, ?> props,
 				CallbackHandler cbh) throws SaslException {
+
+			System.out.println("PlainSaslServerFactory Initialize");
+			System.out.println(props.toString());
+			String url = (String) props.get("url");
+			if (url != null) {
+				System.out.println("PlainSaslServerFactory:" + url);
+				PlainSaslServer.URL = url;
+			}
 
 			if (!PLAIN_MECHANISM.equals(mechanism))
 				throw new SaslException(

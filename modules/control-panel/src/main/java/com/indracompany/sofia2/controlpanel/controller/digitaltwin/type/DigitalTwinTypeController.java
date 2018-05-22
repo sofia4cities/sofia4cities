@@ -95,13 +95,18 @@ public class DigitalTwinTypeController {
 		try {
 			User user = userService.getUser(utils.getUserId());
 			digitalTwinType.setUser(user);
+			log.info("DigitalTwin is going to be created.");
 			digitalTwinTypeService.createDigitalTwinType(digitalTwinType, httpServletRequest);
+			log.info("DigitalTwin is created.");
 			// Create collections on mongo for properties and actions
+			log.info("DigitalTwins collections is going to be created.");
 			mongoManageRepo.createTable4Ontology("TwinProperties"
 					+ digitalTwinType.getName().substring(0, 1).toUpperCase() + digitalTwinType.getName().substring(1),
 					"{}");
+			log.info("DigitalTwin properties collection is created.");
 			mongoManageRepo.createTable4Ontology("TwinActions" + digitalTwinType.getName().substring(0, 1).toUpperCase()
 					+ digitalTwinType.getName().substring(1), "{}");
+			log.info("DigitalTwin Actions collection is created.");
 		} catch (DigitalTwinServiceException e) {
 			log.error("Cannot create digital twin type because of:" + e.getMessage());
 			utils.addRedirectException(e, redirect);
