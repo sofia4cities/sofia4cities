@@ -28,52 +28,77 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ConditionalOnProperty(prefix = "sofia2.iotbroker.plugable.gateway.kafka", name = "enable", havingValue = "true")
 @Service
+@Slf4j
 public class KafkaService {
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.host:localhost}")
 	private String kafkaHost;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.port:9092}")
 	private String kafkaPort;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.partitions:1}")
 	int partitions;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.replication:1}")
 	short replication;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.prefix:ontology_}")
 	private String ontologyPrefix;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.group:ontologyGroup}")
 	private String ontologyGroup;
-	
+
 	private AdminClient adminAcl;
-	
+
 	@PostConstruct
 	public void postKafka() {
-		
+
 		try {
 			Properties config = new Properties();
-			config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost+":"+kafkaPort);
+			config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
 			adminAcl = AdminClient.create(config);
-		} catch (Exception e) {}
-		
+		} catch (Exception e) {
+		}
+
 	}
-	
-	public CreateTopicsResult createTopicWithPrefix(String name, int partitions, short replication ) {
-		NewTopic t = new NewTopic(ontologyPrefix+name, partitions, replication);
+
+	public String getTopicName(String ontology) {
+		return ontologyPrefix + ontology;
+	}
+
+	public CreateTopicsResult createTopicWithPrefix(String name, int partitions, short replication) {
+		NewTopic t = new NewTopic(getTopicName(name), partitions, replication);
 		CreateTopicsResult result = adminAcl.createTopics(Arrays.asList(t));
 		return result;
 	}
-	
-	public DeleteTopicsResult deleteTopic(String name ) {
+
+	public CreateTopicsResult createTopicWithPrefix(String name) {
+		NewTopic t = new NewTopic(getTopicName(name), partitions, replication);
+		CreateTopicsResult result = adminAcl.createTopics(Arrays.asList(t));
+		return result;
+	}
+
+	public boolean createTopicForOntology(String name) {
+		NewTopic t = new NewTopic(getTopicName(name), partitions, replication);
+		try {
+			log.info("Creating topic '{}'", getTopicName(name));
+			CreateTopicsResult result = adminAcl.createTopics(Arrays.asList(t));
+			result.all().get();
+			return true;
+		} catch (Exception e) {
+			log.info("Cannot ensure topic creation for  '{}'", getTopicName(name));
+			return false;
+		}
+	}
+
+	public DeleteTopicsResult deleteTopic(String name) {
 		DeleteTopicsResult result = adminAcl.deleteTopics(Arrays.asList(name));
 		return result;
 	}
-	
-
 
 }

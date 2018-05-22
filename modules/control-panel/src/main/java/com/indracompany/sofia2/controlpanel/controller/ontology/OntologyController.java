@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.indracompany.sofia2.commons.kafka.KafkaService;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.User;
@@ -58,6 +59,9 @@ public class OntologyController {
 	private EntityDeletionService entityDeletionService;
 	@Autowired
 	private UserService userService;
+
+	@Autowired(required = false)
+	private KafkaService kafkaService;
 
 	@Autowired
 	private AppWebUtils utils;
@@ -112,6 +116,19 @@ public class OntologyController {
 			return "redirect:/ontologies/create";
 		}
 		try {
+
+			String ontologyName = ontology.getIdentification();
+			boolean topicCreated = false;
+
+			if (ontology.isAllowsCreateTopic()) {
+				if (kafkaService != null) {
+					topicCreated = kafkaService.createTopicForOntology(ontologyName);
+				}
+			}
+
+			if (topicCreated == true) {
+				ontology.setTopic(kafkaService.getTopicName(ontologyName));
+			}
 			User user = userService.getUser(utils.getUserId());
 			ontology.setUser(user);
 			ontologyService.createOntology(ontology);
