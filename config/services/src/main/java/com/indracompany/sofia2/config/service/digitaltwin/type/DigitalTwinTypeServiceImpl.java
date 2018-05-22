@@ -233,6 +233,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 					l.setTypeId(digitalTwinType);
 					log.error("17- era lógico, pero al parecer no lo era tanto, y claro, SE ROMPIÓ!");
 					log.error("17- " + System.getProperty("line.separator"));
+					log.error("17- " + logic);
 					log.error("17- " + logic.replace("\\n", System.getProperty("line.separator")).substring(1, logic.length()-1).replace("\\r", "").replace("\\t", "   "));
 					l.setLogic(logic.replace("\\n", System.getProperty("line.separator")).substring(1, logic.length()-1).replace("\\r", "").replace("\\t", "   "));
 					log.error("18- CONTRA TODO PRONÓSTICO SIGO VIVO");
