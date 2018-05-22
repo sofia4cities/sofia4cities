@@ -65,7 +65,7 @@ public class ClientsApplication {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode deviceConfig = mapper.readTree(
 				"[{\"action_power\":{\"shutdown\":0,\"start\":1,\"reboot\":2}},{\"action_light\":{\"on\":1,\"off\":0}}]");
-		clientSecure.connect(token, clientPlatform, clientPlatformInstance, timeout, deviceConfig);
+		clientSecure.connect(token, clientPlatform, clientPlatformInstance, "", timeout, deviceConfig);
 
 		// String jsonData = "{\"year\":1993, \"population\" : 3500,
 		// \"population_women\":1500, \"population_men\":2000}";

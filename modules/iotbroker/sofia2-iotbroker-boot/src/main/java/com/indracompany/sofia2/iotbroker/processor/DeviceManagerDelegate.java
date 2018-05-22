@@ -80,6 +80,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 			SSAPBodyJoinMessage body = (SSAPBodyJoinMessage) request.getBody();
 			device.setJsonActions(body.getDeviceConfiguration() != null ? body.getDeviceConfiguration().toString()
 					: device.getJsonActions());
+			device.setTags(body.getTags() != null ? body.getTags() : device.getTags());
 			touchDevice(device, session, true, info, null, null);
 			break;
 		case LEAVE:

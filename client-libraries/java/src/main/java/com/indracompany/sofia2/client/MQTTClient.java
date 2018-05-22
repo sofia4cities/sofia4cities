@@ -97,10 +97,12 @@ public class MQTTClient {
 	 *
 	 * @param token
 	 *            The token associated with the device/template
-	 * @param clientPlatform
+	 * @param deviceTemplate
 	 *            The device template identification
-	 * @param clientPlatformInstance
+	 * @param device
 	 *            The identification of the device
+	 * @param tags
+	 *            Tags for the device, separated by commas
 	 * @param timeout
 	 *            Time in seconds for waiting response from Broker
 	 * @param commandConfiguration
@@ -111,7 +113,7 @@ public class MQTTClient {
 	 */
 
 	@SuppressWarnings("unchecked")
-	public String connect(String token, String clientPlatform, String clientPlatformInstance, int timeout,
+	public String connect(String token, String deviceTemplate, String device, String tags, int timeout,
 			JsonNode commandConfiguration) throws MQTTException {
 
 		try {
@@ -120,31 +122,34 @@ public class MQTTClient {
 			join.setDirection(SSAPMessageDirection.REQUEST);
 			join.setMessageType(SSAPMessageTypes.JOIN);
 			SSAPBodyJoinMessage body = new SSAPBodyJoinMessage();
-			body.setClientPlatform(clientPlatform);
-			body.setClientPlatformInstance(clientPlatformInstance);
+			body.setDeviceTemplate(deviceTemplate);
+			body.setDevice(device);
 			body.setToken(token);
 			body.setDeviceConfiguration(commandConfiguration);
+			body.setTags(tags);
 			join.setBody(body);
+
 			// Connect client MQTT
-			this.client = new MqttClient(brokerURI, clientPlatform, persistence);
+			this.client = new MqttClient(brokerURI, device, persistence);
 			// Unsecure connection
 			if (this.sslConfig == null) {
-				log.info("Connecting to broker MQTT without secure connection");
+				// log.info("Connecting to broker MQTT without secure connection");
 				this.client.connect();
+
 			} else {
-				log.info("Connecting to broker MQTT with SSL");
+				// log.info("Connecting to broker MQTT with SSL");
 				MqttConnectOptions options = new MqttConnectOptions();
 				options.setSocketFactory(this.sslConfig.configureSSLSocketFactory());
 				this.client.connect(options);
 			}
 
-			log.info("Connecting to broker MQTT at " + brokerURI);
+			// log.info("Connecting to broker MQTT at " + brokerURI);
 
 			this.client.subscribe(topic_message + "/" + client.getClientId(), new IMqttMessageListener() {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
 					final String response = new String(message.getPayload());
-					log.info("Message arrived " + response);
+					// log.info("Message arrived " + response);
 					completableFutureMessage.complete(response);
 					completableFutureMessage = new CompletableFuture<>();
 				}
@@ -154,20 +159,21 @@ public class MQTTClient {
 			final MqttMessage mqttJoin = new MqttMessage();
 			mqttJoin.setPayload(SSAPJsonParser.getInstance().serialize(join).getBytes());
 			this.client.publish(topic, mqttJoin);
-			log.info("Trying to get Session Key...");
+			// log.info("Trying to get Session Key...");
 
 			// GET JOIN RESPONSE
 			String joinResponse = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
 			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(joinResponse);
 			if (response.getSessionKey() != null) {
 				this.sessionKey = response.getSessionKey();
-				log.info("Session Key established: " + this.sessionKey);
+				// log.info("Session Key established: " + this.sessionKey);
 			} else
 				throw new MQTTException("Could not stablish connection, error code is "
 						+ response.getBody().getErrorCode() + ":" + response.getBody().getError());
 
 		} catch (MqttException e) {
 			log.error("Could not connect to MQTT broker");
+
 			throw new MQTTException("Could not connect to MQTT broker");
 		} catch (InterruptedException e) {
 			log.error("Could not retrieve message from broker, interrupted thread");
@@ -202,7 +208,7 @@ public class MQTTClient {
 			this.client.subscribe(topic_subscription_command + "/" + this.sessionKey, new IMqttMessageListener() {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
-					log.info("Command message available");
+					// log.info("Command message available");
 					final String response = new String(message.getPayload());
 					delegateCommandMessage(response, listener);
 
@@ -250,7 +256,7 @@ public class MQTTClient {
 
 			final MqttMessage message = new MqttMessage(subscriptionStr.getBytes());
 			client.publish(topic, message);
-			log.info("Subscribed to query " + query);
+			// log.info("Subscribed to query " + query);
 			// GET SUBS RESPONSE
 			String subsResponse = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
 			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(subsResponse);
@@ -264,7 +270,7 @@ public class MQTTClient {
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
 
 					final String response = new String(message.getPayload());
-					log.info("Subscription message available" + response);
+					// log.info("Subscription message available" + response);
 					delegateMessageFromSubscription(response);
 
 				}
@@ -320,7 +326,7 @@ public class MQTTClient {
 			String subsResponse = completableFutureMessage.get();
 			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(subsResponse);
 			if (response.getBody().isOk()) {
-				log.info("Unsubscribed successfully");
+				// log.info("Unsubscribed successfully");
 				this.subscriptions.remove(subscriptionId);
 				client.unsubscribe(topic_subscription + "/" + this.sessionKey);
 			} else
@@ -451,7 +457,7 @@ public class MQTTClient {
 			String response = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
 			SSAPMessage<SSAPBodyReturnMessage> responseSSAP = SSAPJsonParser.getInstance().deserialize(response);
 			if (responseSSAP.getBody().isOk())
-				log.info("Log message published");
+				log.debug("Log message published");
 			else {
 
 				throw new MQTTException("Could not publish message \nError Code: "
@@ -500,7 +506,7 @@ public class MQTTClient {
 
 			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(insertResponse);
 			if (response.getBody().isOk())
-				log.info("Message published");
+				log.debug("Message published");
 			else {
 				throw new MQTTException("Could not publish message \nError Code: " + response.getBody().getErrorCode()
 						+ ":\n" + response.getBody().getError());
@@ -552,6 +558,7 @@ public class MQTTClient {
 			final MqttMessage mqttLeave = new MqttMessage();
 			mqttLeave.setPayload(SSAPJsonParser.getInstance().serialize(leave).getBytes());
 			this.client.publish(topic, mqttLeave);
+
 			log.info("Disconnecting from the server");
 
 			this.client.disconnect();
@@ -592,7 +599,7 @@ public class MQTTClient {
 		((ObjectNode) cmdMsg).put("commandId", commandId);
 		((ObjectNode) cmdMsg).put("command", command);
 		((ObjectNode) cmdMsg).set("params", params);
-		log.info(cmdMsg.toString());
+		// log.info(cmdMsg.toString());
 		new Thread(new Runnable() {
 			public void run() {
 				listener.onMessageArrived(cmdMsg.toString());

@@ -688,10 +688,10 @@ public class InitConfigDB {
 			clientPlatformRepository.save(client);
 			client = new ClientPlatform();
 			client.setId("4");
-			client.setUser(getUserAdministrator());
-			client.setIdentification("ContPerf device");
+			client.setUser(getUserDeveloper());
+			client.setIdentification("Device Master");
 			client.setEncryptionKey(UUID.randomUUID().toString());
-			client.setDescription("Device for continuous performance testing");
+			client.setDescription("Device template for testing");
 			clientPlatformRepository.save(client);
 		}
 
@@ -1515,7 +1515,7 @@ public class InitConfigDB {
 			client.setTokens(hashSetTokens);
 			tokenRepository.save(token);
 
-			client = this.clientPlatformRepository.findByIdentification("ContPerf device");
+			client = this.clientPlatformRepository.findByIdentification("Device Master");
 			token = new Token();
 			token.setClientPlatform(client);
 			token.setToken("56686a5a0d7e497d9cafbbbd4b2563ee");

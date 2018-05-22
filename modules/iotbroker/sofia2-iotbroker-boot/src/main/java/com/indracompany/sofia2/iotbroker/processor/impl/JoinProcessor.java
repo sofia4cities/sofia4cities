@@ -67,7 +67,7 @@ public class JoinProcessor implements MessageTypeProcessor {
 		}
 
 		final Optional<IoTSession> session = securityManager.authenticate(join.getBody().getToken(),
-				join.getBody().getClientPlatform(), join.getBody().getClientPlatformInstance(), join.getSessionKey());
+				join.getBody().getDeviceTemplate(), join.getBody().getDevice(), join.getSessionKey());
 		session.ifPresent(s -> {
 			response.setSessionKey(s.getSessionKey());
 			try {
@@ -99,8 +99,8 @@ public class JoinProcessor implements MessageTypeProcessor {
 	public boolean validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) throws SSAPProcessorException {
 		final SSAPMessage<SSAPBodyJoinMessage> join = (SSAPMessage<SSAPBodyJoinMessage>) message;
 
-		if (StringUtils.isEmpty(join.getBody().getClientPlatform())
-				|| StringUtils.isEmpty(join.getBody().getClientPlatformInstance())) {
+		if (StringUtils.isEmpty(join.getBody().getDeviceTemplate())
+				|| StringUtils.isEmpty(join.getBody().getDevice())) {
 			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "ClientPlatform",
 					join.getMessageType().name()));
 		}

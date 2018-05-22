@@ -102,8 +102,8 @@ public class Rest {
 		request.setMessageType(SSAPMessageTypes.JOIN);
 		// request.setSessionKey();
 		request.getBody().setToken(token);
-		request.getBody().setClientPlatform(clientPlatform);
-		request.getBody().setClientPlatformInstance(clientPlatformId);
+		request.getBody().setDeviceTemplate(clientPlatform);
+		request.getBody().setDevice(clientPlatformId);
 
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
 		if (!SSAPMessageDirection.ERROR.equals(response.getDirection())) {

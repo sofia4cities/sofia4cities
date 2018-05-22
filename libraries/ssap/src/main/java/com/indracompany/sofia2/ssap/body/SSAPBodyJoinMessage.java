@@ -19,9 +19,18 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 public class SSAPBodyJoinMessage extends SSAPBodyMessage {
 
 	private String token;
-	private String clientPlatform;
-	private String clientPlatformInstance;
+	private String deviceTemplate;
+	private String device;
+	private String tags;
 	private JsonNode deviceConfiguration;
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
 
 	public String getToken() {
 		return token;
@@ -31,12 +40,12 @@ public class SSAPBodyJoinMessage extends SSAPBodyMessage {
 		this.token = token;
 	}
 
-	public String getClientPlatform() {
-		return clientPlatform;
+	public String getDeviceTemplate() {
+		return deviceTemplate;
 	}
 
-	public void setClientPlatform(String clientPlatform) {
-		this.clientPlatform = clientPlatform;
+	public void setDeviceTemplate(String deviceTemplate) {
+		this.deviceTemplate = deviceTemplate;
 	}
 
 	public JsonNode getDeviceConfiguration() {
@@ -47,12 +56,12 @@ public class SSAPBodyJoinMessage extends SSAPBodyMessage {
 		this.deviceConfiguration = deviceConfiguration;
 	}
 
-	public String getClientPlatformInstance() {
-		return clientPlatformInstance;
+	public String getDevice() {
+		return device;
 	}
 
-	public void setClientPlatformInstance(String clientPlatformInstance) {
-		this.clientPlatformInstance = clientPlatformInstance;
+	public void setDevice(String device) {
+		this.device = device;
 	}
 
 	@Override

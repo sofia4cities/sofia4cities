@@ -2,33 +2,34 @@ var mymap;
 var markers = new Array();
 var filteredDevices = new Array();
 var setUpMap = function(id, legendJson) {
+	if(devices.length > 0){
+		mymap = L.map(id).setView([devices[0].location[0], devices[0].location[1]],6);
+		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		    maxZoom: 18,
+		    id: 'mapbox.streets',
+		    accessToken: 'pk.eyJ1IjoiZmpnY29ybmVqbyIsImEiOiJjamgxbm9nOW8wN2EwMnhsbm1nNnNvOXRsIn0.6RzVaJ2kUwaFNLJW4AzRQg'
+		}).addTo(mymap);
+		var legend = L.control({position: 'topleft'});
+		legend.onAdd = function (map) {
 	
-	mymap = L.map(id).setView([devices[0].location[0], devices[0].location[1]],6);
-	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-	    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-	    maxZoom: 18,
-	    id: 'mapbox.streets',
-	    accessToken: 'pk.eyJ1IjoiZmpnY29ybmVqbyIsImEiOiJjamgxbm9nOW8wN2EwMnhsbm1nNnNvOXRsIn0.6RzVaJ2kUwaFNLJW4AzRQg'
-	}).addTo(mymap);
-	var legend = L.control({position: 'topleft'});
-	legend.onAdd = function (map) {
-
-	    var div = L.DomUtil.create('div', 'info legend'),
-	        states = [legendJson.connected, legendJson.disconnected, legendJson.error,legendJson.warning],
-	        labels = ['/controlpanel/static/vendor/leaflet/images/marker-icon-green.png','/controlpanel/static/vendor/leaflet/images/marker-icon-grey.png', '/controlpanel/static/vendor/leaflet/images/marker-icon-red.png', '/controlpanel/static/vendor/leaflet/images/marker-icon-yellow.png'];
-
-	    // loop through our density intervals and generate a label with a colored square for each interval
-	    for (var i = 0; i < states.length; i++) {
-	        div.innerHTML +=
-	        	(" <img src="+ labels[i] +">") +states[i] + '<br>';
-	    }
-
-	    return div;
-	};
-
-	legend.addTo(mymap);
-	drawMarkers();
-	$('#map-portlet-body').hide();
+		    var div = L.DomUtil.create('div', 'info legend'),
+		        states = [legendJson.connected, legendJson.disconnected, legendJson.error,legendJson.warning],
+		        labels = ['/controlpanel/static/vendor/leaflet/images/marker-icon-green.png','/controlpanel/static/vendor/leaflet/images/marker-icon-grey.png', '/controlpanel/static/vendor/leaflet/images/marker-icon-red.png', '/controlpanel/static/vendor/leaflet/images/marker-icon-yellow.png'];
+	
+		    // loop through our density intervals and generate a label with a colored square for each interval
+		    for (var i = 0; i < states.length; i++) {
+		        div.innerHTML +=
+		        	(" <img src="+ labels[i] +">") +states[i] + '<br>';
+		    }
+	
+		    return div;
+		};
+	
+		legend.addTo(mymap);
+		drawMarkers();
+	}
+		$('#map-portlet-body').hide();
 	
 } 
 var updateMarkers = function(){
