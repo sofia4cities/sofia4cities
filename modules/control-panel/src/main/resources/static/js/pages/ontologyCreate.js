@@ -194,7 +194,9 @@ var OntologyCreateController = function() {
 		} else if(type == 'file') {
 			properties[prop] = JSON.parse('{"type": "object", '+ updDesc +' '+ updEncryp +' "required": ["data","media"],"properties": {"data": {"type": "string"},"media": {"type": "object", "required": ["name","storageArea","binaryEncoding","mime"],"properties": {"name":{"type": "string"},"storageArea": {"type": "string","enum": ["SERIALIZED","DATABASE","URL"]},"binaryEncoding": {"type": "string","enum": ["Base64"]},"mime": {"type": "string","enum": ["application/pdf","image/jpeg", "image/png"]}}}},"additionalProperties": false}');
 		}else if(type == 'geometry'){
-			properties[prop] = JSON.parse('{"type":"object",  '+ updDesc +' '+ updEncryp +' "required":["coordinates","type"],"properties":{"coordinates":{"type":"object","properties":{"latitude":{"type":"number"},"longitude":{"type":"number"}}},"type":{"type":"string","enum":["Point"]}}}');
+			//properties[prop] = JSON.parse('{"type":"object",  '+ updDesc +' '+ updEncryp +' "required":["coordinates","type"],"properties":{"coordinates":{"type":"object","properties":{"latitude":{"type":"number"},"longitude":{"type":"number"}}},"type":{"type":"string","enum":["Point"]}}}');
+			properties[prop] = JSON.parse('{"type":"object",  '+ updDesc +' '+ updEncryp +' "required":["coordinates","type"],"properties":{"coordinates": {"type": "array","items": [{"type": "number","maximum": 180,"minimum": -180},{"type": "number","maximum": 90,"minimum": -90}],"minItems": 2,"maxItems": 2},"type": {"type": "string","enum": ["Point"]}}}');
+		
 		}else {	
 			propString = '{' + updDesc +' '+ updEncryp +' "type": "' + type + '"}';
 			properties[prop] = JSON.parse(propString);
