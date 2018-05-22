@@ -76,6 +76,12 @@ public class DigitalTwinDevice extends AuditableEntityWithUUID {
 	@NotNull
 	private String intrface;
 
+	@Column(name = "IP", length = 512, nullable = false)
+	@Getter
+	@Setter
+	@NotNull
+	private String ip;
+
 	@Column(name = "IPV6", length = 512, nullable = false)
 	@Getter
 	@Setter
