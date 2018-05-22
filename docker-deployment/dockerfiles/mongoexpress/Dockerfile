@@ -5,7 +5,7 @@ LABEL module.maintainer "plataformasofia2@indra.es" \
       module.name="mongoexpress"
 
 # create sofia user/group
-RUN addgroup -S sofia -g 433 && adduser -u 431 -S -g sofia -h /usr/local -s /sbin/nologin sofia 
+RUN groupadd -r sofia -g 433 && useradd -u 431 -r -g sofia -d /opt/sofia -s /sbin/nologin -c "Sofia user" sofia
       
 ENV ME_CONFIG_MONGODB_SERVER=realtimedb \
 	ME_CONFIG_MONGODB_PORT=27017 \

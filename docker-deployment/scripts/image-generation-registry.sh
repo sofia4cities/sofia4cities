@@ -260,17 +260,17 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 	# Generates images only if they are not present in local docker registry
 	if [[ "$(docker images -q $USERNAME/configdb 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/configdb
-		buildConfigDB latest
+		#buildConfigDB latest
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/schedulerdb 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/schedulerdb
-		buildSchedulerDB latest
+		#buildSchedulerDB latest
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/realtimedb 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/realtimedb
-		buildRealTimeDB latest
+		#buildRealTimeDB latest
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/mongoexpress 2> /dev/null)" == "" ]]; then
@@ -280,7 +280,7 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 	
 	if [[ "$(docker images -q $USERNAME/elasticdb 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/elasticsearch
-		buildElasticSearchDB latest
+		#buildElasticSearchDB latest
 	fi
 	
 	if [[ "$(docker images -q sofia2/kafka-secured 2> /dev/null)" == "" ]]; then
@@ -295,17 +295,17 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 	
 	if [[ "$(docker images -q $USERNAME/nginx 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/nginx
-		buildNginx latest
+		#buildNginx latest
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/quasar 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/quasar
-		buildQuasar latest
+		#buildQuasar latest
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/configinit 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../config/init/
-		buildImage "Config Init"
+		#buildImage "Config Init"
 	fi
 fi
 	
@@ -317,6 +317,7 @@ if [ "$PUSH2OCPREGISTRY" = true ]; then
 	pushImage2OCPRegistry configdb latest 
 	pushImage2OCPRegistry schedulerdb latest 
 	pushImage2OCPRegistry realtimedb latest 
+	pushImage2OCPRegistry mongoexpress latest 
 	pushImage2OCPRegistry elasticdb latest
 	pushImage2OCPRegistry controlpanel latest 
 	pushImage2OCPRegistry iotbroker latest 
@@ -337,6 +338,7 @@ if [ "$PUSH2PRIVREGISTRY" = true ]; then
 	pushImage2Registry configdb latest 
 	pushImage2Registry schedulerdb latest 
 	pushImage2Registry realtimedb latest 
+	pushImage2Registry mongoexpress latest 
 	pushImage2Registry elasticdb latest
 	pushImage2Registry controlpanel latest 
 	pushImage2Registry iotbroker latest 
