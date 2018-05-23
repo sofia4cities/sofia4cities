@@ -38,6 +38,11 @@ public class FormActivity extends AppCompatActivity {
 
         mAccessToken = getIntent().getStringExtra("accessToken");
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.s4c_logo);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+
         mHeightField = (EditText) findViewById(R.id.height);
         mWeightField = (EditText) findViewById(R.id.weight);
         mSysPressureField = (EditText) findViewById(R.id.sys_pressure);
