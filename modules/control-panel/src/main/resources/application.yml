@@ -47,7 +47,7 @@ sofia2: #Config Sofia2 specific
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
       digitaltwin.database: digital_twin
-   database.hadoop.enabled: true
+   database.hadoop.enabled: false
    database.hdfs:
       url: hdfs://127.0.0.1:8020
       basePath: /user/hdfs
