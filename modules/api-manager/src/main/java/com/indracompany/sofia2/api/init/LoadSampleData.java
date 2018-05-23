@@ -153,18 +153,18 @@ public class LoadSampleData implements ApplicationRunner {
 
 		System.out.println(mapper.writeValueAsString(data));
 
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 		int init = 17;
 		int end = refOid.indexOf("\"}}");
 		refOid = refOid.substring(init, end);
 		// 2º
 		data = PojoFactoryLoadData.createProduct("admin");
 		mapper = new ObjectMapper();
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 		// 3º
 		data = PojoFactoryLoadData.createProduct("other");
 		mapper = new ObjectMapper();
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 
 	}
 }

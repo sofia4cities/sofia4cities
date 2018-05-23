@@ -72,7 +72,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 				.clientConnection(UUID.randomUUID().toString()).deviceTemplate(UUID.randomUUID().toString())
 				.device(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString()).build();
 		ObjectMapper mapper = new ObjectMapper();
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 
 		// 2º
 		data = ContextData
@@ -81,7 +81,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 				.clientConnection(UUID.randomUUID().toString()).deviceTemplate(UUID.randomUUID().toString())
 				.device(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString()).build();
 		mapper = new ObjectMapper();
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 
 		// 3º
 		data = ContextData
@@ -90,7 +90,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 				.clientConnection(UUID.randomUUID().toString()).deviceTemplate(UUID.randomUUID().toString())
 				.device(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString()).build();
 		mapper = new ObjectMapper();
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 
 		// 4º
 		data = ContextData
@@ -99,7 +99,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 				.clientConnection(UUID.randomUUID().toString()).deviceTemplate(UUID.randomUUID().toString())
 				.device(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString()).build();
 		mapper = new ObjectMapper();
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 
 	}
 

@@ -117,7 +117,7 @@ public class UpdateProcessorTest {
 	public void setUp() throws IOException, Exception {
 
 		subject = PojoGenerator.generatePerson();
-		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(),
+		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), "",
 				objectMapper.writeValueAsString(subject));
 		subjectId = subjectInsertResult;
 		ssapUpdate = SSAPMessageGenerator.generateUpdateMessage(Person.class.getSimpleName(), "");
@@ -160,8 +160,8 @@ public class UpdateProcessorTest {
 	public void given_OneUpdateProcessor_Then_TwoOccurrencesAreUpdated_ThenTheResponseIndicatesTheTwoOccurrencesWereUpdated()
 			throws Exception {
 
-		repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
-		repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
+		repository.insert(Person.class.getSimpleName(), "", objectMapper.writeValueAsString(subject));
+		repository.insert(Person.class.getSimpleName(), "", objectMapper.writeValueAsString(subject));
 
 		ssapUpdate.getBody().setQuery(
 				"db.Person.update({\"name\":\"" + subject.getName() + "\"},{$set: { \"name\": \"NAME_NEW\" }})");

@@ -121,7 +121,7 @@ public class QueryProcessorTest {
 		// mockOntologies.createOntology(Person.class);
 
 		subject = PojoGenerator.generatePerson();
-		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(),
+		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), "",
 				objectMapper.writeValueAsString(subject));
 		subjectId = subjectInsertResult;
 		ssapQuery = SSAPMessageGenerator.generateQueryMessage(Person.class.getSimpleName(), SSAPQueryType.NATIVE, "");

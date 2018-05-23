@@ -44,6 +44,7 @@ import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
+import com.indracompany.sofia2.controlpanel.services.ontology.OntologyLogicService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,9 @@ public class OntologyController {
 
 	@Autowired(required = false)
 	private KafkaService kafkaService;
+
+	@Autowired
+	private OntologyLogicService ontologyLogicService;
 
 	@Autowired
 	private AppWebUtils utils;
@@ -131,7 +135,7 @@ public class OntologyController {
 			}
 			User user = userService.getUser(utils.getUserId());
 			ontology.setUser(user);
-			ontologyService.createOntology(ontology);
+			ontologyLogicService.createOntology(ontology);
 
 		} catch (OntologyServiceException e) {
 			log.error("Cannot create ontology because of:" + e.getMessage());
