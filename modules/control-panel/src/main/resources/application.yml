@@ -74,6 +74,11 @@ sofia2: #Config Sofia2 specific
    iotbroker.plugable:
      gateway:
       kafka:
+        enable: false
+        host: localhost
+        port: 9092
+        partitions: 1
+        replication: 1      
         prefix: ontology_
         group: ontologyGroup
         topic.pattern: ontology.*

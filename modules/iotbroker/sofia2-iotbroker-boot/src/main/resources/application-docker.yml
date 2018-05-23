@@ -12,6 +12,10 @@ sofia2:
          enable: true
        rest:
          swaggerhost: ${SERVER_NAME}  
+       kafka:
+         enable: true
+         host: kafkaservice
+         port: 9092         
 
 spring:
    datasource:  
