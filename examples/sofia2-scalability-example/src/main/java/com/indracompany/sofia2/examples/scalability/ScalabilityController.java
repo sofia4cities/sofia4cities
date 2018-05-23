@@ -45,53 +45,51 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 public class ScalabilityController {
-	
+
 	private Object lock = new Object();
-	
+
 	private ConcurrentHashMap<Injector, InsertionTask> tasks = new ConcurrentHashMap<Injector, InsertionTask>();
 
 	private Connection connection;
-	
+
 	@Autowired
 	private TaskExecutor taskExecutor;
-	
+
 	@Autowired
 	private BeanFactory beanFactory;
-	
+
 	public ScalabilityController() {
-		
+
 	}
 
 	@RequestMapping("/greeting")
-    public Greeting greeting(@RequestParam(value="name", defaultValue="World") String name) {
+	public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
 		Greeting greeting = new Greeting();
 		greeting.setMsg("Hello!!!");
-        return greeting;
-    }
-	
+		return greeting;
+	}
+
 	@PostMapping(value = "/connection", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseEntity<Connection> setConnection(@RequestBody Connection connection) {
 		synchronized (lock) {
 			if (!(tasks.size() > 0)) {
 				this.connection = connection;
 				return new ResponseEntity<Connection>(connection, HttpStatus.OK);
-			}else {
+			} else {
 				return new ResponseEntity<Connection>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 	}
-	
+
 	@PostMapping(value = "/startInjector", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseEntity<Injector> startInjector( 
-			@RequestParam int injector,
-			@RequestParam String protocol,
-			@RequestBody String data) throws IOException {
-		
+	public @ResponseBody ResponseEntity<Injector> startInjector(@RequestParam int injector,
+			@RequestParam String protocol, @RequestBody String data) throws IOException {
+
 		Client client;
 		Injector inject;
 		InsertionTask task;
 
-		synchronized(lock) {
+		synchronized (lock) {
 			try {
 				switch (protocol) {
 				case "mqtt":
@@ -100,26 +98,30 @@ public class ScalabilityController {
 				case "rest":
 					client = new ClientRestWrapper(connection.getRestURL());
 					break;
+				case "kafka":
+					client = new ClientKafkaProducerWrapper(connection.getKafkaURL());
+					break;
 				default:
 					return new ResponseEntity<Injector>(HttpStatus.INTERNAL_SERVER_ERROR);
 				}
-				client.connect(connection.getToken(), connection.getClientPlatform(), connection.getClientPlatformInstance()+"-"+injector, true);
+				client.connect(connection.getToken(), connection.getClientPlatform(),
+						connection.getClientPlatformInstance() + "-" + injector, true);
 				task = beanFactory.getBean(InsertionTask.class, client, connection.getOntology(), data, injector);
 			} catch (Exception e) {
-				log.error("Error connectiong with the server",e);
+				log.error("Error connectiong with the server", e);
 				return new ResponseEntity<Injector>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-								
+
 			inject = new Injector(injector, data);
 			tasks.putIfAbsent(inject, task);
 			taskExecutor.execute(task);
 		}
-		
+
 		return new ResponseEntity<Injector>(inject, HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value = "/status", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseEntity<List<InjectorStatus>> getStatus(){
+	public @ResponseBody ResponseEntity<List<InjectorStatus>> getStatus() {
 		ArrayList<InjectorStatus> statues = new ArrayList<InjectorStatus>();
 		for (InsertionTask task : tasks.values()) {
 			InjectorStatus status = task.getStatus();
@@ -127,23 +129,23 @@ public class ScalabilityController {
 		}
 		return new ResponseEntity<List<InjectorStatus>>(statues, HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value = "/getDataConnection", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseEntity<Connection> getDataConnection(){
-		synchronized(lock) {
+	public @ResponseBody ResponseEntity<Connection> getDataConnection() {
+		synchronized (lock) {
 			return new ResponseEntity<Connection>(connection, HttpStatus.OK);
 		}
 	}
-	
-	 @GetMapping(value = "/stopInjector", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	 public @ResponseBody ResponseEntity<BasicMsg> stopInjector(@RequestParam int injector){
-		 Injector inj = new Injector(injector, null);
-		 InsertionTask task = tasks.get(inj);
-		 if (task != null) {
-			 task.stop();
-		 }
-		 tasks.remove(inj);
-		 BasicMsg msg = new BasicMsg("Injector Removed");
-		 return new ResponseEntity<BasicMsg>(msg, HttpStatus.OK);
-	 }
+
+	@GetMapping(value = "/stopInjector", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody ResponseEntity<BasicMsg> stopInjector(@RequestParam int injector) {
+		Injector inj = new Injector(injector, null);
+		InsertionTask task = tasks.get(inj);
+		if (task != null) {
+			task.stop();
+		}
+		tasks.remove(inj);
+		BasicMsg msg = new BasicMsg("Injector Removed");
+		return new ResponseEntity<BasicMsg>(msg, HttpStatus.OK);
+	}
 }
