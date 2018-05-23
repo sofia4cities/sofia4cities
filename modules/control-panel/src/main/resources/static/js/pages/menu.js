@@ -83,7 +83,7 @@ var MenuController = function() {
 					icon = item.icon !== '' ? item.icon : icon; 
 					heading = item.title[ menu_LANG ] === '' ? '<i class="'+ icon +'"></i>'  : item.title[ menu_LANG ];
 					menu_HTML  +='<li class="heading text-center">'
-								+'	<h3 class="uppercase"> ' + heading + '</h3>'
+								+'	<h3 class="uppercase titleHeading"> ' + heading + '</h3>'
 								+'</li>';
 				}
 				else{
@@ -101,6 +101,7 @@ var MenuController = function() {
 		});
 		// SET ACTIVE NAV.
 		setActiveNavItem();
+		
 	}
 	
 	// AUX. CHECK IF A NAV-ITEM HAD SUBMENU ITEMS
@@ -159,7 +160,9 @@ var MenuController = function() {
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 			
 			// load menu (role)
-			consoleMenu();			
+			consoleMenu();
+			
+			
 		}		
 	};
 }();
