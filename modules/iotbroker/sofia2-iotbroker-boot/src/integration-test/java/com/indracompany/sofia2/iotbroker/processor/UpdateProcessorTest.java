@@ -34,12 +34,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.commons.testing.IntegrationTest;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
@@ -117,7 +117,7 @@ public class UpdateProcessorTest {
 	public void setUp() throws IOException, Exception {
 
 		subject = PojoGenerator.generatePerson();
-		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(),
+		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), "",
 				objectMapper.writeValueAsString(subject));
 		subjectId = subjectInsertResult;
 		ssapUpdate = SSAPMessageGenerator.generateUpdateMessage(Person.class.getSimpleName(), "");
@@ -160,8 +160,8 @@ public class UpdateProcessorTest {
 	public void given_OneUpdateProcessor_Then_TwoOccurrencesAreUpdated_ThenTheResponseIndicatesTheTwoOccurrencesWereUpdated()
 			throws Exception {
 
-		repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
-		repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
+		repository.insert(Person.class.getSimpleName(), "", objectMapper.writeValueAsString(subject));
+		repository.insert(Person.class.getSimpleName(), "", objectMapper.writeValueAsString(subject));
 
 		ssapUpdate.getBody().setQuery(
 				"db.Person.update({\"name\":\"" + subject.getName() + "\"},{$set: { \"name\": \"NAME_NEW\" }})");

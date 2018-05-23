@@ -39,9 +39,9 @@ public class ESCountService {
 		List<String> list = new ArrayList<String>(Arrays.asList(indexes));
 		Count count = null;
 		if (type == null) {
-			count = new Count.Builder().query(query).addIndices(list).build();
+			count = new Count.Builder().query(query).addIndex(list).build();
 		} else {
-			count = new Count.Builder().query(query).addIndices(list).addType(type).build();
+			count = new Count.Builder().query(query).addIndex(list).addType(type).build();
 		}
 
 		CountResult result;
@@ -63,7 +63,7 @@ public class ESCountService {
 		List<String> list = new ArrayList<String>(Arrays.asList(indexes));
 		try {
 			CountResult result = connector.getHttpClient()
-					.execute(new Count.Builder().addIndices(list).query(jsonQueryString).build());
+					.execute(new Count.Builder().addIndex(list).query(jsonQueryString).build());
 			return result.getCount().longValue();
 		} catch (IOException e) {
 			log.error("Error counting type " + e.getMessage());

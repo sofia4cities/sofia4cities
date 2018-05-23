@@ -11,21 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.iotbroker.plugable.interfaces.security;
+package com.indracompany.sofia2.persistence.hadoop;
 
-import java.time.ZonedDateTime;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
-import lombok.Data;
+@Configuration
+@ComponentScan
+public class HadoopPersistenceStarterAutoConfig {
 
-@Data
-public class IoTSession {
-	private String sessionKey;
-	private String clientPlatform;
-	private String clientPlatformID;
-	private String clientPlatformInstance;
-	private String token;
-	private String userID;
-	private String userName;
-	private ZonedDateTime lastAccess;
-	private long expiration;
 }

@@ -22,13 +22,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.common.util.SSAPUtils;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
@@ -63,54 +63,47 @@ public class QueryProcessor implements MessageTypeProcessor {
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(true);
 		final Optional<IoTSession> session = securityPluginManager.getSession(queryMessage.getSessionKey());
-		
+
 		String user = null;
 		String clientPlatformId = null;
-		
+
 		if (session.isPresent()) {
 			user = session.get().getUserID();
 			clientPlatformId = session.get().getClientPlatform();
 		}
-		
+
 		QueryType type;
-		if( SSAPQueryType.SQL.equals(queryMessage.getBody().getQueryType())) {
+		if (SSAPQueryType.SQL.equals(queryMessage.getBody().getQueryType())) {
 			type = OperationModel.QueryType.SQLLIKE;
-		}
-		else {
+		} else {
 			type = QueryType.valueOf(queryMessage.getBody().getQueryType().name());
 		}
-		
-		final OperationModel model = OperationModel.builder(
-				queryMessage.getBody().getOntology(), 
-				OperationType.QUERY, 
-				user, 
-				Source.IOTBROKER)
-				.body(queryMessage.getBody().getQuery())
-				.queryType(type)
-				.build();
 
-		final NotificationModel modelNotification= new NotificationModel();
+		final OperationModel model = OperationModel
+				.builder(queryMessage.getBody().getOntology(), OperationType.QUERY, user, Source.IOTBROKER)
+				.body(queryMessage.getBody().getQuery()).queryType(type).build();
+
+		final NotificationModel modelNotification = new NotificationModel();
 		modelNotification.setOperationModel(model);
 
 		OperationResultModel result;
 		String responseStr = null;
-		String messageStr= null;
+		String messageStr = null;
 		try {
 			result = routerService.query(modelNotification);
 			responseStr = result.getResult();
 			messageStr = result.getMessage();
 			responseMessage.getBody().setData(objectMapper.readTree(responseStr));
-			if(session.isPresent()) {
+			if (session.isPresent()) {
 				responseMessage.setSessionKey(session.get().getSessionKey());
 			}
 
-		}
-		catch (final Exception e) {
+		} catch (final Exception e) {
 			// TODO LOG
 
-			final String error=MessageException.ERR_DATABASE;
+			final String error = MessageException.ERR_DATABASE;
 			responseMessage = SSAPUtils.generateErrorMessage(message, SSAPErrorCode.PROCESSOR, error);
-			if(messageStr != null) {
+			if (messageStr != null) {
 				responseMessage.getBody().setError(messageStr);
 			}
 		}
@@ -128,15 +121,17 @@ public class QueryProcessor implements MessageTypeProcessor {
 			throws OntologySchemaException, BaseException, Exception {
 		final SSAPMessage<SSAPBodyQueryMessage> queryMessage = (SSAPMessage<SSAPBodyQueryMessage>) message;
 
-		if( StringUtils.isEmpty(queryMessage.getBody().getQuery()) ) {
-			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "query" ,message.getMessageType().name()));
+		if (StringUtils.isEmpty(queryMessage.getBody().getQuery())) {
+			throw new SSAPProcessorException(
+					String.format(MessageException.ERR_FIELD_IS_MANDATORY, "query", message.getMessageType().name()));
 		}
 
-		if( queryMessage.getBody().getQueryType() == null ) {
-			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "queryType" ,message.getMessageType().name()));
+		if (queryMessage.getBody().getQueryType() == null) {
+			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "queryType",
+					message.getMessageType().name()));
 		}
 
-		//TODO: Detect sql injection
+		// TODO: Detect sql injection
 
 		return true;
 	}

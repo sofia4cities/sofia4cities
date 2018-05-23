@@ -2,7 +2,7 @@ version: "2.1"
 
 services:
   realtimedb:
-    image: ${REPOSITORY}sofia2/realtimedb:3.4
+    image: ${REPOSITORY}sofia2/realtimedb:${IMAGETAG}
     container_name: realtimedb
     networks:
       - datanetwork

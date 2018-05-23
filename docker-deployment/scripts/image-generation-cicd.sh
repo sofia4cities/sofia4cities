@@ -69,6 +69,14 @@ buildNginx()
 	docker build -t sofia2/nginx:$1 .		
 }
 
+buildScalability() 
+{
+	echo "Scalability module example image generation with Docker CLI: "
+	cp $1/target/*-exec.jar $1/docker/
+	docker build -t sofia2/$2:$3 .
+	rm $1/docker/*.jar
+}
+
 buildQuasar()
 {
 	echo "Quasar image generation with Docker CLI: "
@@ -276,6 +284,11 @@ if [[ "$1" == "configinit" ]]; then
 	pushImage2Registry configinit latest
 fi
 
+if [[ "$1" == "scalability" ]]; then
+	cd $homepath/../../examples/sofia2-scalability-example/docker
+	buildScalability $homepath/../../examples/sofia2-scalability-example scalability latest
+fi
+
 if [ "$1" == -1 ]; then
 	echo "++++++++++++++++++++ Persistence layer generation..."
 	
@@ -319,6 +332,7 @@ deleteImage monitoringui
 deleteImage flowengine
 deleteImage nginx
 deleteImage configinit
+deleteImage scalability
 
 deleteUntaggedImages
 removeOrphanVolumes

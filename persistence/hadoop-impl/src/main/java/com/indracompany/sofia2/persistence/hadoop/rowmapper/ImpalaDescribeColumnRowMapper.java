@@ -1,6 +1,7 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,10 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.iotbroker.plugable.interfaces.security;
+package com.indracompany.sofia2.persistence.hadoop.rowmapper;
 
-import java.util.Map;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public interface IoTSessionStore extends Map<String, IoTSession> {
+import org.springframework.jdbc.core.RowMapper;
 
+import com.indracompany.sofia2.persistence.common.DescribeColumnData;
+
+public class ImpalaDescribeColumnRowMapper implements RowMapper<DescribeColumnData> {
+
+	@Override
+	public DescribeColumnData mapRow(ResultSet rs, int rowNum) throws SQLException {
+		DescribeColumnData e = new DescribeColumnData();
+		e.setColName(rs.getString("name"));
+		e.setDataType(rs.getString("type"));
+		return e;
+	}
 }

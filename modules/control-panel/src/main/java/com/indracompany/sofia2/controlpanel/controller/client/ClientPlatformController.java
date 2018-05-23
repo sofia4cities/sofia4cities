@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.controller.device;
+package com.indracompany.sofia2.controlpanel.controller.client;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/devices")
 @Slf4j
-public class DeviceController {
+public class ClientPlatformController {
 
 	@Autowired
 	private ClientPlatformService clientPlatformService;
@@ -175,6 +175,7 @@ public class DeviceController {
 					})));
 			ndevice.setUser(this.userService.getUser(this.utils.getUserId()));
 			this.clientPlatformService.createClientPlatform(ndevice);
+			this.clientPlatformService.createDeviceLogOntology(ndevice.getIdentification());
 
 		} catch (ClientPlatformServiceException e) {
 			log.debug("Cannot create clientPlatform");

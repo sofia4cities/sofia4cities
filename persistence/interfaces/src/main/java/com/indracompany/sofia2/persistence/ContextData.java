@@ -36,9 +36,9 @@ public class ContextData implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Getter
-	private String clientPatform;
+	private String deviceTemplate;
 	@Getter
-	private String clientPatformInstance;
+	private String device;
 	@Getter
 	private String clientConnection;
 	@Getter
@@ -54,18 +54,18 @@ public class ContextData implements Serializable {
 
 	public ContextData(JsonNode node) {
 
-		JsonNode clientPlatform = node.findValue("clientPatform");
-		if (clientPlatform != null) {
-			this.clientPatform = clientPlatform.asText();
+		JsonNode deviceTemplate = node.findValue("deviceTemplate");
+		if (deviceTemplate != null) {
+			this.deviceTemplate = deviceTemplate.asText();
 		} else {
-			this.clientPatform = "";
+			this.deviceTemplate = "";
 		}
 
-		JsonNode clientPatformInstance = node.findValue("clientPatformInstance");
-		if (clientPatformInstance != null) {
-			this.clientPatformInstance = clientPatformInstance.asText();
+		JsonNode device = node.findValue("device");
+		if (device != null) {
+			this.device = device.asText();
 		} else {
-			this.clientPatformInstance = "";
+			this.device = "";
 		}
 
 		JsonNode clientConnection = node.findValue("clientConnection");
@@ -112,8 +112,8 @@ public class ContextData implements Serializable {
 
 	public ContextData(ContextData other) {
 		this.user = other.user;
-		this.clientPatform = other.clientPatform;
-		this.clientPatformInstance = other.clientPatformInstance;
+		this.deviceTemplate = other.deviceTemplate;
+		this.device = other.device;
 		this.clientConnection = other.clientConnection;
 		this.clientSession = other.clientSession;
 		this.timezoneId = other.timezoneId;
@@ -128,9 +128,8 @@ public class ContextData implements Serializable {
 		if (!(other instanceof ContextData))
 			return false;
 		ContextData that = (ContextData) other;
-		return Objects.equals(this.user, that.user)
-				&& Objects.equals(this.clientPatformInstance, that.clientPatformInstance)
-				&& Objects.equals(this.clientPatform, that.clientPatform)
+		return Objects.equals(this.user, that.user) && Objects.equals(this.device, that.device)
+				&& Objects.equals(this.deviceTemplate, that.deviceTemplate)
 				&& Objects.equals(this.clientConnection, that.clientConnection)
 				&& Objects.equals(this.clientSession, that.clientSession)
 				&& Objects.equals(this.timezoneId, that.timezoneId) && Objects.equals(this.timestamp, that.timestamp)
@@ -139,8 +138,7 @@ public class ContextData implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(user, clientPatform, clientPatformInstance, clientConnection, clientSession, timezoneId,
-				timestamp);
+		return Objects.hash(user, deviceTemplate, device, clientConnection, clientSession, timezoneId, timestamp);
 	}
 
 	private ContextData(Builder build) {
@@ -148,8 +146,8 @@ public class ContextData implements Serializable {
 		this.timezoneId = build.timezoneId;
 		this.timestamp = build.timestamp;
 		this.clientConnection = build.clientConnection;
-		this.clientPatform = build.clientPatform;
-		this.clientPatformInstance = build.clientPatformInstance;
+		this.deviceTemplate = build.deviceTemplate;
+		this.device = build.device;
 		this.clientSession = build.clientSession;
 		this.timestampMillis = build.timestampMillis;
 	}
@@ -159,8 +157,8 @@ public class ContextData implements Serializable {
 	}
 
 	public static class Builder {
-		private String clientPatform;
-		private String clientPatformInstance;
+		private String deviceTemplate;
+		private String device;
 		private String clientConnection;
 		private String clientSession;
 		private String user;
@@ -189,13 +187,13 @@ public class ContextData implements Serializable {
 			return this;
 		}
 
-		public Builder clientPatformInstance(String clientPatformInstance) {
-			this.clientPatformInstance = clientPatformInstance;
+		public Builder device(String device) {
+			this.device = device;
 			return this;
 		}
 
-		public Builder clientPatform(String clientPatform) {
-			this.clientPatform = clientPatform;
+		public Builder deviceTemplate(String deviceTemplate) {
+			this.deviceTemplate = deviceTemplate;
 			return this;
 		}
 	}

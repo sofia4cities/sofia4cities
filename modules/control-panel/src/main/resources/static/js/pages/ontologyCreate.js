@@ -12,7 +12,7 @@ var OntologyCreateController = function() {
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.	
 	var internalLanguage = 'en';	
-	var validTypes = ["object","string","number","integer","date","timestamp","array","geometry","file"]; // Valid property types	
+	var validTypes = ["object","string","number","integer","date","timestamp","array","geometry","file","boolean"]; // Valid property types	
 	var mountableModel = $('#datamodel_properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	var mountableModel2 = $('#ontology_autthorizations').find('tr.authorization-model')[0].outerHTML;
 	var validJsonSchema = false;
@@ -194,7 +194,9 @@ var OntologyCreateController = function() {
 		} else if(type == 'file') {
 			properties[prop] = JSON.parse('{"type": "object", '+ updDesc +' '+ updEncryp +' "required": ["data","media"],"properties": {"data": {"type": "string"},"media": {"type": "object", "required": ["name","storageArea","binaryEncoding","mime"],"properties": {"name":{"type": "string"},"storageArea": {"type": "string","enum": ["SERIALIZED","DATABASE","URL"]},"binaryEncoding": {"type": "string","enum": ["Base64"]},"mime": {"type": "string","enum": ["application/pdf","image/jpeg", "image/png"]}}}},"additionalProperties": false}');
 		}else if(type == 'geometry'){
-			properties[prop] = JSON.parse('{"type":"object",  '+ updDesc +' '+ updEncryp +' "required":["coordinates","type"],"properties":{"coordinates":{"type":"object","properties":{"latitude":{"type":"number"},"longitude":{"type":"number"}}},"type":{"type":"string","enum":["Point"]}}}');
+			//properties[prop] = JSON.parse('{"type":"object",  '+ updDesc +' '+ updEncryp +' "required":["coordinates","type"],"properties":{"coordinates":{"type":"object","properties":{"latitude":{"type":"number"},"longitude":{"type":"number"}}},"type":{"type":"string","enum":["Point"]}}}');
+			properties[prop] = JSON.parse('{"type":"object",  '+ updDesc +' '+ updEncryp +' "required":["coordinates","type"],"properties":{"coordinates": {"type": "array","items": [{"type": "number","maximum": 180,"minimum": -180},{"type": "number","maximum": 90,"minimum": -90}],"minItems": 2,"maxItems": 2},"type": {"type": "string","enum": ["Point"]}},"additionalProperties": false}');
+			
 		}else {	
 			propString = '{' + updDesc +' '+ updEncryp +' "type": "' + type + '"}';
 			properties[prop] = JSON.parse(propString);
@@ -747,9 +749,9 @@ var OntologyCreateController = function() {
             var tipo = property.type; // adding type
             if (propertyName == "geometry"){ instance = instance + generateBasicType("geometry", "", "");
             // adding object type
-            } else if (tipo.toLowerCase() == "object"){ instance = instance + generateObject(property, "", propertyName);
+            } else if (tipo.toLowerCase() == "object"){ console.log('INSTANCE (obj): ' + instance); instance = instance + generateObject(property, "", propertyName);
 			// adding array type
-            } else if (tipo.toLowerCase() == "array" ){ instance = instance + generateArray(property, "", propertyName);
+            } else if (tipo.toLowerCase() == "array" ){ console.log('INSTANCE (arr): ' + instance); instance = instance + generateArray(property, "", propertyName);
             // else basic type
             } else {
                 thevalue = "";
@@ -797,6 +799,7 @@ var OntologyCreateController = function() {
 				var objtype = ontology.properties[obj].type;
 	             // if obj <> date or geometry, iterates recursive for treatment.
 	             if ((objtype.toLowerCase() == "object") && (obj != "geometry") && ontology.properties[obj].properties && ontology.properties[obj].properties.$date == null ){ 
+					logControl ? console.log('        |--->   generateObject() --> object: ' + JSON.stringify(ontology.properties[obj])) : '';
 	             	instance = instance + "\"" +obj+"\":"+ generateObject(ontology.properties[obj], "", obj);
 	             
 	             }
@@ -812,7 +815,8 @@ var OntologyCreateController = function() {
 	             }
 				// array
 				 else if (objtype.toLowerCase() == "array"){
-	                    instance = instance + "\""+ obj + "\":" + generateArray(ontology.properties[obj], "", obj);	             
+					logControl ? console.log('        |--->   generateObject() --> array: ' + JSON.stringify(ontology.properties[obj])) : '';
+					instance = instance + "\""+ obj + "\":" + generateArray(ontology.properties[obj], "", obj);	             
 	             }
 				 // Basic
 				 else {
@@ -841,38 +845,42 @@ var OntologyCreateController = function() {
         // Se obtiene el numero minimo de elementos del array
 		console.log('ARRAY OBJ: ' + JSON.stringify(ontology));
 		
-		// void or malformed array
 		if (!ontology.hasOwnProperty('items')){
 			instance = instance + "[]";  
 			return instance;
 		}
 		
         if (ontology.minItems != null) {
-            minItems =  ontology.minItems;
-			
+            minItems =  ontology.minItems;			
         }
         instance = instance + "[";        
-        if (ontology.items.type.toLowerCase() == "object"){
-            for (i=1;i<=minItems;i++) {
-                instance = instance + generateObject(ontology.items, "", parent);
+		
+		
+		// main array iteration
+		for (i=0; i <= minItems-1; i++) {
+			// object item
+			if (ontology.items[i].type.toLowerCase() == "object"){
+				instance = instance + generateObject(ontology.items[i], "", parent);
                 if (i < minItems){
                     instance = instance + ",";
                 }
-            }       
-        } else {
-            for (i=1;i<=minItems;i++) {
-                var valor ="";
-                if (ontology.items.enum != null){
-                    valor = ontology.items.enum[0];
-                }
-                instance = instance + generateBasicType(ontology.items.type, "", "", valor);
+			}
+			else{
+			// non object item	
+				var valor = "";
+                if (ontology.items[i].enum != null){
+                    valor = ontology.items[i].enum;
+                }				
+                instance = instance + generateBasicType(ontology.items[i].type, "", "", valor);
                 if (i < minItems){
                     instance = instance + ",";
                 }
-            }
-        }
-        return instance + "]";  
-    };    
+				
+			}		
+		}       
+		
+        return instance + "]"; 
+	};
 	
 	
 	// AJAX AUTHORIZATION FUNCTIONS
