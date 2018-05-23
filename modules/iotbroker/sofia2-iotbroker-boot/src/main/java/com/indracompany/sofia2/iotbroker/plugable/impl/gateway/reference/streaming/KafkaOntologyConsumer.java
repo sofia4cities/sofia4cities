@@ -19,7 +19,6 @@ import java.util.concurrent.CountDownLatch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -78,7 +77,7 @@ public class KafkaOntologyConsumer {
 	}
 
 	// TODO
-	@KafkaListener(topicPattern = "${sofia2.iotbroker.plugable.gateway.kafka.topic.pattern}", containerFactory = "kafkaListenerContainerFactory")
+
 	public void listenToParition(@Payload String message, @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
 			@Header(KafkaHeaders.RECEIVED_TOPIC) String receivedTopic) {
 		log.info("Received Message: " + message + " from partition: " + partition + " received topic:" + receivedTopic);
@@ -107,10 +106,8 @@ public class KafkaOntologyConsumer {
 
 		if (executable) {
 			OperationType operationType = OperationType.INSERT;
-			OperationModel model = OperationModel
-					.builder(ontologyId, OperationType.valueOf(operationType.name()), user,
-							OperationModel.Source.IOTBROKER)
-					.body(message).clientPlatformId("").cacheable(false).build();
+			OperationModel model = OperationModel.builder(ontologyId, OperationType.valueOf(operationType.name()), user,
+					OperationModel.Source.IOTBROKER).body(message).deviceTemplate("").cacheable(false).build();
 
 			NotificationModel modelNotification = new NotificationModel();
 
@@ -149,10 +146,8 @@ public class KafkaOntologyConsumer {
 			String ontologyId = receivedTopic.replace(ontologyPrefix, "");
 
 			OperationType operationType = OperationType.INSERT;
-			OperationModel model = OperationModel
-					.builder(ontologyId, OperationType.valueOf(operationType.name()), user,
-							OperationModel.Source.IOTBROKER)
-					.body(message).clientPlatformId("").cacheable(false).build();
+			OperationModel model = OperationModel.builder(ontologyId, OperationType.valueOf(operationType.name()), user,
+					OperationModel.Source.IOTBROKER).body(message).deviceTemplate("").cacheable(false).build();
 
 			NotificationModel modelNotification = new NotificationModel();
 

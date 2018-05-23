@@ -22,12 +22,13 @@ import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyLogMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyQueryMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUnsubscribeMessage;
@@ -70,6 +71,14 @@ public class IotBrokerAuditEventFactory {
 			IoTSession session, GatewayInfo info) {
 
 		IotBrokerAuditEvent event = createIotBrokerAuditEvent(OperationType.UNSUBSCRIBE, messageText, session, info);
+
+		return event;
+	}
+
+	public IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPBodyLogMessage message, String messageText,
+			IoTSession session, GatewayInfo info) {
+
+		IotBrokerAuditEvent event = createIotBrokerAuditEvent(OperationType.LOG, messageText, session, info);
 
 		return event;
 	}

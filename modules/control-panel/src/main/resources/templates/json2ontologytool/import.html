@@ -438,7 +438,9 @@
 			$('#response').text(invalidSchema);
 			$('#returnAction').modal("show");
 		}
+
 		jQuery.post('/controlpanel/jsontool/createontology',{'ontologyDescription':$('#ontologyDescription').val(),'ontologyIdentification':$('#ontologyIdentification').val(),'instance': myCodeMirror.getValue(),'schema': myCodeMirrorSchema.getValue(), 'datasource' : $('#datasource').val()}, function(data){
+
 			if(data=='ok'){
 				$('#response').text(ontologyCreated);
 			}else{

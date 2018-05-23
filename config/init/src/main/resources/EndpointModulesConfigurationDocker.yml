@@ -1,6 +1,8 @@
 #Integration Resources docker
 sofia2:
   urls: 
+    controlpanel:
+      base: http://s4citiespro.westeurope.cloudapp.azure.com/controlpanel
     iotbroker:
       base: http://iotbrokerservice:19000/iotbroker
       advice: http://iotbrokerservice:19000/iotbroker/advice

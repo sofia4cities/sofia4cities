@@ -66,27 +66,24 @@ public class QueryAsTextMongoDBImplIntegrationTest {
 		// 1º
 		ContextData data = ContextData
 				.builder("user", UUID.randomUUID().toString(), UUID.randomUUID().toString(), System.currentTimeMillis())
-				.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
-				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
-				.build();
+				.clientConnection(UUID.randomUUID().toString()).deviceTemplate(UUID.randomUUID().toString())
+				.device(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString()).build();
 		ObjectMapper mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 		// 2º
 		data = ContextData
 				.builder("admin", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
 						System.currentTimeMillis())
-				.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
-				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
-				.build();
+				.clientConnection(UUID.randomUUID().toString()).deviceTemplate(UUID.randomUUID().toString())
+				.device(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString()).build();
 		mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 		// 3º
 		data = ContextData
 				.builder("other", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
 						System.currentTimeMillis())
-				.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
-				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
-				.build();
+				.clientConnection(UUID.randomUUID().toString()).deviceTemplate(UUID.randomUUID().toString())
+				.device(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString()).build();
 		mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 	}
@@ -233,21 +230,21 @@ public class QueryAsTextMongoDBImplIntegrationTest {
 			Assert.assertTrue(result.indexOf("0") == -1);
 			//
 			result = queryTool.queryNativeAsJson(ONT_NAME,
-					"db.contextData.insert({\"user\":\"user_temp_1\",\"clientPatform\":\"1\"})");
+					"db.contextData.insert({\"user\":\"user_temp_1\",\"deviceTemplate\":\"1\"})");
 			Assert.assertTrue(result.indexOf("Inserted row") != -1);
 			result = queryTool.queryNativeAsJson(ONT_NAME, "db.contextData.remove({\"user\":\"user_temp_1\"})");
 			Assert.assertTrue(result.indexOf("Deleted 1") != -1);
 			//
 			result = queryTool.queryNativeAsJson(ONT_NAME,
-					"db.contextData.insert({'user':'user_temp_2','clientPatform':'2'})");
+					"db.contextData.insert({'user':'user_temp_2','deviceTemplate':'2'})");
 			Assert.assertTrue(result.indexOf("Inserted row") != -1);
 			result = queryTool.queryNativeAsJson(ONT_NAME,
-					"db.contextData.update({'user':'user_temp_2'},{'clientPatform':'3'})");
+					"db.contextData.update({'user':'user_temp_2'},{'deviceTemplate':'3'})");
 			Assert.assertTrue(result.indexOf("Updated 1") != -1);
 			//
 
 			result = queryTool.queryNativeAsJson(ONT_NAME,
-					"db.contextData.remove({'user':'user_temp_2','clientPatform':'3'})");
+					"db.contextData.remove({'user':'user_temp_2','deviceTemplate':'3'})");
 			Assert.assertTrue(result.indexOf("Deleted 1") != -1);
 
 		} catch (Exception e) {

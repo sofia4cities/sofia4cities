@@ -60,10 +60,10 @@ public class OperationModel implements Serializable {
 	private String objectId;
 	@Getter
 	@Setter
-	private String clientPlatformId;
+	private String deviceTemplate;
 	@Getter
 	@Setter
-	private String clientPlatoformInstance;
+	private String device;
 	@Getter
 	@Setter
 	private String clientSession;
@@ -83,10 +83,10 @@ public class OperationModel implements Serializable {
 		return new StringBuilder().append("OperationModel [ontologyName=").append(ontologyName)
 				.append(", operationType=").append(operationType).append(", user=").append(user).append(", source=")
 				.append(source).append(", body=").append(body).append(", queryType=").append(queryType)
-				.append(", objectId=").append(objectId).append(", clientPlatformId=").append(clientPlatformId)
-				.append(", clientPlatformInstance=").append(clientPlatoformInstance).append(", clientSession=")
-				.append(clientSession).append(", clientConnection=").append(clientConnection).append(", cacheable=")
-				.append(cacheable).append("]").toString();
+				.append(", objectId=").append(objectId).append(", deviceTemplate=").append(deviceTemplate)
+				.append(", device=").append(device).append(", clientSession=").append(clientSession)
+				.append(", clientConnection=").append(clientConnection).append(", cacheable=").append(cacheable)
+				.append("]").toString();
 	}
 
 	private OperationModel(Builder builder) {
@@ -97,8 +97,8 @@ public class OperationModel implements Serializable {
 		this.body = builder.body;
 		this.queryType = builder.queryType;
 		this.objectId = builder.objectId;
-		this.clientPlatformId = builder.clientPlatformId;
-		this.clientPlatoformInstance = builder.clientPlatformInstance;
+		this.deviceTemplate = builder.deviceTemplate;
+		this.device = builder.device;
 		this.clientSession = builder.clientSession;
 		this.clientConnection = builder.clientConnection;
 		this.cacheable = builder.cacheable;
@@ -117,8 +117,8 @@ public class OperationModel implements Serializable {
 
 		private String body;
 		private String objectId;
-		private String clientPlatformId;
-		private String clientPlatformInstance;
+		private String deviceTemplate;
+		private String device;
 		private String clientSession;
 		private String clientConnection;
 		private boolean cacheable = false;
@@ -149,13 +149,13 @@ public class OperationModel implements Serializable {
 			return this;
 		}
 
-		public Builder clientPlatformId(String clientPlatformId) {
-			this.clientPlatformId = clientPlatformId;
+		public Builder deviceTemplate(String deviceTemplate) {
+			this.deviceTemplate = deviceTemplate;
 			return this;
 		}
 
-		public Builder clientPlatformInstance(String clientPlatformInstance) {
-			this.clientPlatformInstance = clientPlatformInstance;
+		public Builder device(String device) {
+			this.device = device;
 			return this;
 		}
 

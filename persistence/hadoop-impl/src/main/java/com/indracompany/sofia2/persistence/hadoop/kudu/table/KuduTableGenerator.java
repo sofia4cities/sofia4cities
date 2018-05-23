@@ -14,10 +14,10 @@
  */
 package com.indracompany.sofia2.persistence.hadoop.kudu.table;
 
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM_CONNECTION;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM_INSTANCE;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_SESSION;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE_TEMPLATE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMESTAMP;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMESTAMP_MILLIS;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMEZONE_ID;
@@ -63,9 +63,10 @@ public class KuduTableGenerator {
 			String key = it.next();
 			JSONObject o = (JSONObject) properties.get(key);
 
-			Object ref = o.get("$ref");
+			// Object ref = o.get("$ref");
 
-			if (ref != null) {
+			if (o.has("$ref")) {
+				Object ref = o.get("$ref");
 				String refScript = ((String) ref).replace("#/", "");
 				JSONObject refMap = jsonObj.getJSONObject(refScript);
 				return refMap.getJSONObject(JsonFieldType.PROPERTIES_FIELD);
@@ -203,9 +204,9 @@ public class KuduTableGenerator {
 
 		List<HiveColumn> columns = new ArrayList<>();
 
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_PLATFORM, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_PLATFORM_INSTANCE, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_PLATFORM_CONNECTION, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION, HiveFieldType.STRING_FIELD));
 
 		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_SESSION, HiveFieldType.STRING_FIELD));
 		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_USER, HiveFieldType.STRING_FIELD));

@@ -42,12 +42,15 @@ import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepository;
+import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 @Service
 public class OntologyServiceImpl implements OntologyService {
 
+	@Autowired
+	EntityDeletionService deletionService;
 	@Autowired
 	private OntologyRepository ontologyRepository;
 	@Autowired
@@ -259,7 +262,10 @@ public class OntologyServiceImpl implements OntologyService {
 				} else if (jsonNode.path(property).get("type").asText().equals("array")) {
 					this.extractSubFieldsFromJson(fields, jsonNode, property, property, true, false);
 				} else {
-					fields.put(property, jsonNode.path(property).get("type").asText());
+					if (jsonNode.path(property).get("format") != null)
+						fields.put(property, "date");
+					else
+						fields.put(property, jsonNode.path(property).get("type").asText());
 				}
 
 			}
@@ -305,7 +311,10 @@ public class OntologyServiceImpl implements OntologyService {
 				} else if (jsonNode.path(property).get("type").asText().equals("array")) {
 					this.extractSubFieldsFromJson(fields, jsonNode, property, property, true, true);
 				} else {
-					fields.put(property, jsonNode.path(property).get("type").asText());
+					if (jsonNode.path(property).get("format") != null)
+						fields.put(property, "date");
+					else
+						fields.put(property, jsonNode.path(property).get("type").asText());
 				}
 
 			}
@@ -416,9 +425,13 @@ public class OntologyServiceImpl implements OntologyService {
 			} else {
 				if (subProperty.equals("$date"))
 					fields.put(parentField, "date");
-				else
-					fields.put(parentField + "." + subProperty, jsonNode.path(subProperty).get("type").asText());
+				else {
+					if (jsonNode.path(subProperty).get("format") != null)
+						fields.put(parentField + "." + subProperty, "date");
+					else
+						fields.put(parentField + "." + subProperty, jsonNode.path(subProperty).get("type").asText());
 
+				}
 			}
 		}
 
@@ -602,7 +615,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Override
 	public void delete(Ontology ontology) {
-		ontologyRepository.delete(ontology);
+		deletionService.deleteOntology(ontology.getId(), ontology.getUser().getUserId());
 	}
 
 }
