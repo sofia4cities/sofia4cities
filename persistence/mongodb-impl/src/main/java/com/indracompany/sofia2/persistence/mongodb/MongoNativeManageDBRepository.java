@@ -35,6 +35,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.commons.OSDetector;
+import com.indracompany.sofia2.persistence.common.DescribeColumnData;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.index.MongoDbIndex;
@@ -381,6 +382,11 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 	@Override
 	public long deleteAfterExport(String ontology, String query) {
 		return this.mongoDbConnector.remove(this.database, ontology, query);
+	}
+
+	@Override
+	public List<DescribeColumnData> describeTable(String name) {
+		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 }

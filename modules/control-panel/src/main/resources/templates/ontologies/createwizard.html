@@ -482,6 +482,17 @@
 													<hr/>
 													<b th:text="#{ontology.rtdb.warning}">Warning!</b>
 												</div>
+												<!-- KAFKA SELECTION -->
+												
+												<div class="form-group">
+													<label class="" th:text="#{ontology.allowsCreateTopic} + ':'">Allow Create Topic</label>
+														<div class="mt-checkbox-list">
+															<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.allowsCreateTopic.help},data-title=#{ontology.allowsCreateTopic}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.allowsCreateTopic} +'?'">Allow Create Topic?</div>
+																<input  id="allowsCreateTopic" class="form-control no-remove"  name="allowsCreateTopic" type="checkbox"   />
+																	<span></span><!-- necesario por estilos. -->
+															</label>
+														</div>
+												</div>
 											<!-- RTDB CLEANSE SELECTION -->
 												<div class="form-group">
 													<label class="control-label" th:text="#{ontology.clean.options}">Cleanse Options</label>
@@ -501,6 +512,7 @@
 							
 													
 												</div>
+												
 											</div>
 										</div>									
 									</div>									

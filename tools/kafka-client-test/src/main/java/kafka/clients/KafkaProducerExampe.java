@@ -18,12 +18,9 @@ public class KafkaProducerExampe {
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9093");
 		config.put("security.protocol", "SASL_PLAINTEXT");
 		config.put("sasl.mechanism", "PLAIN");
-		// config.put("sasl.jaas.config",
-		// "org.apache.kafka.common.security.plain.PlainLoginModule required
-		// username=\"admin\" password=\"admin-secret\";");
 
 		config.put("sasl.jaas.config",
-				"org.apache.kafka.common.security.plain.PlainLoginModule required username=\"2936c949-c514-43d5-ba86-568bb6791fb5\" password=\"56686a5a0d7e497d9cafbbbd4b2563ee\";");
+				"org.apache.kafka.common.security.plain.PlainLoginModule required username=\"Ticketing%20App\" password=\"e7ef0742d09d4de5a3687f0cfdf7f626\";");
 
 		// Use Kafka Avro Deserializer.
 
@@ -33,10 +30,12 @@ public class KafkaProducerExampe {
 		KafkaProducer<String, String> producer = new KafkaProducer<>(config);
 
 		for (int i = 0; i < 1000; i++) {
-			String pepe = "{\"groupId\" : \"GROUP\",\"imageList\" : [],\"code\" : \"5d7c232c-cc57-4a05-bbe1-236f9d9a3891\",\"name\" : \"name1\",\"category\" : \"CATEGORY\", \"mainImage\" : \"IMAGE\"}";
+			String pepe = "{\"groupId\" : \"GROUP\",\"imageList\" : [],\"code\" : \"" + System.currentTimeMillis()
+					+ "\",\"name\" : \"name1" + System.currentTimeMillis()
+					+ "\",\"category\" : \"CATEGORY\", \"mainImage\" : \"IMAGE\"}";
 			Future<RecordMetadata> metadata = producer
 					.send(new ProducerRecord<String, String>("ontology_product", pepe));
-			System.out.println(i);
+			System.out.println("Inserting data : " + i + " -> with value : " + pepe);
 
 		}
 		producer.flush();

@@ -45,7 +45,7 @@ var loadJsonFromDoc = function(files){
 						var blob = files[0].slice(offset , offset + chunk_size);
 						reader.readAsText(blob);	
 					}else{
-						var content = chunks.join("").replace(/\"/g, '');
+						var content = chunks.join("");//.replace(/\"/g, '');
 						fileLoaded = JSON.parse(csvJSON(content));
 						printJson();
 					}

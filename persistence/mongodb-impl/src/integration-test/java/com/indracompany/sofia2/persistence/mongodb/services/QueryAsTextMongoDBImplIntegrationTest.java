@@ -70,7 +70,7 @@ public class QueryAsTextMongoDBImplIntegrationTest {
 				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 				.build();
 		ObjectMapper mapper = new ObjectMapper();
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 		// 2º
 		data = ContextData
 				.builder("admin", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
@@ -79,7 +79,7 @@ public class QueryAsTextMongoDBImplIntegrationTest {
 				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 				.build();
 		mapper = new ObjectMapper();
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 		// 3º
 		data = ContextData
 				.builder("other", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
@@ -88,7 +88,7 @@ public class QueryAsTextMongoDBImplIntegrationTest {
 				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 				.build();
 		mapper = new ObjectMapper();
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		refOid = repository.insert(ONT_NAME, "", mapper.writeValueAsString(data));
 	}
 
 	@After

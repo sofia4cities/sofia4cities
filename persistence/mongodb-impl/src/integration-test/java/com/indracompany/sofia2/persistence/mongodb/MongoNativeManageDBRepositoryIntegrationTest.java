@@ -115,7 +115,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 					.build();
 
 			ObjectMapper mapper = new ObjectMapper();
-			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			basicOps.insert("contextData", "", mapper.writeValueAsString(data));
 
 			data = ContextData
 					.builder("user2", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
@@ -124,7 +124,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 					.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 					.build();
 
-			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			basicOps.insert("contextData", "", mapper.writeValueAsString(data));
 			Assert.assertEquals(basicOps.count("contextData"), 2);
 			int numIndex = repository.getListIndexes("contextData").size();
 			repository.createIndex("contextData", "user");
@@ -149,7 +149,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 					.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 					.build();
 			ObjectMapper mapper = new ObjectMapper();
-			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			basicOps.insert("contextData", "", mapper.writeValueAsString(data));
 
 			data = ContextData
 					.builder("user2", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
@@ -158,7 +158,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 					.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 					.build();
 
-			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			basicOps.insert("contextData", "", mapper.writeValueAsString(data));
 			Assert.assertEquals(basicOps.count("contextData"), 2);
 			int numIndex = repository.getListIndexes("contextData").size();
 			repository.createIndex("contextData", "user_i", "user");
@@ -186,7 +186,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 					.build();
 
 			ObjectMapper mapper = new ObjectMapper();
-			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			basicOps.insert("contextData", "", mapper.writeValueAsString(data));
 			data = ContextData
 					.builder("user1", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
 							System.currentTimeMillis())
@@ -194,7 +194,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 					.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 					.build();
 
-			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			basicOps.insert("contextData", "", mapper.writeValueAsString(data));
 			Assert.assertEquals(basicOps.count("contextData"), 2);
 			int numIndex = repository.getListIndexes("contextData").size();
 			repository.createIndex("db.contextData.createIndex({'user':1},{'name':'user_i'})");
