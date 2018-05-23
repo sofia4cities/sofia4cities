@@ -18,6 +18,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
 import com.indracompany.sofia2.persistence.services.BasicOpsPersistenceServiceFacade;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
@@ -47,6 +49,9 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	@Autowired
 	private OntologyDataService ontologyDataService;
 
+	@Autowired
+	private OntologyRepository ontologyRepository;
+
 	@Override
 	@Auditable
 	public OperationResultModel insert(OperationModel operationModel) throws RouterCrudServiceException {
@@ -71,10 +76,12 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 			List<String> processedData = ontologyDataService.preProcessInsertData(operationModel);
 
+			final Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
+
 			if (METHOD.equalsIgnoreCase("POST")
 					|| METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
-				final List<BulkWriteResult> results = basicOpsService.insertBulk(ontologyName, processedData, true,
-						true);
+				final List<BulkWriteResult> results = basicOpsService.insertBulk(ontologyName, ontology.getJsonSchema(),
+						processedData, true, true);
 				if (results.size() > 1)
 					OUTPUT = String.valueOf(results.size());
 				else

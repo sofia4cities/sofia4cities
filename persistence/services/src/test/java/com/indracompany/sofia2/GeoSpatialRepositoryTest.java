@@ -39,12 +39,11 @@ import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.persistence.services.BasicOpsPersistenceServiceFacade;
 import com.indracompany.sofia2.persistence.services.GeoSpatialOpsService;
+import com.indracompany.sofia2.persistence.services.GeoSpatialOpsService.GeoQueries;
 import com.indracompany.sofia2.persistence.services.ManageDBPersistenceServiceFacade;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
-import com.indracompany.sofia2.persistence.services.GeoSpatialOpsService.GeoQueries;
 
 import lombok.extern.slf4j.Slf4j;
-
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -52,108 +51,98 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Ignore
 public class GeoSpatialRepositoryTest {
-	
+
 	public final static String TEST_INDEX = "newdoc";
 	public final static String TEST_INDEX_PIN = "newpin";
-	public final static String TEST_INDEX_MONGO = TEST_INDEX+System.currentTimeMillis() ;
-	public final static String TEST_INDEX_MONGO_AGNOSTIC = TEST_INDEX+System.currentTimeMillis()+"agnostic" ;
-	public final static String TEST_INDEX_MONGO_PIN = TEST_INDEX_PIN+System.currentTimeMillis() ;
-	
+	public final static String TEST_INDEX_MONGO = TEST_INDEX + System.currentTimeMillis();
+	public final static String TEST_INDEX_MONGO_AGNOSTIC = TEST_INDEX + System.currentTimeMillis() + "agnostic";
+	public final static String TEST_INDEX_MONGO_PIN = TEST_INDEX_PIN + System.currentTimeMillis();
+
 	private static User userAdministrator = null;
 
-		
 	@Autowired
 	private BasicOpsPersistenceServiceFacade basicOpsFacade;
-	
+
 	@Autowired
 	private ManageDBPersistenceServiceFacade manageFacade;
-	
 
 	@Autowired
 	private OntologyService ontologyService;
-	
+
 	@Autowired
 	private OntologyRepository ontologyRepository;
-	
+
 	@Autowired
 	private UserRepository userCDBRepository;
-	
+
 	@Autowired
 	QueryToolService queryToolService;
-	
-	
+
 	ObjectMapper mapper = new ObjectMapper();
-	
+
 	@Autowired
 	private GeoSpatialOpsService geoService;
-	
+
 	private User getUserAdministrator() {
 		if (userAdministrator == null)
 			userAdministrator = this.userCDBRepository.findByUserId("administrator");
 		return userAdministrator;
 	}
-			
-	private String partial_polygon_agnostic =   "partial_polygon_agnostic.json";
 
+	private String partial_polygon_agnostic = "partial_polygon_agnostic.json";
 
 	public static String getString(String file) throws IOException {
 		File in = new ClassPathResource(file).getFile();
 		return FileUtils.readFileToString(in);
 	}
-	
+
 	@Before
-	public  void doBefore() throws Exception {	
+	public void doBefore() throws Exception {
 		log.info("up process...");
-		
-		
+
 		File in = new ClassPathResource("type.json").getFile();
 		String TYPE = FileUtils.readFileToString(in);
-			
+
 		File data = new ClassPathResource("type_data.json").getFile();
-		String DATA  = FileUtils.readFileToString(data);
-		
-		doBeforeALL(TYPE, DATA, TEST_INDEX,RtdbDatasource.ElasticSearch);
-		
+		String DATA = FileUtils.readFileToString(data);
+
+		doBeforeALL(TYPE, DATA, TEST_INDEX, RtdbDatasource.ElasticSearch);
+
 		in = new ClassPathResource("type_geo_point.json").getFile();
 		TYPE = FileUtils.readFileToString(in);
-			
+
 		data = new ClassPathResource("type_geo_point_data.json").getFile();
-		DATA  = FileUtils.readFileToString(data);
-		 
-		doBeforeALL(TYPE, DATA, TEST_INDEX_PIN,RtdbDatasource.ElasticSearch);
-		 
+		DATA = FileUtils.readFileToString(data);
+
+		doBeforeALL(TYPE, DATA, TEST_INDEX_PIN, RtdbDatasource.ElasticSearch);
+
 		in = new ClassPathResource("type_geo_mongo.json").getFile();
 		TYPE = FileUtils.readFileToString(in);
-				
+
 		data = new ClassPathResource("type_geo_point_data.json").getFile();
-		DATA  = FileUtils.readFileToString(data);
-		
-		doBeforeALL(TYPE, DATA, TEST_INDEX_MONGO_PIN,RtdbDatasource.Mongo);
-	
+		DATA = FileUtils.readFileToString(data);
+
+		doBeforeALL(TYPE, DATA, TEST_INDEX_MONGO_PIN, RtdbDatasource.Mongo);
+
 		in = new ClassPathResource("type_mongo.json").getFile();
 		TYPE = FileUtils.readFileToString(in);
-		 
+
 		data = new ClassPathResource("type_data.json").getFile();
-		DATA  = FileUtils.readFileToString(data);
-		doBeforeALL(TYPE, DATA, TEST_INDEX_MONGO,RtdbDatasource.Mongo);
-		
+		DATA = FileUtils.readFileToString(data);
+		doBeforeALL(TYPE, DATA, TEST_INDEX_MONGO, RtdbDatasource.Mongo);
+
 		in = new ClassPathResource("type_geo_mongo.json").getFile();
 		TYPE = FileUtils.readFileToString(in);
-		 
-		data = new ClassPathResource("type_geo_point_data.json").getFile();
-		DATA  = FileUtils.readFileToString(data);
-		doBeforeALL(TYPE, DATA, TEST_INDEX_MONGO_AGNOSTIC,RtdbDatasource.ElasticSearch);
-		
-		
-		 
-	}
-	
 
-	
-	public  void doBeforeALL(String TYPE, String DATA, String ontologyName, RtdbDatasource dataSource) throws Exception {	
+		data = new ClassPathResource("type_geo_point_data.json").getFile();
+		DATA = FileUtils.readFileToString(data);
+		doBeforeALL(TYPE, DATA, TEST_INDEX_MONGO_AGNOSTIC, RtdbDatasource.ElasticSearch);
+
+	}
+
+	public void doBeforeALL(String TYPE, String DATA, String ontologyName, RtdbDatasource dataSource) throws Exception {
 		log.info("doBefore4 up process...");
 
-		
 		try {
 			Ontology ontology = new Ontology();
 			ontology.setJsonSchema(TYPE);
@@ -165,173 +154,175 @@ public class GeoSpatialRepositoryTest {
 			ontology.setPublic(true);
 			ontology.setRtdbDatasource(dataSource);
 			ontology.setUser(getUserAdministrator());
-			
-			
-			Ontology index1 = ontologyService.getOntologyByIdentification(ontologyName, getUserAdministrator().getUserId());
-			if (index1==null) {
+
+			Ontology index1 = ontologyService.getOntologyByIdentification(ontologyName,
+					getUserAdministrator().getUserId());
+			if (index1 == null) {
 				try {
 					ontologyService.createOntology(ontology);
-				} catch (Exception e) {}
-				
+				} catch (Exception e) {
+				}
+
 				try {
 					manageFacade.createTable4Ontology(ontologyName, TYPE);
-				} catch (Exception e) {}
-				
+				} catch (Exception e) {
+				}
+
 			}
-					
-			String idES = basicOpsFacade.insert(ontologyName, DATA);
-			log.info("doBefore4 inserted object with id "+idES);
+
+			String idES = basicOpsFacade.insert(ontologyName, ontology.getJsonSchema(), DATA);
+			log.info("doBefore4 inserted object with id " + idES);
 
 		} catch (Exception e) {
-			log.info("Issue creating table4ontology "+e);
+			log.info("Issue creating table4ontology " + e);
 		}
-	
+
 	}
-	
+
 	@Test
 	public void testGeoServiceElasticWithin() {
 		try {
 			Thread.sleep(10000);
 			log.info(">>>>>>>>>>>>> testGeoServiceElasticWithin");
 			partial_polygon_agnostic = getString(partial_polygon_agnostic);
-			
+
 			log.info(basicOpsFacade.findAllAsJson(TEST_INDEX));
-			
+
 			log.info(basicOpsFacade.findAllAsJson(TEST_INDEX, 10));
-			
+
 			List<String> listQ = geoService.within(TEST_INDEX, partial_polygon_agnostic);
-			
-			log.info("result  "+listQ);
-			Assert.assertTrue(listQ!=null);
+
+			log.info("result  " + listQ);
+			Assert.assertTrue(listQ != null);
 		} catch (Exception e) {
 			Assert.fail("testGeoServiceElasticWithin failure. " + e);
 		}
 	}
+
 	@Test
 	public void testGeoServiceMongoWithin() {
 		try {
 			log.info(">>>>>>>>>>>>> testGeoServiceMongoWithin");
 			partial_polygon_agnostic = getString(partial_polygon_agnostic);
-			
+
 			List<String> listQ = geoService.within(TEST_INDEX_MONGO, partial_polygon_agnostic);
-			
-			log.info("result  "+listQ);
-			Assert.assertTrue(listQ!=null);
+
+			log.info("result  " + listQ);
+			Assert.assertTrue(listQ != null);
 		} catch (Exception e) {
 			Assert.fail("testGeoServiceMongoWithin failure. " + e);
 		}
 	}
-	
-	
+
 	@Test
 	public void testGeoServiceElastic() {
 		try {
 			Thread.sleep(10000);
 			log.info(">>>>>>>>>>>>> testGeoServiceElastic");
 			partial_polygon_agnostic = getString(partial_polygon_agnostic);
-			
+
 			log.info(basicOpsFacade.findAllAsJson(TEST_INDEX));
-			
+
 			List<String> listQ = geoService.intersects(TEST_INDEX, partial_polygon_agnostic);
-			
-			log.info("result  "+listQ);
-			Assert.assertTrue(listQ!=null);
+
+			log.info("result  " + listQ);
+			Assert.assertTrue(listQ != null);
 		} catch (Exception e) {
 			Assert.fail("testGeoServiceElastic failure. " + e);
 		}
 	}
-	
+
 	@Test
 	public void testGeoServiceMongo() {
 		try {
 			log.info(">>>>>>>>>>>>> testGeoServiceMongo");
 			partial_polygon_agnostic = getString(partial_polygon_agnostic);
-			
+
 			List<String> listQ = geoService.intersects(TEST_INDEX_MONGO, partial_polygon_agnostic);
-			
-			log.info("result  "+listQ);
-			Assert.assertTrue(listQ!=null);
+
+			log.info("result  " + listQ);
+			Assert.assertTrue(listQ != null);
 		} catch (Exception e) {
 			Assert.fail("testGeoServiceMongo failure. " + e);
 		}
 	}
-	
+
 	@Test
 	public void testGeoServiceNear() {
 		try {
 			Thread.sleep(10000);
 			log.info(basicOpsFacade.findAllAsJson(TEST_INDEX_PIN));
 			log.info(">>>>>>>>>>>>> testGeoServiceNear");
-			String TWO_HUNDRED_KILOMETERS=""+(1000*200);
-			
+			String TWO_HUNDRED_KILOMETERS = "" + (1000 * 200);
+
 			List<String> listQ = geoService.near(TEST_INDEX_PIN, TWO_HUNDRED_KILOMETERS, "40", "-70");
-			
-			log.info("result  "+listQ);
-			Assert.assertTrue(listQ!=null);
+
+			log.info("result  " + listQ);
+			Assert.assertTrue(listQ != null);
 		} catch (Exception e) {
 			Assert.fail("testGeoServiceNear failure. " + e);
 		}
 	}
 
-	
 	@Test
 	public void testGeoServiceNearMongo() {
 		try {
 			log.info(">>>>>>>>>>>>> testGeoServiceNearMongo");
-			
-			String TWO_HUNDRED_KILOMETERS=""+(1000*200);
+
+			String TWO_HUNDRED_KILOMETERS = "" + (1000 * 200);
 			List<String> listQ = geoService.near(TEST_INDEX_MONGO_PIN, TWO_HUNDRED_KILOMETERS, "40", "-70");
-			
-			log.info("result  "+listQ);
-			Assert.assertTrue(listQ!=null);
+
+			log.info("result  " + listQ);
+			Assert.assertTrue(listQ != null);
 		} catch (Exception e) {
 			Assert.fail("testGeoServiceNearMongo failure. " + e);
 		}
 	}
-	
+
 	@Test
 	public void testGeoServiceByQueryTool() {
 		try {
 			log.info(">>>>>>>>>>>>> testGeoServiceByQueryTool");
-			
-			String TWO_HUNDRED_KILOMETERS=""+(1000*200);
+
+			String TWO_HUNDRED_KILOMETERS = "" + (1000 * 200);
 			List<String> listQ = geoService.near(TEST_INDEX_MONGO_PIN, TWO_HUNDRED_KILOMETERS, "40", "-70");
-			log.info("result  "+listQ);
-			String query = geoService.getQuery(GeoQueries.near, TEST_INDEX_MONGO_PIN, "geometry","40", "-70", TWO_HUNDRED_KILOMETERS);
-			
-			
+			log.info("result  " + listQ);
+			String query = geoService.getQuery(GeoQueries.near, TEST_INDEX_MONGO_PIN, "geometry", "40", "-70",
+					TWO_HUNDRED_KILOMETERS);
+
 			log.info(">>>>>>>>>>>>> USE of querytool with the GetQuery Generator of GeoService");
-			
-			String result = queryToolService.queryNativeAsJson(getUserAdministrator().getUserId(), TEST_INDEX_MONGO_PIN, query);
-			
-			log.info("result QueryTool "+result);
-			Assert.assertTrue(listQ!=null);
+
+			String result = queryToolService.queryNativeAsJson(getUserAdministrator().getUserId(), TEST_INDEX_MONGO_PIN,
+					query);
+
+			log.info("result QueryTool " + result);
+			Assert.assertTrue(listQ != null);
 		} catch (Exception e) {
 			Assert.fail("testGeoServiceNearMongo failure. " + e);
 		}
 	}
-	
+
 	@Test
 	public void testGeoServiceByQueryToolAgnostic() {
 		try {
 			log.info(">>>>>>>>>>>>> testGeoServiceByQueryToolAgnostic");
-			
-			String TWO_HUNDRED_KILOMETERS=""+(1000*200);
+
+			String TWO_HUNDRED_KILOMETERS = "" + (1000 * 200);
 			List<String> listQ = geoService.near(TEST_INDEX_MONGO_AGNOSTIC, TWO_HUNDRED_KILOMETERS, "40", "-70");
-			log.info("result  "+listQ);
-			String query = geoService.getQuery(GeoQueries.near, TEST_INDEX_MONGO_AGNOSTIC, "geometry","40", "-70", TWO_HUNDRED_KILOMETERS);
-			
-			
+			log.info("result  " + listQ);
+			String query = geoService.getQuery(GeoQueries.near, TEST_INDEX_MONGO_AGNOSTIC, "geometry", "40", "-70",
+					TWO_HUNDRED_KILOMETERS);
+
 			log.info(">>>>>>>>>>>>> USE of querytool with the GetQuery Generator of GeoService");
-			
-			String result = queryToolService.queryNativeAsJson(getUserAdministrator().getUserId(), TEST_INDEX_MONGO_AGNOSTIC, query);
-			
-			log.info("result QueryTool "+result);
-			Assert.assertTrue(listQ!=null);
+
+			String result = queryToolService.queryNativeAsJson(getUserAdministrator().getUserId(),
+					TEST_INDEX_MONGO_AGNOSTIC, query);
+
+			log.info("result QueryTool " + result);
+			Assert.assertTrue(listQ != null);
 		} catch (Exception e) {
 			Assert.fail("testGeoServiceNearMongo failure. " + e);
 		}
 	}
-	
 
 }

@@ -600,4 +600,9 @@ public class OntologyServiceImpl implements OntologyService {
 		return this.ontologyRepository.findByRtdbCleanTrue();
 	}
 
+	@Override
+	public void delete(Ontology ontology) {
+		ontologyRepository.delete(ontology);
+	}
+
 }

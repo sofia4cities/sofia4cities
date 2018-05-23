@@ -100,4 +100,6 @@ public interface OntologyService {
 
 	List<Ontology> getCleanableOntologies();
 
+	void delete(Ontology ontology);
+
 }
