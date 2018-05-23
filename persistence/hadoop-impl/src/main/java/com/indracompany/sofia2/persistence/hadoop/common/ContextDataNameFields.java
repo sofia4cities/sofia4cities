@@ -18,8 +18,8 @@ public class ContextDataNameFields {
 
 	public static final String CONTEXT_DATA_FIELD_PREFIX = "contextData__";
 
-	public static final String FIELD_CLIENT_PLATFORM = "clientPatform";
-	public static final String FIELD_CLIENT_PLATFORM_INSTANCE = "clientPatformInstance";
+	public static final String FIELD_CLIENT_PLATFORM = "deviceTemplate";
+	public static final String FIELD_CLIENT_PLATFORM_INSTANCE = "device";
 	public static final String FIELD_CLIENT_PLATFORM_CONNECTION = "clientConnection";
 	public static final String FIELD_CLIENT_SESSION = "clientSession";
 	public static final String FIELD_USER = "user";

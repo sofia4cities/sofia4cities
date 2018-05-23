@@ -33,6 +33,7 @@ import com.indracompany.sofia2.config.services.datamodel.DataModelService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
+import com.indracompany.sofia2.controlpanel.services.ontology.OntologyLogicService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
@@ -51,6 +52,8 @@ public class JsonToolController {
 
 	@Autowired
 	private OntologyService ontologyService;
+	@Autowired
+	private OntologyLogicService ontologyLogicService;
 	@Autowired
 	private DataModelService dataModelService;
 	@Autowired
@@ -87,7 +90,7 @@ public class JsonToolController {
 		ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 		ontology.setRtdbDatasource(Ontology.RtdbDatasource.valueOf(datasource));
 		try {
-			this.ontologyService.createOntology(ontology);
+			this.ontologyLogicService.createOntology(ontology);
 		} catch (OntologyServiceException e) {
 			return "ko";
 		}

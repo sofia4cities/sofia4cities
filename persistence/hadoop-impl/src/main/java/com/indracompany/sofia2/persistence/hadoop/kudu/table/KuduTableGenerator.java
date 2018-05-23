@@ -63,9 +63,10 @@ public class KuduTableGenerator {
 			String key = it.next();
 			JSONObject o = (JSONObject) properties.get(key);
 
-			Object ref = o.get("$ref");
+			// Object ref = o.get("$ref");
 
-			if (ref != null) {
+			if (o.has("$ref")) {
+				Object ref = o.get("$ref");
 				String refScript = ((String) ref).replace("#/", "");
 				JSONObject refMap = jsonObj.getJSONObject(refScript);
 				return refMap.getJSONObject(JsonFieldType.PROPERTIES_FIELD);
