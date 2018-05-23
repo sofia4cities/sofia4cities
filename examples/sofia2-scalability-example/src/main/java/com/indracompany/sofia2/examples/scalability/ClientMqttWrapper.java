@@ -19,8 +19,9 @@ public class ClientMqttWrapper implements Client {
 	public void createClient(String url) {
 		MQTTClient mqttClient;
 		String protocol = url.substring(0, 3);
-		
-		if ("ssl".equals(protocol.toLowerCase())) {
+		if("tcp".equals(protocol.toLowerCase())) {
+			mqttClient = new MQTTClient(url);
+		} else {
 			ClassPathResource classPathResource = new ClassPathResource("clientdevelkeystore.jks");
 			String keystore;
 			try {
@@ -29,11 +30,9 @@ public class ClientMqttWrapper implements Client {
 				throw new RuntimeException("Error opening clientdevelkeystore.jks");
 			}
 			MQTTSecureConfiguration sslConfig = new MQTTSecureConfiguration(keystore, "changeIt!");
-			mqttClient = new MQTTClient(url, sslConfig);
-			
-		} else {
-			mqttClient = new MQTTClient(url);
+			mqttClient = new MQTTClient(url, sslConfig);	
 		}
+		
 		if(client != null) {
 			client.disconnect();
 		}

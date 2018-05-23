@@ -18,4 +18,4 @@ spring: ## General Config
 ## LOGGING CONF
 logging:
    level:
-      com.indra: INFO
+      com.indra: WARN
