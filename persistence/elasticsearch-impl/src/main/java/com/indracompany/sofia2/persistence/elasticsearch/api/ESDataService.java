@@ -45,7 +45,7 @@ public class ESDataService {
 
 		List<String> list = new ArrayList<String>(Arrays.asList(indexes));
 
-		Search search = new Search.Builder(jsonQueryString).addIndex(list).build();
+		Search search = new Search.Builder(jsonQueryString).addIndices(list).build();
 
 		SearchResult result;
 		try {
@@ -63,7 +63,7 @@ public class ESDataService {
 		jsonQueryString = jsonQueryString.replaceAll("\\r", "");
 
 		List<String> list = new ArrayList<String>(Arrays.asList(indexes));
-		Search search = new Search.Builder(jsonQueryString).addIndex(list).build();
+		Search search = new Search.Builder(jsonQueryString).addIndices(list).build();
 		SearchResult result;
 		try {
 			result = connector.getHttpClient().execute(search);
