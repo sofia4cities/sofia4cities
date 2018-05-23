@@ -27,14 +27,19 @@ public class HiveColumn {
 	@Setter
 	private String columnType;
 
+	@Getter
+	@Setter
+	private boolean required;
+
 	public HiveColumn() {
 		super();
 	}
 
-	public HiveColumn(String name, String columnType) {
+	public HiveColumn(String name, String columnType, boolean required) {
 		super();
 		this.name = name;
 		this.columnType = columnType;
+		this.required = required;
 	}
 
 }

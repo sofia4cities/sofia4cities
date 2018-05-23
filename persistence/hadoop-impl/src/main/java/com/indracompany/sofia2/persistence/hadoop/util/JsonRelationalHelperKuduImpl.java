@@ -87,17 +87,14 @@ public class JsonRelationalHelperKuduImpl {
 				JSONObject o = obj.getJSONObject(key);
 
 				if (isGeometry(obj.getJSONObject(key))) {
-					System.out.println(key + " is geometry");
 					JSONArray coordinates = o.getJSONArray("coordinates");
 					sqlInsert.append(key + HiveFieldType.LATITUDE_FIELD).append(", ")
 							.append(key + HiveFieldType.LONGITUDE_FIELD);
 					sqlValues.append(coordinates.getDouble(0)).append(",").append(coordinates.getDouble(1));
 				} else if (isTimestamp(obj.getJSONObject(key))) {
-					System.out.println(key + " is timestamp");
 					sqlInsert.append(key);
 					sqlValues.append("'").append(o.get("$date")).append("'");
 				} else if (isContextData(key)) {
-					System.out.println(key + " is contextData");
 
 					sqlInsert.append(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE).append(", ");
 					sqlValues.append("'").append(o.get(FIELD_DEVICE_TEMPLATE)).append("', ");
@@ -177,20 +174,15 @@ public class JsonRelationalHelperKuduImpl {
 		String nombreClave = "";
 
 		try {
+			@SuppressWarnings("unchecked")
 			Map<String, Object> obj = new ObjectMapper().readValue(json, Map.class);
 
 			Iterator<Entry<String, Object>> it = obj.entrySet().iterator();
 
 			while (it.hasNext()) {
-				Map.Entry<String, Object> e = (Entry<String, Object>) it.next();
+				Map.Entry<String, Object> e = it.next();
 				nombreClave = e.getKey().toString();
-				/*
-				 * if (e.getValue() instanceof LinkedHashMap) {
-				 * compruebaValorDeClaves((LinkedHashMap<String, Object>) e.getValue(),
-				 * nombreClave, map); } else {
-				 */
 				map.put(nombreClave, e.getValue());
-				// }
 			}
 		} catch (Exception e) {
 			throw new DBPersistenceException(e);

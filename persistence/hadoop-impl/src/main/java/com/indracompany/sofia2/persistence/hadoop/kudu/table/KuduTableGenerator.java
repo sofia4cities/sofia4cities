@@ -63,8 +63,6 @@ public class KuduTableGenerator {
 			String key = it.next();
 			JSONObject o = (JSONObject) properties.get(key);
 
-			// Object ref = o.get("$ref");
-
 			if (o.has("$ref")) {
 				Object ref = o.get("$ref");
 				String refScript = ((String) ref).replace("#/", "");
@@ -86,17 +84,25 @@ public class KuduTableGenerator {
 		table.getColumns().add(getPrimaryId());
 		table.getColumns().addAll(getContexDataFields());
 
+		List<String> requiredProperties = new ArrayList<>();
+
+		if (props.has("required")) {
+			JSONArray array = props.getJSONArray("required");
+
+			for (int i = 0; i < array.length(); i++) {
+				requiredProperties.add(array.getString(i));
+			}
+		}
+
 		while (it.hasNext()) {
 			String key = it.next();
 			JSONObject o = (JSONObject) props.get(key);
 
 			if (isPrimitive(o)) {
-				HiveColumn column = new HiveColumn();
-				column.setName(key);
-				column.setColumnType(pickPrimitiveType(key, o));
-				table.getColumns().add(column);
+				table.getColumns()
+						.add(new HiveColumn(key, pickPrimitiveType(key, o), requiredProperties.contains(key)));
 			} else {
-				table.getColumns().addAll(pickType(key, o));
+				table.getColumns().addAll(pickType(key, o, requiredProperties));
 			}
 		}
 
@@ -150,29 +156,17 @@ public class KuduTableGenerator {
 		return result;
 	}
 
-	public List<HiveColumn> pickType(String key, JSONObject o) {
+	public List<HiveColumn> pickType(String key, JSONObject o, List<String> requiredProperties) {
 
 		List<HiveColumn> columns = new ArrayList<>();
 
 		if (isGeometry(o)) {
 
-			HiveColumn latitude = new HiveColumn();
-			latitude.setName(key + HiveFieldType.LATITUDE_FIELD);
-			latitude.setColumnType("double");
-			columns.add(latitude);
-
-			HiveColumn longitude = new HiveColumn();
-			longitude.setName(key + HiveFieldType.LONGITUDE_FIELD);
-			longitude.setColumnType("double");
-			columns.add(longitude);
+			columns.add(new HiveColumn(key + HiveFieldType.LATITUDE_FIELD, "double", true));
+			columns.add(new HiveColumn(key + HiveFieldType.LONGITUDE_FIELD, "double", true));
 
 		} else if (isTimestamp(o)) {
-
-			HiveColumn timestamp = new HiveColumn();
-			timestamp.setName(key);
-			timestamp.setColumnType(HiveFieldType.TIMESTAMP_FIELD);
-			columns.add(timestamp);
-
+			columns.add(new HiveColumn(key, HiveFieldType.TIMESTAMP_FIELD, requiredProperties.contains(key)));
 		}
 
 		return columns;
@@ -197,23 +191,23 @@ public class KuduTableGenerator {
 	}
 
 	public HiveColumn getPrimaryId() {
-		return new HiveColumn(JsonFieldType.PRIMARY_ID_FIELD, HiveFieldType.STRING_FIELD);
+		return new HiveColumn(JsonFieldType.PRIMARY_ID_FIELD, HiveFieldType.STRING_FIELD, true);
 	}
 
 	public List<HiveColumn> getContexDataFields() {
 
 		List<HiveColumn> columns = new ArrayList<>();
 
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE, HiveFieldType.STRING_FIELD, false));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE, HiveFieldType.STRING_FIELD, false));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION, HiveFieldType.STRING_FIELD, false));
 
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_SESSION, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_USER, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMEZONE_ID, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMESTAMP, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_SESSION, HiveFieldType.STRING_FIELD, false));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_USER, HiveFieldType.STRING_FIELD, false));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMEZONE_ID, HiveFieldType.STRING_FIELD, false));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMESTAMP, HiveFieldType.STRING_FIELD, false));
 
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMESTAMP_MILLIS, HiveFieldType.BIGINT_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMESTAMP_MILLIS, HiveFieldType.BIGINT_FIELD, false));
 
 		return columns;
 	}
