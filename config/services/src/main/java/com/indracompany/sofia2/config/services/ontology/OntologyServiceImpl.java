@@ -42,12 +42,15 @@ import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepository;
+import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 @Service
 public class OntologyServiceImpl implements OntologyService {
 
+	@Autowired
+	EntityDeletionService deletionService;
 	@Autowired
 	private OntologyRepository ontologyRepository;
 	@Autowired
@@ -612,7 +615,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Override
 	public void delete(Ontology ontology) {
-		ontologyRepository.delete(ontology);
+		deletionService.deleteOntology(ontology.getId(), ontology.getUser().getUserId());
 	}
 
 }
