@@ -26,7 +26,7 @@ import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
 import com.indracompany.sofia2.persistence.hadoop.config.condition.HadoopEnabledCondition;
 import com.indracompany.sofia2.persistence.hadoop.resultset.KuduResultSetExtractor;
-import com.indracompany.sofia2.persistence.hadoop.util.QueryProcessor;
+import com.indracompany.sofia2.persistence.hadoop.util.HadoopQueryProcessor;
 import com.indracompany.sofia2.persistence.interfaces.QueryAsTextDBRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ public class KuduQueryAsTextDBRepository implements QueryAsTextDBRepository {
 	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	private QueryProcessor queryProcessor;
+	private HadoopQueryProcessor queryProcessor;
 
 	@PostConstruct
 	public void sss() {

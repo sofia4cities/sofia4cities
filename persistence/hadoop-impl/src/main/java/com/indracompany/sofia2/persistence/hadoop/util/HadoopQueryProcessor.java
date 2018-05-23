@@ -17,7 +17,7 @@ package com.indracompany.sofia2.persistence.hadoop.util;
 import org.springframework.stereotype.Service;
 
 @Service
-public class QueryProcessor {
+public class HadoopQueryProcessor {
 
 	public String parse(String query) {
 
