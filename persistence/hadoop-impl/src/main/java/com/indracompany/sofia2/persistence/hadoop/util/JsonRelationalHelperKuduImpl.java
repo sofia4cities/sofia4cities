@@ -14,18 +14,18 @@
  */
 package com.indracompany.sofia2.persistence.hadoop.util;
 
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM_CONNECTION;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM_INSTANCE;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_SESSION;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE_TEMPLATE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMESTAMP;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMESTAMP_MILLIS;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMEZONE_ID;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_USER;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_PLATFORM;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_PLATFORM_CONNECTION;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_PLATFORM_INSTANCE;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_SESSION;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_DEVICE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_DEVICE_TEMPLATE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_DEVICE_TEMPLATE_CONNECTION;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_TIMESTAMP;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_TIMESTAMP_MILLIS;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_TIMEZONE_ID;
@@ -99,14 +99,14 @@ public class JsonRelationalHelperKuduImpl {
 				} else if (isContextData(key)) {
 					System.out.println(key + " is contextData");
 
-					sqlInsert.append(CONTEXT_DATA_FIELD_CLIENT_PLATFORM).append(", ");
-					sqlValues.append("'").append(o.get(FIELD_CLIENT_PLATFORM)).append("', ");
+					sqlInsert.append(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE).append(", ");
+					sqlValues.append("'").append(o.get(FIELD_DEVICE_TEMPLATE)).append("', ");
 
-					sqlInsert.append(CONTEXT_DATA_FIELD_CLIENT_PLATFORM_INSTANCE).append(", ");
-					sqlValues.append("'").append(o.get(FIELD_CLIENT_PLATFORM_INSTANCE)).append("', ");
+					sqlInsert.append(CONTEXT_DATA_FIELD_DEVICE).append(", ");
+					sqlValues.append("'").append(o.get(FIELD_DEVICE)).append("', ");
 
-					sqlInsert.append(CONTEXT_DATA_FIELD_CLIENT_PLATFORM_CONNECTION).append(", ");
-					sqlValues.append("'").append(o.get(FIELD_CLIENT_PLATFORM_CONNECTION)).append("', ");
+					sqlInsert.append(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION).append(", ");
+					sqlValues.append("'").append(o.get(FIELD_DEVICE_TEMPLATE_CONNECTION)).append("', ");
 
 					sqlInsert.append(CONTEXT_DATA_FIELD_CLIENT_SESSION).append(", ");
 					sqlValues.append("'").append(o.get(FIELD_CLIENT_SESSION)).append("', ");
