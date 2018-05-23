@@ -688,10 +688,10 @@ public class InitConfigDB {
 			clientPlatformRepository.save(client);
 			client = new ClientPlatform();
 			client.setId("4");
-			client.setUser(getUserAdministrator());
-			client.setIdentification("ContPerf device");
+			client.setUser(getUserDeveloper());
+			client.setIdentification("Device Master");
 			client.setEncryptionKey(UUID.randomUUID().toString());
-			client.setDescription("Device for continuous performance testing");
+			client.setDescription("Device template for testing");
 			clientPlatformRepository.save(client);
 		}
 
@@ -895,6 +895,15 @@ public class InitConfigDB {
 			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Audit.json"));
 			dataModel.setDescription("Base Audit");
 			dataModel.setLabels("Audit,General,IoT");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("DeviceLog");
+			dataModel.setTypeEnum(DataModel.MainType.IoT);
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_DeviceLog.json"));
+			dataModel.setDescription("Data model for device logging");
+			dataModel.setLabels("General,IoT,Log");
 			dataModel.setUser(getUserAdministrator());
 			dataModelRepository.save(dataModel);
 			//
@@ -1506,7 +1515,7 @@ public class InitConfigDB {
 			client.setTokens(hashSetTokens);
 			tokenRepository.save(token);
 
-			client = this.clientPlatformRepository.findByIdentification("ContPerf device");
+			client = this.clientPlatformRepository.findByIdentification("Device Master");
 			token = new Token();
 			token.setClientPlatform(client);
 			token.setToken("56686a5a0d7e497d9cafbbbd4b2563ee");
@@ -1521,10 +1530,10 @@ public class InitConfigDB {
 		List<UserToken> tokens = this.userTokenRepository.findAll();
 		if (tokens.isEmpty()) {
 			List<User> userList = this.userCDBRepository.findAll();
-			
+
 			for (Iterator<User> iterator = userList.iterator(); iterator.hasNext();) {
 				User user = (User) iterator.next();
-				
+
 				UserToken userToken = new UserToken();
 
 				userToken.setToken(UUID.randomUUID().toString().replaceAll("-", ""));

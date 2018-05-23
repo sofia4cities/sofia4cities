@@ -79,13 +79,13 @@ public class OntologyDataServiceImplTest {
 		final String user = "developer";
 		final Source source = Source.INTERNAL_ROUTER;
 		final String clientConnection = "connection1";
-		final String clientPlatformId = "platform1";
-		final String clientPlatformInstance = "instance1";
+		final String deviceTemplate = "platform1";
+		final String device = "instance1";
 		final String clientSession = "session1";
 		OperationModel om = OperationModel.builder(ontologyName, operationType, user, source)
-				.clientConnection(clientConnection).clientPlatformId(clientPlatformId)
-				.clientPlatformInstance(clientPlatformInstance).clientSession(clientSession)
-				.body(TestResources.DATA_FOR_GOOD_JSON).cacheable(false).queryType(QueryType.NATIVE).build();
+				.clientConnection(clientConnection).deviceTemplate(deviceTemplate).device(device)
+				.clientSession(clientSession).body(TestResources.DATA_FOR_GOOD_JSON).cacheable(false)
+				.queryType(QueryType.NATIVE).build();
 
 		String completeBody = service.addContextData(om, null);
 		assertTrue("The body should be created", completeBody != null);
@@ -103,12 +103,11 @@ public class OntologyDataServiceImplTest {
 		JsonNode userJSON = contextData.findValue("user");
 		assertTrue("The user should be created", userJSON.asText().equals(user));
 
-		JsonNode clientPlatformJSON = contextData.findValue("clientPatform");
-		assertTrue("The clientPatform should be created", clientPlatformJSON.asText().equals(clientPlatformId));
+		JsonNode deviceTemplateJSON = contextData.findValue("deviceTemplate");
+		assertTrue("The deviceTemplate should be created", deviceTemplateJSON.asText().equals(deviceTemplate));
 
-		JsonNode clientPlatformInstanceJSON = contextData.findValue("clientPatformInstance");
-		assertTrue("The clientPatformInstance should be created",
-				clientPlatformInstanceJSON.asText().equals(clientPlatformInstance));
+		JsonNode deviceJSON = contextData.findValue("device");
+		assertTrue("The device should be created", deviceJSON.asText().equals(device));
 
 		JsonNode clientConnectionJSON = contextData.findValue("clientConnection");
 		assertTrue("The clientConnection should be created", clientConnectionJSON.asText().equals(clientConnection));
@@ -127,7 +126,8 @@ public class OntologyDataServiceImplTest {
 		ontology.setIdentification(ontologyName);
 		ontology.setJsonSchema(TestResources.GOOD_JSON_SCHEMA);
 
-		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_GOOD_JSON, ontology, EncryptionOperations.encrypt);
+		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_GOOD_JSON, ontology,
+				EncryptionOperations.encrypt);
 
 		assertTrue("If ontology does not allow encryption, data should not be encrypted",
 				TestResources.DATA_FOR_GOOD_JSON.equals(encryptedData));
@@ -144,7 +144,8 @@ public class OntologyDataServiceImplTest {
 		ontology.setJsonSchema(TestResources.SMALL_SCHEMA_WITH_ENCRYPTION);
 		ontology.setAllowsCypherFields(true);
 
-		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_GOOD_JSON, ontology, EncryptionOperations.encrypt);
+		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_GOOD_JSON, ontology,
+				EncryptionOperations.encrypt);
 
 		JsonNode jsonData = objectMapper.readTree(TestResources.DATA_FOR_GOOD_JSON);
 		JsonNode id = jsonData.findPath("id");
@@ -164,7 +165,8 @@ public class OntologyDataServiceImplTest {
 		ontology.setJsonSchema(TestResources.LONG_SCHEMA_WITH_ENCRYPTED);
 		ontology.setAllowsCypherFields(true);
 
-		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT, ontology, EncryptionOperations.encrypt);
+		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT, ontology,
+				EncryptionOperations.encrypt);
 
 		JsonNode jsonData = objectMapper.readTree(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT);
 		JsonNode name = jsonData.findPath("image").path("media").path("name");
@@ -186,9 +188,10 @@ public class OntologyDataServiceImplTest {
 		assertTrue("Feed.image.media.mime should not be encrypted", mime.toString().equals(encryptedMime.toString()));
 
 	}
-	
+
 	@Test
-	public void given_OneOntologyThatAllowsEncryptedDataAndOneEncryptedEntity_When_DecryptionOfDataIsRequested_Then_TheClearEntityIsReturned() throws IOException {
+	public void given_OneOntologyThatAllowsEncryptedDataAndOneEncryptedEntity_When_DecryptionOfDataIsRequested_Then_TheClearEntityIsReturned()
+			throws IOException {
 		final String ontologyName = "one";
 		final Ontology ontology = new Ontology();
 		ontology.setId("1");
@@ -196,7 +199,8 @@ public class OntologyDataServiceImplTest {
 		ontology.setJsonSchema(TestResources.SMALL_SCHEMA_WITH_ENCRYPTION);
 		ontology.setAllowsCypherFields(true);
 
-		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_GOOD_JSON, ontology, EncryptionOperations.encrypt);
+		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_GOOD_JSON, ontology,
+				EncryptionOperations.encrypt);
 
 		JsonNode jsonData = objectMapper.readTree(TestResources.DATA_FOR_GOOD_JSON);
 		JsonNode id = jsonData.findPath("id");
@@ -204,10 +208,11 @@ public class OntologyDataServiceImplTest {
 		JsonNode encryptedId = jsonEncryptedData.findPath("id");
 
 		assertFalse("Data should be encrypted", id.toString().equals(encryptedId.toString()));
-		
+
 		String clearData = service.encryptionOperation(encryptedData, ontology, EncryptionOperations.decrypt);
-		
-		assertTrue("Data should be equal after encrytion and decryption process", clearData.equals(jsonData.toString()));
-		
+
+		assertTrue("Data should be equal after encrytion and decryption process",
+				clearData.equals(jsonData.toString()));
+
 	}
 }

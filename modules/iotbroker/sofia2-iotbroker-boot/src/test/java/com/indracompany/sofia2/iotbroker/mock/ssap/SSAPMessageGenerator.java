@@ -45,8 +45,8 @@ public final class SSAPMessageGenerator {
 		ssapMessage.setDirection(SSAPMessageDirection.REQUEST);
 		ssapMessage.setMessageId(UUID.randomUUID().toString());
 		ssapMessage.setMessageType(SSAPMessageTypes.JOIN);
-		body.setClientPlatform(faker.name().firstName());
-		body.setClientPlatformInstance(UUID.randomUUID().toString());
+		body.setDeviceTemplate(faker.name().firstName());
+		body.setDevice(UUID.randomUUID().toString());
 		body.setToken(UUID.randomUUID().toString());
 
 		ssapMessage.setBody(body);
@@ -54,7 +54,8 @@ public final class SSAPMessageGenerator {
 		return ssapMessage;
 	}
 
-	public static SSAPMessage<SSAPBodyInsertMessage> generateInsertMessage(String ontology, Object value) throws Exception, IOException {
+	public static SSAPMessage<SSAPBodyInsertMessage> generateInsertMessage(String ontology, Object value)
+			throws Exception, IOException {
 
 		final SSAPMessage<SSAPBodyInsertMessage> message = new SSAPMessage<>();
 		message.setSessionKey(UUID.randomUUID().toString());
@@ -69,7 +70,8 @@ public final class SSAPMessageGenerator {
 		return message;
 	}
 
-	public static SSAPMessage<SSAPBodyUpdateMessage> generateUpdateMessage(String ontology, String query) throws Exception, IOException {
+	public static SSAPMessage<SSAPBodyUpdateMessage> generateUpdateMessage(String ontology, String query)
+			throws Exception, IOException {
 
 		final SSAPMessage<SSAPBodyUpdateMessage> message = new SSAPMessage<>();
 		message.setSessionKey(UUID.randomUUID().toString());
@@ -126,7 +128,8 @@ public final class SSAPMessageGenerator {
 		return message;
 	}
 
-	public static SSAPMessage<SSAPBodyQueryMessage> generateQueryMessage(String ontology, SSAPQueryType type, String query) {
+	public static SSAPMessage<SSAPBodyQueryMessage> generateQueryMessage(String ontology, SSAPQueryType type,
+			String query) {
 		final SSAPMessage<SSAPBodyQueryMessage> message = new SSAPMessage<>();
 		message.setSessionKey(UUID.randomUUID().toString());
 
@@ -141,7 +144,8 @@ public final class SSAPMessageGenerator {
 		return message;
 	}
 
-	public static SSAPMessage<SSAPBodySubscribeMessage> generateSubscriptionMessage(String ontology, String sessionKey,SSAPQueryType queryType, String query) {
+	public static SSAPMessage<SSAPBodySubscribeMessage> generateSubscriptionMessage(String ontology, String sessionKey,
+			SSAPQueryType queryType, String query) {
 		final SSAPMessage<SSAPBodySubscribeMessage> message = new SSAPMessage<>();
 		message.setSessionKey(sessionKey);
 
@@ -156,7 +160,8 @@ public final class SSAPMessageGenerator {
 		return message;
 	}
 
-	public static SSAPMessage<SSAPBodyCommandMessage> generateCommandMessage(String sessionKey) throws JsonProcessingException, IOException {
+	public static SSAPMessage<SSAPBodyCommandMessage> generateCommandMessage(String sessionKey)
+			throws JsonProcessingException, IOException {
 		final SSAPMessage<SSAPBodyCommandMessage> message = new SSAPMessage<>();
 		message.setSessionKey(sessionKey);
 
@@ -171,8 +176,8 @@ public final class SSAPMessageGenerator {
 		return message;
 	}
 
-	//	public static SSAPMessage<SSAPBodyLeaveMessage> generateLeaveMessage() {
-	//		final SSAPMessage<SSAPBodyLeaveMessage> message = new SSAPMessage<>();
+	// public static SSAPMessage<SSAPBodyLeaveMessage> generateLeaveMessage() {
+	// final SSAPMessage<SSAPBodyLeaveMessage> message = new SSAPMessage<>();
 	//
-	//	}
+	// }
 }

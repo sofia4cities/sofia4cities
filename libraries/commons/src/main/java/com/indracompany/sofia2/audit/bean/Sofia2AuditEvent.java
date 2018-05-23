@@ -38,7 +38,9 @@ public class Sofia2AuditEvent implements Serializable {
 	}
 
 	public enum OperationType {
-		LOGIN, LOGOUT, JOIN, LEAVE, INSERT, UPDATE, DELETE, QUERY, SUBSCRIBE, UNSUBSCRIBE, INDICATION, COMMAND, START, STOP
+
+		LOGIN, LOGOUT, JOIN, LEAVE, INSERT, UPDATE, DELETE, QUERY, SUBSCRIBE, UNSUBSCRIBE, INDICATION, COMMAND, START, STOP, LOG
+
 	}
 
 	public static enum ResultOperationType {

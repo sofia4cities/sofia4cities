@@ -77,6 +77,7 @@ public class JsonToolController {
 	public @ResponseBody String createOntology(Model model, @RequestParam String ontologyIdentification,
 			@RequestParam String ontologyDescription, @RequestParam String schema, @RequestParam String instance,
 			@RequestParam String datasource) throws IOException {
+
 		Ontology ontology = new Ontology();
 		ontology.setJsonSchema(this.completeSchema(schema, ontologyIdentification, ontologyDescription).toString());
 		ontology.setIdentification(ontologyIdentification);

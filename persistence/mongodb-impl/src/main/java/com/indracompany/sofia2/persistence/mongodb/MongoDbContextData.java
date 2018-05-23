@@ -28,27 +28,29 @@ import com.indracompany.sofia2.persistence.ContextData;
 import lombok.Getter;
 import lombok.Setter;
 
-public class MongoDbContextData  {
+public class MongoDbContextData {
 
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
-	@Getter @Setter private ContextData contextData;
-	
+	@Getter
+	@Setter
+	private ContextData contextData;
+
 	private MongoDbDate timestamp;
-	
-	public MongoDbContextData(){}
-	
+
+	public MongoDbContextData() {
+	}
+
 	public MongoDbContextData(JsonNode node) {
 		contextData = new ContextData(node);
 		this.timestamp = new MongoDbDate(node.findValue("timestamp"));
 	}
-	
+
 	public MongoDbContextData(ContextData cd) {
 		contextData = cd;
 		this.timestamp = new MongoDbDate();
 	}
-
 
 	public String toJson() {
 		try {
@@ -57,26 +59,25 @@ public class MongoDbContextData  {
 			throw new RuntimeException("Unable to serialize contextData.");
 		}
 	}
-		
+
 	@Override
 	public String toString() {
-		return "MongoDbContextData ["
-				+ "timestamp=" + timestamp + 
-				", user=" + contextData.getUser() + 
-				", clientPlatform="	+ contextData.getClientPatform() + 
-				", clientConnection=" +contextData.getClientConnection() + 
-				", clientSession=" + contextData.getClientSession() +
-				", timeZoneId=" + contextData.getTimezoneId();
+		return "MongoDbContextData [" + "timestamp=" + timestamp + ", user=" + contextData.getUser()
+				+ ", deviceTemplate=" + contextData.getDeviceTemplate() + ", clientConnection="
+				+ contextData.getClientConnection() + ", clientSession=" + contextData.getClientSession()
+				+ ", timeZoneId=" + contextData.getTimezoneId();
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
-		if (other == null) return false;
-		if (!(other instanceof MongoDbContextData)) return false;
+		if (other == null)
+			return false;
+		if (!(other instanceof MongoDbContextData))
+			return false;
 		MongoDbContextData that = (MongoDbContextData) other;
 		return this.timestamp.equals(that.timestamp) && this.contextData.equals(that.contextData);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(timestamp, contextData);

@@ -69,9 +69,8 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 		// 1º
 		ContextData data = ContextData
 				.builder("user", UUID.randomUUID().toString(), UUID.randomUUID().toString(), System.currentTimeMillis())
-				.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
-				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
-				.build();
+				.clientConnection(UUID.randomUUID().toString()).deviceTemplate(UUID.randomUUID().toString())
+				.device(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString()).build();
 		ObjectMapper mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 
@@ -79,9 +78,8 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 		data = ContextData
 				.builder("admin", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
 						System.currentTimeMillis())
-				.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
-				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
-				.build();
+				.clientConnection(UUID.randomUUID().toString()).deviceTemplate(UUID.randomUUID().toString())
+				.device(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString()).build();
 		mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 
@@ -89,9 +87,8 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 		data = ContextData
 				.builder("other", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
 						System.currentTimeMillis())
-				.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
-				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
-				.build();
+				.clientConnection(UUID.randomUUID().toString()).deviceTemplate(UUID.randomUUID().toString())
+				.device(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString()).build();
 		mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 
@@ -99,9 +96,8 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 		data = ContextData
 				.builder("other", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
 						System.currentTimeMillis())
-				.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
-				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
-				.build();
+				.clientConnection(UUID.randomUUID().toString()).deviceTemplate(UUID.randomUUID().toString())
+				.device(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString()).build();
 		mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 

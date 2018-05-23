@@ -1,6 +1,7 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,10 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.iotbroker.plugable.interfaces.security;
+package com.indracompany.sofia2.config.components;
 
-import java.util.Map;
+import lombok.Data;
 
-public interface IoTSessionStore extends Map<String, IoTSession> {
+@Data
+public class Controlpanel {
+
+	public String base;
 
 }

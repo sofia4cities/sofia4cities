@@ -45,8 +45,8 @@ function buildSwaggerJSON(data) {
                 case "array":
                     typeData = typeOf(data[x][0]);
                     if (typeData === "array") {
-                        // op.properties[x] = { "type": "array", "items": { type: typeData } };
-                        throw new Error("Complex object (array of array etc...)", data[x][0]);
+                        op.properties[x] = { "type": "array", "items": { type: typeData } };
+                        //throw new Error("Complex object (array of array etc...)", data[x][0]);
                     }
                     if (typeData === "object") {
                         op.properties[x] = {

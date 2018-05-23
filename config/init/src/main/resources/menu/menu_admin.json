@@ -207,15 +207,23 @@
 			"submenu": [
 				{
 					"title": {
-						"EN": "Devices Management",
-						"ES": "Gestión de Dispositivos"
+						"EN": "Device Templates",
+						"ES": "Definición de Devices"
 					},
 					"icon": "",
 					"url": "/controlpanel/devices/list"
 				},
 				{
 					"title": {
-						"EN": "Devices Simulator Management",
+						"EN": "Devices Management",
+						"ES": "Gestión de Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devices/management/list"
+				},
+				{
+					"title": {
+						"EN": "Device Simulator Management",
 						"ES": "Gestión de Simulaciones de Dispositivos"
 					},
 					"icon": "",
