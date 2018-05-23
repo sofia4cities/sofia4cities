@@ -190,8 +190,7 @@ var MenuController = function() {
 					// CONTROL DE MENUS PPALES completamente ocultos
 					var submenus = $('.page-sidebar-menu > li.nav-item > ul.sub-menu');
 					submenus.each(function( index ){
-						console.log(index +': ' + $(this).children().length);
-						console.log('ocultos: ' + $(this).children('li[style*="display: none"]').length); 
+						logControl ? console.log(index +' totales: ' + $(this).children().length + ' ocultos: ' + $(this).children('li[style*="display: none"]').length): '';						
 						if ($(this).children().length == $(this).children('li[style*="display: none"]').length){							
 							$(this).parent('li.nav-item').addClass('hided').hide();
 						}
