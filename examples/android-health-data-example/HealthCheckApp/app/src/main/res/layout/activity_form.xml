@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorSecondary"
     tools:context="com.indracompany.sofia2.android.healthcheckapp.FormFragment">
 
     <ScrollView
@@ -98,6 +99,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_store_form"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="@color/colorAccent"
                 android:textStyle="bold" />
 
         </LinearLayout>

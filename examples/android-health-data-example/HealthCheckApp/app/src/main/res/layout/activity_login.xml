@@ -70,6 +70,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_sign_in"
+                android:textColor="@color/colorAccent"
+                android:background="@color/colorPrimaryDark"
                 android:textStyle="bold" />
 
         </LinearLayout>

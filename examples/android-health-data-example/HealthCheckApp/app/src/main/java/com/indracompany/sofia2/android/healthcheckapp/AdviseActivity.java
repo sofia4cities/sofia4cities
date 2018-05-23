@@ -1,16 +1,17 @@
 package com.indracompany.sofia2.android.healthcheckapp;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -30,48 +31,45 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpecialistActivity extends AppCompatActivity implements RequestAdapter.ListItemClickListener  {
+public class AdviseActivity extends AppCompatActivity {
 
-    private RequestAdapter mAdapter;
-    private RecyclerView mItemsRV;
-    private ArrayList<RequestData> mRequestArray = new ArrayList<>();
-
-    String mAccessToken = "";
-    String mUsername = "";
-    String mInput = "";
-
-    int clickedElement = 0;
-    String clickedId = "";
+    String mAccessToken;
+    private RecyclerView mRV;
+    List<HealthData> mHealthData;
+    Button mButton;
+    String mInput;
+    String mUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_specialist);
+        setContentView(R.layout.activity_advise);
 
         mAccessToken = getIntent().getStringExtra("accessToken");
         mUsername = getIntent().getStringExtra("username");
 
-        mItemsRV = (RecyclerView) findViewById(R.id.list_spec);
-        mItemsRV.setLayoutManager(new LinearLayoutManager(this));
-        mItemsRV.setHasFixedSize(true);
-    }
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.s4c_logo);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        mButton = (Button) findViewById(R.id.specialist_advise_button);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createAndShowAlertDialog();
+            }
+        });
+
+
+        Context context = AdviseActivity.this;
+        mRV = (RecyclerView) findViewById(R.id.list_specialist_advise);
+        mRV.setLayoutManager(new LinearLayoutManager(context));
+
         new GetFromS4CAsyncTask().execute((Void) null);
+
+
     }
 
-    @Override
-    public void onListItemClick(int clickedItemId) {
-        clickedElement = clickedItemId;
-        //createAndShowAlertDialog();
-        Intent mIntent = new Intent();
-        mIntent = new Intent(SpecialistActivity.this,AdviseActivity.class);
-        mIntent.putExtra("accessToken",mAccessToken);
-        mIntent.putExtra("username",mUsername);
-        startActivity(mIntent);
-    }
 
     public class GetFromS4CAsyncTask extends AsyncTask<Void, Void, Integer> {
 
@@ -80,7 +78,7 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/specialistInterface/\\PendingRequests";
+            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/citizenInterface/\\HistoricalData";
             URL url = null;
             int responseCode = 500;
             try {
@@ -114,7 +112,7 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
                     connection.disconnect();
 
                     ja =  new JSONArray(responseOutput.toString());
-                    mRequestArray = loadRequestDataFromJson(ja);
+                    mHealthData = loadHealthDataFromJson(ja);
 
 
                 }
@@ -136,6 +134,7 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
                 e.printStackTrace();
             }
 
+            // TODO: register the new account here.
             return responseCode;
         }
 
@@ -143,41 +142,46 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
         protected void onPostExecute(Integer responseCode) {
             super.onPostExecute(responseCode);
             if(responseCode == HttpURLConnection.HTTP_OK){
-                loadRequestData();
+                loadHealthData();
+            }
+            else if(responseCode == HttpURLConnection.HTTP_FORBIDDEN){
+                Toast.makeText(AdviseActivity.this,"Access revoked by patient",Toast.LENGTH_SHORT).show();
+                finish();
             }
             else{
-                Toast.makeText(SpecialistActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
-                new GetFromS4CAsyncTask().execute((Void) null);
+                Toast.makeText(AdviseActivity.this,"Could not connect with S4C Platform",Toast.LENGTH_SHORT).show();
             }
         }
     }
-    public ArrayList<RequestData> loadRequestDataFromJson(JSONArray arrayFromS4c){
-        ArrayList<RequestData> mRequestData = new ArrayList<>(arrayFromS4c.length()+1);
+    public List<HealthData> loadHealthDataFromJson(JSONArray arrayFromS4c){
+        List<HealthData> mHealthData = new ArrayList<>(arrayFromS4c.length()+1);
         JSONObject data = new JSONObject();
         JSONObject contextData = new JSONObject();
 
         for(int i=0; i<arrayFromS4c.length();i++){
-            RequestData dummyRequestData = new RequestData();
+            HealthData dummyHealthData = new HealthData();
             try{
-                data = arrayFromS4c.getJSONObject(i).getJSONObject("value").getJSONObject("specialistInbox");
+                data = arrayFromS4c.getJSONObject(i).getJSONObject("value").getJSONObject("citizenHealthData");
                 contextData = arrayFromS4c.getJSONObject(i).getJSONObject("value").getJSONObject("contextData");
-                clickedId = arrayFromS4c.getJSONObject(i).getJSONObject("value").getString("_id");
 
-                dummyRequestData.setUsername(data.getString("patient"));
-                dummyRequestData.setPending(data.getString("pending"));
-
+                dummyHealthData.setComments(data.getString("comments"));
+                dummyHealthData.setDiaPressure(data.getInt("dia_pressure"));
+                dummyHealthData.setSysPressure(data.getInt("sys_pressure"));
+                dummyHealthData.setHeight(data.getInt("height"));
+                dummyHealthData.setWeight(data.getInt("weight"));
+                dummyHealthData.setTimestamp(contextData.getString("timestamp"));
             }
             catch (JSONException e){
                 e.printStackTrace();
             }
-            mRequestData.add(dummyRequestData);
+            mHealthData.add(dummyHealthData);
         }
 
-        return mRequestData;
+        return mHealthData;
     }
 
-    public void loadRequestData(){
-        mItemsRV.setAdapter(new RequestAdapter(mRequestArray,SpecialistActivity.this));
+    public void loadHealthData(){
+        mRV.setAdapter(new MyHealthFrameRecyclerViewAdapter(mHealthData));
     }
 
     private void createAndShowAlertDialog() {
@@ -283,11 +287,10 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
         protected void onPostExecute(Integer responseCode) {
             super.onPostExecute(responseCode);
             if(responseCode == HttpURLConnection.HTTP_OK){
-                Toast.makeText(SpecialistActivity.this,"Feedback sent",Toast.LENGTH_SHORT).show();
-                mRequestArray.remove(clickedElement);
+                Toast.makeText(AdviseActivity.this,"Feedback sent",Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(SpecialistActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdviseActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -36,6 +36,11 @@ public class HistActivity extends AppCompatActivity {
 
         mAccessToken = getIntent().getStringExtra("accessToken");
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.s4c_logo);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+
         Context context = HistActivity.this;
         mRV = (RecyclerView) findViewById(R.id.list);
         mRV.setLayoutManager(new LinearLayoutManager(context));
