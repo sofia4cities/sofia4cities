@@ -83,7 +83,7 @@ public class CheckSecurityFilter implements Filter {
     	String firstResult = null;
     	
         	HttpServletRequest req = (HttpServletRequest) request;
-        	CheckSecurityWrapper requestWrapper = new CheckSecurityWrapper(req);
+        	
         	
         	String path = new UrlPathHelper().getPathWithinApplication(req);
         	String[] states = path.split("/");
@@ -98,7 +98,7 @@ public class CheckSecurityFilter implements Filter {
             Authentication authentication = tokenExtractor.extract(req);
             
             if (authentication ==null && firstResult==null) {
-            	chain.doFilter(requestWrapper, response); // Goes to default servlet.
+            	chain.doFilter(request, response); // Goes to default servlet.
             }
             
             else if (authentication ==null && firstResult!=null) {
@@ -123,7 +123,7 @@ public class CheckSecurityFilter implements Filter {
             	}
             	
             	else {
-            		chain.doFilter(requestWrapper, response); // Goes to default servlet.
+            		chain.doFilter(request, response); // Goes to default servlet.
             		logout(req);
 
             	}

@@ -80,13 +80,14 @@ public class DashboardServiceImpl implements DashboardService {
 		List<DashboardDTO> dashboardsDTO = dashboards.stream().map(temp -> {
 			DashboardDTO obj = new DashboardDTO();
 			obj.setCreatedAt(temp.getCreatedAt());
-			// obj.setCustomcss(temp.getCustomcss());
-			// obj.setCustomjs(customjs);
 			obj.setDescription(temp.getDescription());
 			obj.setId(temp.getId());
 			obj.setIdentification(temp.getIdentification());
-			// obj.setJsoni18n(jsoni18n);
-			// obj.setModel(model);
+			if (null != temp.getImage()) {
+				obj.setHasImage(Boolean.TRUE);
+			} else {
+				obj.setHasImage(Boolean.FALSE);
+			}
 			obj.setPublic(temp.isPublic());
 			obj.setUpdatedAt(temp.getUpdatedAt());
 			obj.setUser(temp.getUser());
@@ -108,15 +109,26 @@ public class DashboardServiceImpl implements DashboardService {
 		return identifications;
 	}
 
+	@Transactional
 	@Override
 	public void deleteDashboard(String dashboardId, String userId) {
-		if (hasUserEditPermission(dashboardId, userId)) {
-			Dashboard dashboard = this.dashboardRepository.findById(dashboardId);
-			if (dashboard != null) {
-				this.dashboardRepository.delete(dashboard);
-			} else
-				throw new DashboardServiceException("Cannot delete dashboard that does not exist");
-		}
+
+		Dashboard dashboard = this.dashboardRepository.findById(dashboardId);
+		if (dashboard != null) {
+			this.dashboardRepository.delete(dashboard);
+		} else
+			throw new DashboardServiceException("Cannot delete dashboard that does not exist");
+
+	}
+
+	@Transactional
+	@Override
+	public String deleteDashboardAccess(String dashboardId, String userId) {
+
+		Dashboard d = dashboardRepository.findById(dashboardId);
+		this.dashboardUserAccessRepository.deleteByDashboard(d);
+		return d.getId();
+
 	}
 
 	@Override
@@ -158,14 +170,15 @@ public class DashboardServiceImpl implements DashboardService {
 		}
 	}
 
+	@Override
 	public boolean hasUserViewPermission(String id, String userId) {
 		User user = userRepository.findByUserId(userId);
 
-		if (userId.equals(ANONYMOUSUSER) || user == null) {
+		if (dashboardRepository.findById(id).isPublic()) {
+			return true;
+		} else if (userId.equals(ANONYMOUSUSER) || user == null) {
 			return dashboardRepository.findById(id).isPublic();
-		}
-
-		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
+		} else if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
 			return true;
 		} else {
 			boolean propietary = dashboardRepository.findById(id).getUser().getUserId().equals(userId);
@@ -249,10 +262,7 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Override
 	public Dashboard getDashboardById(String id, String userId) {
-		if (hasUserViewPermission(id, userId)) {
-			return dashboardRepository.findById(id);
-		}
-		throw new DashboardServiceException("Cannot view Dashboard that does not exist or don't have permission");
+		return dashboardRepository.findById(id);
 	}
 
 	@Override
@@ -286,6 +296,17 @@ public class DashboardServiceImpl implements DashboardService {
 			d.setCustomcss("");
 			d.setCustomjs("");
 			d.setJsoni18n("");
+			try {
+				if (null != dashboard.getImage() && !dashboard.getImage().isEmpty()) {
+					d.setImage(dashboard.getImage().getBytes());
+				} else {
+					d.setImage(null);
+				}
+			} catch (IOException e) {
+
+				e.printStackTrace();
+
+			}
 			d.setDescription(dashboard.getDescription());
 			d.setIdentification(dashboard.getIdentification());
 			d.setPublic(dashboard.getPublicAccess());
@@ -299,7 +320,7 @@ public class DashboardServiceImpl implements DashboardService {
 				if (dashboard.getAuthorizations() != null) {
 					List<DashboardAccessDTO> access = objectMapper.readValue(dashboard.getAuthorizations(), objectMapper
 							.getTypeFactory().constructCollectionType(List.class, DashboardAccessDTO.class));
-					for (Iterator iterator = access.iterator(); iterator.hasNext();) {
+					for (Iterator<DashboardAccessDTO> iterator = access.iterator(); iterator.hasNext();) {
 						DashboardAccessDTO dashboardAccessDTO = (DashboardAccessDTO) iterator.next();
 						DashboardUserAccess dua = new DashboardUserAccess();
 						dua.setDashboard(d);
@@ -398,9 +419,27 @@ public class DashboardServiceImpl implements DashboardService {
 			Dashboard d = dashboardRepository.findById(dashboard.getId());
 			d.setPublic(dashboard.getPublicAccess());
 			d.setDescription(dashboard.getDescription());
+			try {
+				if (dashboard.getImage() != null && !dashboard.getImage().isEmpty()) {
+					d.setImage(dashboard.getImage().getBytes());
+				} else {
+					d.setImage(null);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			this.dashboardRepository.save(d);
 			return d.getId();
 		}
+	}
+
+	@Override
+	public byte[] getImgBytes(String id) {
+		Dashboard d = dashboardRepository.findById(id);
+
+		byte[] buffer = d.getImage();
+
+		return buffer;
 	}
 
 }

@@ -15,7 +15,6 @@ package com.indracompany.sofia2.iotbroker.processor;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -34,19 +33,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
-
 import com.indracompany.sofia2.commons.testing.IntegrationTest;
-
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
-import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
@@ -83,16 +76,18 @@ public class DeleteProcessorTest {
 	@MockBean
 	DeviceManager deviceManager;
 
-	
-	//@MockBean
-	//IotBrokerAuditableAspect iotBrokerAuditableAspect;
+	// @MockBean
+	// IotBrokerAuditableAspect iotBrokerAuditableAspect;
 
 	private void auditMocks() {
 		try {
-			//TODO it is not possible to mock processTx in this way. It returns a value.
-			//TODO Furthermore, it is an @Around aspect, so it executes before and after the jointpoint method. 
-			//doNothing().when(iotBrokerAuditableAspect).processTx(any(), any(), any(), any());
-			//doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(), any(), any(), any(), any());
+			// TODO it is not possible to mock processTx in this way. It returns a value.
+			// TODO Furthermore, it is an @Around aspect, so it executes before and after
+			// the jointpoint method.
+			// doNothing().when(iotBrokerAuditableAspect).processTx(any(), any(), any(),
+			// any());
+			// doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(), any(),
+			// any(), any(), any());
 
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
@@ -115,7 +110,7 @@ public class DeleteProcessorTest {
 		// mockOntologies.createOntology(Person.class);
 
 		subject = PojoGenerator.generatePerson();
-		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(),
+		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), "",
 				objectMapper.writeValueAsString(subject));
 		// subjectId =
 		// objectMapper.readTree(subjectInsertResult).at("/_id/$oid").asText();

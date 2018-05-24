@@ -14,59 +14,62 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.management.device;
 
-import static com.indracompany.sofia2.controlpanel.controller.management.device.DeviceManagementUrl.OP_DEVICES;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.indracompany.sofia2.controlpanel.controller.management.BaseRestServices;
-import com.indracompany.sofia2.controlpanel.controller.management.model.ErrorServiceResponse;
-import com.indracompany.sofia2.controlpanel.controller.management.model.ResponseGeneric;
+import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.services.apimanager.ApiManagerService;
+import com.indracompany.sofia2.config.services.client.ClientPlatformService;
+import com.indracompany.sofia2.controlpanel.controller.management.ApiOpsRestServices;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(value="Device Management")
+@Api(value = "Device Management")
 @RestController
 @Slf4j
-public class DeviceManagementController extends BaseRestServices {
-	
-	
-	@ApiOperation(value = "Devices Management")
-	@GetMapping(OP_DEVICES)
-	
-	public ResponseEntity<ResponseGeneric> devices() {
+public class DeviceManagementController extends ApiOpsRestServices {
 
-		ResponseGeneric response = new ResponseGeneric();
+	@Autowired
+	ClientPlatformService clientPlatformService;
+	@Autowired
+	ApiManagerService apiManagerService;
+
+	@ApiOperation(value = "validate Device id with token")
+	@RequestMapping(value = "/validate/device/{identification}/token/{token}", method = RequestMethod.GET)
+	public ResponseEntity<?> validate(
+			@ApiParam(value = "identification  ", required = true) @PathVariable("identification") String identification,
+			@ApiParam(value = "Token", required = true) @PathVariable(name = "token") String token) {
+
 		try {
-			log.info(OP_DEVICES + " Request: Entry");
-			
-			
-			//TODO debugging purposes
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			log.info(authentication.toString());
-			
-		
+			ClientPlatform cp = clientPlatformService.getByIdentification(identification);
 
+			String clientPlatformId = cp.getId();
+
+			List<Token> tokens = clientPlatformService.getTokensByClientPlatformId(clientPlatformId);
+
+			if (tokens == null || tokens.size() == 0)
+				return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
+
+			Token result = tokens.stream().filter(x -> token.equals(x.getToken())).findAny().orElse(null);
+
+			if (result == null)
+				return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
+			else
+				return new ResponseEntity<>("VALID", HttpStatus.OK);
 		} catch (Exception e) {
-			response = new ResponseGeneric();
-			e.printStackTrace();
-			ErrorServiceResponse errorResponseService = processError(e);
-			response.setErrorResponse(errorResponseService);
-
-			response.setErrorCode("500");
-			response.setErrorDescription(errorResponseService.getDescription());
-			log.error(OP_DEVICES + " Error: " + e.getMessage(),e);
-			log.error(OP_DEVICES + " Error: " + e.getStackTrace());
-			return new ResponseEntity<ResponseGeneric>(response, HttpStatus.OK);
-
+			return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
 		}
-		return new ResponseEntity<ResponseGeneric> (response, HttpStatus.OK);
 
 	}
 

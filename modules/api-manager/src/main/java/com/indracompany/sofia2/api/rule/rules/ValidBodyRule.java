@@ -75,7 +75,7 @@ public class ValidBodyRule extends DefaultRuleBase {
 			}
 				
 			else 
-				stopAllNextRules(facts, "BODY IS NOT JSON PARSEABLE "+body,DefaultRuleBase.ReasonType.GENERAL);
+				stopAllNextRules(facts, "BODY IS NOT JSON PARSEABLE ",DefaultRuleBase.ReasonType.GENERAL);
 		}
 		
 		

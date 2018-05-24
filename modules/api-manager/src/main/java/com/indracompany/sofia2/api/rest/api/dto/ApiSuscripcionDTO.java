@@ -38,21 +38,15 @@ public class ApiSuscripcionDTO implements Cloneable, Serializable{
 	@Setter
 	private String userId;
 	
-	@ApiModelProperty(value = "APISubscription initDate")
+	@ApiModelProperty(value = "APISubscription createdAt")
 	@Getter
 	@Setter
-	private String initDate;
+	private String createdAt;
 	
-	@ApiModelProperty(value = "APISubscription endDate")
+	@ApiModelProperty(value = "APISubscription updatedAt")
 	@Getter
 	@Setter
-	private String endDate;
-	
-	@ApiModelProperty(value = "APISubscription active")
-	@Getter
-	@Setter
-	private Boolean active;
-
-	
+	private String updatedAt;
+		
 	
 }

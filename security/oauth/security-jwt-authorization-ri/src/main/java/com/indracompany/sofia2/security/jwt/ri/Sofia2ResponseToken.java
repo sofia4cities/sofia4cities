@@ -23,7 +23,7 @@ public class Sofia2ResponseToken implements Serializable {
 	private String token;
 	private Date expirationTimestamp;
 	private String expirationFormatted;
-	private String ip;
+	
 	
 	private OAuth2AccessToken oauthInfo;
 
@@ -60,15 +60,6 @@ public class Sofia2ResponseToken implements Serializable {
 	}
 	
 	
-
-	public String getIp() {
-		return ip;
-	}
-
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-
 	@Override
 	public String toString() {
 		return "Sofia2ResponseToken [token=" + token + ", expirationTimestamp=" + expirationTimestamp

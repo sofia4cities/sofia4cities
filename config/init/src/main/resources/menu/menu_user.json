@@ -46,14 +46,6 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/audit/show"
-				},
-				{
-					"title": {
-						"EN": "JSON import Tools",
-						"ES": "Herramientas de importación"
-					},
-					"icon": "",
-					"url": "/controlpanel/jsontool/tools"
 				}
 			]
 		}

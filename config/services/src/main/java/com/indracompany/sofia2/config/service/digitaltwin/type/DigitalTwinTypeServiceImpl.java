@@ -223,6 +223,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService {
 					l.setLogic(
 							logic.substring(1, logic.length() - 1).replace("\\n", System.getProperty("line.separator"))
 									.replace("\\r", "").replace("\\t", "   "));
+
 					logicDigitalTwinTypes.add(l);
 				}
 

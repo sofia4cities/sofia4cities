@@ -12,7 +12,7 @@
 	
 	<properties>	
 		<sofia2.version>5.2.0-SNAPSHOT</sofia2.version>
-		<docker.image.username>onesait</docker.image.username>
+		<docker.image.username>sofia2</docker.image.username>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -36,7 +36,7 @@
 		<elasticsearch.version>6.2.3</elasticsearch.version>
 		<skip.unit.tests>false</skip.unit.tests>
 		<skip.integration.tests>true</skip.integration.tests>
-		<sofia2.quartzURL>jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
+		<sofia2.quartzURL>jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
 	</properties>
 	
 	<dependencyManagement>
@@ -98,7 +98,7 @@
         <module>libraries/social</module>
         <module>libraries/flow-engine-services</module>
         <module>libraries/audit</module>
-        <module>libraries/streaming</module>
+        
 
 		<!--CONFIG -->
 		<module>config/model</module>
@@ -112,11 +112,13 @@
 		<module>security/oauth/security-jwt-core-ri</module>
 		<module>security/oauth/security-jwt-jdbc-core-ri</module>
 		<module>security/oauth/security-jwt-authorization-ri</module>
+		<module>security/kafka-login</module>
 		
 		<!--PERSISTENCE-->
 		<module>persistence/interfaces</module>	
 		<module>persistence/mongodb-impl</module>		
 		<module>persistence/elasticsearch-impl</module>		
+		<module>persistence/hadoop-impl</module>	
 		<module>persistence/services</module>				
 		
 		<module>contributions/spring-boot-admin-server-ui</module>
@@ -125,6 +127,7 @@
 		<!--THEMES -->
 		<module>themes/openplatform</module>
 		<module>themes/select4cities</module>
+		<module>themes/sofia2</module>
 
 		<!--MODULES-->
 		<module>modules/iotbroker</module>		
@@ -335,13 +338,13 @@
 		<profile>
 			<id>development</id>
 			<properties>
-				<sofia2.quartzURL>jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
+				<sofia2.quartzURL>jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
 			</properties>
 		</profile>
 		<profile>
 			<id>integration</id>
 			<properties>
-				<sofia2.quartzURL>jdbc:mysql://localhost:3307/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
+				<sofia2.quartzURL>jdbc:mysql://localhost:3307/sofia2_s4c_scheduler?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
 			</properties>
 		</profile>
 		<profile>

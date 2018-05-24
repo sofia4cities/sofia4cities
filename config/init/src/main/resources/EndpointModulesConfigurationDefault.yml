@@ -7,6 +7,8 @@ sofia2:
     scriptingEngine:
       base:
       advice:
+    controlpanel:
+      base: http://localhost:18000/controlpanel
     flowEngine:
       base: http://localhost:20100/flowengine
       advice: http://localhost:5050/
@@ -18,8 +20,8 @@ sofia2:
       hawtio: http://localhost:20000/hawtio/index.html
       swaggerUI: http://localhost:20000/router/swagger-ui.html
     apiManager:
-      base: https://localhost:19100/api-manager/
-      api: https://localhost:19100/api-manager/server/api/
-      swaggerUI: https://localhost:19100/api-manager/swagger-ui.html?url=
-      swaggerUIManagement: https://localhost:19100/api-manager/services/management/api-docs?url=/api-manager/services/management/swagger.json
-      swaggerJson: https://localhost:19100/api-manager/services/management/swagger/
+      base: http://localhost:19100/api-manager/
+      api: http://localhost:19100/api-manager/server/api/
+      swaggerUI: http://localhost:19100/api-manager/swagger-ui.html?url=
+      swaggerUIManagement: http://localhost:19100/api-manager/services/management/api-docs?url=/api-manager/services/management/swagger.json
+      swaggerJson: http://localhost:19100/api-manager/services/management/swagger/

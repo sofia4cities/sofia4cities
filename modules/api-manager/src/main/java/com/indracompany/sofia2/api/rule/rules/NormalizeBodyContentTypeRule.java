@@ -74,7 +74,7 @@ public class NormalizeBodyContentTypeRule extends DefaultRuleBase {
 					data.put(ApiServiceInterface.BODY, xmlJSONObj.toString());
 				} catch (Exception e) {
 					
-					stopAllNextRules(facts, "BODY IS NOT JSON PARSEABLE "+body+ ": "+e.getMessage(),DefaultRuleBase.ReasonType.GENERAL);
+					stopAllNextRules(facts, "BODY IS NOT JSON PARSEABLE : "+e.getMessage(),DefaultRuleBase.ReasonType.GENERAL);
 				}
 	
 			}

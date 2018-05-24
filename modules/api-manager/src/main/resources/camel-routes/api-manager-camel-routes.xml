@@ -12,23 +12,16 @@
 					</setBody>
 				</when>
 				<otherwise>
-
 					<doTry>
-						<throttle id="defaultThrottler" timePeriodMillis="1000"
-							rejectExecution="true">
-							<constant>100</constant>
+						<throttle id="defaultThrottler" timePeriodMillis="1000"	rejectExecution="true">
+							<constant>300</constant>
 							<to uri="direct:process-api" />
 						</throttle>
 						<doCatch>
 							<exception>org.apache.camel.processor.ThrottlerRejectedExecutionException</exception>
-							<log message="Error processing API" loggingLevel="ERROR" />
+							<log message="Error Throttling processing API" loggingLevel="ERROR" />
 							<to uri="direct:set-default-headers" />
-							<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
-								<constant>429</constant>
-							</setHeader>
-							<setBody>
-								<simple>["GLOBAL THROTTLER POLICY","${exception.message}"]</simple>
-							</setBody>
+							<to uri="direct:set-error-429"/>
 						</doCatch>
 					</doTry>
 				</otherwise>
@@ -44,21 +37,19 @@
 					<exception>java.io.IOException</exception>
 					<exception>java.lang.IllegalStateException</exception>
 					<exception>java.lang.Exception</exception>
-					<log message="Error processing API" loggingLevel="ERROR" />
+					<log message="Error processing API: Captured Exception" loggingLevel="ERROR" />
 					<to uri="direct:set-default-headers" />
-					<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
-						<constant>500</constant>
-					</setHeader>
-					<setBody>
-						<simple>["MESSAGE EXCEPTION","${exception.message}"]</simple>
-					</setBody>
+					<to uri="direct:set-error-500"/>
+					
 				</doCatch>
 				<choice>
 					<when>
 						<simple>${in.headers.STATUS} == 'STOP'</simple>
-						<log message="STOP STATE DETECTED" loggingLevel="ERROR" />
+						<log message="STOP STATE DETECTED: exiting" loggingLevel="ERROR" />
 						<to uri="direct:set-default-headers" />
-
+						<setBody>
+							<simple>${in.headers.REASON}</simple>
+						</setBody>
 					</when>
 					<otherwise>
 						<to uri="direct:process-query" />
@@ -73,28 +64,59 @@
 			<doTry>
 				<to uri="bean:apiServiceImpl?method=processQuery" />
 				<doCatch>
-					<exception>com.indracompany.sofia2.api.service.impl.ApiServiceException</exception>
-					<log message="Error in query" loggingLevel="ERROR"/>
+					<exception>java.lang.Exception</exception>
+					<log message="Error Processing Query, Exception detected" loggingLevel="ERROR" />
 					<to uri="direct:set-default-headers" />
-					<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
-						<constant>400</constant>
-					</setHeader>
-					<setBody>
-						<simple>["MESSAGE EXCEPTION","${exception.message}"]</simple>
-					</setBody>
+					<to uri="direct:set-error-500"/>
 				</doCatch>
+				
+				<choice>
+					<when>
+						<simple>${in.headers.STATUS} == 'STOP'</simple>
+						<log message="Error Processing Query, Stop Execution detected" loggingLevel="ERROR" />
+						<to uri="direct:set-default-headers" />
+						<to uri="direct:set-error-500"/>
+						<setBody>
+							<simple>${in.headers.REASON}</simple>
+						</setBody>
+					</when>
+					<otherwise>
+						<to uri="direct:post-process" />
+					</otherwise>
+				</choice>
+				
+				
+			</doTry>
+		</route>
+		
+		<route id="post-process">
+			<from uri="direct:post-process" />
+
+			<doTry>
+				<to uri="bean:apiServiceImpl?method=postProcess" />
 				<doCatch>
 					<exception>java.lang.Exception</exception>
-					<log message="Error processing QUERTY API" loggingLevel="ERROR" />
+					<log message="Error Post Processing ,Exception Detected: ${exception.message}" loggingLevel="ERROR" />
 					<to uri="direct:set-default-headers" />
-					<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
-						<constant>500</constant>
-					</setHeader>
-					<setBody>
-						<simple>["MESSAGE EXCEPTION","${exception.message}"]</simple>
-					</setBody>
+					<to uri="direct:set-error-500"/>
+					
 				</doCatch>
-				<to uri="direct:process-output" />
+				
+				<choice>
+					<when>
+						<simple>${in.headers.STATUS} == 'STOP'</simple>
+						<log message="Error Post Processing Query, Stop Execution detected" loggingLevel="ERROR" />
+						<to uri="direct:set-default-headers" />
+						<to uri="direct:set-error-500"/>
+						<setBody>
+							<simple>${in.headers.REASON}</simple>
+						</setBody>
+					</when>
+					<otherwise>
+						<to uri="direct:process-output" />
+					</otherwise>
+				</choice>
+				
 			</doTry>
 		</route>
 
@@ -108,6 +130,7 @@
 					<exception>java.lang.Exception</exception>
 					<log message="Error processing OUTPUT API ${exception.message}" loggingLevel="ERROR" />
 					<to uri="direct:set-default-headers" />
+					<to uri="direct:set-error-500"/>
 				</doCatch>
 				<setHeader headerName="Content-Type">
 					<simple>${in.headers.CONTENT_TYPE}</simple>
@@ -151,5 +174,49 @@
 				<constant>SAMEORIGIN</constant>
 			</setHeader>
 		</route>
+		
+		<route id="set-error-500">
+			<from uri="direct:set-error-500" />
+			
+			<setHeader headerName="STATUS">
+				<constant>STOP</constant>
+			</setHeader>
+			
+			<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+				<constant>500</constant>
+			</setHeader>
+			
+		</route>
+		
+		<route id="set-error-400">
+			<from uri="direct:set-error-400" />
+			
+			<setHeader headerName="STATUS">
+				<constant>STOP</constant>
+			</setHeader>
+
+			<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+				<constant>400</constant>
+			</setHeader>
+			
+		</route>
+		
+		<route id="set-error-429">
+			<from uri="direct:set-error-429" />
+			
+			<setHeader headerName="STATUS">
+				<constant>STOP</constant>
+			</setHeader>
+
+			<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+				<constant>429</constant>
+			</setHeader>
+			
+			<setBody>
+				<simple>{"result":"GLOBAL THROTTLER POLICY", "message":"Maximum petitions reached"}</simple>
+			</setBody>
+			
+		</route>
+		
 
 	</routes>

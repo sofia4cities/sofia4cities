@@ -60,6 +60,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 		instance.put("type", model.getType());
 		instance.put("timestamp", timestamp);
 		instance.put("event", event);
+
 		if (model.getEventName() != null) {
 			instance.put("eventName", model.getEventName());
 		}
@@ -70,6 +71,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 		}
 
 		String output = "";
+
 		result.setMessage("OK");
 		result.setStatus(true);
 
@@ -107,6 +109,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 		instance.put("timestamp", timestamp);
 
 		String output = "";
+
 		result.setMessage("OK");
 		result.setStatus(true);
 
@@ -144,6 +147,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 		instance.put("status", new JSONObject(model.getStatus()));
 
 		String output = "";
+
 		result.setMessage("OK");
 		result.setStatus(true);
 

@@ -38,10 +38,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.processor.DeviceManager;
 
 @RunWith(SpringRunner.class)
@@ -54,7 +54,7 @@ public class RestTest {
 	@Autowired
 	private WebApplicationContext wac;
 	private ResultActions resultAction;
-	private final String URL_PATH  = "/rest";
+	private final String URL_PATH = "/rest";
 	@Autowired
 	ObjectMapper mapper;
 
@@ -67,9 +67,6 @@ public class RestTest {
 	@MockBean
 	DeviceManager deviceManager;
 
-
-
-
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
 		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
@@ -79,7 +76,6 @@ public class RestTest {
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
 	}
-
 
 	@Before
 	public void setup() {
@@ -94,20 +90,19 @@ public class RestTest {
 	public void test_join() throws Exception {
 
 		final StringBuilder url = new StringBuilder(URL_PATH);
-		url.append("/client/join?token=2382c702758c4f26ad1d38d1309335d0&clientPlatform=GTKP-Example&clientPlatformId=1111");
-		resultAction = mockMvc.perform(MockMvcRequestBuilders.get(url.toString())
-				.accept(org.springframework.http.MediaType.APPLICATION_JSON)
-				.contentType(org.springframework.http.MediaType.APPLICATION_JSON));
+		url.append(
+				"/client/join?token=2382c702758c4f26ad1d38d1309335d0&clientPlatform=GTKP-Example&clientPlatformId=1111");
+		resultAction = mockMvc.perform(
+				MockMvcRequestBuilders.get(url.toString()).accept(org.springframework.http.MediaType.APPLICATION_JSON)
+						.contentType(org.springframework.http.MediaType.APPLICATION_JSON));
 
 		resultAction.andExpect(status().is2xxSuccessful());
 		final JsonNode result = mapper.readValue(resultAction.andReturn().getResponse().getContentAsString(),
 				JsonNode.class);
 		Assert.assertNotNull(result);
 
-		//		final String a = (String) result.getBody();
+		// final String a = (String) result.getBody();
 		System.out.println(result);
 	}
-
-
 
 }

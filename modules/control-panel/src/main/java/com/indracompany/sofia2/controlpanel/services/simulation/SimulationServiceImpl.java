@@ -50,7 +50,7 @@ public class SimulationServiceImpl implements SimulationService {
 
 		((ObjectNode) rootNode).put("clientPlatform", clientPlatform);
 
-		((ObjectNode) rootNode).put("clientPlatformInstance", clientPlatform + ":" + identification);
+		((ObjectNode) rootNode).put("clientPlatformInstance", identification);
 
 		((ObjectNode) rootNode).put("token", token);
 		((ObjectNode) rootNode).put("ontology", ontology);

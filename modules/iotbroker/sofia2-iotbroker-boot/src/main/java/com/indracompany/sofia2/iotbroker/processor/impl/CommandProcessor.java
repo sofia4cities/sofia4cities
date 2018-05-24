@@ -20,12 +20,14 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.processor.GatewayNotifier;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyCommandMessage;
@@ -36,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping(path="/")
+@RequestMapping(path = "/")
 @EnableAutoConfiguration
 @CrossOrigin(origins = "*")
 public class CommandProcessor {
@@ -45,38 +47,46 @@ public class CommandProcessor {
 	GatewayNotifier notifier;
 	@Autowired
 	ObjectMapper mapper;
+	@Autowired
+	SecurityPluginManager securityPluginManager;
 
-	@RequestMapping(value="/commandAsync/{command}", method=RequestMethod.POST)
-	public boolean sendAsync(@PathVariable(name="command") String command, String sessionKey, @RequestBody JsonNode params) {
-		final SSAPMessage<SSAPBodyCommandMessage> cmd = new SSAPMessage<>();
-		cmd.setBody(new SSAPBodyCommandMessage());
-		cmd.setDirection(SSAPMessageDirection.REQUEST);
-		cmd.setMessageType(SSAPMessageTypes.COMMAND);
-		cmd.setSessionKey(sessionKey);
-		cmd.getBody().setCommandId(UUID.randomUUID().toString());
-		cmd.getBody().setCommand(command);
-		cmd.getBody().setParams(params);
+	@RequestMapping(value = "/commandAsync/{command}", method = RequestMethod.POST)
+	public boolean sendAsync(@PathVariable(name = "command") String command,
+			@RequestHeader(value = "Authorization", required = true) String sessionKey, @RequestBody JsonNode params) {
 
-		notifier.sendCommandAsync(cmd);
+		if (this.securityPluginManager.checkSessionKeyActive(sessionKey)) {
+			final SSAPMessage<SSAPBodyCommandMessage> cmd = new SSAPMessage<>();
+			cmd.setBody(new SSAPBodyCommandMessage());
+			cmd.setDirection(SSAPMessageDirection.REQUEST);
+			cmd.setMessageType(SSAPMessageTypes.COMMAND);
+			cmd.setSessionKey(sessionKey);
+			cmd.getBody().setCommandId(UUID.randomUUID().toString());
+			cmd.getBody().setCommand(command);
+			cmd.getBody().setParams(params);
 
-		return true;
+			notifier.sendCommandAsync(cmd);
+
+			return true;
+		} else
+			return false;
 	}
 
-	//	@RequestMapping(value="/commandSync/{command}", method=RequestMethod.POST)
-	//	public JsonNode sendSync(@PathVariable(name="command") String command, String sessionKey, @RequestBody JsonNode params) {
+	// @RequestMapping(value="/commandSync/{command}", method=RequestMethod.POST)
+	// public JsonNode sendSync(@PathVariable(name="command") String command, String
+	// sessionKey, @RequestBody JsonNode params) {
 	//
-	//		final SSAPMessage<SSAPBodyCommandMessage> cmd = new SSAPMessage<>();
-	//		cmd.setBody(new SSAPBodyCommandMessage());
-	//		cmd.setDirection(SSAPMessageDirection.REQUEST);
-	//		cmd.setMessageType(SSAPMessageTypes.COMMAND);
-	//		cmd.setSessionKey(sessionKey);
-	//		cmd.getBody().setCommand(UUID.randomUUID().toString());
-	//		cmd.getBody().setCommand(command);
-	//		cmd.getBody().setParams(params);
+	// final SSAPMessage<SSAPBodyCommandMessage> cmd = new SSAPMessage<>();
+	// cmd.setBody(new SSAPBodyCommandMessage());
+	// cmd.setDirection(SSAPMessageDirection.REQUEST);
+	// cmd.setMessageType(SSAPMessageTypes.COMMAND);
+	// cmd.setSessionKey(sessionKey);
+	// cmd.getBody().setCommand(UUID.randomUUID().toString());
+	// cmd.getBody().setCommand(command);
+	// cmd.getBody().setParams(params);
 	//
-	//		notifier.sendCommandSync(cmd);
+	// notifier.sendCommandSync(cmd);
 	//
-	//		return JsonNodeFactory.instance.nullNode();
-	//	}
+	// return JsonNodeFactory.instance.nullNode();
+	// }
 
 }

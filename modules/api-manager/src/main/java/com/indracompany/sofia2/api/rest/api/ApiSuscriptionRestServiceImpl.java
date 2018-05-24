@@ -48,7 +48,7 @@ public class ApiSuscriptionRestServiceImpl implements ApiSuscriptionRestService 
 
 	@Override
 	public Response getApiSuscripcionesUsuario(String identificacionUsuario, String tokenUsuario) throws Exception {
-		return Response.ok(apiSuscripcionFIQL.toApiSuscripcionDTO(apiService.findApiSuscripcionesUser(identificacionUsuario))).build();
+		return Response.ok(apiSuscripcionFIQL.toApiSuscripcionesDTO(apiService.findApiSuscripcionesUser(identificacionUsuario))).build();
 	}
 	
 	@Override

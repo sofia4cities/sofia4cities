@@ -36,6 +36,7 @@ import com.indracompany.sofia2.audit.bean.Sofia2AuditError;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEventFactory;
 import com.indracompany.sofia2.iotbroker.audit.processor.DeleteAuditProcessor;
@@ -51,7 +52,6 @@ import com.indracompany.sofia2.iotbroker.common.exception.SSAPAuditProcessorExce
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -290,7 +290,7 @@ public class IotBrokerAuditProcessorTest {
 		Assert.assertEquals(session.getUserID(), event.getUser());
 		Assert.assertEquals(session.getSessionKey(), event.getSessionKey());
 		Assert.assertEquals(session.getClientPlatform(), event.getClientPlatform());
-		Assert.assertEquals(session.getClientPlatformInstance(), event.getClientPlatformInstance());
+		Assert.assertEquals(session.getDevice(), event.getClientPlatformInstance());
 		Assert.assertEquals(Module.IOTBROKER, event.getModule());
 
 	}

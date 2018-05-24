@@ -34,9 +34,12 @@
 			<artifactId>sofia2-persistence-elasticsearch</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-
-
-
+ 
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-persistence-hadoop</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.github.spullara.mustache.java</groupId>

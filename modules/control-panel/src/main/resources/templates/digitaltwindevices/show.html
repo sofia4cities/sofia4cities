@@ -309,7 +309,7 @@
 	$("#generateButton").on("click", function(){
 		var selected = $('input[name=project]:checked', '#digitaltwindevice_create_form').val()
 		if(selected=='maven'){
-			window.location.href = "/controlpanel/digitaltwindevices/generateProject/"+$("#identification").text()+"/"+$("#compile").val()+"/"+$("#sensehat").val(); 
+			window.location.href = "/controlpanel/digitaltwindevices/generateProject/"+encodeURIComponent($("#identification").text())+"/"+$("#compile").val(); 
 		}else {
 			//TODO
 		}

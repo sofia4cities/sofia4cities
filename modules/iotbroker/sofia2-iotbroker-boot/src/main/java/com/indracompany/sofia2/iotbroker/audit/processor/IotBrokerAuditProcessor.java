@@ -25,13 +25,13 @@ import com.indracompany.sofia2.audit.bean.Sofia2AuditError;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
 import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.audit.aop.MessageAuditProcessor;
 import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPAuditProcessorException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
@@ -122,7 +122,7 @@ public class IotBrokerAuditProcessor {
 			event.setUser(session.getUserID());
 			event.setSessionKey(message.getSessionKey());
 			event.setClientPlatform(session.getClientPlatform());
-			event.setClientPlatformInstance(session.getClientPlatformInstance());
+			event.setClientPlatformInstance(session.getDevice());
 		}
 
 		if (event.getUser() == null || "".equals(event.getUser())) {
@@ -159,7 +159,7 @@ public class IotBrokerAuditProcessor {
 
 		Optional<IoTSession> sessionPlugin = securityPluginManager.getSession(message.getSessionKey());
 
-		if (sessionPlugin !=  null && sessionPlugin.isPresent()) {
+		if (sessionPlugin != null && sessionPlugin.isPresent()) {
 			session = sessionPlugin.get();
 		}
 

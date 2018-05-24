@@ -570,7 +570,7 @@ var HeaderController = function() {
 	
 	// DASHBOARDS-CONFIRM-DIALOG
 	var showConfirmDialogDashboard = function(formId){	
-debugger
+
 		//i18 labels
 		var Close = headerReg.btnCancelar;
 		var Remove = headerReg.btnEliminar;

@@ -18,7 +18,7 @@
 buildImage()
 {
 	echo "Docker image generation with spotify plugin for module: "$1 
-	mvn clean package docker:build -Dmaven.test.skip=true
+	mvn clean package docker:build -Dmaven.test.skip=true -Ponesaitplatform
 }
 
 buildConfigDB()
@@ -47,10 +47,36 @@ buildRealTimeDB()
 	docker build -t $USERNAME/realtimedb:$1 .
 }
 
+buildMongoExpress()
+{
+	echo "MongoExpress image generation with Docker CLI: "
+	docker build -t $USERNAME/mongoexpress:$1 .
+}
+
 buildElasticSearchDB()
 {
 	echo "ElasticSearchDB image generation with Docker CLI: "
 	docker build -t $USERNAME/elasticdb:$1 .
+}
+
+buildKafka() 
+{
+	echo "KAFKA image generation with Docker CLI: "
+	docker build -t $USERNAME/kafka-secured:$1 .
+}
+
+buildZookeeper() 
+{
+	echo "KAFKA image generation with Docker CLI: "
+	docker build -t $USERNAME/zookeeper-secured:$1 .
+}
+
+buildScalability() 
+{
+	echo "Scalability module example image generation with Docker CLI: "
+	cp $1/target/*-exec.jar $1/docker/
+	docker build -t $USERNAME/$2:$3 .
+	rm $1/docker/*.jar
 }
 
 buildNginx()
@@ -195,70 +221,90 @@ if [ "$ONLYPERSISTENCE" = false ]; then
 	# Generates images only if they are not present in local docker registry
 	if [[ "$(docker images -q $USERNAME/controlpanel 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../modules/control-panel/
-		buildImage "Control Panel"
+		#buildImage "Control Panel"
 	fi	
 	
 	if [[ "$(docker images -q $USERNAME/iotbroker 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../modules/iotbroker/sofia2-iotbroker-boot/	
-		buildImage "IoT Broker"
+		#buildImage "IoT Broker"
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/apimanager 2> /dev/null)" == "" ]]; then	
 		cd $homepath/../../modules/api-manager/	
-		buildImage "API Manager"
+		#buildImage "API Manager"
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/digitaltwin 2> /dev/null)" == "" ]]; then	
 		cd $homepath/../../modules/digitaltwin-broker/	
-		buildImage "Digital Twin"
+		#buildImage "Digital Twin"
 	fi	
 	
 	if [[ "$(docker images -q $USERNAME/dashboard 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../modules/dashboard-engine/
-		buildImage "Dashboard Engine"
+		#buildImage "Dashboard Engine"
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/devicesimulator 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../modules/device-simulator/
-		buildImage "Device Simulator"
+		#buildImage "Device Simulator"
 	fi	
 	
 	if [[ "$(docker images -q $USERNAME/monitoringui 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../modules/monitoring-ui/
-		buildImage "Monitoring UI"
+		#buildImage "Monitoring UI"
 	fi		
 	
 	if [[ "$(docker images -q $USERNAME/flowengine 2> /dev/null)" == "" ]]; then		
- 		prepareNodeRED		
+ 		#prepareNodeRED		
 	
 		cd $homepath/../../modules/flow-engine/
-		buildImage "Flow Engine"
+		#buildImage "Flow Engine"
 		
-		removeNodeRED
-	fi	
+		#removeNodeRED
+	fi
+	
+	if [[ "$(docker images -q $USERNAME/scalability 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../examples/sofia2-scalability-example/docker
+		buildScalability $homepath/../../examples/sofia2-scalability-example scalability latest
+	fi				
 fi
 
 if [[ "$ONLYPERSISTENCE" = true ]]; then
 	# Generates images only if they are not present in local docker registry
 	if [[ "$(docker images -q $USERNAME/configdb 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/configdb
-		buildConfigDB latest
+		#buildConfigDB latest
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/schedulerdb 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/schedulerdb
-		buildSchedulerDB latest
+		#buildSchedulerDB latest
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/realtimedb 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/realtimedb
-		buildRealTimeDB latest
+		#buildRealTimeDB latest
 	fi
+	
+	if [[ "$(docker images -q $USERNAME/mongoexpress 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/mongoexpress
+		#buildMongoExpress latest
+	fi	
 	
 	if [[ "$(docker images -q $USERNAME/elasticdb 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/elasticsearch
-		buildElasticSearchDB latest
+		#buildElasticSearchDB latest
 	fi
+	
+	if [[ "$(docker images -q sofia2/kafka-secured 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/kafka-cluster/kafka
+		#buildKafka latest
+	fi	
+
+		if [[ "$(docker images -q sofia2/zookeeper-secured 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/kafka-cluster/zookeeper
+		#buildZookeeper latest
+	fi	
 	
 	if [[ "$(docker images -q $USERNAME/nginx 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/nginx
@@ -267,12 +313,12 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 	
 	if [[ "$(docker images -q $USERNAME/quasar 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/quasar
-		buildQuasar latest
+		#buildQuasar latest
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/configinit 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../config/init/
-		buildImage "Config Init"
+		#buildImage "Config Init"
 	fi
 fi
 	
@@ -284,6 +330,7 @@ if [ "$PUSH2OCPREGISTRY" = true ]; then
 	pushImage2OCPRegistry configdb latest 
 	pushImage2OCPRegistry schedulerdb latest 
 	pushImage2OCPRegistry realtimedb latest 
+	pushImage2OCPRegistry mongoexpress latest 
 	pushImage2OCPRegistry elasticdb latest
 	pushImage2OCPRegistry controlpanel latest 
 	pushImage2OCPRegistry iotbroker latest 
@@ -296,6 +343,7 @@ if [ "$PUSH2OCPREGISTRY" = true ]; then
 	pushImage2OCPRegistry nginx latest
 	pushImage2OCPRegistry quasar latest 
 	pushImage2OCPRegistry configinit latest	
+	pushImage2OCPRegistry scalability latest	
 fi
 
 if [ "$PUSH2PRIVREGISTRY" = true ]; then
@@ -304,6 +352,7 @@ if [ "$PUSH2PRIVREGISTRY" = true ]; then
 	pushImage2Registry configdb latest 
 	pushImage2Registry schedulerdb latest 
 	pushImage2Registry realtimedb latest 
+	pushImage2Registry mongoexpress latest 
 	pushImage2Registry elasticdb latest
 	pushImage2Registry controlpanel latest 
 	pushImage2Registry iotbroker latest 
@@ -316,6 +365,7 @@ if [ "$PUSH2PRIVREGISTRY" = true ]; then
 	pushImage2Registry nginx latest
 	pushImage2Registry quasar latest 
 	pushImage2Registry configinit latest 
+	pushImage2Registry scalability latest
 fi
 
 exit 0

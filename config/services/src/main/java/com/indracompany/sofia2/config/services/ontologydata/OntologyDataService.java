@@ -28,4 +28,7 @@ public interface OntologyDataService {
 	
 	public void checkOntologySchemaCompliance(final JsonNode data, final Ontology ontology)throws DataSchemaValidationException ;
 
+	public String decrypt(String data, String ontologyName, String user) throws OntologyDataUnauthorizedException, OntologyDataJsonProblemException;
+
 }
+	

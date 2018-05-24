@@ -1,0 +1,416 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+		
+		
+		<!-- BEGIN WEB FONT -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+		
+		<!-- PLUGINS STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>
+		
+		<!-- Funciones AJAX -->
+		<script th:inline="javascript">
+			//<![CDATA[       
+			function navigateUrl(url,reload){ 
+				if(reload){
+					window.location.reload();
+					window.location.replace(url);
+				}
+				else{
+					window.location.href = url;
+				}
+			}
+
+			var showCreateNotebookDialog = function(){
+				$.confirm({
+					icon: 'fas fa-chart-pie',
+					title: [[#{notebook.newnotebook.popup}]],
+					theme: 'dark',
+					columnClass: 'medium',
+					content: "<input class='col-md-12 form-control' type=text id='newNotebook'></input>",
+					draggable: true,
+					dragWindowGap: 100,
+					backgroundDismiss: true,
+					closeIcon: true,
+					buttons: {
+						Ok: {
+							text: "Ok",
+							btnClass: 'btn btn-sm btn-danger btn-outline',
+							action: function() {
+								if($("#newNotebook").val()=="" || !$("#newNotebook").val()){
+									console.log("notebook empty");
+									return;
+								}
+								createNotebook($("#newNotebook").val());
+							}											
+						},
+						close: {
+							text: "Cancel",
+							btnClass: 'btn btn-sm btn-default btn-outline',
+							action: function (){} //GENERIC CLOSE.		
+						}
+					}
+				});
+			}
+
+			var showImportNotebookDialog = function(){
+				$.confirm({
+					icon: 'fas fa-chart-pie',
+					title: [[#{notebook.importnotebook}]],
+					theme: 'dark',
+					columnClass: 'medium',
+					content: "<input class='element text form-control' type='text' id='newImportNotebook' placeholder='[[#{gen.name}]]'/><br/><input type='hidden' id='dataJSONImport' /><input class='element text form-control' type='file' accept='.json' id='jsonInputData' onchange='fileImportChange(this.files[0])' />",
+					draggable: true,
+					dragWindowGap: 100,
+					backgroundDismiss: true,
+					closeIcon: true,
+					buttons: {
+						Ok: {
+							text: "Ok",
+							btnClass: 'btn btn-sm btn-danger btn-outline',
+							action: function() {
+								if($("#newImportNotebook").val()=="" || !$("#jsonInputData").val() || $("#jsonInputData").val()=="" || !$("#newImportNotebook").val()){
+									console.log("notebook name or json file empty");
+									return;
+								}
+								importNotebook($("#newImportNotebook").val(),$("#dataJSONImport").val());
+							}									
+						},
+						close: {
+							text: "Cancel",
+							btnClass: 'btn btn-sm btn-default btn-outline',
+							action: function (){} //GENERIC CLOSE.		
+						}
+					}
+				});
+			}
+
+
+			var showCloneNotebookDialog = function(initNotebook){
+				$.confirm({
+					icon: 'fas fa-chart-pie',
+					title: [[#{notebook.newnotebook.popup}]],
+					theme: 'dark',
+					columnClass: 'medium',
+					content: "<input class='col-md-12 form-control' type=text id='newNotebook'></input>",
+					draggable: true,
+					dragWindowGap: 100,
+					backgroundDismiss: true,
+					closeIcon: true,
+					buttons: {
+						Ok: {
+							text: "Ok",
+							btnClass: 'btn btn-sm btn-danger btn-outline',
+							action: function() {
+								if($("#newNotebook").val()=="" || !$("#newNotebook").val()){
+									console.log("notebook empty");
+									return;
+								}
+								cloneNotebook($("#newNotebook").val(),initNotebook);
+							}										
+						},
+						close: {
+							text: "Cancel",
+							btnClass: 'btn btn-sm btn-default btn-outline',
+							action: function (){} //GENERIC CLOSE.		
+						}
+					}
+				});
+			}
+
+			function showRemoveNotebookDialog(id,idzep) {
+				$.confirm({
+					icon: 'fas fa-chart-pie',
+					title: [[#{notebook.confirm.delete}]],
+					theme: 'dark',
+					columnClass: 'medium',
+					content: "",
+					draggable: true,
+					dragWindowGap: 100,
+					backgroundDismiss: true,
+					closeIcon: true,
+					buttons: {
+						"Ok": {
+							text: "Ok",
+							btnClass: 'btn btn-sm btn-danger btn-outline',
+							action: function() {
+								document.forms["command" + id].submit();
+							}
+						},
+						close: {
+							text: "Cancel",
+							btnClass: 'btn btn-sm btn-default btn-outline',
+							action: function (){} //GENERIC CLOSE.		
+						}
+					}
+				});
+			}
+			/*Create Notebook */
+			function createNotebook(name){
+				$.post(
+					"/controlpanel/notebooks/createNotebook", 
+					{name : name}
+				).done(function(data){
+					localStorage.setItem("reload","true");//Created notebook, reload forced
+					navigateUrl("/controlpanel/notebooks/app/#/notebook/" + data)}
+				).fail(
+					function(e){
+						console.log("Error creating note, message detail: " + e.responseText);
+					}
+				)
+			}
+			function cloneNotebook(name,initId){
+				$.post(
+					"/controlpanel/notebooks/cloneNotebook", 
+					{
+						name : name,
+						idzep : initId
+					}
+				).done(function(data){
+					localStorage.setItem("reload","true");//Created notebook, reload forced
+					navigateUrl("/controlpanel/notebooks/app/#/notebook/" + data)}
+				).fail(
+					function(e){
+						console.log("Error creating note, message detail: " + e.responseText);
+					}
+				)
+			}
+			function importNotebook(name,data){
+				if($("#jsonInputData").val()==="" || $("#newImportNotebook").val()===""){
+					return;//Required params
+				}
+				//Name inside notebook
+				var jsonData = JSON.parse(data)
+				jsonData.name = name;
+				data = JSON.stringify(jsonData);
+				
+				$.post(
+					"/controlpanel/notebooks/importNotebook", 
+					{
+						name: name,
+						data: data
+					}
+				).done(function(data){
+					localStorage.setItem("reload","true");//Created notebook, reload forced
+					navigateUrl("/controlpanel/notebooks/app/#/notebook/" + data)}
+				).fail(
+					function(e){
+						console.log("Error importing note, message detail: " + e.responseText);
+					}
+				)
+			}
+			function fileImportChange(jsonFile){
+				var reader = new FileReader();
+				reader.readAsText(jsonFile);
+				reader.onload = function(data) {
+					$('#newImportNotebook').val(JSON.parse(data.target.result).name);
+					$("#dataJSONImport").val(data.target.result);
+				};
+			}
+			//]]>
+		</script>	
+	</head>	
+	
+	<!-- page-sidebar-closed to start page with collapsed menu -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>		
+			
+		<!-- BEGIN SIDEBAR -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+		
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				
+				<!-- BEGIN PAGE HEADER-->
+				
+				<!-- BEGIN PAGE BAR AND BREADCRUM -->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/notebooks/list}"> <span th:text="#{notebook.breadcrumb.list}">Notebooks</span></a><i class="fa fa-circle"></i></li>						
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{notebook.template.list}">My Notebooks </span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">
+					
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="icon-list font-grey-gallery"></i>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{notebook.template.list}"> My Notebooks </span>
+									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>
+								</div>
+								<div class="actions margin-right-20">
+									<div class="btn-group">												
+										<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" type="button" class="btn grey-mint  btn-outline sbold" th:text="#{notebook.manageinter}" onclick="navigateUrl('/controlpanel/notebooks/app/#/interpreter')"></button>
+										<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" type="button" class="btn grey-mint  btn-outline sbold" onclick="navigateUrl('/controlpanel/notebooks/app/#/helium')">Helium</button>
+										<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" type="button" class="btn grey-mint  btn-outline sbold" th:text="#{notebook.configuration}" onclick="navigateUrl('/controlpanel/notebooks/app/#/configuration')"></button>
+										<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" type="button" class="btn grey-mint  btn-outline sbold" onclick="navigateUrl('/controlpanel/notebooks/app/#/jobmanager')">Job Manager</button>
+										<button type="button" class="btn grey-mint  btn-outline sbold" th:text="#{notebook.newnotebook}" onclick="javascript:showCreateNotebookDialog()"></button>
+										<button type="button" class="btn grey-mint  btn-outline sbold" th:text="#{notebook.importnotebook}" onclick="javascript:showImportNotebookDialog()"></button>
+									</div>										
+								</div>
+							</div>
+							<div th:fragment="domain" id="domain" class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone">
+										<!-- ALERT ZONE -->	
+										<div th:if="${messageAlertType == 'SUCCESS' and message != null}" id="messages" class="alert alert-success alert-dismissable" th:text="${message}">
+										</div>
+										<div th:if="${messageAlertType == 'WARNING' and message != null}" id="messages" class="alert alert-warning alert-dismissable" th:text="${message}">
+										</div>
+										<div th:if="${messageAlertType == 'ERROR' and message != null}" id="messages" class="alert alert-danger alert-dismissable" th:text="${message}">
+										</div>
+										<div th:if="${messageAlertType == 'INFO' and message != null}" id="messages" class="alert alert-info alert-dismissable" th:text="${message}">
+										</div>
+									</div>
+									<!-- NOTEBOOK LIST -->
+									<div class="col-md-12">											
+										<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
+											<div>
+												<!-- DATATABLE DANDELION CONF. -->												
+												<table id="notebooks" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
+													<thead>
+														<tr class="cabecera-tabla">
+															<th class="titulo-columnas" th:text="#{gen.name}">Identification</th>
+															<th class="titulo-columnas" th:text="#{gen.owner}">Owner</th>
+															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{gen.created}"> Created At </span></th>
+															<th class="titulo-columnas text-center" ><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
+														</tr>
+													</thead>
+													<tbody th:remove="all-but-first">
+														<tr th:each="notebook : ${lnt}">
+															<td>                                                                                                                                                       
+																<a th:text="${notebook.identification}" th:href="'/controlpanel/notebooks/app/#/notebook/'+@{${notebook.idzep}}"></a>
+															</td>  
+															<td th:text="${notebook.user.userId}"></td>
+															<!-- DATE --> 
+															<td class="text-center" th:if="${notebook.createdAt!=null}" th:text="${#dates.format(notebook.createdAt,'dd/MM/YYYY')}"></td>
+															<td class="text-center" th:if="${notebook.createdAt==null}" th:text="${notebook.createdAt}"></td>
+															<!-- OPTIONS -->
+															<td class="icon" style="white-space: nowrap">
+																<div class="grupo-iconos text-center">
+																	<span th:title="#{gen.edit}" class="btn btn-sm blue-sharp sbold tooltips" th:alt="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/notebooks/app/#/notebook/${notebook.idzep}|} + '\');'"><i class="fa fa-pencil"></i></span>
+																	<span th:title="#{notebook.clone}" class="btn btn-sm btn-warning sbold tooltips" th:alt="#{notebook.clone}" th:onclick="'javascript:showCloneNotebookDialog(\'' + @{|${notebook.idzep}|}+ '\');'"><i class="fa fa-clone"></i></span>
+																	<a th:title="#{notebook.download}" class="btn btn-sm green-haze sbold tooltips" th:alt="#{notebook.download}" target="_blank" th:href="'/controlpanel/notebooks/exportNotebook/' +  ${notebook.identification}"><i class="fa fa-download"></i></a>
+																	<span th:title="#{gen.deleteBtn}" class="btn btn-sm btn-danger sbold tooltips" th:alt="#{gen.deleteBtn}" th:onclick="'javascript:showRemoveNotebookDialog(\'' + ${notebook.identification} + '\',\'' + ${notebook.idzep} + '\');'">
+																		<i class="fa fa-trash"></i>
+																		<form th:id="command + ${notebook.identification}" action="list.html" th:action="@{|/notebooks/${notebook.identification}|}" method="post" style="display:none">
+																			<input type="hidden" name="_method" value="DELETE"/>
+																		</form>
+																	</span>
+																	
+																</div>
+															</td>
+														</tr>
+													</tbody>
+												</table>																							
+											</div>
+										</div>											
+									</div>
+								</div>
+							</div>
+						</div><!-- END PORTLET BASIC LIGHT -->							
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->				
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER-INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>	
+	
+	<!-- CORE CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
+	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	
+	
+	<script th:inline="javascript">	
+	
+	// DATATABLES LANGUAJE FROM PROPERTIES.
+	datatable_lang = [[#{datatables_lang}]];	
+	var languageJson = JSON.parse(datatable_lang);
+	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
+ 
+	</script>
+	
+	<script type="text/javascript">	
+	var optionName = 'Notebooks';
+	
+	//<![CDATA[
+	function navigateUrl(url){  window.location.href = url;	}
+	
+	// MAIN WHEN READY
+	$( document ).ready(function() {
+		
+		
+	});
+	 
+	// MAIN WHEN LOAD
+	$(window).load(function(){  
+		
+		// SHOW/HIDE DATATABLES COLUMN INIT 		
+		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
+		$('#dataTable-vis-toggle').removeClass('hide');
+		
+	});
+	
+	//]]>
+	</script>
+	
+</body>
+</html>
+  

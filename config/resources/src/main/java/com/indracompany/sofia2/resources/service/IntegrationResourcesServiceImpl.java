@@ -33,7 +33,6 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 
 	private Urls urls;
 
-
 	public enum ServiceUrl {
 		base, advice, management, router, hawtio, swaggerUI, api, swaggerUIManagement, swaggerJson
 	}
@@ -42,14 +41,13 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 		iotbroker, scriptingEngine, flowEngine, routerStandAlone, apiManager, controlpanel
 	}
 
-
 	@PostConstruct
 	public void getActiveProfile() {
 		String[] profiles = environment.getActiveProfiles();
 		String activeProfile = "default";
 		if (profiles.length > 0)
 			activeProfile = profiles[0];
-		else 
+		else
 			activeProfile = environment.getDefaultProfiles()[0];
 		this.urls = this.configurationService.getEndpointsUrls(activeProfile);
 	}
@@ -58,6 +56,12 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 	public String getUrl(Module module, ServiceUrl service) {
 
 		switch (module) {
+		case controlpanel:
+			switch (service) {
+			case base:
+				return this.urls.getControlpanel().getBase();
+
+			}
 		case iotbroker:
 			switch (service) {
 			case base:
