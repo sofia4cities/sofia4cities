@@ -47,15 +47,15 @@ public class DigitalTwinStatus implements IDigitalTwinStatus{
 		</#list>
 		
 		mapClass = new HashMap<String, Class>();
-		<#list mapClass as class>
-			mapClass.put("${class.name}", ${class.type}.class);
+		<#list mapClass as cls>
+			mapClass.put("${cls.name}", ${cls.type}.class);
 		</#list>
 	}
 
 	@Override
 	public Boolean validate(OperationType operationType, String property) {
 		try {
-			Class cls = Class.forName(DigitalTwinStatus.class.getName());
+			Class cls = this.getClass();
 			Method method = cls.getDeclaredMethod("getOperation"+property.substring(0, 1).toUpperCase() + property.substring(1), null);
 			OperationType operation = (OperationType) method.invoke(this,null);
 			
@@ -72,7 +72,7 @@ public class DigitalTwinStatus implements IDigitalTwinStatus{
 	@Override
 	public Object getProperty(String property) {
 		try {
-			Class cls = Class.forName(DigitalTwinStatus.class.getName());
+			Class cls = this.getClass();
 			Method method = cls.getMethod("get"+property.substring(0, 1).toUpperCase() + property.substring(1), null);
 			
 			return method.invoke(this, new Class[]{});
@@ -86,7 +86,7 @@ public class DigitalTwinStatus implements IDigitalTwinStatus{
 	@Override
 	public void setProperty(String property, Object value) {
 		try {
-			Class cls = Class.forName(DigitalTwinStatus.class.getName());
+			Class cls = this.getClass();
 			
 			Method method = cls.getMethod("set"+property.substring(0, 1).toUpperCase() + property.substring(1), mapClass.get(property));
 			method.invoke(this, mapClass.get(property).cast(value));

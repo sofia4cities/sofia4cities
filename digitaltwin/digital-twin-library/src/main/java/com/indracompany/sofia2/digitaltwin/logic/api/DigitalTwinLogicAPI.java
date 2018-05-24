@@ -12,19 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.digitaltwin.broker.processor;
+package com.indracompany.sofia2.digitaltwin.logic.api;
 
-import org.springframework.stereotype.Component;
+public interface DigitalTwinLogicAPI extends JavascriptAPI {
 
-import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel;
+	public void log(String trace);
 
-@Component
-public class EventProcessorDelegate implements EventProcessor{
+	public void setStatusValue(String property, Object value);
 
-	@Override
-	public String process(DigitalTwinModel model) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public Object getStatusValue(String property);
+
+	public void sendUpdateShadow();
+
+	public void sendCustomEvent(String eventName);
 
 }
