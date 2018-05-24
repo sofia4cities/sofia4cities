@@ -77,7 +77,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 
 		try {
 
-			output = mongoRepo.insert(EVENTS_COLLECTION, instance.toString());
+			output = mongoRepo.insert(EVENTS_COLLECTION, null, instance.toString());
 
 		} catch (final Exception e) {
 			result.setResult(output);
@@ -115,7 +115,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 
 		try {
 
-			output = mongoRepo.insert(LOG_COLLECTION, instance.toString());
+			output = mongoRepo.insert(LOG_COLLECTION, null, instance.toString());
 
 		} catch (final Exception e) {
 			result.setResult(output);
@@ -154,7 +154,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 		try {
 
 			output = mongoRepo.insert(PROPERTIES_COLLECTION + model.getType().substring(0, 1).toUpperCase()
-					+ model.getType().substring(1), instance.toString());
+					+ model.getType().substring(1), null, instance.toString());
 
 		} catch (final Exception e) {
 			result.setResult(output);
@@ -192,7 +192,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 
 			output = mongoRepo.insert(
 					ACTIONS_COLLECTION + model.getType().substring(0, 1).toUpperCase() + model.getType().substring(1),
-					instance.toString());
+					null, instance.toString());
 
 		} catch (final Exception e) {
 			result.setResult(output);
