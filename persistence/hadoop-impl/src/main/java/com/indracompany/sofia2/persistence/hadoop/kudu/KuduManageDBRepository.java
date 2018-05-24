@@ -26,7 +26,7 @@ import org.springframework.stereotype.Repository;
 
 import com.indracompany.sofia2.persistence.common.DescribeColumnData;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
+import com.indracompany.sofia2.persistence.hadoop.common.NameBeanConst;
 import com.indracompany.sofia2.persistence.hadoop.config.condition.HadoopEnabledCondition;
 import com.indracompany.sofia2.persistence.hadoop.kudu.table.KuduTable;
 import com.indracompany.sofia2.persistence.hadoop.kudu.table.KuduTableGenerator;

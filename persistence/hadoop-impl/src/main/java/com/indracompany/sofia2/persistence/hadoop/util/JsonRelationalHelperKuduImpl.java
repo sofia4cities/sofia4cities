@@ -44,7 +44,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.hadoop.common.GeometryType;
+import com.indracompany.sofia2.persistence.hadoop.common.geometry.GeometryType;
 import com.indracompany.sofia2.persistence.hadoop.kudu.table.KuduTable;
 import com.indracompany.sofia2.persistence.hadoop.kudu.table.KuduTableGenerator;
 

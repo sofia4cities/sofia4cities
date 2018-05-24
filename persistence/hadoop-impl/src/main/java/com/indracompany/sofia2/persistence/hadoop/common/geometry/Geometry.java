@@ -12,22 +12,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop.common;
+package com.indracompany.sofia2.persistence.hadoop.common.geometry;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class Geometry {
 
-public enum GeometryType {
+	private Double[] coordinates;
+	private GeometryType type;
 
-	@JsonProperty("Point")
-	Point("Point");
-
-	private String name;
-
-	private GeometryType(String name) {
-		this.name = name;
+	public Geometry() {
+		super();
+		this.coordinates = new Double[2];
 	}
 
-	public String getName() {
-		return name;
+	public Double[] getCoordinates() {
+		return coordinates;
+	}
+
+	public void setCoordinates(Double[] coordinates) {
+		this.coordinates = coordinates;
+	}
+
+	public GeometryType getType() {
+		return type;
+	}
+
+	public void setType(GeometryType type) {
+		this.type = type;
 	}
 }

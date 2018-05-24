@@ -32,7 +32,7 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.hadoop.common.GeometryType;
+import com.indracompany.sofia2.persistence.hadoop.common.geometry.GeometryType;
 import com.indracompany.sofia2.persistence.hadoop.hive.table.HiveColumn;
 import com.indracompany.sofia2.persistence.hadoop.util.HiveFieldType;
 import com.indracompany.sofia2.persistence.hadoop.util.JsonFieldType;

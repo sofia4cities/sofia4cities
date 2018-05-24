@@ -14,8 +14,8 @@
  */
 package com.indracompany.sofia2.persistence.hadoop.kudu;
 
-import static com.indracompany.sofia2.persistence.hadoop.NameBeanConst.IMPALA_MANAGE_DB_REPO_BEAN_NAME;
-import static com.indracompany.sofia2.persistence.hadoop.NameBeanConst.IMPALA_TEMPLATE_JDBC_BEAN_NAME;
+import static com.indracompany.sofia2.persistence.hadoop.common.NameBeanConst.IMPALA_MANAGE_DB_REPO_BEAN_NAME;
+import static com.indracompany.sofia2.persistence.hadoop.common.NameBeanConst.IMPALA_TEMPLATE_JDBC_BEAN_NAME;
 
 import java.util.ArrayList;
 import java.util.List;

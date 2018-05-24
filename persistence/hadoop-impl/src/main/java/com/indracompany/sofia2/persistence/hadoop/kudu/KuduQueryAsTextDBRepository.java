@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
+import com.indracompany.sofia2.persistence.hadoop.common.NameBeanConst;
 import com.indracompany.sofia2.persistence.hadoop.config.condition.HadoopEnabledCondition;
 import com.indracompany.sofia2.persistence.hadoop.resultset.KuduResultSetExtractor;
 import com.indracompany.sofia2.persistence.hadoop.util.HadoopQueryProcessor;
