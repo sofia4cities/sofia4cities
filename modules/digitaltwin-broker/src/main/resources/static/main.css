@@ -43,3 +43,43 @@ body {
     margin-right: auto;
     width: 50%;
 }
+
+.arrow {
+	position: absolute;
+	top: 79px;
+	left: 81px;
+}
+
+.text-logo-panel {
+   	color: darkturquoise;
+	position: relative;
+	top: -25px;
+	left: 71px;
+	font-size: 11px;
+	white-space: nowrap;
+	display: block;
+}
+
+.text-logo-s4c {
+    position: relative;
+    color: white;
+    top: -2px;
+    left: 2px;
+    font-size: 15px;
+}
+
+.page-header.navbar .page-logo .logo-default {
+    margin: 0;
+    width: 35px;
+    height: auto;
+    padding-top: 3px;
+}
+
+.page-header.navbar .page-logo {
+    background-color: #212529;
+    width: 340px;
+}
+.page-header-inner {
+	background-color: #333333;
+}
+

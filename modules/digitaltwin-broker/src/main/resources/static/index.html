@@ -10,71 +10,73 @@
     <script src="/digitaltwinbroker/app.js"></script>
 </head>
 <body>
-<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
-<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+<script src="Chart.js"></script>
 <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
     enabled. Please enable
     Javascript and reload this page!</h2></noscript>
 <div id="main-content" class="container">
-    <div class="row">
-        <div class="col-md-6">
+	<div class="page-header-inner ">
+		<!-- BEGIN LOGO -->
+		<div class="page-logo">			
+			<div class="menu-toggler sidebar-toggler">
+				<span></span>
+			</div>
+			<img alt="logo" class="logo-default" src="platform_logo.png"/>	
+			<span class="text-logo-s4c" onclick="location.href='/controlpanel'" th:text="#{name.apptitle}">S4Cities</span>
+			<span class="text-logo-panel" onclick="location.href='/controlpanel'" th:text="#{name.appsubtitle}">DIGITAL TWIN DEMO</span>			
+		</div>
+		<!-- END LOGO -->
+	</div>
+    <div class="row" style="padding-top: 20px;">
+        <div class="col-md-12">
             <form class="form-inline">
-	            <div class="form-group col-md-12">
+	            <div class="form-group col-md-7">
 					<label>Device: </label>
 					<select id="devices" class="form-control"></select>
+					<label style="padding-left: 20px;">Digital Key: </label>
+					<input class="form-control" id="digitaltwin_key" name="digitaltwin_key" maxlength="50" disabled="disabled" style="width: 45%;"/>
 				</div>
-				<div class="form-group col-md-12">
-					<label>Digital Key: </label>
-					<input class="form-control" id="digitaltwin_key" name="digitaltwin_key" maxlength="50" disabled="disabled"/>
-				</div>
-				<div class="pull-right col-md-12">
+				<div class="pull-right col-md-5">
 					<button id="connect" type="submit" class="btn btn-square btn-success" name="connect"><i class="la la-check"></i> <span> Connect</span></button>
-					<button id="disconnect" type="submit" class="btn btn-square btn-outline red-sunglo" name="disconnect"  value="disconnect" disabled="disabled"><i class="la la-times"></i><span> Disconnect </span></button>
+					<button id="disconnect" type="submit" class="btn btn-square btn-danger" name="disconnect"  value="disconnect" disabled="disabled"><i class="la la-times"></i><span> Disconnect </span></button>
 				</div>
             </form>
-            <div class="row">
-            	<div class="form-group col-md-12">
-					<label>Temperature [ºC]: </label>
-					<div class="input-icon ">
-						<i class="fa fa-link"></i>
-						<input class="form-control" id="temperature" name="temperature" maxlength="50" disabled="disabled"/>
+        </div>
+        <div class="col-md-12" style="margin-top: 30px;">
+	        <div class="col-md-6">
+		        <div class="row">
+					<div class="col-md-12">
+						<canvas id="tempChart" style="max-width: 500px;"></canvas>
 					</div>
-				</div>
-				<div class="form-group col-md-12">
-					<label>Humidity [%]: </label>
-					<div class="input-icon ">
-						<i class="fa fa-link"></i>
-						<input class="form-control" id="humidity" name="humidity" maxlength="50" disabled="disabled"/>
+					<div class="col-md-12">
+						<canvas id="humChart" style="max-width: 500px;"></canvas>
 					</div>
-				</div>
-				<div class="form-group col-md-12">
-					<label>Pressure [Milibars]: </label>
-					<div class="input-icon ">
-						<i class="fa fa-link"></i>
-						<input class="form-control" id="pressure" name="pressure" maxlength="50" disabled="disabled"/>
-					</div>
-				</div>
-				<div class="form-group col-md-12">
+					<div class="col-md-12">
+						<canvas id="atmChart" style="max-width: 500px;"></canvas>
+			        </div>
+			    </div>
+	        </div>
+	        <div id="rasp" class="col-md-6">
+	        	<img src="sensehat.png">
+	        	<img id="up" src="up.png" class="arrow" style="display:none;">
+	        	<img id="down" src="down.png" class=" arrow" style="display:none;">
+	        	<img id="left" src="left.png" class=" arrow" style="display:none;">
+	        	<img id="right" src="right.png" class=" arrow" style="display:none;">
+	         
+	            <button id="sendLeft" class="btn btn-default" type="submit">L</button>
+	            <button id="sendRight" class="btn btn-default" type="submit">R</button>
+	            <button id="sendUp" class="btn btn-default" type="submit">U</button>
+	            <button id="sendDown" class="btn btn-default" type="submit">D</button>
+	            
+	            <div class="form-group col-md-12">
 					<label>Joystick: </label>
 					<div class="input-icon ">
 						<i class="fa fa-link"></i>
 						<input class="form-control" id="joystick" name="joystick" maxlength="50" disabled="disabled"/>
 					</div>
 				</div>
-		    </div>
+	        </div>
         </div>
-        <div class="col-md-6">
-        	<img src="sensehat.png">
-         
-            <button id="sendLeft" class="btn btn-default" type="submit">L</button>
-            <button id="sendRight" class="btn btn-default" type="submit">R</button>
-            <button id="sendUp" class="btn btn-default" type="submit">U</button>
-            <button id="sendDown" class="btn btn-default" type="submit">D</button>
-            
-        </div>
-        <div id="chartTemp" class="col-md-12"></div>
-        <div id="chartHum" class="col-md-12"></div>
-        <div id="chartAtm" class="col-md-12"></div>
     </div>
 </div>
 </body>
