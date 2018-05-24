@@ -14,16 +14,22 @@
  */
 package com.indracompany.sofia2.digitaltwin.event.manager;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;
 
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -45,12 +51,15 @@ import com.indracompany.sofia2.digitaltwin.event.model.LogMessage;
 import com.indracompany.sofia2.digitaltwin.event.model.PingMessage;
 import com.indracompany.sofia2.digitaltwin.event.model.RegisterMessage;
 import com.indracompany.sofia2.digitaltwin.event.model.ShadowMessage;
+import com.indracompany.sofia2.digitaltwin.exception.NetworkInterfaceNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class EventRestManager implements EventManager {
+
+	private final int TIMEOUT = (int) TimeUnit.SECONDS.toMillis(10);
 
 	@Value("${api.key}")
 	private String apikey;
@@ -61,8 +70,11 @@ public class EventRestManager implements EventManager {
 	@Value("${device.rest.local.schema}")
 	private String localUrlSchema;
 
-	@Value("${device.rest.local.ip}")
-	private String localIP;
+	@Value("${device.rest.local.network.interface}")
+	private String networkInterface;
+
+	@Value("${device.rest.local.network.ipv6}")
+	private Boolean ipv6;
 
 	@Value("${server.port}")
 	private String localPort;
@@ -98,8 +110,11 @@ public class EventRestManager implements EventManager {
 
 		SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 
+		RequestConfig config = RequestConfig.custom().setSocketTimeout(TIMEOUT).setConnectTimeout(TIMEOUT)
+				.setConnectionRequestTimeout(TIMEOUT).build();
+
 		CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf)
-				.setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).build();
+				.setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).setDefaultRequestConfig(config).build();
 
 		HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 		httpRequestFactory.setHttpClient(httpClient);
@@ -129,9 +144,18 @@ public class EventRestManager implements EventManager {
 
 		@Override
 		public void run() {
+
+			String ip;
+			try {
+				ip = getLocalIp();
+			} catch (Exception e) {
+				log.error("Unable to get local IP to register device in broker");
+				throw new RuntimeException();
+			}
+
 			RegisterMessage registerMessage = new RegisterMessage();
 			registerMessage.setId(deviceId);
-			registerMessage.setEndpoint(localUrlSchema + "://" + localIP + ":" + localPort + "/" + localBasePath);
+			registerMessage.setEndpoint(localUrlSchema + "://" + ip + ":" + localPort + "/" + localBasePath);
 
 			PingMessage pingMessage = new PingMessage();
 			pingMessage.setId(deviceId);
@@ -254,6 +278,30 @@ public class EventRestManager implements EventManager {
 			log.warn("HTTP code {} send custom event {} in broker {}", eventName, resp.getStatusCode(), brokerEndpoint);
 			log.warn("Broker message {}", resp.getBody());
 		}
+	}
+
+	private String getLocalIp() throws SocketException, NetworkInterfaceNotFoundException {
+		Enumeration<NetworkInterface> enInterfaces = NetworkInterface.getNetworkInterfaces();
+		while (enInterfaces.hasMoreElements()) {
+			NetworkInterface ifc = enInterfaces.nextElement();
+			if (networkInterface.equalsIgnoreCase(ifc.getName())) {
+				Enumeration<InetAddress> enAddresses = ifc.getInetAddresses();
+				while (enAddresses.hasMoreElements()) {
+					String ip = enAddresses.nextElement().getHostAddress();
+					if (ipv6) {
+						if (ip.contains(":")) {
+							return ip.substring(0, ip.indexOf('%'));
+						}
+					} else {
+						if (!ip.contains(":")) {
+							return ip;
+						}
+					}
+				}
+			}
+		}
+		throw new NetworkInterfaceNotFoundException();
+
 	}
 
 }

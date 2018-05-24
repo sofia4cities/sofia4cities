@@ -285,6 +285,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     finish();
 
                 }
+                else{
+                    return false;
+                }
 
             }
             catch (ProtocolException e) {
@@ -297,8 +300,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 e.printStackTrace();
             }
 
-            // TODO: register the new account here.
-            return true;
+            return false;
         }
 
         @Override
@@ -309,8 +311,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                mEmailView.setError(getString(R.string.error_incorrect_password));
+                mEmailView.requestFocus();
             }
         }
 

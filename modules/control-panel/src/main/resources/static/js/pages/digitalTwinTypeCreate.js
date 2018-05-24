@@ -432,7 +432,7 @@ var DigitalTwinCreateController = function() {
 				logControl ? console.log('|---> Action-mode: UPDATE') : '';
 				
 				// if digitalTwinType has properties  we load it!.
-				propertiesJson = digitalTwinCreateJson.properties;			
+				propertiesJson = digitalTwinCreateJson.dproperties;			
 				if (propertiesJson.length > 0 ){
 					
 					// MOUNTING PROPERTIES ARRAY

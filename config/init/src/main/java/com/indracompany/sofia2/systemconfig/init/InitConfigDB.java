@@ -276,7 +276,8 @@ public class InitConfigDB {
 			device.setContextPath("/turbine");
 			device.setDigitalKey("f0e50f5f8c754204a4ac601f29775c15");
 			device.setIdentification("TurbineHelsinki");
-			device.setIp("localhost");
+			device.setIntrface("eth0");
+			device.setIpv6(true);
 			device.setLatitude("60.17688297979675");
 			device.setLongitude("24.92333816559176");
 			device.setPort(10000);
