@@ -16,11 +16,19 @@ package com.indracompany.sofia2.examples.scalability;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indracompany.sofia2.client.RestClient;
 
 public class ClientRestWrapper implements Client{
 
 	private RestClient client;
+	private String token;
+	private String clientPlatform;
+	private String clientPlatformInstance;
+	private boolean avoidSSLValidation;
+	private int attempts = 0;
+	private final static int MAX_ATTEMPTS = 100;
+	private final static int ATTEMPTS_DELAY = 500;
 	
 	public ClientRestWrapper(String url) {
 		createClient(url);
@@ -38,12 +46,40 @@ public class ClientRestWrapper implements Client{
 	@Override
 	public void connect(String token, String clientPlatform, String clientPlatformInstance,
 			boolean avoidSSLValidation) throws IOException {
+		this.token = token;
+		this.clientPlatform = clientPlatform;
+		this.clientPlatformInstance = clientPlatformInstance;
+		this.avoidSSLValidation = avoidSSLValidation;
 		client.connect(token, clientPlatform, clientPlatformInstance, avoidSSLValidation);
+	}
+	
+	private void reconnect() throws InterruptedException {
+		Thread.sleep(ATTEMPTS_DELAY);
+		if (MAX_ATTEMPTS > attempts) {
+			attempts++;
+			try {
+				connect(token, clientPlatform, clientPlatformInstance, avoidSSLValidation);
+			} catch (IOException e) {
+				reconnect();
+			}
+		} else {
+			throw new RuntimeException("Impossible to reconnect with the server");
+		}
 	}
 
 	@Override
 	public void insertInstance(String ontology, String instance) {
-		client.insertInstance(ontology, instance);
+		try {
+			client.insertInstance(ontology, instance);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException("Error processiong instance data");
+		} catch (IOException e) {
+			try {
+				reconnect();
+			} catch (InterruptedException e1) {
+				throw new RuntimeException("Error sleeping task");
+			}
+		}
 	}
 
 	@Override

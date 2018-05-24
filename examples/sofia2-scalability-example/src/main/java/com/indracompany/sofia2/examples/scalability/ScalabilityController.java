@@ -38,7 +38,6 @@ import com.indracompany.sofia2.examples.scalability.msgs.Connection;
 import com.indracompany.sofia2.examples.scalability.msgs.Greeting;
 import com.indracompany.sofia2.examples.scalability.msgs.Injector;
 import com.indracompany.sofia2.examples.scalability.msgs.InjectorStatus;
-import com.indracompany.sofia2.examples.scalability.msgs.InsertionTask;
 
 import lombok.extern.slf4j.Slf4j;
 
