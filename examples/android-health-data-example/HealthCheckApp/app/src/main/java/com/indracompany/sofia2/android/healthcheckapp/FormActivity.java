@@ -38,6 +38,11 @@ public class FormActivity extends AppCompatActivity {
 
         mAccessToken = getIntent().getStringExtra("accessToken");
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.s4c_logo);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+
         mHeightField = (EditText) findViewById(R.id.height);
         mWeightField = (EditText) findViewById(R.id.weight);
         mSysPressureField = (EditText) findViewById(R.id.sys_pressure);
@@ -188,7 +193,7 @@ public class FormActivity extends AppCompatActivity {
                 Toast.makeText(FormActivity.this,"Form stored successfully",Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(FormActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
+                Toast.makeText(FormActivity.this,"Could not connect to S4C Platform",Toast.LENGTH_SHORT).show();
             }
         }
     }

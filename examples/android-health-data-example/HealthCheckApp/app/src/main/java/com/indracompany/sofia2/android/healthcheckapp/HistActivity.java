@@ -28,6 +28,8 @@ public class HistActivity extends AppCompatActivity {
     String mAccessToken;
     private RecyclerView mRV;
     List<HealthData> mHealthData;
+    private final int MAX_RETRIES = 3;
+    int mGetRetries = MAX_RETRIES;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,11 @@ public class HistActivity extends AppCompatActivity {
         setContentView(R.layout.activity_hist);
 
         mAccessToken = getIntent().getStringExtra("accessToken");
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.s4c_logo);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
 
         Context context = HistActivity.this;
         mRV = (RecyclerView) findViewById(R.id.list);
@@ -118,8 +125,15 @@ public class HistActivity extends AppCompatActivity {
                 loadHealthData();
             }
             else{
-                Toast.makeText(HistActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
-                new GetFromS4CAsyncTask().execute((Void) null);
+                mGetRetries--;
+                if(mGetRetries == 0){
+                    mGetRetries = MAX_RETRIES;
+                    Toast.makeText(HistActivity.this,"Cannot connect to S4C platform",Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                else{
+                    new GetFromS4CAsyncTask().execute((Void) null);
+                }
             }
         }
     }

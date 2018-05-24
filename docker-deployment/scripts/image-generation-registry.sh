@@ -62,7 +62,9 @@ buildElasticSearchDB()
 buildKafka() 
 {
 	echo "KAFKA image generation with Docker CLI: "
+	cp $homepath/../../security/kafka-login/target/*.jar .
 	docker build -t $USERNAME/kafka-secured:$1 .
+	rm sofia2-kafka-login*.jar
 }
 
 buildZookeeper() 
@@ -298,17 +300,17 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 	
 	if [[ "$(docker images -q sofia2/kafka-secured 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/kafka-cluster/kafka
-		#buildKafka latest
+		buildKafka latest
 	fi	
 
 		if [[ "$(docker images -q sofia2/zookeeper-secured 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/kafka-cluster/zookeeper
-		#buildZookeeper latest
+		buildZookeeper latest
 	fi	
 	
 	if [[ "$(docker images -q $USERNAME/nginx 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/nginx
-		buildNginx latest
+		#buildNginx latest
 	fi
 	
 	if [[ "$(docker images -q $USERNAME/quasar 2> /dev/null)" == "" ]]; then

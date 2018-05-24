@@ -14,8 +14,6 @@
  */
 package com.indracompany.sofia2.persistence.hadoop.kudu;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Conditional;
@@ -23,10 +21,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
+import com.indracompany.sofia2.persistence.hadoop.common.NameBeanConst;
 import com.indracompany.sofia2.persistence.hadoop.config.condition.HadoopEnabledCondition;
 import com.indracompany.sofia2.persistence.hadoop.resultset.KuduResultSetExtractor;
-import com.indracompany.sofia2.persistence.hadoop.util.QueryProcessor;
+import com.indracompany.sofia2.persistence.hadoop.util.HadoopQueryProcessor;
 import com.indracompany.sofia2.persistence.interfaces.QueryAsTextDBRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,12 +39,7 @@ public class KuduQueryAsTextDBRepository implements QueryAsTextDBRepository {
 	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	private QueryProcessor queryProcessor;
-
-	@PostConstruct
-	public void sss() {
-		log.info("dadasdasd");
-	}
+	private HadoopQueryProcessor queryProcessor;
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)

@@ -26,6 +26,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -155,9 +156,11 @@ public class RestClient {
 	 *            Ontology associated with the message
 	 * @param jsonData
 	 *            Ontology message payload
+	 * @throws IOException 
+	 * @throws JsonProcessingException 
 	 * 
 	 */
-	public String insertInstance(String ontology, String instance) {
+	public String insertInstance(String ontology, String instance) throws JsonProcessingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		HttpUrl urlJoinWithParams = new HttpUrl.Builder().scheme(HttpUrl.parse(this.restServer).scheme())
 				.host(HttpUrl.parse(this.restServer).host()).port(HttpUrl.parse(this.restServer).port())
@@ -168,15 +171,11 @@ public class RestClient {
 		Request request = new Request.Builder().url(urlJoinWithParams).post(body)
 				.addHeader("Authorization", this.sessionKey).build();
 		String idInsert = null;
-		try {
-			Response response = client.newCall(request).execute();
-			idInsert = mapper.readTree(response.body().string()).get("id").asText();
-			log.info("Inserted ontology instance, id returned: " + idInsert);
-		} catch (IOException e) {
-			log.error("Could not insert instance");
-			e.printStackTrace();
-		}
-
+		
+		Response response = client.newCall(request).execute();
+		idInsert = mapper.readTree(response.body().string()).get("id").asText();
+		log.debug("Inserted ontology instance, id returned: " + idInsert);
+		
 		return idInsert;
 
 	}

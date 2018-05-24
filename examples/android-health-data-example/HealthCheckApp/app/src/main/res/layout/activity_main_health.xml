@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main_health"
@@ -8,7 +10,10 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/colorSecondary"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.indracompany.sofia2.android.healthcheckapp.MainHealthActivity">
+
 
     <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,6 +27,12 @@
         app:layoutManager="LinearLayoutManager"
         tools:context="com.indracompany.sofia2.android.healthcheckapp.HealthFrameFragment"
         tools:listitem="@layout/fragment_healthframe" />
+
+    <!--<ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/s4c_logo"
+        android:layout_alignBottom="@id/list_main"/>-->
 
 
 </RelativeLayout>

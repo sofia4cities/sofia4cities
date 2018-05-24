@@ -19,6 +19,7 @@ import java.util.concurrent.CountDownLatch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -29,7 +30,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
@@ -76,8 +76,7 @@ public class KafkaOntologyConsumer {
 		return latch;
 	}
 
-	// TODO
-
+	@KafkaListener(topicPattern = "${sofia2.iotbroker.plugable.gateway.kafka.topic.pattern}", containerFactory = "kafkaListenerContainerFactory")
 	public void listenToParition(@Payload String message, @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
 			@Header(KafkaHeaders.RECEIVED_TOPIC) String receivedTopic) {
 		log.info("Received Message: " + message + " from partition: " + partition + " received topic:" + receivedTopic);
@@ -85,24 +84,7 @@ public class KafkaOntologyConsumer {
 		String ontologyId = receivedTopic.replace(ontologyPrefix, "");
 
 		boolean executable = true;
-
-		// get user from AVRO!!!
-		/*
-		 * String sessionUserId="user"; ontologyService.getOntologyById(ontology,
-		 * sessionUserId);
-		 */
-
 		String user = "administrator";
-		Ontology ontology = ontologyRepository.getOne(ontologyId);
-		/*
-		 * try { JsonNode actualObj = mapper.readTree(message);
-		 * ontologyDataService.checkOntologySchemaCompliance(actualObj, ontology); }
-		 * catch (IOException e) {
-		 * log.error("Data not valid to process internally: "+e.getMessage(),e);
-		 * executable=true; } catch (DataSchemaValidationException e) {
-		 * log.error("Data not valid to process internally: "+e.getMessage(),e);
-		 * executable=true; }
-		 */
 
 		if (executable) {
 			OperationType operationType = OperationType.INSERT;
@@ -113,13 +95,8 @@ public class KafkaOntologyConsumer {
 
 			modelNotification.setOperationModel(model);
 
-			// sendMessage(modelNotification);
-			// modelNotification.setOperationModel(model);
-
 			try {
 				routerService.insert(modelNotification);
-
-				// latch.countDown();
 			} catch (Exception e) {
 				log.error("Cannot process insert model into router from Kafka", e);
 			}

@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:id="@+id/cv"
         android:layout_marginBottom="5dp"
-        app:cardBackgroundColor="@color/cardview_shadow_end_color">
+        app:cardBackgroundColor="@color/colorPrimaryDark">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -28,6 +28,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/card_margin"
+                        android:textColor="@color/colorAccent"
                         android:text="Height (cm): "
                         android:fontFamily="serif-monospace"/>
 
@@ -35,6 +36,7 @@
                         android:id="@+id/height_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/colorAccent"
                         android:layout_margin="@dimen/card_margin"
                         android:fontFamily="serif-monospace"/>
 
@@ -52,6 +54,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/card_margin"
+                        android:textColor="@color/colorAccent"
                         android:text="Weight (kg): "
                         android:fontFamily="serif-monospace"/>
                     <TextView
@@ -59,6 +62,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/card_margin"
+                        android:textColor="@color/colorAccent"
                         android:fontFamily="serif-monospace"/>
 
 
@@ -76,6 +80,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/card_margin"
+                        android:textColor="@color/colorAccent"
                         android:text="SysPressure (mmHg): "
                         android:fontFamily="serif-monospace"/>
 
@@ -83,6 +88,7 @@
                         android:id="@+id/sys_pressure_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/colorAccent"
                         android:layout_margin="@dimen/card_margin"
                         android:fontFamily="serif-monospace"/>
 
@@ -100,6 +106,7 @@
                         android:id="@+id/dia_pressure_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/colorAccent"
                         android:layout_margin="@dimen/card_margin"
                         android:text="DiaPressure (mmHg): "
                         android:fontFamily="serif-monospace"/>
@@ -109,6 +116,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/card_margin"
+                        android:textColor="@color/colorAccent"
                         android:fontFamily="serif-monospace"/>
 
 
@@ -127,6 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/card_margin"
+                        android:textColor="@color/colorAccent"
                         android:text="Comments: "
                         android:fontFamily="serif-monospace"/>
 
@@ -135,6 +144,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/card_margin"
+                        android:textColor="@color/colorAccent"
                         android:fontFamily="serif-monospace"/>
 
 
@@ -151,6 +161,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/card_margin"
+                        android:textColor="@color/colorAccent"
                         android:fontFamily="monospace"/>
 
                 </LinearLayout>

@@ -32,8 +32,8 @@ This paragraph show you how to install the platform development environment in a
 	4. In Windows>Preferences>General>Network Connections review you have correctly configured your proxy
 	5. In File>Import>General>Existing Projects into Workspace select Root Directory **S:\sources\sofia4cities\** and import all projects.
 3. Start Sofia2 ConfigDB with **S:\scripts\ConfigDB_start.bat**. We are going to create schemas, tables an data needed (when launched if all is OK you´ll have a command line opened with ConfigDB).
-	1. Execute **S:\scripts\ConfigDB_browser.bat** to manage the database (use server host localhost, port 3306, username root and no password)
-	2. Into the program verify there is a schema called **sofia2_s4c**. If it is not created, do it.
+	1. Execute **S:\scripts\ConfigDB_browser.bat** to manage the database (use server host localhost, port 3306, username root and password changeIt!)
+	2. Into the program verify there are two schemas called **sofia2_s4c** and **sofia2_s4c_scheduler**. If they are not created, do it.
 	3.  Launch **S:\start.bat**, in the command line go to **S:\sources\sofia4cities\config\init** and execute **mvn spring-boot:run**. This execute this project as Spring Boot and creates all the tables and master data in the ConfigDB. The program close when create all tables.
 	1. Into the program launched by ConfigDB_browser.bat refresh **sofia2_s4c** schema and verify the schema sofia2_s4c has a group of tables like ontology and data into it.
 
