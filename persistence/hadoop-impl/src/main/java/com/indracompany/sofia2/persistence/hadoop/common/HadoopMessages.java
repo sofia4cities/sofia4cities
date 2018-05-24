@@ -12,22 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.indracompany.sofia2.persistence.hadoop.common;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class HadoopMessages {
 
-public enum GeometryType {
+	public static String NOT_IMPLEMENTED = "Not implemented yet";
+	public static String NOT_SUPPORTED = "Not Supported Operation";
 
-	@JsonProperty("Point")
-	Point("Point");
-
-	private String name;
-
-	private GeometryType(String name) {
-		this.name = name;
+	private HadoopMessages() {
+		super();
 	}
 
-	public String getName() {
-		return name;
-	}
 }

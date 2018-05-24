@@ -12,34 +12,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop.hive.table;
+package com.indracompany.sofia2.persistence.hadoop.common.geometry;
 
-import lombok.Getter;
-import lombok.Setter;
+public class Geometry {
 
-public class HiveColumn {
+	private Double[] coordinates;
+	private GeometryType type;
 
-	@Getter
-	@Setter
-	private String name;
-
-	@Getter
-	@Setter
-	private String columnType;
-
-	@Getter
-	@Setter
-	private boolean required;
-
-	public HiveColumn() {
+	public Geometry() {
 		super();
+		this.coordinates = new Double[2];
 	}
 
-	public HiveColumn(String name, String columnType, boolean required) {
-		super();
-		this.name = name;
-		this.columnType = columnType;
-		this.required = required;
+	public Double[] getCoordinates() {
+		return coordinates;
 	}
 
+	public void setCoordinates(Double[] coordinates) {
+		this.coordinates = coordinates;
+	}
+
+	public GeometryType getType() {
+		return type;
+	}
+
+	public void setType(GeometryType type) {
+		this.type = type;
+	}
 }

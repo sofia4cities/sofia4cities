@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop;
+package com.indracompany.sofia2.persistence.hadoop.common;
 
 public class NameBeanConst {
 
@@ -26,4 +26,8 @@ public class NameBeanConst {
 	public static final String KUDU_QUERY_REPO_BEAN_NAME = "kuduQueryAsTextDBRepository";
 	public static final String KUDU_MANAGE_DB_REPO_BEAN_NAME = "kuduManageDBRepository";
 	public static final String KUDU_BASIC_OPS_BEAN_NAME = "kuduBasicOpsDBRepository";
+
+	private NameBeanConst() {
+		super();
+	}
 }
