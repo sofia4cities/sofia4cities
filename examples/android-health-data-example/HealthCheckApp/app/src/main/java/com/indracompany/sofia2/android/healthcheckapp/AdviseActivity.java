@@ -290,7 +290,7 @@ public class AdviseActivity extends AppCompatActivity {
                 Toast.makeText(AdviseActivity.this,"Feedback sent",Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(AdviseActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdviseActivity.this,"Communication error. Please try again",Toast.LENGTH_SHORT).show();
             }
         }
     }

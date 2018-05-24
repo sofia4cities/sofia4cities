@@ -38,4 +38,8 @@ public class ContextDataNameFields {
 	public static final String CONTEXT_DATA_FIELD_TIMESTAMP = CONTEXT_DATA_FIELD_PREFIX + FIELD_TIMESTAMP;
 	public static final String CONTEXT_DATA_FIELD_TIMESTAMP_MILLIS = CONTEXT_DATA_FIELD_PREFIX + FIELD_TIMESTAMP_MILLIS;
 
+	private ContextDataNameFields() {
+		super();
+	}
+
 }

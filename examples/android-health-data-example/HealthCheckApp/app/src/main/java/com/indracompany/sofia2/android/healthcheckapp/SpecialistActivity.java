@@ -36,6 +36,9 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
     private RecyclerView mItemsRV;
     private ArrayList<RequestData> mRequestArray = new ArrayList<>();
 
+    private final int MAX_RETRIES = 3;
+    int mGetRetries = MAX_RETRIES;
+
     String mAccessToken = "";
     String mUsername = "";
     String mInput = "";
@@ -146,8 +149,14 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
                 loadRequestData();
             }
             else{
-                Toast.makeText(SpecialistActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
-                new GetFromS4CAsyncTask().execute((Void) null);
+                mGetRetries--;
+                if(mGetRetries == 0){
+                    mGetRetries = MAX_RETRIES;
+                    Toast.makeText(SpecialistActivity.this,"Could not connect to S4C Platform",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    new GetFromS4CAsyncTask().execute((Void) null);
+                }
             }
         }
     }

@@ -12,14 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.examples.scalability.msgs;
+package com.indracompany.sofia2.examples.scalability;
 
 import java.util.Date;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.examples.scalability.Client;
+import com.indracompany.sofia2.examples.scalability.msgs.InjectorStatus;
 
 import lombok.extern.slf4j.Slf4j;
 

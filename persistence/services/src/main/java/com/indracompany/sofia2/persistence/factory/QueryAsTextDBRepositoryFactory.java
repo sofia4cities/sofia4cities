@@ -14,7 +14,7 @@
  */
 package com.indracompany.sofia2.persistence.factory;
 
-import static com.indracompany.sofia2.persistence.hadoop.NameBeanConst.KUDU_QUERY_REPO_BEAN_NAME;
+import static com.indracompany.sofia2.persistence.hadoop.common.NameBeanConst.KUDU_QUERY_REPO_BEAN_NAME;
 
 import java.util.List;
 

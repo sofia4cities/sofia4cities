@@ -294,13 +294,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 e.printStackTrace();
             } catch (MalformedURLException e) {
                 e.printStackTrace();
+                return false;
             } catch (IOException e) {
                 e.printStackTrace();
+                return false;
             } catch (JSONException e) {
                 e.printStackTrace();
+                return false;
             }
 
-            return false;
+            return true;
         }
 
         @Override

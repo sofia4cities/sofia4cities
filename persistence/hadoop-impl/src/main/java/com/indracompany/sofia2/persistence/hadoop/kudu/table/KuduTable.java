@@ -46,6 +46,11 @@ public class KuduTable {
 
 			for (HiveColumn column : columns) {
 				sentence.append(column.getName()).append(" ").append(column.getColumnType());
+
+				if (column.isRequired()) {
+					sentence.append(" NOT NULL");
+				}
+
 				if (i < numOfColumns - 1) {
 					sentence.append(", ");
 				}
