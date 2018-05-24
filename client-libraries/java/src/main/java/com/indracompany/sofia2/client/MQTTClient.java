@@ -91,6 +91,27 @@ public class MQTTClient {
 		this.sslConfig = sslConfig;
 
 	}
+	
+	/**
+	 * Creates a MQTT session.
+	 *
+	 * @param token
+	 *            The token associated with the device/template
+	 * @param deviceTemplate
+	 *            The device template identification
+	 * @param device
+	 *            The identification of the device
+	 * @param tags
+	 *            Tags for the device, separated by commas
+	 * @param timeout
+	 *            Time in seconds for waiting response from Broker
+	 * @return The session key for the session established between client and IoT
+	 *         Broker
+	 * @throws MQTTException
+	 */	
+	public String connect(String token, String deviceTemplate, String device, int timeout) throws MQTTException {
+		return connect(token, deviceTemplate, device, null, timeout, null);
+	}
 
 	/**
 	 * Creates a MQTT session.
@@ -110,8 +131,7 @@ public class MQTTClient {
 	 * @return The session key for the session established between client and IoT
 	 *         Broker
 	 * @throws MQTTException
-	 */
-
+	 */	
 	@SuppressWarnings("unchecked")
 	public String connect(String token, String deviceTemplate, String device, String tags, int timeout,
 			JsonNode commandConfiguration) throws MQTTException {
