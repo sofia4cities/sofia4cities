@@ -1,6 +1,8 @@
 #Integration Resources
-sofia2:
-  urls:  
+open_platform:
+  urls:
+    digitalTwinBroker:
+      base: http://localhost:19300/digitaltwinbroker  
     iotbroker:
       base: http://localhost:19000/iotbroker
       advice: http://localhost:19000/iotbroker/advice

@@ -185,7 +185,7 @@ public class Ontology extends AuditableEntityWithUUID {
 	@NotNull
 	@Getter
 	@Setter
-	private boolean allowsCreateTopic = false;
+	private boolean allowsCreateTopic;
 
 	@Column(name = "TOPIC", length = 256)
 	@Getter
