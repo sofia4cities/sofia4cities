@@ -14,8 +14,6 @@
  */
 package com.indracompany.sofia2.persistence.hadoop.kudu;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Conditional;
@@ -42,11 +40,6 @@ public class KuduQueryAsTextDBRepository implements QueryAsTextDBRepository {
 
 	@Autowired
 	private HadoopQueryProcessor queryProcessor;
-
-	@PostConstruct
-	public void sss() {
-		log.info("dadasdasd");
-	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
