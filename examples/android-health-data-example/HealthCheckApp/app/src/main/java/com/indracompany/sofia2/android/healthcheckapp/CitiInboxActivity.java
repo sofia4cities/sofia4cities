@@ -38,6 +38,9 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
 
     int clickedElement = 0;
     String clickedId = "";
+    private final int MAX_RETRIES = 3;
+    int mGetRetries = MAX_RETRIES;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -220,8 +223,15 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
                 loadRequestData();
             }
             else{
-                Toast.makeText(CitiInboxActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
-                new GetFromS4CAsyncTask().execute((Void) null);
+                mGetRetries--;
+                if(mGetRetries == 0){
+                    mGetRetries = MAX_RETRIES;
+                    Toast.makeText(CitiInboxActivity.this,"Could not connect to S4C Platform",Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                else {
+                    new GetFromS4CAsyncTask().execute((Void) null);
+                }
             }
         }
     }
@@ -348,7 +358,7 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
                 Toast.makeText(CitiInboxActivity.this,"Access revoked",Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(CitiInboxActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
+                Toast.makeText(CitiInboxActivity.this,"Could not connect to S4C Platform",Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -25,7 +25,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@ComponentScan("com.indracompany.sofia2")
+@ComponentScan("com.indracompany.sofia2.examples.scalability")
 @EnableAsync
 public class Application {
 

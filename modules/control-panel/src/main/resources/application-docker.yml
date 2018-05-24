@@ -19,7 +19,7 @@ sofia2:
      gateway:
       kafka:
         enable: true
-        host: kafkaservice
+        host: kafka
         port: 9092
         partitions: 1
         replication: 1 

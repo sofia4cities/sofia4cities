@@ -14,7 +14,7 @@ sofia2:
          swaggerhost: ${SERVER_NAME}  
        kafka:
          enable: true
-         host: kafkaservice
+         host: kafka
          port: 9092         
 
 spring:

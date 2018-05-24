@@ -193,7 +193,7 @@ public class FormActivity extends AppCompatActivity {
                 Toast.makeText(FormActivity.this,"Form stored successfully",Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(FormActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
+                Toast.makeText(FormActivity.this,"Could not connect to S4C Platform",Toast.LENGTH_SHORT).show();
             }
         }
     }

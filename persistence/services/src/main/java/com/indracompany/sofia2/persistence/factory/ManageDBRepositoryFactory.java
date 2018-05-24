@@ -14,7 +14,7 @@
  */
 package com.indracompany.sofia2.persistence.factory;
 
-import static com.indracompany.sofia2.persistence.hadoop.NameBeanConst.KUDU_MANAGE_DB_REPO_BEAN_NAME;
+import static com.indracompany.sofia2.persistence.hadoop.common.NameBeanConst.KUDU_MANAGE_DB_REPO_BEAN_NAME;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

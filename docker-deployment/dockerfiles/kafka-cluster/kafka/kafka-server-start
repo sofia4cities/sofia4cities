@@ -50,10 +50,10 @@ case $COMMAND in
     ;;
 esac
 
-export JMX_PORT=${JMX_PORT:-9999}
-export JOLOKIA_HOME=$base_dir
-export JOLOKIA_JAR=$JOLOKIA_HOME/jolokia-jvm-1.5.0-agent.jar
-export KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Djava.net.preferIPv4Stack=true"
+#export JMX_PORT=${JMX_PORT:-9999}
+#export JOLOKIA_HOME=$base_dir
+#export JOLOKIA_JAR=$JOLOKIA_HOME/jolokia-jvm-1.5.0-agent.jar
+#export KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Djava.net.preferIPv4Stack=true"
 export KAFKA_OPTS="-Djava.security.auth.login.config=/etc/kafka/kafka_server.jaas"
-export KAFKA_OPTS="-javaagent:$JOLOKIA_JAR=port=7778,host=* $KAFKA_OPTS"
+#export KAFKA_OPTS="-javaagent:$JOLOKIA_JAR=port=7778,host=* $KAFKA_OPTS"
 exec $base_dir/kafka-run-class $EXTRA_ARGS io.confluent.support.metrics.SupportedKafka "$@"

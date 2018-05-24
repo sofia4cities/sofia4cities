@@ -18,11 +18,11 @@
 	    		<input class="token" name="token" value="008215e3580f4876bd7a301abc483664"/>
 	    	</div>
 	    	<div class="block-cell">
-	    		<label for="clientPlatform">Client Platform:</label>
+	    		<label for="clientPlatform">Device template:</label>
 	    		<input class="clientPlatform" name="clientPlatform" value="Thermometer"/>
 	    	</div>
 	    	<div class="block-cell">
-	    		<label for="clientPlatformInstance">Client Platform Instance:</label>
+	    		<label for="clientPlatformInstance">Device:</label>
 	    		<input class="clientPlatformInstance" name="clientPlatformInstance" value="Thermometer-Room-1"/>
 	    	</div>
 	    	<div class="block-cell">
@@ -172,7 +172,7 @@
 		        data: data,
 		        dataType: 'json',
 		        success: function (response){
-		        	var text = 'token:' + response.token + ', clientPlatform:' + response.clientPlatform + ', clientPlatformInstance:' + response.clientPlatformInstance + ', ontology:' + response.ontology;
+		        	var text = 'token:' + response.token + ', device template:' + response.clientPlatform + ', device:' + response.clientPlatformInstance + ', ontology:' + response.ontology;
 	                $(".session").text(text);
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {
@@ -183,13 +183,7 @@
 		}
 		
 		function btnStart(injector) {
-			//var data = JSON.stringify({
-			//	temperature:{ 
-			//		value: 25
-			//	}
-			//});
 			var data = $("textarea#instance").val();
-			//var data = $(".instance").val();
 
 			var id = 'inj-' + injector;
 			var status = $(".injector[id="+id+"]").find(".inj-cell-status");
@@ -351,8 +345,8 @@
 		        type: 'GET',
 		        dataType: 'json',
 		        success: function (response){
-		        	var text = 'token:' + response.token + ', clientPlatform:' + response.clientPlatform + ', clientPlatformInstance:' + response.clientPlatformInstance;	        	
-	                $(".session").text(text);
+		        	var text = 'token:' + response.token + ', device template:' + response.clientPlatform + ', device:' + response.clientPlatformInstance;	        	
+	                $(".session").text(text);	                
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {
 	            	if (xhr.status == 200){

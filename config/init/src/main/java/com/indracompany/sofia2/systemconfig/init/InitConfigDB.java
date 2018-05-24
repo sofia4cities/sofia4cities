@@ -1769,7 +1769,7 @@ public class InitConfigDB {
 
 			marketAsset.setJsonDesc(loadFromResources("market/details/DigitalTwin.json"));
 
-			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
+			marketAsset.setImage(loadFileFromResources("market/img/gears.png"));
 			marketAsset.setImageType("png");
 
 			marketAsset.setContent(loadFileFromResources("market/docs/TurbineHelsinki.zip"));
@@ -1793,7 +1793,7 @@ public class InitConfigDB {
 
 			marketAsset.setJsonDesc(loadFromResources("market/details/API NodeRED.json"));
 
-			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
+			marketAsset.setImage(loadFileFromResources("market/img/gears.png"));
 			marketAsset.setImageType("png");
 
 			marketAsset.setContent(loadFileFromResources("market/docs/API NodeRED sofia4cities.zip"));
@@ -1819,6 +1819,52 @@ public class InitConfigDB {
 
 			marketAsset.setContent(loadFileFromResources("market/docs/oauth2-authentication.zip"));
 			marketAsset.setContentId("oauth2-authentication.zip");
+
+			marketAssetRepository.save(marketAsset);
+
+			// Device simulator Jar
+
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("8");
+			marketAsset.setIdentification("Device Simulator");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setImage(loadFileFromResources("market/img/jar-file.jpg"));
+			marketAsset.setImageType("jpg");
+			marketAsset.setJsonDesc(loadFromResources("market/details/DeviceSimulator.json"));
+
+			marketAsset.setContent(loadFileFromResources("market/docs/device-simulator.zip"));
+			marketAsset.setContentId("device-simulator.zip");
+
+			marketAssetRepository.save(marketAsset);
+
+			// JSON document example for Data import tool
+
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("9");
+			marketAsset.setIdentification("Countries JSON");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/details/Countries.json"));
+
+			marketAsset.setImage(loadFileFromResources("market/img/json.png"));
+			marketAsset.setImageType("png");
+			marketAsset.setContent(loadFileFromResources("market/docs/countries.json"));
+			marketAsset.setContentId("countries.json");
 
 			marketAssetRepository.save(marketAsset);
 		}

@@ -20,9 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.util.StringUtils;
+
+import com.indracompany.sofia2.controlpanel.controller.management.login.LoginManagementController;
+import com.indracompany.sofia2.controlpanel.controller.management.login.model.RequestLogin;
 
 @Component
 public class Securityhandler implements AuthenticationSuccessHandler {
@@ -31,16 +36,19 @@ public class Securityhandler implements AuthenticationSuccessHandler {
 	private final String URI_CONTROLPANEL = "/controlpanel";
 	private final String URI_MAIN = "/main";
 
+	@Autowired
+	private LoginManagementController controller;
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException {
 
 		HttpSession session = request.getSession();
 		if (session != null) {
+			this.generateTokenOauth2ForControlPanel(request);
 			String redirectUrl = (String) session.getAttribute(BLOCK_PRIOR_LOGIN);
 			if (redirectUrl != null) {
 				// we do not forget to clean this attribute from session
-
 				session.removeAttribute(BLOCK_PRIOR_LOGIN);
 				// then we redirect
 				response.sendRedirect(request.getContextPath() + redirectUrl.replace(URI_CONTROLPANEL, ""));
@@ -52,4 +60,22 @@ public class Securityhandler implements AuthenticationSuccessHandler {
 		}
 
 	}
+
+	private void generateTokenOauth2ForControlPanel(HttpServletRequest request) {
+		String password = request.getParameter("password");
+		String username = request.getParameter("username");
+		if (!StringUtils.isEmpty(password) && !StringUtils.isEmpty(username)) {
+			RequestLogin oauthRequest = new RequestLogin();
+			oauthRequest.setPassword(password);
+			oauthRequest.setUsername(username);
+			try {
+				request.getSession().setAttribute("oauthToken",
+						this.controller.postLoginOauth2(oauthRequest).getBody());
+			} catch (Exception e) {
+
+				e.printStackTrace();
+			}
+		}
+	}
+
 }

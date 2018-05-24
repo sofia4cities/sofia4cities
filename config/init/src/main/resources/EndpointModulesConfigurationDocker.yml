@@ -1,6 +1,8 @@
 #Integration Resources docker
-sofia2:
+open_platform:
   urls: 
+    digitalTwinBroker:
+      base: http://digitaltwinbrokerservice:19300/digitaltwinbroker
     controlpanel:
       base: http://s4citiespro.westeurope.cloudapp.azure.com/controlpanel
     iotbroker:
