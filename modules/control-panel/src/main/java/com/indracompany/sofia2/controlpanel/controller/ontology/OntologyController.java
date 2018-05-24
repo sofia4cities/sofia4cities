@@ -102,11 +102,19 @@ public class OntologyController {
 		return "ontologies/create";
 	}
 
-	@GetMapping(value = "/createwizard", produces = "text/html")
-	public String createWizard(Model model, @Valid Ontology ontology, BindingResult bindingResult) {
+	/*
+	 * @GetMapping(value = "/createwizard", produces = "text/html") public String
+	 * createWizard(Model model, @Valid Ontology ontology, BindingResult
+	 * bindingResult) {
+	 * 
+	 * if (bindingResult.hasErrors()) model.addAttribute("ontology", new
+	 * Ontology()); populateForm(model); return "ontologies/createwizard"; }
+	 */
 
-		if (bindingResult.hasErrors())
-			model.addAttribute("ontology", new Ontology());
+	@GetMapping(value = "/createwizard", produces = "text/html")
+	public String createWizard(Model model) {
+
+		model.addAttribute("ontology", new Ontology());
 		populateForm(model);
 		return "ontologies/createwizard";
 	}
