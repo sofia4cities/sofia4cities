@@ -64,7 +64,7 @@ public class KuduManageDBRepository implements ManageDBRepository {
 			KuduTable table = kuduTableGenerator.builTable(ontology, schema);
 			jdbcTemplate.execute(table.build());
 			log.debug("kudu table created successfully");
-		} catch (DataAccessException e) {
+		} catch (DataAccessException | DBPersistenceException e) {
 			log.error("error creating kudu table for ontology " + ontology, e);
 			throw new DBPersistenceException(e);
 		}
