@@ -176,10 +176,9 @@ public class FeedbackActivity extends AppCompatActivity {
             super.onPostExecute(responseCode);
             if(responseCode == HttpURLConnection.HTTP_OK){
                 new PostAuthApi().execute("authorize");
-                Toast.makeText(FeedbackActivity.this,"Request sent",Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(FeedbackActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
+                Toast.makeText(FeedbackActivity.this,"Could not connect to S4C Platform",Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -274,10 +273,10 @@ public class FeedbackActivity extends AppCompatActivity {
         protected void onPostExecute(Integer responseCode) {
             super.onPostExecute(responseCode);
             if(responseCode == HttpURLConnection.HTTP_OK){
-                Toast.makeText(FeedbackActivity.this,"Data access to specialist is granted",Toast.LENGTH_SHORT).show();
+                Toast.makeText(FeedbackActivity.this,"Request sent & data access granted",Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(FeedbackActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
+                Toast.makeText(FeedbackActivity.this,"Could not connect to S4C Platform"+responseCode,Toast.LENGTH_SHORT).show();
             }
         }
     }
