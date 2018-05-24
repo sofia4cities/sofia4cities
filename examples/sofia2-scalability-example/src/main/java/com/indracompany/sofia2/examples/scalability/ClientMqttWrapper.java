@@ -24,16 +24,16 @@ import com.indracompany.sofia2.client.configuration.MQTTSecureConfiguration;
 public class ClientMqttWrapper implements Client {
 
 	private MQTTClient client;
-	
+
 	public ClientMqttWrapper(String url) {
 		createClient(url);
 	}
-	
+
 	@Override
 	public void createClient(String url) {
 		MQTTClient mqttClient;
 		String protocol = url.substring(0, 3);
-		if("tcp".equals(protocol.toLowerCase())) {
+		if ("tcp".equals(protocol.toLowerCase())) {
 			mqttClient = new MQTTClient(url);
 		} else {
 			ClassPathResource classPathResource = new ClassPathResource("clientdevelkeystore.jks");
@@ -44,10 +44,10 @@ public class ClientMqttWrapper implements Client {
 				throw new RuntimeException("Error opening clientdevelkeystore.jks");
 			}
 			MQTTSecureConfiguration sslConfig = new MQTTSecureConfiguration(keystore, "changeIt!");
-			mqttClient = new MQTTClient(url, sslConfig);	
+			mqttClient = new MQTTClient(url, sslConfig);
 		}
-		
-		if(client != null) {
+
+		if (client != null) {
 			client.disconnect();
 		}
 		client = mqttClient;

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorSecondary"
-    tools:context="com.indracompany.sofia2.android.healthcheckapp.FormFragment">
+    tools:context="com.indracompany.sofia2.android.healthcheckapp.FormActivity">
 
     <ScrollView
         android:id="@+id/form_form"

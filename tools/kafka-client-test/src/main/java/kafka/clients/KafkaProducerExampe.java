@@ -30,11 +30,9 @@ public class KafkaProducerExampe {
 		KafkaProducer<String, String> producer = new KafkaProducer<>(config);
 
 		for (int i = 0; i < 1000; i++) {
-			String pepe = "{\"groupId\" : \"GROUP\",\"imageList\" : [],\"code\" : \"" + System.currentTimeMillis()
-					+ "\",\"name\" : \"name1" + System.currentTimeMillis()
-					+ "\",\"category\" : \"CATEGORY\", \"mainImage\" : \"IMAGE\"}";
+			String pepe = "{\"year\":1875,\"population\":23070,\"population_women\":10236,\"population_men\":12834}";
 			Future<RecordMetadata> metadata = producer
-					.send(new ProducerRecord<String, String>("ontology_product", pepe));
+					.send(new ProducerRecord<String, String>("ontology_HelsinkiPopulation", pepe));
 			System.out.println("Inserting data : " + i + " -> with value : " + pepe);
 
 		}

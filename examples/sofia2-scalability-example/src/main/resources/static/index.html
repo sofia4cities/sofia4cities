@@ -40,11 +40,17 @@
 					<label for="mqtt-url">MQTT URL:</label>
 	    			<input class="mqtt-url url" name="mqtt-url" value="ssl://localhost:8883"/>
 				</div>
-				<button class="btn-connect" onclick="btnConnect()">Connect</button>
+				<div>
+					<label for="kafka-url">KAFKA URL:</label>
+	    			<input class="kafka-url url" name="kafka-url" value="localhost:9093"/>
+				</div>
+				<button class="btn-connect" onclick="btnConnect()">Store Values</button>
 			</div>
 			<div class="block-cell">
 				<label for="instance">Instance json:</label>
-				<input class="instance json" name="instance" value='{"temperature":{ "value": 25}}'/>
+				<textarea class="instance json" name="instance" rows="5" id="instance">{"temperature":{ "value": 25}}</textarea>
+				
+				<!--  input class="instance json" name="instance" value='{"temperature":{ "value": 25}}'/-->
 			</div>
 		</div>
 		<div class="block">
@@ -59,6 +65,7 @@
 				<select class="combo-protocol">
 					<option value="rest">Rest</option>
 				 	<option value="mqtt">MQTT</option>
+				 	<option value="kafka">KAFKA</option>
 				</select>
 			</div>
 			<div class="injectors inj-table">
@@ -154,6 +161,7 @@
 				clientPlatformInstance: $(".clientPlatformInstance").val(),
 				restURL: $(".rest-url").val(),
 				mqttURL: $(".mqtt-url").val(),
+				kafkaURL: $(".kafka-url").val(),
 				ontology: $(".ontology").val()
 			});
 				
@@ -180,12 +188,13 @@
 			//		value: 25
 			//	}
 			//});
-			var data = $(".instance").val();
+			var data = $("textarea#instance").val();
+			//var data = $(".instance").val();
 
 			var id = 'inj-' + injector;
 			var status = $(".injector[id="+id+"]").find(".inj-cell-status");
 			var protocol = $(".injector[id="+id+"]").find(".inj-cell-protocol").text();
-			var ontology = 'thermometer';
+			var ontology = $(".ontology").val();
 			
 			$.ajax({
 		        url: 'startInjector?&injector='+injector+'&protocol='+protocol,
