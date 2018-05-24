@@ -14,6 +14,9 @@
  */
 package com.indracompany.sofia2.resources.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +41,10 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 	}
 
 	public enum Module {
-		iotbroker, scriptingEngine, flowEngine, routerStandAlone, apiManager, controlpanel
+		iotbroker, scriptingEngine, flowEngine, routerStandAlone, apiManager, controlpanel, digitalTwinBroker
 	}
+
+	public final static String SWAGGER_UI_SUFFIX = "swagger-ui.html";
 
 	@PostConstruct
 	public void getActiveProfile() {
@@ -128,9 +133,38 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 			}
 
 			break;
-
+		case digitalTwinBroker:
+			switch (service) {
+			case base:
+				return this.urls.getDigitalTwinBroker().getBase();
+			}
+		default:
+			break;
 		}
 		return "RESOURCE_URL_NOT_FOUND";
+	}
+
+	@Override
+	public Map<String, String> getSwaggerUrls() {
+		Map<String, String> map = new HashMap<>();
+		String controlpanel = this.urls.getControlpanel().getBase();
+		String iotbroker = this.urls.getIotbroker().getBase();
+		String apimanager = this.urls.getApiManager().getBase();
+		String router = this.urls.getRouterStandAlone().getBase();
+		String digitalTwinBroker = this.urls.getDigitalTwinBroker().getBase();
+		map.put(Module.controlpanel.name(), controlpanel.endsWith("/") ? controlpanel.concat(SWAGGER_UI_SUFFIX)
+				: controlpanel.concat("/").concat(SWAGGER_UI_SUFFIX));
+		map.put(Module.iotbroker.name(), iotbroker.endsWith("/") ? iotbroker.concat(SWAGGER_UI_SUFFIX)
+				: iotbroker.concat("/").concat(SWAGGER_UI_SUFFIX));
+		map.put(Module.apiManager.name(), apimanager.endsWith("/") ? apimanager.concat(SWAGGER_UI_SUFFIX)
+				: apimanager.concat("/").concat(SWAGGER_UI_SUFFIX));
+		map.put(Module.routerStandAlone.name(),
+				router.endsWith("/") ? router.concat(SWAGGER_UI_SUFFIX) : router.concat("/").concat(SWAGGER_UI_SUFFIX));
+		map.put(Module.digitalTwinBroker.name(),
+				digitalTwinBroker.endsWith("/") ? digitalTwinBroker.concat(SWAGGER_UI_SUFFIX)
+						: digitalTwinBroker.concat("/").concat(SWAGGER_UI_SUFFIX));
+
+		return map;
 	}
 
 }

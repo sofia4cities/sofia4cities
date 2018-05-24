@@ -177,7 +177,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 				.findByTypeAndEnvironment(Configuration.Type.EndpointModulesConfiguration, environment);
 		Constructor constructor = new Constructor(ModulesUrls.class);
 		Yaml yamlUrls = new Yaml(constructor);
-		return (Urls) yamlUrls.loadAs(config.getYmlConfig(), ModulesUrls.class).getSofia2().get("urls");
+		return (Urls) yamlUrls.loadAs(config.getYmlConfig(), ModulesUrls.class).getOpen_platform().get("urls");
 
 	}
 
