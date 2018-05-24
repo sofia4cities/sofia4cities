@@ -1,8 +1,8 @@
-version: "3"
+version: "2.1"
 
 services:  
   zookeeper:
-    image: sofia2/zookeeper-secured:latest
+    image: ${REPOSITORY}sofia2/zookeeper-secured:${IMAGETAG}
     container_name: zookeeper  
     ports:
      - "2181:2181"
@@ -10,7 +10,7 @@ services:
        ZOOKEEPER_CLIENT_PORT: "2181"
     network_mode: host
   kafka:
-    image: sofia2/kafka-secured:latest
+    image: ${REPOSITORY}sofia2/kafka-secured:${IMAGETAG}
     container_name: kafka    
     ports:
      - "9093:9093"
@@ -20,10 +20,10 @@ services:
        KAFKA_ADVERTISED_LISTENERS: "SASL_PLAINTEXT://localhost:9093,PLAINTEXT://localhost:9092"
        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
     depends_on:
-     - zookeeper      
+     - "zookeeper"      
     network_mode: host
   schema-registry:
-    image: confluentinc/cp-schema-registry:latest
+    image: confluentinc/cp-schema-registry:${IMAGETAG}
     container_name: schema-registry    
     ports:
      - "8081:8081"
@@ -35,11 +35,11 @@ services:
        SCHEMA_REGISTRY_HOST_NAME: "schema-registry"
        SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
     depends_on:
-     - zookeeper
-     - kafka
+     - "zookeeper"
+     - "kafka"
     network_mode: host
   kafka-rest:
-    image: confluentinc/cp-kafka-rest:latest
+    image: confluentinc/cp-kafka-rest:${IMAGETAG}
     container_name: kafka-rest    
     ports:
      - "8082:8082"
@@ -49,7 +49,7 @@ services:
        KAFKA_REST_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
        KAFKA_REST_HOST_NAME: "kafka-rest"
     depends_on:
-     - zookeeper
-     - kafka  
-     - schema-registry   
+     - "zookeeper"
+     - "kafka"  
+     - "schema-registry"   
     network_mode: host
