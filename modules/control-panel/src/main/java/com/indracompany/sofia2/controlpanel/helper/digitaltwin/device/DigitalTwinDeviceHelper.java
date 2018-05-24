@@ -151,7 +151,7 @@ public class DigitalTwinDeviceHelper {
 
 		// pom.xml Template properties
 		Map<String, Object> dataPomMap = new HashMap<String, Object>();
-		dataPomMap.put("projectName", identificacion);
+		dataPomMap.put("ProjectName", identificacion);
 		dataPomMap.put("sensehat", sensehat);
 
 		Writer writerDeviceApplication = null;

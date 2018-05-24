@@ -47,8 +47,8 @@ public class DigitalTwinStatus implements IDigitalTwinStatus{
 		</#list>
 		
 		mapClass = new HashMap<String, Class>();
-		<#list mapClass as class>
-			mapClass.put("${class.name}", ${class.type}.class);
+		<#list mapClass as cls>
+			mapClass.put("${cls.name}", ${cls.type}.class);
 		</#list>
 	}
 

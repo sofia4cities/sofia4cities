@@ -29,8 +29,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-
-	@Value("${device.broker.rest.swaggerhost}")
+	
+	@Value("${r"${device.broker.rest.swaggerhost}"}")
 	private String host;
 
 	@Bean
