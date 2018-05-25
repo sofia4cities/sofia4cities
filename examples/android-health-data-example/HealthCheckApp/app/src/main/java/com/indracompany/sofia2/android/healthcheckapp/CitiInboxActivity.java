@@ -4,9 +4,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -17,11 +17,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -50,7 +47,7 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
     private String pref_env;
 
     private void loadPreferences(){
-        pref_env = preferences.getString("EnvSelect","s4citiespro.westeurope.cloudapp.azure.com");
+        pref_env = preferences.getString("EnvSelect","rancher.sofia4cities.com");
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
