@@ -1,5 +1,5 @@
 server:
-   port: ${serverPort}
+   port: ${serverPort?c}
    contextPath: ${serverContextPath}
 
 spring:

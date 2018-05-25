@@ -1,27 +1,73 @@
 var stompClient = null;
+var ctxTemp = null;
+var ctxHum = null;
+var ctxAtm = null;
 
-var dataPoints = [];
+var optionsTemp = {
+	    type: 'line',
+	    data: {
+	        labels: [],
+	        datasets: [
+	            {
+	                label: "Temperature (degrees)",
+	                fillColor: "rgba(220,220,220,0.2)",
+	                strokeColor: "rgba(220,220,220,1)",
+	                pointColor: "rgba(220,220,220,1)",
+	                pointStrokeColor: "#fff",
+	                pointHighlightFill: "#fff",
+	                pointHighlightStroke: "rgba(220,220,220,1)",
+	                data: []
+	            }
+	        ]
+	    },
+	    options: {
+	        responsive: true
+	    }    
+	};
 
-var options =  {
-	animationEnabled: true,
-	theme: "light2",
-	title: {
-		text: "Daily Sales Data"
-	},
-	axisX: {
-		valueFormatString: "DD MMM YYYY",
-	},
-	axisY: {
-		title: "USD",
-		titleFontSize: 24,
-		includeZero: false
-	},
-	data: [{
-		type: "spline", 
-		yValueFormatString: "$#,###.##",
-		dataPoints: dataPoints
-	}]
-};
+var optionsHum = {
+	    type: 'line',
+	    data: {
+	        labels: [],
+	        datasets: [
+	            {
+	                label: "Humidity (%)",
+	                fillColor: "rgba(220,220,220,0.2)",
+	                strokeColor: "rgba(220,220,220,1)",
+	                pointColor: "rgba(220,220,220,1)",
+	                pointStrokeColor: "#fff",
+	                pointHighlightFill: "#fff",
+	                pointHighlightStroke: "rgba(220,220,220,1)",
+	                data: []
+	            }
+	        ]
+	    },
+	    options: {
+	        responsive: true
+	    }    
+	};
+
+var optionsAtm = {
+	    type: 'line',
+	    data: {
+	        labels: [],
+	        datasets: [
+	            {
+	                label: "Pressure (%)",
+	                fillColor: "rgba(220,220,220,0.2)",
+	                strokeColor: "rgba(220,220,220,1)",
+	                pointColor: "rgba(220,220,220,1)",
+	                pointStrokeColor: "#fff",
+	                pointHighlightFill: "#fff",
+	                pointHighlightStroke: "rgba(220,220,220,1)",
+	                data: []
+	            }
+	        ]
+	    },
+	    options: {
+	        responsive: true
+	    }    
+	};
 
 // MAIN WHEN READY
 $( document ).ready(function() {
@@ -37,7 +83,9 @@ $( document ).ready(function() {
 	});
 	
 	
-	
+	ctxTemp = $("#tempChart").get(0).getContext('2d');
+	ctxHum = $("#humChart").get(0).getContext('2d');
+	ctxAtm = $("#atmChart").get(0).getContext('2d');
 	
 });
 
@@ -54,12 +102,13 @@ function setConnected(connected) {
 }
 
 function connect() {
+	$("#devices").attr("disabled", "disabled");
     var socket = new SockJS('/digitaltwinbroker/websocket');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/api/custom/SenseHatSpain', function (notification) {
+        stompClient.subscribe('/api/custom/'+$("#devices").val(), function (notification) {
         	//Joystick events
         	 var obj=JSON.parse(notification.body)
         	 
@@ -69,21 +118,37 @@ function connect() {
         		 $("#sendDown").css("background-color", "");
         		 $("#sendLeft").css("background-color", "");
         		 $("#sendRight").css("background-color", "");
+        		 $("#up").show();
+        		 $("#down").hide();
+        		 $("#left").hide();
+        		 $("#right").hide();
         	 }if(obj.event=="joystickEventDown"){
         		 $("#sendDown").css("background-color", "red");
         		 $("#sendUp").css("background-color", "");
         		 $("#sendLeft").css("background-color", "");
         		 $("#sendRight").css("background-color", "");
+        		 $("#down").show();
+        		 $("#up").hide();
+        		 $("#left").hide();
+        		 $("#right").hide();
         	 }if(obj.event=="joystickEventLeft"){
         		 $("#sendLeft").css("background-color", "red");
         		 $("#sendDown").css("background-color", "");
         		 $("#sendUp").css("background-color", "");
         		 $("#sendRight").css("background-color", "");
+        		 $("#left").show();
+        		 $("#down").hide();
+        		 $("#up").hide();
+        		 $("#right").hide();
         	 }if(obj.event=="joystickEventRight"){
         		 $("#sendRight").css("background-color", "red");
         		 $("#sendDown").css("background-color", "");
         		 $("#sendLeft").css("background-color", "");
         		 $("#sendUp").css("background-color", "");
+        		 $("#right").show();
+        		 $("#down").hide();
+        		 $("#left").hide();
+        		 $("#up").hide();
         	 }
         });
        stompClient.subscribe('/api/shadow/' + $("#devices").val(), function (notification) {
@@ -94,32 +159,56 @@ function connect() {
            $("#humidity").val(obj.status.humidity);
            $("#pressure").val(obj.status.pressure);
            
-           var m_names = new Array("Jan", "Feb", "Mar", 
-        		   "Apr", "May", "Jun", "Jul", "Aug", "Sep", 
-        		   "Oct", "Nov", "Dec");
-
-		   var d = new Date();
-		   var curr_date = d.getDate();
-		   var curr_month = d.getMonth();
-		   var curr_year = d.getFullYear();
-		   var date = curr_date + " " + m_names[curr_month] 
-		   + " " + curr_year;
-		   
-		   for (var i = 0; i < data.length; i++) {
-				dataPoints.push({
-					x: new Date(data[i].date),
-					y: data[i].units
-				});
-			}
+           var d = new Date();
+           if(d.getHours().length==1){
+        	   var curr_hour = "0"+d.getHours();
+           }else{
+        	   var curr_hour = d.getHours();
+           }
            
-           dataPoints.push({
-   				x: date,
-   				y: obj.status.temperature
-   			});
-//           
-//           var tempLenght = optionsTemp.data[0].dataPoints.length;
-//           optionsTemp.data[0].dataPoints.push({ x: new Date(), y: obj.status.temperature });
-           $("#chartTemp").CanvasJSChart(options);
+           if(d.getMinutes().length==1){
+        	   var curr_min = "0" + d.getMinutes();
+           }else{
+        	   var curr_min = d.getMinutes();
+           }
+           
+           if(d.getSeconds().length==1){
+        	   var curr_sec = "0"+d.getSeconds();
+           }else{
+        	   var curr_sec = d.getSeconds();
+           }
+		   
+		   var date = curr_hour + ":" + curr_min + ":" + curr_sec;
+		   
+		   if(optionsHum.data.labels.length==15){
+			   optionsHum.data.labels.shift();
+			   optionsHum.data.datasets[0].data.shift();
+		   }
+		   
+		   optionsHum.data.labels.push(date);
+		   optionsHum.data.datasets[0].data.push(obj.status.humidity);
+
+		   new Chart(ctxHum, optionsHum);
+		   
+		   if(optionsTemp.data.labels.length==15){
+			   optionsTemp.data.labels.shift();
+			   optionsTemp.data.datasets[0].data.shift();
+		   }
+		   
+		   optionsTemp.data.labels.push(date);
+		   optionsTemp.data.datasets[0].data.push(obj.status.temperature);
+
+		   new Chart(ctxTemp, optionsTemp);
+		   
+		   if(optionsAtm.data.labels.length==15){
+			   optionsAtm.data.labels.shift();
+			   optionsAtm.data.datasets[0].data.shift();
+		   }
+		   
+		   optionsAtm.data.labels.push(date);
+		   optionsAtm.data.datasets[0].data.push(obj.status.pressure);
+
+		  new Chart(ctxAtm, optionsAtm);
         });
        stompClient.subscribe('/api/action/' + $("#devices").val(), function (notification) {
     	 console.log(notification);
@@ -135,6 +224,7 @@ function connect() {
 }
 
 function disconnect() {
+	$("#devices").remoteAttr("disabled");
     if (stompClient !== null) {
         stompClient.disconnect();
     }
@@ -147,6 +237,10 @@ function sendCustomLeftEvent() {
 	 $("#sendDown").css("background-color", "");
 	 $("#sendLeft").css("background-color", "red");
 	 $("#sendRight").css("background-color", "");
+	 $("#up").hide();
+	 $("#down").hide();
+	 $("#left").show();
+	 $("#right").hide();
     stompClient.send("/api/sendAction", {'Authorization': $("#digitaltwin_key").val()}, JSON.stringify({'id':$("#devices").val(),'name':'joystickLeft'}));
 }
 
@@ -155,6 +249,10 @@ function sendCustomRightEvent() {
 	 $("#sendDown").css("background-color", "");
 	 $("#sendLeft").css("background-color", "");
 	 $("#sendRight").css("background-color", "red");
+	 $("#up").hide();
+	 $("#down").hide();
+	 $("#left").hide();
+	 $("#right").show();
     stompClient.send("/api/sendAction", {'Authorization': $("#digitaltwin_key").val()}, JSON.stringify({'id':$("#devices").val(),'name':'joystickRight'}));
 }
 
@@ -163,10 +261,18 @@ function sendCustomUpEvent() {
 	 $("#sendDown").css("background-color", "");
 	 $("#sendLeft").css("background-color", "");
 	 $("#sendRight").css("background-color", "");
+	 $("#up").show();
+	 $("#down").hide();
+	 $("#left").hide();
+	 $("#right").hide();
     stompClient.send("/api/sendAction", {'Authorization': $("#digitaltwin_key").val()}, JSON.stringify({'id':$("#devices").val(),'name':'joystickUp'}));
 }
 
 function sendCustomDownEvent() {
+	 $("#up").hide();
+	 $("#down").show();
+	 $("#left").hide();
+	 $("#right").hide();
 	 $("#sendUp").css("background-color", "");
 	 $("#sendDown").css("background-color", "red");
 	 $("#sendLeft").css("background-color", "");

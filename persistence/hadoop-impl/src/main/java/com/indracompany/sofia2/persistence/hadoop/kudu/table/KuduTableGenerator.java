@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
@@ -42,6 +43,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class KuduTableGenerator {
+
+	@Value("${sofia2.database.kudu.numreplicas:1}")
+	private int numReplicas;
+
+	@Value("${sofia2.database.kudu.address:localhost:7051}")
+	private String addresses;
 
 	public KuduTable builTable(String ontologyName, String schema) throws DBPersistenceException {
 
@@ -102,8 +109,8 @@ public class KuduTableGenerator {
 
 	public KuduTable build(String name, JSONObject props, List<String> requiredProperties)
 			throws DBPersistenceException {
-		KuduTable table = new KuduTable();
-		table.setName(name);
+
+		KuduTable table = new KuduTable(name, numReplicas, addresses);
 
 		@SuppressWarnings("unchecked")
 		Iterator<String> it = props.keys();

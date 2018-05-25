@@ -50,6 +50,7 @@ public class DigitalTwinDisplayController {
 	final static String LOG_COLLECTION = "TwinLogs";
 	final static String PROPERTIES_COLLECTION = "TwinProperties";
 	final static String EVENTS_COLLECTION = "TwinEvents";
+	final static String ACTIONS_COLLECTION = "TwinActions";
 
 	DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
@@ -87,7 +88,8 @@ public class DigitalTwinDisplayController {
 
 	@PostMapping("executeQuery")
 	public String executeQuery(Model model, @RequestParam String type, @RequestParam String device,
-			@RequestParam String offset, @RequestParam String operation, @RequestParam String eventName) {
+			@RequestParam String offset, @RequestParam String operation, @RequestParam String eventName,
+			@RequestParam String actionName) {
 		try {
 			List<String> results = new ArrayList<String>();
 			List<String> devices = new ArrayList<String>();
@@ -124,6 +126,9 @@ public class DigitalTwinDisplayController {
 							|| operation.equalsIgnoreCase(DigitalTwinModel.EventType.PING.name())) {
 
 						collection = EVENTS_COLLECTION;
+					} else if (operation.equalsIgnoreCase("action")) {
+
+						collection = ACTIONS_COLLECTION + t.substring(0, 1).toUpperCase() + t.substring(1);
 					}
 					if (operation.equalsIgnoreCase(DigitalTwinModel.EventType.CUSTOM.name()) && eventName != "") {
 						queryResult = mongoRepo.queryNativeAsJson(collection,
@@ -133,6 +138,10 @@ public class DigitalTwinDisplayController {
 					} else if (collection.equalsIgnoreCase(EVENTS_COLLECTION)) {
 						queryResult = mongoRepo.queryNativeAsJson(collection,
 								"db." + collection + ".find({deviceId:'" + d + "',event:'" + operation.toUpperCase()
+										+ "'}).sort({timestamp: -1}).limit(" + Integer.parseInt(offset) + ")");
+					} else if (collection.equalsIgnoreCase(ACTIONS_COLLECTION)) {
+						queryResult = mongoRepo.queryNativeAsJson(collection,
+								"db." + collection + ".find({deviceId:'" + d + "',action:'" + actionName
 										+ "'}).sort({timestamp: -1}).limit(" + Integer.parseInt(offset) + ")");
 					} else {
 						queryResult = mongoRepo.queryNativeAsJson(collection, "db." + collection + ".find({deviceId:'"

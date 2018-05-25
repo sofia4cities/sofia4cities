@@ -1,4 +1,4 @@
-FROM mongo:latest
+FROM mongo:3.4
 
 # Metadata
 LABEL module.maintainer="plataformasofia2@indra.es" \
@@ -14,4 +14,4 @@ EXPOSE 27017
 USER mongodb
 
 # Init data for testing purposes
-COPY initdb.js /docker-entrypoint-initdb.d/initdb.js
+# COPY initdb.js /docker-entrypoint-initdb.d/initdb.js

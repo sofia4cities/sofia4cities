@@ -18,8 +18,8 @@ sofia2:
    iotbroker.plugable:
      gateway:
       kafka:
-        enable: true
-        host: kafkaservice
+        enable: false
+        host: kafka
         port: 9092
         partitions: 1
         replication: 1 

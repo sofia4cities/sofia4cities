@@ -345,7 +345,9 @@ if [ "$PUSH2OCPREGISTRY" = true ]; then
 	pushImage2OCPRegistry nginx latest
 	pushImage2OCPRegistry quasar latest 
 	pushImage2OCPRegistry configinit latest	
-	pushImage2OCPRegistry scalability latest	
+	pushImage2OCPRegistry scalability latest
+	pushImage2OCPRegistry zookeeper-secured latest
+	pushImage2OCPRegistry kafka-secured latest		
 fi
 
 if [ "$PUSH2PRIVREGISTRY" = true ]; then
@@ -368,6 +370,8 @@ if [ "$PUSH2PRIVREGISTRY" = true ]; then
 	pushImage2Registry quasar latest 
 	pushImage2Registry configinit latest 
 	pushImage2Registry scalability latest
+	pushImage2Registry zookeeper-secured latest
+	pushImage2Registry kafka-secured latest
 fi
 
 exit 0

@@ -1,5 +1,7 @@
 package com.indracompany.sofia2.android.healthcheckapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -61,8 +63,8 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
     @Override
     public void onListItemClick(int clickedItemId) {
         clickedElement = clickedItemId;
-        Toast.makeText(CitiInboxActivity.this,"Revoke access",Toast.LENGTH_SHORT).show();
-        new PostAuthApi().execute("deauthorize");
+        createAndShowAlertDialog();
+
     }
 
     @Override
@@ -356,6 +358,7 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
             super.onPostExecute(responseCode);
             if(responseCode == HttpURLConnection.HTTP_OK){
                 Toast.makeText(CitiInboxActivity.this,"Access revoked",Toast.LENGTH_SHORT).show();
+
             }
             else{
                 Toast.makeText(CitiInboxActivity.this,"Could not connect to S4C Platform",Toast.LENGTH_SHORT).show();
@@ -368,4 +371,24 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
             return true;
         }
     };
+
+    private void createAndShowAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("GDPR Warning");
+        builder.setMessage("By proceeding you will revoke access to your data by the specialist");
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                new PostAuthApi().execute("deauthorize");
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 }

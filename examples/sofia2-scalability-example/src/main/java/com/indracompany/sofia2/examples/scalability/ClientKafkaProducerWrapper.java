@@ -16,6 +16,7 @@ package com.indracompany.sofia2.examples.scalability;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -60,6 +61,11 @@ public class ClientKafkaProducerWrapper implements Client {
 	public void insertInstance(String ontology, String instance) {
 		Future<RecordMetadata> metadata = producer
 				.send(new ProducerRecord<String, String>(prefix + ontology, instance));
+		try {
+			metadata.get();
+		} catch (InterruptedException | ExecutionException e) {
+			throw new RuntimeException("Error inserting data with kafka", e);
+		}
 		// producer.flush();
 	}
 
