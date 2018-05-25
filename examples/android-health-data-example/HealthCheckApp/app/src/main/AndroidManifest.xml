@@ -27,6 +27,7 @@
         <activity android:name=".FeedbackActivity" />
         <activity android:name=".SpecialistActivity" />
         <activity android:name=".CitiInboxActivity" />
+        <activity android:name=".SettingsActivity" />
         <activity android:name=".AdviseActivity"></activity>
     </application>
 

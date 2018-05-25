@@ -2,11 +2,14 @@ package com.indracompany.sofia2.android.healthcheckapp;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -43,17 +46,37 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
     private final int MAX_RETRIES = 3;
     int mGetRetries = MAX_RETRIES;
 
+    SharedPreferences preferences;
+    private String pref_env;
+
+    private void loadPreferences(){
+        pref_env = preferences.getString("EnvSelect","s4citiespro.westeurope.cloudapp.azure.com");
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_citi_inbox);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.s4c_logo);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        loadPreferences();
+
 
         mAccessToken = getIntent().getStringExtra("accessToken");
         mUsername = getIntent().getStringExtra("username");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(mUsername);
 
         mItemsRV = (RecyclerView) findViewById(R.id.list_citi_inbox);
         mItemsRV.setLayoutManager(new LinearLayoutManager(this));
@@ -80,7 +103,7 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/citizenInboxInterface/\\PendingRequests";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInboxInterface/\\PendingRequests";
             URL url = null;
             int responseCode = 500;
             try {
@@ -159,7 +182,7 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/citizenInboxInterface/Messages";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInboxInterface/Messages";
             URL url = null;
             int responseCode = 500;
             try {
@@ -275,8 +298,8 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
 
             String command = params[0];
 
-            String data = "https://s4citiespro.westeurope.cloudapp.azure.com/controlpanel/management/"+command+"/api/9ad97800-0992-485c-ad8c-fb573649d7cb/user/specialistHealth";
-            String inbox = "https://s4citiespro.westeurope.cloudapp.azure.com/controlpanel/management/"+command+"/api/5eb1559a-f7f3-4e78-8a08-c9da44d71f0e/user/specialistHealth";
+            String data = "https://"+pref_env+"/controlpanel/management/"+command+"/api/9ad97800-0992-485c-ad8c-fb573649d7cb/user/specialistHealth";
+            String inbox = "https://"+pref_env+"/controlpanel/management/"+command+"/api/5eb1559a-f7f3-4e78-8a08-c9da44d71f0e/user/specialistHealth";
             URL urlInbox = null;
             URL urlData = null;
             int responseCode = 500;

@@ -3,7 +3,9 @@ package com.indracompany.sofia2.android.healthcheckapp;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +13,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -46,22 +50,57 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
     int clickedElement = 0;
     String clickedId = "";
 
+    SharedPreferences preferences;
+    private String pref_env;
+
+    private void loadPreferences(){
+        pref_env = preferences.getString("EnvSelect","s4citiespro.westeurope.cloudapp.azure.com");
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_specialist);
 
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        loadPreferences();
+
         mAccessToken = getIntent().getStringExtra("accessToken");
         mUsername = getIntent().getStringExtra("username");
+
+        getSupportActionBar().setTitle(mUsername);
 
         mItemsRV = (RecyclerView) findViewById(R.id.list_spec);
         mItemsRV.setLayoutManager(new LinearLayoutManager(this));
         mItemsRV.setHasFixedSize(true);
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        else if (id == R.id.action_settings) {
+            Intent mSettingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(mSettingsIntent);
+            return true;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
     @Override
     protected void onResume() {
         super.onResume();
+        loadPreferences();
         new GetFromS4CAsyncTask().execute((Void) null);
     }
 
@@ -83,7 +122,7 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/specialistInterface/\\PendingRequests";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/specialistInterface/\\PendingRequests";
             URL url = null;
             int responseCode = 500;
             try {
@@ -219,7 +258,7 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/citizenInboxInterface";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInboxInterface";
             URL url = null;
             int responseCode = 500;
             try {

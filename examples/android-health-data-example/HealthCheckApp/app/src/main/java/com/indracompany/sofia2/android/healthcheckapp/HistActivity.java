@@ -1,12 +1,15 @@
 package com.indracompany.sofia2.android.healthcheckapp;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -26,21 +29,43 @@ import java.util.List;
 public class HistActivity extends AppCompatActivity {
 
     String mAccessToken;
+    String mUsername;
     private RecyclerView mRV;
     List<HealthData> mHealthData;
     private final int MAX_RETRIES = 3;
     int mGetRetries = MAX_RETRIES;
+
+    SharedPreferences preferences;
+    private String pref_env;
+
+    private void loadPreferences(){
+        pref_env = preferences.getString("EnvSelect","s4citiespro.westeurope.cloudapp.azure.com");
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hist);
 
-        mAccessToken = getIntent().getStringExtra("accessToken");
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        loadPreferences();
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.s4c_logo);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        mAccessToken = getIntent().getStringExtra("accessToken");
+        mUsername =  getIntent().getStringExtra("username");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(mUsername);
+
 
 
         Context context = HistActivity.this;
@@ -58,7 +83,7 @@ public class HistActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/citizenInterface/\\HistoricalData";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInterface/\\HistoricalData";
             URL url = null;
             int responseCode = 500;
             try {
