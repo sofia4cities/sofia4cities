@@ -50,6 +50,7 @@ public class DeviceSimulatorJob {
 	private final static String STRING_VAR = "string";
 	private final static String OBJECT_VAR = "object";
 	private final static String ARRAY_VAR = "array";
+	private final static String BOOLEAN_VAR = "boolean";
 	private JsonNode schema;
 
 	public void execute(JobExecutionContext context) throws IOException {
@@ -114,6 +115,8 @@ public class DeviceSimulatorJob {
 				}
 			else if (ontologySchema.path(field).get("type").asText().equals(NUMBER_VAR))
 				((ObjectNode) fieldsSchema).put(field, 0);
+			else if (ontologySchema.path(field).get("type").asText().equals(BOOLEAN_VAR))
+				((ObjectNode) fieldsSchema).put(field, true);
 			else if (ontologySchema.path(field).get("type").asText().equals(OBJECT_VAR)) {
 				JsonNode object = this.createObject(ontologySchema.path(field));
 				((ObjectNode) fieldsSchema).set(field, object);
@@ -158,6 +161,8 @@ public class DeviceSimulatorJob {
 					}
 				else if (fieldNode.path(field).get("type").asText().equals(NUMBER_VAR))
 					((ObjectNode) objectNode).put(field, 0);
+				else if (fieldNode.path(field).get("type").asText().equals(BOOLEAN_VAR))
+					((ObjectNode) objectNode).put(field, true);
 				else if (fieldNode.path(field).get("type").asText().equals(OBJECT_VAR)) {
 					JsonNode object = this.createObject(fieldNode.path(field));
 					((ObjectNode) objectNode).set(field, object);
@@ -209,6 +214,8 @@ public class DeviceSimulatorJob {
 					}
 				else if (fieldNode.path(field).get("type").asText().equals(NUMBER_VAR))
 					((ObjectNode) objectNode).put(field, 0);
+				else if (fieldNode.path(field).get("type").asText().equals(BOOLEAN_VAR))
+					((ObjectNode) objectNode).put(field, true);
 				else if (fieldNode.path(field).get("type").asText().equals(OBJECT_VAR)) {
 					return this.createObject(fieldNode.path(field));
 				}
@@ -240,6 +247,9 @@ public class DeviceSimulatorJob {
 						} else if (type.equals(OBJECT_VAR)) {
 							JsonNode object = this.createObject(fieldNode);
 							return object;
+						} else if (type.equals(BOOLEAN_VAR)) {
+							((ObjectNode) nodeAux).put(String.valueOf(j), true);
+							nodeArray.add(true);
 						}
 
 					}
@@ -257,6 +267,8 @@ public class DeviceSimulatorJob {
 				} else if (type.equals(NUMBER_VAR)) {
 					nodeArray.add(0);
 
+				} else if (type.equals(BOOLEAN_VAR)) {
+					nodeArray.add(true);
 				} else if (type.equals(OBJECT_VAR)) {
 					JsonNode object = this.createObject(fieldNode);
 					return object;
