@@ -165,7 +165,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		OperationModel model = OperationModel
 				.builder(ontology.getIdentification(), OperationType.valueOf(operationType.name()), user.getUserId(),
 						OperationModel.Source.APIMANAGER)
-				.body(body).queryType(QueryType.valueOf(QUERY_TYPE)).objectId(OBJECT_ID).clientPlatformId("")
+				.body(body).queryType(QueryType.valueOf(QUERY_TYPE)).objectId(OBJECT_ID).deviceTemplate("")
 				.cacheable("true".equalsIgnoreCase(CACHEABLE) ? true : false).build();
 
 		NotificationModel modelNotification = new NotificationModel();
@@ -203,6 +203,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	@Timed
 	public Map<String, Object> postProcess(Map<String, Object> data, Exchange exchange) throws Exception {
 		String error = "";
+
 		ApiOperation apiOperation = ((ApiOperation) data.get(ApiServiceInterface.API_OPERATION));
 
 		if (apiOperation != null) {

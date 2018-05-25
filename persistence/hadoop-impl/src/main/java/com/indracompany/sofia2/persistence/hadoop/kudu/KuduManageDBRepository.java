@@ -14,6 +14,8 @@
  */
 package com.indracompany.sofia2.persistence.hadoop.kudu;
 
+import static com.indracompany.sofia2.persistence.hadoop.common.HadoopMessages.NOT_IMPLEMENTED;
+
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +28,7 @@ import org.springframework.stereotype.Repository;
 
 import com.indracompany.sofia2.persistence.common.DescribeColumnData;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
+import com.indracompany.sofia2.persistence.hadoop.common.NameBeanConst;
 import com.indracompany.sofia2.persistence.hadoop.config.condition.HadoopEnabledCondition;
 import com.indracompany.sofia2.persistence.hadoop.kudu.table.KuduTable;
 import com.indracompany.sofia2.persistence.hadoop.kudu.table.KuduTableGenerator;
@@ -52,8 +54,7 @@ public class KuduManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public Map<String, Boolean> getStatusDatabase() throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override
@@ -64,7 +65,7 @@ public class KuduManageDBRepository implements ManageDBRepository {
 			KuduTable table = kuduTableGenerator.builTable(ontology, schema);
 			jdbcTemplate.execute(table.build());
 			log.debug("kudu table created successfully");
-		} catch (DataAccessException e) {
+		} catch (DataAccessException | DBPersistenceException e) {
 			log.error("error creating kudu table for ontology " + ontology, e);
 			throw new DBPersistenceException(e);
 		}
@@ -79,68 +80,57 @@ public class KuduManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public List<String> getListOfTables4Ontology(String ontology) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public void removeTable4Ontology(String ontology) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public void createIndex(String ontology, String attribute) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public void createIndex(String ontology, String nameIndex, String attribute) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public void createIndex(String sentence) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public void dropIndex(String ontology, String indexName) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public List<String> getListIndexes(String ontology) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public String getIndexes(String ontology) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public void validateIndexes(String ontology, String schema) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public String exportToJson(String ontology, long startDateMillis) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public long deleteAfterExport(String ontology, String query) {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new DBPersistenceException(NOT_IMPLEMENTED);
 	}
 
 	@Override

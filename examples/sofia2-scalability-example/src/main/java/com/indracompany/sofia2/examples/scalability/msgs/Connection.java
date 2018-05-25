@@ -19,10 +19,25 @@ import lombok.Setter;
 
 public class Connection {
 
-	@Setter @Getter private String token;
-	@Setter @Getter private String clientPlatform;
-	@Setter @Getter private String clientPlatformInstance;
-	@Setter @Getter private String ontology;
-	@Setter @Getter private String restURL;
-	@Setter @Getter private String mqttURL;
+	@Setter
+	@Getter
+	private String token;
+	@Setter
+	@Getter
+	private String clientPlatform;
+	@Setter
+	@Getter
+	private String clientPlatformInstance;
+	@Setter
+	@Getter
+	private String ontology;
+	@Setter
+	@Getter
+	private String restURL;
+	@Setter
+	@Getter
+	private String mqttURL;
+	@Setter
+	@Getter
+	private String kafkaURL;
 }

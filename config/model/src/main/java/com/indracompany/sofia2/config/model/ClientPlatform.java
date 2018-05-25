@@ -38,6 +38,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
 import lombok.Getter;
@@ -52,18 +53,21 @@ public class ClientPlatform extends AuditableEntityWithUUID {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter
+	@JsonIgnore
 	private Set<ClientPlatformOntology> clientPlatformOntologies = new HashSet<>();
 
 	@OneToMany(mappedBy = "clientPlatform", cascade = CascadeType.REMOVE)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter
+	@JsonIgnore
 	private Set<Token> tokens;
 
 	@OneToMany(mappedBy = "clientPlatform", fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter
+	@JsonIgnore
 	private Set<ClientConnection> clientConnections;
 
 	@ManyToOne

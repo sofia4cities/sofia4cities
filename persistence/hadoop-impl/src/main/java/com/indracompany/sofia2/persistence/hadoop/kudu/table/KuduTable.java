@@ -33,6 +33,21 @@ public class KuduTable {
 	@Setter
 	private List<HiveColumn> columns = new ArrayList<>();
 
+	@Getter
+	@Setter
+	private int numReplicas;
+
+	@Getter
+	@Setter
+	private String addresses;
+
+	public KuduTable(String name, int numReplicas, String addresses) {
+		super();
+		this.name = name;
+		this.numReplicas = numReplicas;
+		this.addresses = addresses;
+	}
+
 	public String build() {
 		StringBuilder sentence = new StringBuilder();
 
@@ -46,6 +61,11 @@ public class KuduTable {
 
 			for (HiveColumn column : columns) {
 				sentence.append(column.getName()).append(" ").append(column.getColumnType());
+
+				if (column.isRequired()) {
+					sentence.append(" NOT NULL");
+				}
+
 				if (i < numOfColumns - 1) {
 					sentence.append(", ");
 				}
@@ -56,9 +76,13 @@ public class KuduTable {
 		sentence.append(") PARTITION BY HASH(" + JsonFieldType.PRIMARY_ID_FIELD + ") PARTITIONS 2");
 		sentence.append(" STORED AS KUDU ");
 		sentence.append("TBLPROPERTIES(");
-		sentence.append("'kudu.master_addresses' = 'localhost:7051',");
+		sentence.append("'kudu.master_addresses' = '");
+		sentence.append(addresses);
+		sentence.append("',");
 		sentence.append("'kudu.table_name' = '" + name + "',");
-		sentence.append("'kudu.num_tablet_replicas' = '1'");
+		sentence.append("'kudu.num_tablet_replicas' = '");
+		sentence.append(numReplicas);
+		sentence.append("'");
 		sentence.append(");");
 
 		return sentence.toString();

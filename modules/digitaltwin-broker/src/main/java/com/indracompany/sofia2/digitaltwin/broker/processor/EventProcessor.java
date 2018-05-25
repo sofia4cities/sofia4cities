@@ -14,10 +14,27 @@
  */
 package com.indracompany.sofia2.digitaltwin.broker.processor;
 
-import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.indracompany.sofia2.digitaltwin.broker.processor.model.EventResponseMessage;
 
 public interface EventProcessor {
-	
-	String process(DigitalTwinModel model);
-	
+
+	public EventResponseMessage register(String apiKey, JSONObject data) throws JSONException;
+
+	public EventResponseMessage ping(String apiKey, JSONObject data) throws JSONException;
+
+	public EventResponseMessage log(String apiKey, JSONObject data) throws JSONException;
+
+	public EventResponseMessage shadow(String apiKey, JSONObject data) throws JSONException;
+
+	public EventResponseMessage notebook(String apiKey, JSONObject data) throws JSONException;
+
+	public EventResponseMessage flow(String apiKey, JSONObject data) throws JSONException;
+
+	public EventResponseMessage rule(String apiKey, JSONObject data) throws JSONException;
+
+	public EventResponseMessage custom(String apiKey, JSONObject data) throws JSONException;
+
 }

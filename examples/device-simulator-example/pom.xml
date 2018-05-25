@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.indracompany.sofia2</groupId>
+		<artifactId>sofia2-parent</artifactId>
+		<version>5.2.0-SNAPSHOT</version>
+		<relativePath>../..</relativePath>
+	</parent>
+	<groupId>com.indracompany.sofia2</groupId>
+	<artifactId>sofia2-devices-simulator-example</artifactId>
+	<version>5.2.0-SNAPSHOT</version>
+	<name>sofia2-device-simulator-example</name>
+	<description>Example for simulating different devices</description>
+	<dependencies>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-java-clients</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+</project>

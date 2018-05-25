@@ -22,31 +22,38 @@ import com.indracompany.sofia2.router.service.app.model.DigitalTwinCompositeMode
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 
 @Service("routerDigitalTwinServiceImpl")
-public class RouterDigitalTwinServiceImpl implements RouterDigitalTwinService{
-	
+public class RouterDigitalTwinServiceImpl implements RouterDigitalTwinService {
+
 	@Autowired
 	CamelContext camelContext;
-	
+
 	private String defaultStartupRoute = "direct:start-digitaltwin-broker-flow";
 
 	@Override
 	public OperationResultModel insertEvent(DigitalTwinCompositeModel model) {
 		ProducerTemplate t = camelContext.createProducerTemplate();
-		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+		OperationResultModel result = (OperationResultModel) t.requestBody(defaultStartupRoute, model);
 		return result;
 	}
-	
+
 	@Override
 	public OperationResultModel insertLog(DigitalTwinCompositeModel model) {
 		ProducerTemplate t = camelContext.createProducerTemplate();
-		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+		OperationResultModel result = (OperationResultModel) t.requestBody(defaultStartupRoute, model);
 		return result;
 	}
 
 	@Override
 	public OperationResultModel updateShadow(DigitalTwinCompositeModel model) {
 		ProducerTemplate t = camelContext.createProducerTemplate();
-		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+		OperationResultModel result = (OperationResultModel) t.requestBody(defaultStartupRoute, model);
+		return result;
+	}
+
+	@Override
+	public OperationResultModel insertAction(DigitalTwinCompositeModel model) {
+		ProducerTemplate t = camelContext.createProducerTemplate();
+		OperationResultModel result = (OperationResultModel) t.requestBody(defaultStartupRoute, model);
 		return result;
 	}
 

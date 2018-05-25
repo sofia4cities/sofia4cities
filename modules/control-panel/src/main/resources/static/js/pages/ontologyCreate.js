@@ -857,7 +857,7 @@ var OntologyCreateController = function() {
 		
 		
 		// main array iteration
-		for (i=0; i <= minItems; i++) {
+		for (i=0; i <= minItems-1; i++) {
 			// object item
 			if (ontology.items[i].type.toLowerCase() == "object"){
 				instance = instance + generateObject(ontology.items[i], "", parent);

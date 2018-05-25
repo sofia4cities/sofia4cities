@@ -15,10 +15,12 @@ package com.indracompany.sofia2.iotbroker.plugable.interfaces.security;
 
 import java.util.Optional;
 
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 public interface SecurityPlugin {
-	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance, String sessionKey);
+	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance,
+			String sessionKey);
 
 	public boolean closeSession(String sessionKey);
 

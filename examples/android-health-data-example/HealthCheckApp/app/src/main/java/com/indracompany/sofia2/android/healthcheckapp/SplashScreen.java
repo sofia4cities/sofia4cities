@@ -24,13 +24,7 @@ public class SplashScreen extends Activity {
     boolean granted = false;
 
     String[] permissions= new String[]{
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.BLUETOOTH,
-            Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.INTERNET,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_PHONE_STATE};
+            Manifest.permission.INTERNET};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +94,8 @@ public class SplashScreen extends Activity {
 
 
     private  boolean requestPermissions() {
-        return true;
-        /*int result;
+
+        int result;
         List<String> listPermissionsNeeded = new ArrayList<>();
         for (String p:permissions) {
             result = ContextCompat.checkSelfPermission(this,p);
@@ -113,7 +107,7 @@ public class SplashScreen extends Activity {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),1);
             return false;
         }
-        return true;*/
+        return true;
     }
 
     private void createAndShowAlertDialog() {

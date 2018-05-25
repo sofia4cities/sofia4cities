@@ -223,7 +223,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final String ontologyName = operationModel.getOntologyName();
 		final String OBJECT_ID = operationModel.getObjectId();
 		final String USER = operationModel.getUser();
-		final String CLIENTPLATFORM = operationModel.getClientPlatformId();
+		final String CLIENTPLATFORM = operationModel.getDeviceTemplate();
 
 		String OUTPUT = "";
 		result.setMessage("OK");

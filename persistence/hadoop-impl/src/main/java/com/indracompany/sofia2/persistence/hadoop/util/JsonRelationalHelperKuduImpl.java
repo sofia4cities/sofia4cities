@@ -14,18 +14,18 @@
  */
 package com.indracompany.sofia2.persistence.hadoop.util;
 
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM_CONNECTION;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM_INSTANCE;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_SESSION;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE_TEMPLATE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMESTAMP;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMESTAMP_MILLIS;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMEZONE_ID;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_USER;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_PLATFORM;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_PLATFORM_CONNECTION;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_PLATFORM_INSTANCE;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_SESSION;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_DEVICE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_DEVICE_TEMPLATE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_DEVICE_TEMPLATE_CONNECTION;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_TIMESTAMP;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_TIMESTAMP_MILLIS;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_TIMEZONE_ID;
@@ -44,7 +44,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.hadoop.common.GeometryType;
+import com.indracompany.sofia2.persistence.hadoop.common.geometry.GeometryType;
 import com.indracompany.sofia2.persistence.hadoop.kudu.table.KuduTable;
 import com.indracompany.sofia2.persistence.hadoop.kudu.table.KuduTableGenerator;
 
@@ -87,26 +87,23 @@ public class JsonRelationalHelperKuduImpl {
 				JSONObject o = obj.getJSONObject(key);
 
 				if (isGeometry(obj.getJSONObject(key))) {
-					System.out.println(key + " is geometry");
 					JSONArray coordinates = o.getJSONArray("coordinates");
 					sqlInsert.append(key + HiveFieldType.LATITUDE_FIELD).append(", ")
 							.append(key + HiveFieldType.LONGITUDE_FIELD);
 					sqlValues.append(coordinates.getDouble(0)).append(",").append(coordinates.getDouble(1));
 				} else if (isTimestamp(obj.getJSONObject(key))) {
-					System.out.println(key + " is timestamp");
 					sqlInsert.append(key);
 					sqlValues.append("'").append(o.get("$date")).append("'");
 				} else if (isContextData(key)) {
-					System.out.println(key + " is contextData");
 
-					sqlInsert.append(CONTEXT_DATA_FIELD_CLIENT_PLATFORM).append(", ");
-					sqlValues.append("'").append(o.get(FIELD_CLIENT_PLATFORM)).append("', ");
+					sqlInsert.append(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE).append(", ");
+					sqlValues.append("'").append(o.get(FIELD_DEVICE_TEMPLATE)).append("', ");
 
-					sqlInsert.append(CONTEXT_DATA_FIELD_CLIENT_PLATFORM_INSTANCE).append(", ");
-					sqlValues.append("'").append(o.get(FIELD_CLIENT_PLATFORM_INSTANCE)).append("', ");
+					sqlInsert.append(CONTEXT_DATA_FIELD_DEVICE).append(", ");
+					sqlValues.append("'").append(o.get(FIELD_DEVICE)).append("', ");
 
-					sqlInsert.append(CONTEXT_DATA_FIELD_CLIENT_PLATFORM_CONNECTION).append(", ");
-					sqlValues.append("'").append(o.get(FIELD_CLIENT_PLATFORM_CONNECTION)).append("', ");
+					sqlInsert.append(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION).append(", ");
+					sqlValues.append("'").append(o.get(FIELD_DEVICE_TEMPLATE_CONNECTION)).append("', ");
 
 					sqlInsert.append(CONTEXT_DATA_FIELD_CLIENT_SESSION).append(", ");
 					sqlValues.append("'").append(o.get(FIELD_CLIENT_SESSION)).append("', ");
@@ -177,20 +174,15 @@ public class JsonRelationalHelperKuduImpl {
 		String nombreClave = "";
 
 		try {
+			@SuppressWarnings("unchecked")
 			Map<String, Object> obj = new ObjectMapper().readValue(json, Map.class);
 
 			Iterator<Entry<String, Object>> it = obj.entrySet().iterator();
 
 			while (it.hasNext()) {
-				Map.Entry<String, Object> e = (Entry<String, Object>) it.next();
+				Map.Entry<String, Object> e = it.next();
 				nombreClave = e.getKey().toString();
-				/*
-				 * if (e.getValue() instanceof LinkedHashMap) {
-				 * compruebaValorDeClaves((LinkedHashMap<String, Object>) e.getValue(),
-				 * nombreClave, map); } else {
-				 */
 				map.put(nombreClave, e.getValue());
-				// }
 			}
 		} catch (Exception e) {
 			throw new DBPersistenceException(e);

@@ -1,5 +1,5 @@
 server:
-   port: ${serverPort}
+   port: ${serverPort?c}
    contextPath: ${serverContextPath}
 
 spring:
@@ -12,7 +12,9 @@ device:
    rest:
      local:
         schema: ${deviceRestLocalSchema}
-        ip: ${deviceRestLocalIp}
+        network:
+           interface: ${deviceLocalInterface}
+           ipv6: ${deviceIpv6?c}
      basepath: ${serverContextPath}
    register.fail.retry.seconds: 60
    ping.interval.seconds: 10

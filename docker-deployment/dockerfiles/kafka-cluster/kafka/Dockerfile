@@ -6,10 +6,11 @@ LABEL module.maintainer "plataformasofia2@indra.es" \
 
 # Copy kafka plugin and config
 COPY kafka-server-start /usr/bin/kafka-server-start
+# COPY jolokia-jvm-1.5.0-agent.jar /usr/bin/jolokia-jvm-1.5.0-agent.jar
 COPY server.properties /etc/kafka/server.properties
 COPY kafka_server.jaas /etc/kafka/kafka_server.jaas
-COPY sofia2-kafka-login-5.2.0-SNAPSHOT.jar /usr/share/java/kafka/authentication-0.0.1-SNAPSHOT.jar
+COPY sofia2-kafka-login*.jar /usr/share/java/kafka/sofia2-kafka-login.jar
       
-EXPOSE 9093 9092   
+EXPOSE 9093 9092 9999 7778 
 
 ENTRYPOINT ["kafka-server-start", "/etc/kafka/server.properties"]

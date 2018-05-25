@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -24,10 +26,24 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
 public class FeedbackActivity extends AppCompatActivity {
 
     String mAccessToken = "";
     String mUsername = "";
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return true;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,12 +52,27 @@ public class FeedbackActivity extends AppCompatActivity {
         mAccessToken = getIntent().getStringExtra("accessToken");
         mUsername = getIntent().getStringExtra("username");
 
-        ImageButton mIB = (ImageButton) findViewById(R.id.ib_feedback);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(mUsername);
+
+
+        Button mIB = (Button) findViewById(R.id.ib_feedback);
         mIB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createAndShowAlertDialog();
 
+            }
+        });
+
+        Button mIB2 = (Button) findViewById(R.id.ib_inbox);
+        mIB2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mIntent = new Intent(FeedbackActivity.this,CitiInboxActivity.class);
+                mIntent.putExtra("accessToken",mAccessToken);
+                mIntent.putExtra("username",mUsername);
+                startActivity(mIntent);
             }
         });
 
@@ -62,7 +93,7 @@ public class FeedbackActivity extends AppCompatActivity {
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                finish();
+
                 dialog.dismiss();
             }
         });
@@ -98,7 +129,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
                 JSONObject healthFrame = new JSONObject();
                 JSONObject specialistInbox =  new JSONObject();
-                specialistInbox.put("patient",mUsername);
+                specialistInbox.put("patient","9ad97800-0992-485c-ad8c-fb573649d7cb");
                 specialistInbox.put("pending","true");
                 healthFrame.put("specialistInbox",specialistInbox);
 
@@ -154,11 +185,115 @@ public class FeedbackActivity extends AppCompatActivity {
         protected void onPostExecute(Integer responseCode) {
             super.onPostExecute(responseCode);
             if(responseCode == HttpURLConnection.HTTP_OK){
-                Toast.makeText(FeedbackActivity.this,"Request sent",Toast.LENGTH_SHORT).show();
+                new PostAuthApi().execute("authorize");
             }
             else{
-                Toast.makeText(FeedbackActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
+                Toast.makeText(FeedbackActivity.this,"Could not connect to S4C Platform",Toast.LENGTH_SHORT).show();
             }
         }
     }
+
+    class PostAuthApi extends AsyncTask<String, Void, Integer> {
+
+
+        @Override
+        protected Integer doInBackground(String... params) {
+
+            String command = params[0];
+
+            String data = "https://s4citiespro.westeurope.cloudapp.azure.com/controlpanel/management/"+command+"/api/9ad97800-0992-485c-ad8c-fb573649d7cb/user/specialistHealth";
+            String inbox = "https://s4citiespro.westeurope.cloudapp.azure.com/controlpanel/management/"+command+"/api/5eb1559a-f7f3-4e78-8a08-c9da44d71f0e/user/specialistHealth";
+            URL urlInbox = null;
+            URL urlData = null;
+            int responseCode = 500;
+            try {
+                urlInbox = new URL(inbox);
+                urlData = new URL(data);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            try{
+                HttpsURLConnection connection = (HttpsURLConnection) urlData.openConnection();
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.setRequestMethod("POST");
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(10000);
+                connection.setAllowUserInteraction(false);
+                connection.setUseCaches(false);
+                connection.setHostnameVerifier(DO_NOT_VERIFY);
+
+                connection.setRequestProperty("Authorization", "Bearer "+mAccessToken);
+                connection.setRequestProperty("Content-Type","application/json");
+
+
+                connection.connect();
+                responseCode = connection.getResponseCode();
+
+                if(connection.getResponseCode() == HttpURLConnection.HTTP_CREATED ||
+                        connection.getResponseCode() ==  HttpURLConnection.HTTP_OK){
+                    connection.disconnect();
+                    HttpsURLConnection connection2 = (HttpsURLConnection) urlInbox.openConnection();
+                    connection2.setDoInput(true);
+                    connection2.setDoOutput(true);
+                    connection2.setRequestMethod("POST");
+                    connection2.setConnectTimeout(10000);
+                    connection2.setReadTimeout(10000);
+                    connection2.setAllowUserInteraction(false);
+                    connection2.setUseCaches(false);
+                    connection2.setHostnameVerifier(DO_NOT_VERIFY);
+
+                    connection2.setRequestProperty("Authorization", "Bearer "+mAccessToken);
+                    connection2.setRequestProperty("Content-Type","application/json");
+
+
+                    connection2.connect();
+                    responseCode = connection2.getResponseCode();
+                    if(connection2.getResponseCode() == HttpURLConnection.HTTP_CREATED ||
+                            connection2.getResponseCode() ==  HttpURLConnection.HTTP_OK){
+                        return 200;
+                    }
+                    else{
+
+                    }
+
+                    //Toast.makeText(mActivity.getBaseContext(),"Form stored successfully",Toast.LENGTH_SHORT);
+                }
+                else{
+                    int code = connection.getResponseCode();
+                    String msg = connection.getResponseMessage();
+                    String dummy = connection.getRequestMethod();
+                    //Toast.makeText(mActivity.getBaseContext(),"Connection ERROR",Toast.LENGTH_SHORT);
+                }
+
+            }
+            catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // TODO: register the new account here.
+            return responseCode;
+        }
+
+        @Override
+        protected void onPostExecute(Integer responseCode) {
+            super.onPostExecute(responseCode);
+            if(responseCode == HttpURLConnection.HTTP_OK){
+                Toast.makeText(FeedbackActivity.this,"Request sent & data access granted",Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Toast.makeText(FeedbackActivity.this,"Could not connect to S4C Platform"+responseCode,Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
+        }
+    };
 }

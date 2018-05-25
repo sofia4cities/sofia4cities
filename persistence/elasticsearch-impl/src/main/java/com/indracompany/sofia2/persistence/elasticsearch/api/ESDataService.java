@@ -39,10 +39,10 @@ public class ESDataService {
 	ESBaseApi connector;
 
 	public List<String> findQueryData(String jsonQueryString, String... indexes) {
-		
+
 		jsonQueryString = jsonQueryString.replaceAll("\\n", "");
 		jsonQueryString = jsonQueryString.replaceAll("\\r", "");
-		
+
 		List<String> list = new ArrayList<String>(Arrays.asList(indexes));
 
 		Search search = new Search.Builder(jsonQueryString).addIndices(list).build();
@@ -58,7 +58,7 @@ public class ESDataService {
 	}
 
 	public String findQueryDataAsJson(String jsonQueryString, String... indexes) {
-		
+
 		jsonQueryString = jsonQueryString.replaceAll("\\n", "");
 		jsonQueryString = jsonQueryString.replaceAll("\\r", "");
 
@@ -101,17 +101,17 @@ public class ESDataService {
 
 		return findQueryData(query, ontology);
 	}
-	
+
 	public List<String> findAllByType(String ontology, String query, int from, int limit) {
 		String querybase = ESBaseApi.queryAllSizeFromToQuery;
-		
+
 		querybase = querybase.replace("[SIZE]", "" + limit);
 		querybase = querybase.replace("[FROM]", "" + from);
 		querybase = querybase.replace("[QUERY]", "" + query);
 
 		return findQueryData(querybase, ontology);
 	}
-	
+
 	public List<String> findAllByType(String ontology, int limit) {
 		String query = ESBaseApi.queryAllSize;
 		query = query.replace("[SIZE]", "" + limit);
@@ -125,7 +125,7 @@ public class ESDataService {
 
 		return findQueryDataAsJson(query, ontology);
 	}
-	
+
 	public String findAllByTypeAsJson(String ontology, int from, int limit) {
 		String query = ESBaseApi.queryAllSizeFromTo;
 		query = query.replace("[SIZE]", "" + limit);

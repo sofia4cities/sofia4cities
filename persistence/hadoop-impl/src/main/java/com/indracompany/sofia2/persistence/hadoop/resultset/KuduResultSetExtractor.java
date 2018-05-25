@@ -14,19 +14,19 @@
  */
 package com.indracompany.sofia2.persistence.hadoop.resultset;
 
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM_CONNECTION;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM_INSTANCE;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_SESSION;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE_TEMPLATE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_PREFIX;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMESTAMP;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMESTAMP_MILLIS;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMEZONE_ID;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_USER;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_PLATFORM;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_PLATFORM_CONNECTION;
-import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_PLATFORM_INSTANCE;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_CLIENT_SESSION;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_DEVICE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_DEVICE_TEMPLATE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_DEVICE_TEMPLATE_CONNECTION;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_TIMESTAMP;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_TIMESTAMP_MILLIS;
 import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.FIELD_TIMEZONE_ID;
@@ -46,8 +46,8 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.persistence.hadoop.common.Geometry;
-import com.indracompany.sofia2.persistence.hadoop.common.GeometryType;
+import com.indracompany.sofia2.persistence.hadoop.common.geometry.Geometry;
+import com.indracompany.sofia2.persistence.hadoop.common.geometry.GeometryType;
 import com.indracompany.sofia2.persistence.hadoop.util.HiveFieldType;
 
 import lombok.extern.slf4j.Slf4j;
@@ -122,12 +122,12 @@ public class KuduResultSetExtractor implements ResultSetExtractor<String> {
 	}
 
 	public void addToContextData(String columnName, Object value, JSONObject contextData) {
-		if (CONTEXT_DATA_FIELD_CLIENT_PLATFORM.equalsIgnoreCase(columnName)) {
-			contextData.put(FIELD_CLIENT_PLATFORM, value);
-		} else if (CONTEXT_DATA_FIELD_CLIENT_PLATFORM_INSTANCE.equalsIgnoreCase(columnName)) {
-			contextData.put(FIELD_CLIENT_PLATFORM_INSTANCE, value);
-		} else if (CONTEXT_DATA_FIELD_CLIENT_PLATFORM_CONNECTION.equalsIgnoreCase(columnName)) {
-			contextData.put(FIELD_CLIENT_PLATFORM_CONNECTION, value);
+		if (CONTEXT_DATA_FIELD_DEVICE_TEMPLATE.equalsIgnoreCase(columnName)) {
+			contextData.put(FIELD_DEVICE_TEMPLATE, value);
+		} else if (CONTEXT_DATA_FIELD_DEVICE.equalsIgnoreCase(columnName)) {
+			contextData.put(FIELD_DEVICE, value);
+		} else if (CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION.equalsIgnoreCase(columnName)) {
+			contextData.put(FIELD_DEVICE_TEMPLATE_CONNECTION, value);
 		} else if (CONTEXT_DATA_FIELD_CLIENT_SESSION.equalsIgnoreCase(columnName)) {
 			contextData.put(FIELD_CLIENT_SESSION, value);
 		} else if (CONTEXT_DATA_FIELD_USER.equalsIgnoreCase(columnName)) {

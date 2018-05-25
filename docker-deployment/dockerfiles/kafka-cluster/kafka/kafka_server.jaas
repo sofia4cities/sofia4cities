@@ -1,7 +1,8 @@
 KafkaServer{
    authentication.PlainLoginModule required
    username="admin"
-   password="admin-secret";
+   password="admin-secret"
+   url="http://controlpanelservice:18000/controlpanel/api-ops/validate/";
 };
 
 //Zookeper config

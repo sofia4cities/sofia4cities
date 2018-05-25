@@ -38,15 +38,15 @@ function buildSwaggerJSON(data) {
         var typeData = typeOf(data[x]);
         if (["array", "object", "null", "string"].indexOf(typeData) === -1)
             op.properties[x] = {
-                "type": [typeData, "null"]
+                "type": typeData
             };
         else {
             switch (typeData) {
                 case "array":
                     typeData = typeOf(data[x][0]);
                     if (typeData === "array") {
-                        // op.properties[x] = { "type": "array", "items": { type: typeData } };
-                        throw new Error("Complex object (array of array etc...)", data[x][0]);
+                        op.properties[x] = { "type": "array", "items": { type: typeData } };
+                        //throw new Error("Complex object (array of array etc...)", data[x][0]);
                     }
                     if (typeData === "object") {
                         op.properties[x] = {
@@ -71,9 +71,9 @@ function buildSwaggerJSON(data) {
                     op.properties[x].type = "object";
                     break;
                 case "null":
-                	op.properties[x] ={
-                		"type" : ["string", "number", "null"]
-                	};
+//                	op.properties[x] ={
+//                		"type" : ["string", "number", "null"]
+//                	};
                 	for(var i= op.required.length-1; i>=0; i--){
                 		if(op.required[i] == x){
                 			op.required.splice(i,1);
@@ -89,7 +89,7 @@ function buildSwaggerJSON(data) {
                 		};
                 	}else{*/
                 		op.properties[x] = {
-                                "type": [typeData, "null"]
+                                "type": typeData
                             };
                 	//}
                 default:

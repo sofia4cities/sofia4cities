@@ -276,7 +276,8 @@ public class InitConfigDB {
 			device.setContextPath("/turbine");
 			device.setDigitalKey("f0e50f5f8c754204a4ac601f29775c15");
 			device.setIdentification("TurbineHelsinki");
-			device.setIp("localhost");
+			device.setIntrface("eth0");
+			device.setIpv6(true);
 			device.setLatitude("60.17688297979675");
 			device.setLongitude("24.92333816559176");
 			device.setPort(10000);
@@ -688,10 +689,10 @@ public class InitConfigDB {
 			clientPlatformRepository.save(client);
 			client = new ClientPlatform();
 			client.setId("4");
-			client.setUser(getUserAdministrator());
-			client.setIdentification("ContPerf device");
+			client.setUser(getUserDeveloper());
+			client.setIdentification("Device Master");
 			client.setEncryptionKey(UUID.randomUUID().toString());
-			client.setDescription("Device for continuous performance testing");
+			client.setDescription("Device template for testing");
 			clientPlatformRepository.save(client);
 		}
 
@@ -895,6 +896,15 @@ public class InitConfigDB {
 			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Audit.json"));
 			dataModel.setDescription("Base Audit");
 			dataModel.setLabels("Audit,General,IoT");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("DeviceLog");
+			dataModel.setTypeEnum(DataModel.MainType.IoT);
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_DeviceLog.json"));
+			dataModel.setDescription("Data model for device logging");
+			dataModel.setLabels("General,IoT,Log");
 			dataModel.setUser(getUserAdministrator());
 			dataModelRepository.save(dataModel);
 			//
@@ -1506,10 +1516,10 @@ public class InitConfigDB {
 			client.setTokens(hashSetTokens);
 			tokenRepository.save(token);
 
-			client = this.clientPlatformRepository.findByIdentification("ContPerf device");
+			client = this.clientPlatformRepository.findByIdentification("Device Master");
 			token = new Token();
 			token.setClientPlatform(client);
-			token.setToken("56686a5a0d7e497d9cafbbbd4b2563ee");
+			token.setToken("a16b9e7367734f04bc720e981fcf483f");
 			tokenRepository.save(token);
 		}
 
@@ -1521,10 +1531,10 @@ public class InitConfigDB {
 		List<UserToken> tokens = this.userTokenRepository.findAll();
 		if (tokens.isEmpty()) {
 			List<User> userList = this.userCDBRepository.findAll();
-			
+
 			for (Iterator<User> iterator = userList.iterator(); iterator.hasNext();) {
 				User user = (User) iterator.next();
-				
+
 				UserToken userToken = new UserToken();
 
 				userToken.setToken(UUID.randomUUID().toString().replaceAll("-", ""));
@@ -1759,7 +1769,7 @@ public class InitConfigDB {
 
 			marketAsset.setJsonDesc(loadFromResources("market/details/DigitalTwin.json"));
 
-			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
+			marketAsset.setImage(loadFileFromResources("market/img/gears.png"));
 			marketAsset.setImageType("png");
 
 			marketAsset.setContent(loadFileFromResources("market/docs/TurbineHelsinki.zip"));
@@ -1783,7 +1793,7 @@ public class InitConfigDB {
 
 			marketAsset.setJsonDesc(loadFromResources("market/details/API NodeRED.json"));
 
-			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
+			marketAsset.setImage(loadFileFromResources("market/img/gears.png"));
 			marketAsset.setImageType("png");
 
 			marketAsset.setContent(loadFileFromResources("market/docs/API NodeRED sofia4cities.zip"));
@@ -1809,6 +1819,52 @@ public class InitConfigDB {
 
 			marketAsset.setContent(loadFileFromResources("market/docs/oauth2-authentication.zip"));
 			marketAsset.setContentId("oauth2-authentication.zip");
+
+			marketAssetRepository.save(marketAsset);
+
+			// Device simulator Jar
+
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("8");
+			marketAsset.setIdentification("Device Simulator");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setImage(loadFileFromResources("market/img/jar-file.jpg"));
+			marketAsset.setImageType("jpg");
+			marketAsset.setJsonDesc(loadFromResources("market/details/DeviceSimulator.json"));
+
+			marketAsset.setContent(loadFileFromResources("market/docs/device-simulator.zip"));
+			marketAsset.setContentId("device-simulator.zip");
+
+			marketAssetRepository.save(marketAsset);
+
+			// JSON document example for Data import tool
+
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("9");
+			marketAsset.setIdentification("Countries JSON");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/details/Countries.json"));
+
+			marketAsset.setImage(loadFileFromResources("market/img/json.png"));
+			marketAsset.setImageType("png");
+			marketAsset.setContent(loadFileFromResources("market/docs/countries.json"));
+			marketAsset.setContentId("countries.json");
 
 			marketAssetRepository.save(marketAsset);
 		}

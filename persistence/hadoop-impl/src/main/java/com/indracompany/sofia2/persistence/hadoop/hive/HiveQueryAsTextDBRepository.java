@@ -21,9 +21,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
+import com.indracompany.sofia2.persistence.hadoop.common.NameBeanConst;
 import com.indracompany.sofia2.persistence.hadoop.resultset.DefaultResultSetExtractor;
-import com.indracompany.sofia2.persistence.hadoop.util.QueryProcessor;
+import com.indracompany.sofia2.persistence.hadoop.util.HadoopQueryProcessor;
 import com.indracompany.sofia2.persistence.interfaces.QueryAsTextDBRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class HiveQueryAsTextDBRepository implements QueryAsTextDBRepository {
 	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	private QueryProcessor hivePricessor;
+	private HadoopQueryProcessor hivePricessor;
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
