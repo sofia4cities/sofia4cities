@@ -7,6 +7,7 @@ You can find:
 
 - [Architecture Overview](architecture-overview/) of the Platform, with explanation of the modules, executables, third-party libraries, HA,...
 - [Getting Started](getting-started/) a Guide about how to start with the platform, execute the platform in Docker, enter in the ControlPanel, define Devices, Ontologies, create a dashboard,...
+- [Tutorials](tutorials/) guides and videos explaining in a simple way some uses and functionalities of the platform
 - [SSAP Protocol Description](ssap_protocol/) SSAP is the protocol of the plataforma to exchange info between devices and systemas and the platform.
 - [How to contribute](how-to-contribute/) description of the easy rules to follow to contribute to the evolution of the platform
 - [How to execute in local](how-to-execute-local/) this section explain how to install our Development Environment (at the moment for Windows), how to compile all the modules, load in the IDE of the DevEnv and execute some modules
