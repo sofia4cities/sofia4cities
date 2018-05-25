@@ -31,6 +31,7 @@ import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.simulation.DeviceSimulationService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,6 +45,8 @@ public class MainPageController {
 	private MenuService menuService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private IntegrationResourcesService integrationResourcesService;
 
 	// TEMPORAL
 	@Autowired
@@ -69,7 +72,8 @@ public class MainPageController {
 		// Remove PrettyPrinted
 		String menu = utils.validateAndReturnJson(jsonMenu);
 		utils.setSessionAttribute(request, "menu", menu);
-
+		if (request.getSession().getAttribute("apis") == null)
+			utils.setSessionAttribute(request, "apis", this.integrationResourcesService.getSwaggerUrls());
 		if (utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name())) {
 			model.addAttribute("kpis", mainService.createKPIs());
 
@@ -94,6 +98,8 @@ public class MainPageController {
 			return "main";
 		} else if (utils.getRole().equals(Role.Type.ROLE_USER.name())) {
 			return "redirect:/marketasset/list";
+		} else if (utils.getRole().equals(Role.Type.ROLE_DATAVIEWER.name())) {
+			return "redirect:/dashboards/viewerlist";
 		}
 
 		// FLOW

@@ -21,13 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
 import com.indracompany.sofia2.iotbroker.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
@@ -69,19 +69,19 @@ public class InsertProcessor implements MessageTypeProcessor {
 		final Optional<IoTSession> session = securityPluginManager.getSession(insertMessage.getSessionKey());
 
 		String user = null;
-		String clientPlatformId = null;
-		String clientPlatformInstance = null;
+		String deviceTemplate = null;
+		String device = null;
 		if (session.isPresent()) {
 			user = session.get().getUserID();
-			clientPlatformId = session.get().getClientPlatform();
-			clientPlatformInstance = session.get().getClientPlatformInstance();
+			deviceTemplate = session.get().getClientPlatform();
+			device = session.get().getDevice();
 		}
 
 		final OperationModel model = OperationModel
 				.builder(insertMessage.getBody().getOntology(), OperationType.POST, user, Source.IOTBROKER)
 				.body(insertMessage.getBody().getData().toString()).queryType(QueryType.NATIVE)
-				.clientPlatformId(clientPlatformId).clientPlatformInstance(clientPlatformInstance)
-				.clientSession(insertMessage.getSessionKey()).clientConnection("").build();
+				.deviceTemplate(deviceTemplate).device(device).clientSession(insertMessage.getSessionKey())
+				.clientConnection("").build();
 
 		final NotificationModel modelNotification = new NotificationModel();
 		modelNotification.setOperationModel(model);

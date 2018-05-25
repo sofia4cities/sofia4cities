@@ -22,7 +22,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiKeyAuthDefinition;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -45,7 +44,6 @@ public interface SwaggerGeneratorService {
 			@PathParam("identificacion") @ApiParam(name = "identificacion", required = true) String identificacion,
 			@PathParam("token") @ApiParam(name = "token", required = true) String token) throws Exception;
 
-	
 	@GET
 	@Path("/{identification}/swagger.json")
 	@ApiOperation(value = "Generate Swagger.json File", notes = "Generate Swagger.json File", httpMethod = "GET", produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
@@ -53,5 +51,6 @@ public interface SwaggerGeneratorService {
 			@ApiResponse(code = 400, message = "Bad Request"), @ApiResponse(code = 401, message = "Unauthorized"),
 			@ApiResponse(code = 501, message = "Internal Server Error") })
 	public Response getApiWithoutToken(
-			@PathParam("identification") @ApiParam(name = "identification", required = true) String identificacion) throws Exception;
+			@PathParam("identification") @ApiParam(name = "identification", required = true) String identificacion)
+			throws Exception;
 }

@@ -106,6 +106,7 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService {
 					log.error("Digital Twin Type : " + type + "doesn't exist.");
 					return;
 				}
+				digitalTwinDevice.setIp("");
 				digitalTwinDevice.setLogic(digitalTwinDevice.getLogic().replace("\\r", "")
 						.replace("\\n", System.getProperty("line.separator")).replace("\\t", "   ")
 						.replace("\\\"", "'"));

@@ -103,7 +103,7 @@
 		      <groupId>com.spotify</groupId>
 		      <artifactId>docker-maven-plugin</artifactId>   		      
 		      <configuration>
-		        <imageName>sofia2/configinit</imageName>
+		        <imageName>${docker.image.username}/configinit</imageName>
 		        <imageTags>
 		           <imageTag>${project.version}</imageTag>
 		        </imageTags>		        

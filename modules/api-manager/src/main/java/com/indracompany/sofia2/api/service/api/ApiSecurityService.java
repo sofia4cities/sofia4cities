@@ -27,6 +27,7 @@ import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserApi;
 import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -106,20 +107,13 @@ public class ApiSecurityService {
 			autorizado=true;
 		}else{
 			//No administrador, ni propietario pero está suscrito
-			List<ApiSuscription> lSuscripcionesApi=null;
+			UserApi suscriptionApi=null;
 			try{
-				lSuscripcionesApi=apiServiceRest.findApiSuscriptions(api, user);
+				suscriptionApi=apiServiceRest.findApiSuscriptions(api, user);
 			} catch (Exception e) {}
 			
-			if(lSuscripcionesApi!=null && lSuscripcionesApi.size()>0){
-				for(ApiSuscription suscripcion:lSuscripcionesApi){
-					if(suscripcion.getEndDate()==null){
-						autorizado=true;
-					}
-					if(suscripcion.getEndDate()!=null && suscripcion.getEndDate().after(new Date())){
-						autorizado=true;
-					}
-				}
+			if(suscriptionApi!=null){
+				autorizado=true;
 			}
 		}
 		

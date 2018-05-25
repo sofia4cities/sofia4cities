@@ -18,9 +18,15 @@
 
 	<properties>
 		<license.dir>${project.parent.basedir}</license.dir>
+		<controlpanel.theme>sofia2-select4cities-theme</controlpanel.theme>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>${controlpanel.theme}</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-persistence-services</artifactId>
@@ -62,6 +68,23 @@
 			<version>${sofia2.version}</version>
 		</dependency>
 
+		<!-- Spring fox swagger ui -->
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-security-jwt-authorization-ri</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
@@ -158,30 +181,31 @@
 		</dependency>
 		<!-- freemarker -->
 		<dependency>
-		    <groupId>org.freemarker</groupId>
-		    <artifactId>freemarker</artifactId>
-		    <version>${freemarket.version}</version>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${freemarket.version}</version>
 		</dependency>
 	</dependencies>
 
 	<build>
-	    <resources>
-	        <resource>
-	            <filtering>true</filtering>
-	            <directory>src/main/resources</directory>
-	            <excludes>
-	            	<exclude>static/**</exclude>
-	            </excludes>
-	        </resource>
-	        <resource>
-	            <filtering>false</filtering>
-	            <directory>src/main/resources</directory>
-	            <includes>
-	            	<include>static/**</include>
-	            </includes>
-	        </resource>	        
-	    </resources>
-    
+
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>static/**</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>static/**</include>
+				</includes>
+			</resource>
+		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -197,26 +221,45 @@
 					</execution>
 				</executions>
 			</plugin>
-		    <plugin>
-		      <groupId>com.spotify</groupId>
-		      <artifactId>docker-maven-plugin</artifactId>   		      
-		      <configuration>
-		        <imageName>${docker.image.username}/controlpanel</imageName>
-		        <imageTags>
-		           <imageTag>${project.version}</imageTag>
-		        </imageTags>		        
-		        <dockerDirectory>docker</dockerDirectory>
-		        <resources>
-		           <resource>
-		             <targetPath>/</targetPath>
-		             <directory>${project.build.directory}</directory>
-		             <include>${project.build.finalName}-exec.jar</include>
-		           </resource>
-		        </resources>
-		      </configuration>
-		    </plugin>			
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<configuration>
+					<imageName>${docker.image.username}/controlpanel</imageName>
+					<imageTags>
+						<imageTag>${project.version}</imageTag>
+					</imageTags>
+					<dockerDirectory>docker</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}-exec.jar</include>
+						</resource>
+					</resources>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
-
+	<profiles>
+		<profile>
+			<id>onesaitplatform</id>
+			<properties>
+				<controlpanel.theme>sofia2-onesaitplatform-theme</controlpanel.theme>
+			</properties>
+		</profile>
+		<profile>
+			<id>select4cities</id>
+			<properties>
+				<controlpanel.theme>sofia2-select4cities-theme</controlpanel.theme>
+			</properties>
+		</profile>
+		<profile>
+			<id>sofia2</id>
+			<properties>
+				<controlpanel.theme>sofia2-sofia2-theme</controlpanel.theme>
+			</properties>
+		</profile>
+	</profiles>
 </project>

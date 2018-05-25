@@ -18,11 +18,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.audit.aop.MessageAuditProcessor;
 import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEventFactory;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;

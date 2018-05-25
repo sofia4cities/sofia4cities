@@ -14,22 +14,33 @@
  */
 package com.indracompany.sofia2.config.services.device;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import com.indracompany.sofia2.config.components.LogOntology;
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Device;
 
 public interface DeviceService {
 
-	public List<Device> getByClientPlatformId(String identification);
+	List<Device> getByClientPlatformIdAndIdentification(ClientPlatform clientPlatform, String identification);
 
-	public List<Device>  getByClientPlatformIdAndIdentification(String clientPlatformId, String identification);
+	void createDevice(Device device);
 
-	public void createDevice(Device device);
+	void updateDevice(Device device);
 
-	public void updateDevice(Device device);
+	void patchDevice(String deviceId, String tags);
 
-	public List<Device> getAll();
+	List<Device> getAll();
+
+	Device getById(String id);
 
 	int updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(boolean status, boolean disabled, Date date);
+
+	List<Device> getByClientPlatformId(ClientPlatform clientPlatform);
+
+	List<LogOntology> getLogInstances(String resultFromQueryTool) throws IOException;
+
+	List<String> getDeviceCommands(Device device);
 }

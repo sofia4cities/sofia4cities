@@ -26,7 +26,6 @@ import com.indracompany.sofia2.config.services.configuration.ConfigurationServic
 import com.indracompany.sofia2.libraries.social.twitter.TwitterServiceFactory;
 import com.indracompany.sofia2.libraries.social.twitter.TwitterServiceSpringSocialImpl;
 import com.indracompany.sofia2.streaming.twitter.listener.TwitterStreamListener;
-import com.indracompany.sofia2.streaming.twitter.persistence.PeristenceService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +35,6 @@ public class TwitterStreamService {
 
 	@Autowired
 	private ConfigurationService configurationService;
-
 
 	private Map<String, TwitterStreamListener> listenersMap = new HashMap<String, TwitterStreamListener>();
 	private Map<String, Stream> streamMap = new HashMap<String, Stream>();
@@ -54,10 +52,10 @@ public class TwitterStreamService {
 	}
 
 	public Stream subscribe(TwitterStreamListener twitterStreamListener) throws Exception {
-		
+
 		String listenerId = twitterStreamListener.getId();
-	
-		if(listenersMap.containsKey(listenerId))
+
+		if (listenersMap.containsKey(listenerId))
 			throw new Exception("Listener already exists");
 
 		String keywords = "";
@@ -70,7 +68,7 @@ public class TwitterStreamService {
 		Stream stream = this.getTwitterConfiguration(twitterStreamListener.getConfigurationId())
 				.createFilterStreaming(keywords, twitterStreamListener);
 		twitterStreamListener.setTwitterStream(stream);
-	
+
 		log.info("Suscribed stream: " + stream.hashCode());
 		listenersMap.put(listenerId, twitterStreamListener);
 		streamMap.put(listenerId, stream);
@@ -86,24 +84,22 @@ public class TwitterStreamService {
 			listener.closeStream();
 			listenersMap.remove(listenerId);
 			streamMap.remove(listenerId);
-		
+
 		} else
 			throw new Exception("Error listener not found");
 	}
 
 	public boolean isSubscribe(String id) {
-		if (listenersMap.containsKey(id))
-		{
-			if(listenersMap.get(id).getTwitterStream() == null)
-			{
+		if (listenersMap.containsKey(id)) {
+			if (listenersMap.get(id).getTwitterStream() == null) {
 				listenersMap.remove(id);
 				streamMap.remove(id);
 				return false;
-			}else
+			} else
 				return true;
-		}else 
+		} else
 			return false;
-			
+
 	}
 
 }

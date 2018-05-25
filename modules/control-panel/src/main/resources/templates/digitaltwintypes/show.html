@@ -157,7 +157,7 @@
 																		<div class="tab-content">
 																			<div class="tab-pane active" id="tab_3">	
 																				<div id="property" class="margin-bottom-20">
-																					<table id="properties" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
+																					<table id="properties_table" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 																						<thead>
 																							<tr class="cabecera-tabla" role="row" >
 																								<th class="titulo-columnas" th:text="#{gen.name}">Nombre</th>
@@ -168,7 +168,7 @@
 																							</tr>
 																						</thead>
 																						<tbody>
-																							<tr th:each="prop : ${properties}" pages:paginate="10">
+																							<tr th:each="prop : ${dproperties}" pages:paginate="10">
 																								<td class="text-left no-wrap " th:text="${prop.name}"></td>
 																								<td class="text-left no-wrap " th:text="${prop.type}"></td>
 																								<td class="text-left no-wrap " th:text="${prop.unit}"></td>

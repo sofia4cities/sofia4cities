@@ -65,6 +65,14 @@
 					</a>
 				</li> -->
 				<!-- END {REST} -->
+				<!-- BEGIN APIS -->
+				<li class="dropdown dropdown-user-toggler">
+					<a class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Apis" style="padding-right:8px !important;" onclick="javascript:$('#modalApis').modal('show');">
+						<i class="flaticon-multimedia"></i><span class="hidden-xs" >APIS</span>
+					</a>
+					
+				</li>
+				<!-- END APIS -->
 				
 				<!-- BEGIN USER NO-PARTNER -->						
 				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-user-toggler">
@@ -84,6 +92,7 @@
 					</ul>
 				</li>
 				<!-- END USER NO-PARTNER -->
+
 				
 				<!-- BEGIN USER PARTNER -->						
 				<li  sec:authorize="hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-user-toggler">
@@ -143,6 +152,39 @@
 		<!-- END TOP NAVIGATION MENU -->
 	</div>
 	<!-- END HEADER INNER -->
+	<!-- Modal -->
+	<div id="modalApis" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	
+	    <!-- Modal content-->
+	    <div class="modal-content"  >
+	    	<div class="modal-header">
+	        	<button type="button" class="close" data-dismiss="modal">&times;</button>
+	        	<h4 class="modal-title" th:text="#{menu.modal.api}" >Modal Header</h4>
+	     	</div>
+	     	<div class="modal-body">
+		      	<div id="contenido" class="wrappercontenido container-fluid quitapadding">
+		      		<h3 th:text="#{menu.modal.oauthtoken}">Oauth Token</h3>
+		      		<p th:text="#{menu.modal.bearer}+' '+${session.oauthToken}" class="dont-break-out"></p>
+		      		<h3 th:text="#{menu.apis}">Apis</h3>
+		      		<h4 ><a th:text="#{menu.modal.controlpanel}" th:href="${session.apis?.controlpanel}">Control panel</a></h4>
+		      		<h4 ><a th:text="#{menu.modal.iotbroker}" th:href="${session.apis?.iotbroker}">IoTBroker</a></h4>
+		      		<h4 ><a th:text="#{menu.modal.apimanager}" th:href="${session.apis?.apiManager}">Api Manager</a></h4>
+		      		<h4 ><a th:text="#{menu.modal.router}" th:href="${session.apis?.routerStandAlone}">Router</a></h4>
+		      		<h4 ><a th:text="#{menu.modal.digitaltwinbroker}" th:href="${session.apis?.digitalTwinBroker}">Digital Twin broker</a></h4>
+		      		
+		      		
+		      	</div>
+	      	</div>
+	        <div class="modal-footer">
+	        	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      	</div>
+	    </div>
+	 </div>
+	 <style>
+	 .modal-dialog { width: 50% !important;display: block;  margin-left: 25%; margin-rigth:25%;}
+	 </style>
+	</div> <!-- End modal -->
 	
 	<!-- MODAL SEARCH -->
 	<div class="modal fade bs-example-modal-lg"  id="modalDocs" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">

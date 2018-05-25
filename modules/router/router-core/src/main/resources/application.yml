@@ -4,6 +4,22 @@
 spring.application.name : router-core
      
 sofia2: #Config Sofia2 specific
+   iotbroker.plugable:
+      gateway:
+         kafka:
+            enable: false
+            host: localhost
+            port: 9092
+            partitions: 1
+            replication: 1
+            prefix: ontology_
+            group: ontologyGroup
+            topic.pattern: ontology.*
+            router.topic: router
+            consumer.consumersCount : 10
+            consumer.seekTo : beginning 
+            consumer.group : kafkaGroup
+            consumer.maxPollRecords : 5000
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -30,22 +46,6 @@ sofia2: #Config Sofia2 specific
       quasar.connector.http.endpoint: http://localhost:18200/query/fs/
    router.avoidsslverification: true
 
-   iotbroker.plugable:
-    gateway:
-      kafka:
-        enable: false
-        host: localhost
-        port: 9092
-        partitions: 1
-        replication: 1
-        prefix: ontology_
-        group: ontologyGroup
-        topic.pattern: ontology.*
-        router.topic: router
-        consumer.consumersCount : 10
-        consumer.seekTo : beginning 
-        consumer.group : kafkaGroup
-        consumer.maxPollRecords : 5000
 #Security Config
 security:
     user:
@@ -63,7 +63,7 @@ spring: ## General Config
    datasource: ## JPA Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password:
+      password: changeIt!
       # Number of ms to wait before throwing an exception if no connection is available.
       tomcat.max-wait: 10000
       # Maximum number of active connections that can be allocated from this pool at the same time.

@@ -83,7 +83,7 @@ var MenuController = function() {
 					icon = item.icon !== '' ? item.icon : icon; 
 					heading = item.title[ menu_LANG ] === '' ? '<i class="'+ icon +'"></i>'  : item.title[ menu_LANG ];
 					menu_HTML  +='<li class="heading text-center">'
-								+'	<h3 class="uppercase"> ' + heading + '</h3>'
+								+'	<h3 class="uppercase titleHeading"> ' + heading + '</h3>'
 								+'</li>';
 				}
 				else{
@@ -101,6 +101,7 @@ var MenuController = function() {
 		});
 		// SET ACTIVE NAV.
 		setActiveNavItem();
+		
 	}
 	
 	// AUX. CHECK IF A NAV-ITEM HAD SUBMENU ITEMS
@@ -159,7 +160,59 @@ var MenuController = function() {
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 			
 			// load menu (role)
-			consoleMenu();			
+			consoleMenu();
+			
+			// INICIALIZACIÓN DE BUSCADORES LIVE-SEARCH 
+			$('#search-query').keyup(function(){
+			
+			var searchValue = $(this).val().toLowerCase();
+				// selector para coger todos los span donde están los títulos de los menus.
+				var Menus = $('.page-sidebar-menu > li.nav-item > ul.sub-menu  > li.nav-item > a.nav-link.nav-toggle > span.title');
+					
+				// live-search 
+				var matchProjects = '';
+				if (searchValue !== '') {
+					Menus.each(function( index ){
+						if (index < 0) { return; }
+						var menuTitle = $(this).text().toLowerCase();
+						if ( menuTitle.includes(searchValue) ){
+							//lo incluye: hacemos algo para remarcar el título o lo que se nos ocurra, o nada.
+							logControl ? console.log($(this).text() + ' - ' + searchValue + '-> SI'): '';
+							 $(this).parents("li.nav-item > ul.sub-menu  > li.nav-item").show();	
+						}
+						else {
+							// no lo incluye
+							logControl ? console.log($(this).text() + ' - ' + searchValue + ' -> NO'): '';
+							$(this).parents("li.nav-item > ul.sub-menu  > li.nav-item").hide();							
+						}
+					});
+					
+					// CONTROL DE MENUS PPALES completamente ocultos
+					var submenus = $('.page-sidebar-menu > li.nav-item > ul.sub-menu');
+					submenus.each(function( index ){
+						logControl ? console.log(index +' totales: ' + $(this).children().length + ' ocultos: ' + $(this).children('li[style*="display: none"]').length): '';						
+						if ($(this).children().length == $(this).children('li[style*="display: none"]').length){							
+							$(this).parent('li.nav-item').addClass('hided').hide();
+						}
+						else{
+							$(this).parent('li.nav-item').removeClass('hided').show();
+						}
+						
+					});
+
+					
+				}
+				else{
+					// si hay algún proyecto oculto lo volvemos a mostrar	
+					$('.page-sidebar-menu > li.nav-item > ul.sub-menu  > li.nav-item').show();
+					$('.hided').removeClass('hided').show();
+				}		
+				
+				
+				
+			});
+			
+			
 		}		
 	};
 }();

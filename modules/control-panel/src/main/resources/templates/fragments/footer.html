@@ -8,9 +8,9 @@
 				<span class="sep">|</span>				
 				<span class="m-link m-link--metal" th:text="'('+#{build.version}+')'">5.2.0</span>
 				<span class="sep">|</span>
-				<a target="_blank" th:href="#{footer.github.url}" class="m-link m-link--metal" ><i class="fa fa-github"></i> <span th:text="#{footer.github}">Project Github</span></a>
+				<a target="_blank" th:href="@{#{footer.github.url}}" class="m-link m-link--metal" ><i class="fa fa-github"></i> <span th:text="#{footer.github}">Project Github</span></a>
 				<span class="sep">|</span>
-				<a href="#{footer.license.url}" class="m-link m-link--metal"  th:text="#{footer.license}" >Legal Conditions</a>					
+				<a href="@{#{footer.license.url}}" class="m-link m-link--metal"  th:text="#{footer.license}" >Legal Conditions</a>					
 				<span class="sep">|</span> 
 			</div>
 		</div>

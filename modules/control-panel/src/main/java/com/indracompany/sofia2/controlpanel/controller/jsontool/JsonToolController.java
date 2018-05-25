@@ -33,6 +33,7 @@ import com.indracompany.sofia2.config.services.datamodel.DataModelService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
+import com.indracompany.sofia2.controlpanel.services.ontology.OntologyLogicService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
@@ -52,6 +53,8 @@ public class JsonToolController {
 	@Autowired
 	private OntologyService ontologyService;
 	@Autowired
+	private OntologyLogicService ontologyLogicService;
+	@Autowired
 	private DataModelService dataModelService;
 	@Autowired
 	private AppWebUtils utils;
@@ -64,17 +67,20 @@ public class JsonToolController {
 
 	private static final String DATAMODEL_DEFAULT_NAME = "EmptyBase";
 	private static final String SCHEMA_DRAFT_VERSION = "http://json-schema.org/draft-04/schema#";
+	private static final String PATH_PROPERTIES = "properties";
 
 	@GetMapping("tools")
 	public String show(Model model) {
+		model.addAttribute("datasources", this.ontologyService.getDatasources());
 		model.addAttribute("ontologies", this.ontologyService.getOntologiesByUserId(this.utils.getUserId()));
 		return "json2ontologytool/import";
 	}
 
 	@PostMapping("createontology")
 	public @ResponseBody String createOntology(Model model, @RequestParam String ontologyIdentification,
-			@RequestParam String ontologyDescription, @RequestParam String schema, @RequestParam String instance)
-			throws IOException {
+			@RequestParam String ontologyDescription, @RequestParam String schema, @RequestParam String instance,
+			@RequestParam String datasource) throws IOException {
+
 		Ontology ontology = new Ontology();
 		ontology.setJsonSchema(this.completeSchema(schema, ontologyIdentification, ontologyDescription).toString());
 		ontology.setIdentification(ontologyIdentification);
@@ -82,8 +88,9 @@ public class JsonToolController {
 		ontology.setDataModel(this.dataModelService.getDataModelByName(DATAMODEL_DEFAULT_NAME));
 		ontology.setDescription(ontologyDescription);
 		ontology.setUser(this.userService.getUser(this.utils.getUserId()));
+		ontology.setRtdbDatasource(Ontology.RtdbDatasource.valueOf(datasource));
 		try {
-			this.ontologyService.createOntology(ontology);
+			this.ontologyLogicService.createOntology(ontology);
 		} catch (OntologyServiceException e) {
 			return "ko";
 		}
@@ -117,6 +124,20 @@ public class JsonToolController {
 		}
 
 		return "Error";
+	}
+
+	@PostMapping("/getParentNodeOfSchema")
+	public @ResponseBody String parentNode(@RequestParam String id) throws IOException {
+		final Ontology ontology = this.ontologyService.getOntologyByIdentification(id, this.utils.getUserId());
+		if (ontology != null) {
+			final String jsonSchema = ontology.getJsonSchema();
+
+			final JsonNode schema = this.mapper.readTree(jsonSchema);
+			if (schema.path(PATH_PROPERTIES).size() == 1) {
+				return schema.path(PATH_PROPERTIES).fieldNames().next();
+			}
+		}
+		return "";
 	}
 
 	public JsonNode completeSchema(String schema, String identification, String description) throws IOException {

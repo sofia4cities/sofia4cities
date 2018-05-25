@@ -16,6 +16,6 @@ package com.indracompany.sofia2.config.services.menu;
 import com.indracompany.sofia2.config.model.User;
 
 public interface MenuService {
-	
+
 	public String loadMenuByRole(User user);
 }

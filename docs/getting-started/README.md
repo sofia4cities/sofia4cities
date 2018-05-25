@@ -4,23 +4,23 @@ Getting Started Guide
 
 ## Installing the Development Environment
 
-[See documentation](../how-to-execute-devenv/README.md)
+[See documentation](../how-to-execute-local/README.md)
 
 ## Downloading the Source Code
 
-[See documentation](../how-to-execute-devenv/README.md)
+[See documentation](../how-to-execute-local/README.md)
 
 ## Compiling the Project
 
-[See documentation](../how-to-execute-devenv/README.md)
+[See documentation](../how-to-execute-local/README.md)
 
 ## Integration with Eclipse IDE
 
-[See documentation](../how-to-execute-devenv/README.md)
+[See documentation](../how-to-execute-local/README.md)
 
 ## Running the Platform
 
-[See documentation](../how-to-execute-devenv/README.md)
+[See documentation](../how-to-execute-local/README.md)
 
 ## Basic Usage of the Platform
 

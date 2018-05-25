@@ -15,7 +15,7 @@
 <body>
 	<header role="banner">
 		<div id="cd-logo">
-		<a href="#0" style="color: #FFF; font-size: 30px; font-family: 'Poppins';font-weight: 400;text-shadow: 0px 4px 3px rgba(0,0,0,0.4), 0px 8px 13px rgba(0,0,0,0.1), 0px 18px 23px rgba(0,0,0,0.1);"><span style="font-weight: 700">Sofia</span>4<span style="font-weight: 700">Cities</span> <span style="font-size: 15px;font-weight: 400; letter-spacing: 2px">Control Panel</span></a>
+		<a href="#0" style="color: #FFF; font-size: 30px; font-family: 'Poppins';font-weight: 400;text-shadow: 0px 4px 3px rgba(0,0,0,0.4), 0px 8px 13px rgba(0,0,0,0.1), 0px 18px 23px rgba(0,0,0,0.1);"><span style="font-weight: 700" th:text="#{login.apptitle}">Sofia4Cities</span> <span style="font-size: 15px;font-weight: 400; letter-spacing: 2px" th:text="#{login.appsubtitle}">Control Panel</span></a>
 		</div>
 
 		<nav class="main-nav">
@@ -160,7 +160,7 @@
 	</div> <!-- cd-user-modal -->
 	
 	<!-- LEGAL INFO -->
-	<div id="legal" style="z-index: 1;color: #FFF; margin: 1em auto; position: absolute; bottom:5%;vertical-align: middle;text-align: center;width: 100%;" class="">Sofia4Cities Minsait © 2018 Indra Company</div>
+	<div id="legal" style="z-index: 1;color: #FFF; margin: 1em auto; position: absolute; bottom:5%;vertical-align: middle;text-align: center;width: 100%;" class="" th:text="#{footer.app}" >Sofia4Cities Minsait © 2018 Indra Company</div>
 	
 	<!-- Modal -->
 	<div id="myModal" class="modal fade" role="dialog">

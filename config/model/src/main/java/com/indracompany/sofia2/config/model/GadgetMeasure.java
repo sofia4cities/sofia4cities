@@ -40,27 +40,27 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "GADGET_MEASURE")
-@SuppressWarnings("deprecation")
-
 public class GadgetMeasure extends AuditableEntityWithUUID {
-	
-	
+
 	@ManyToOne
 	@JoinColumn(name = "GADGET_ID", referencedColumnName = "ID")
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter @Setter private Gadget gadget;
+	@Getter
+	@Setter
+	private Gadget gadget;
 
 	@ManyToOne
 	@JoinColumn(name = "DATASOURCE_ID", referencedColumnName = "ID")
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter @Setter private GadgetDatasource datasource;
-	
-	
+	@Getter
+	@Setter
+	private GadgetDatasource datasource;
 
-	 @Column(name = "CONFIG")
-	 @Lob
-	 @Type(type ="org.hibernate.type.TextType")
-     @Getter @Setter private String config;
+	@Column(name = "CONFIG")
+	@Lob
+	@Type(type = "org.hibernate.type.TextType")
+	@Getter
+	@Setter
+	private String config;
 
 }
-

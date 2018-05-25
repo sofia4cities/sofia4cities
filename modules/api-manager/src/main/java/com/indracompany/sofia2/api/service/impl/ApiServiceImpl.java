@@ -13,13 +13,20 @@
  */
 package com.indracompany.sofia2.api.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -63,6 +70,8 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	@Autowired
 	private RouterOperationsServiceFacade facade;
 
+	private Invocable invocable;
+
 	@SuppressWarnings("unchecked")
 	@Override
 	@ApiManagerAuditable
@@ -102,10 +111,10 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 				exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
 			}
 
-			exchange.getIn().setBody("[\"STOPPED EXECUTION BY " + REASON_TYPE + "\",\"" + REASON + "\"]");
+			String messageError = generateErrorMessage(REASON_TYPE, "Stopped Execution, Found Stop State", REASON);
 			exchange.getIn().setHeader("content-type", "text/plain");
 			exchange.getIn().setHeader(ApiServiceInterface.STATUS, "STOP");
-			exchange.getIn().setHeader(ApiServiceInterface.REASON, REASON);
+			exchange.getIn().setHeader(ApiServiceInterface.REASON, messageError);
 
 			exchange.getIn().setHeader(ApiServiceInterface.REMOTE_ADDRESS,
 					(String) data.get(ApiServiceInterface.REMOTE_ADDRESS));
@@ -113,7 +122,8 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			exchange.getIn().setHeader(ApiServiceInterface.QUERY, (String) data.get(ApiServiceInterface.QUERY));
 			exchange.getIn().setHeader(ApiServiceInterface.USER, (User) data.get(ApiServiceInterface.USER));
 			exchange.getIn().setHeader(ApiServiceInterface.ONTOLOGY, (Ontology) data.get(ApiServiceInterface.ONTOLOGY));
-			exchange.getIn().setHeader(ApiServiceInterface.BODY, (String) dataFact.get(ApiServiceInterface.BODY));
+			// exchange.getIn().setHeader(ApiServiceInterface.BODY, (String)
+			// dataFact.get(ApiServiceInterface.BODY));
 		} else {
 			exchange.getIn().setHeader(ApiServiceInterface.STATUS, "FOLLOW");
 			exchange.getIn().setBody(data);
@@ -155,7 +165,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		OperationModel model = OperationModel
 				.builder(ontology.getIdentification(), OperationType.valueOf(operationType.name()), user.getUserId(),
 						OperationModel.Source.APIMANAGER)
-				.body(body).queryType(QueryType.valueOf(QUERY_TYPE)).objectId(OBJECT_ID).clientPlatformId("")
+				.body(body).queryType(QueryType.valueOf(QUERY_TYPE)).objectId(OBJECT_ID).deviceTemplate("")
 				.cacheable("true".equalsIgnoreCase(CACHEABLE) ? true : false).build();
 
 		NotificationModel modelNotification = new NotificationModel();
@@ -167,13 +177,72 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 
 		if (result != null) {
 			if ("ERROR".equals(result.getResult())) {
-				throw new ApiServiceException("Error inserting data: " + result.getMessage());
+
+				exchange.getIn().setHeader("content-type", "text/plain");
+				exchange.getIn().setHeader(ApiServiceInterface.STATUS, "STOP");
+				String messageError = generateErrorMessage("ERROR Output from Router Processing",
+						"Stopped Execution, Error from Router", result.getMessage());
+				exchange.getIn().setHeader(ApiServiceInterface.REASON, messageError);
+			} else {
+				OUTPUT = result.getResult();
+				data.put(ApiServiceInterface.OUTPUT, OUTPUT);
+
 			}
-			OUTPUT = result.getResult();
+
+		} else {
+			exchange.getIn().setHeader(ApiServiceInterface.STATUS, "STOP");
+			String messageError = generateErrorMessage("ERROR Output from Router Processing", "Stopped Execution",
+					"Null Result From Router");
+			exchange.getIn().setHeader(ApiServiceInterface.REASON, messageError);
 		}
 
-		data.put(ApiServiceInterface.OUTPUT, OUTPUT);
-		exchange.getIn().setBody(data);
+		return data;
+	}
+
+	@PrometheusTimeMethod(name = "postProcess", help = "postProcess")
+	@Timed
+	public Map<String, Object> postProcess(Map<String, Object> data, Exchange exchange) throws Exception {
+		String error = "";
+
+		ApiOperation apiOperation = ((ApiOperation) data.get(ApiServiceInterface.API_OPERATION));
+
+		if (apiOperation != null) {
+			String postProcessScript = apiOperation.getPostProcess();
+			if (postProcessScript != null && !"".equals(postProcessScript)) {
+				ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+				this.invocable = (Invocable) engine;
+				try {
+
+					String scriptPostprocessFunction = "function postprocess(data){ " + postProcessScript + " }";
+
+					ByteArrayInputStream scriptInputStream = new ByteArrayInputStream(
+							scriptPostprocessFunction.getBytes(StandardCharsets.UTF_8));
+
+					engine.eval(new InputStreamReader(scriptInputStream));
+
+					Invocable inv = (Invocable) engine;
+
+					Object result;
+					result = inv.invokeFunction("postprocess", data.get(ApiServiceInterface.OUTPUT));
+					data.put(ApiServiceInterface.OUTPUT, result);
+				} catch (ScriptException e) {
+					log.error("Execution logic for postprocess error", e);
+					exchange.getIn().setHeader(ApiServiceInterface.STATUS, "STOP");
+					String messageError = generateErrorMessage("ERROR from Scripting Post Process",
+							"Execution logic for Postprocess error", e.getCause().getMessage());
+					exchange.getIn().setHeader(ApiServiceInterface.REASON, messageError);
+
+				} catch (Exception e) {
+					exchange.getIn().setHeader(ApiServiceInterface.STATUS, "STOP");
+					String messageError = generateErrorMessage("ERROR from Scripting Post Process",
+							"Exception detected", e.getCause().getMessage());
+					exchange.getIn().setHeader(ApiServiceInterface.REASON, messageError);
+
+				}
+
+			}
+		}
+
 		return data;
 	}
 
@@ -341,6 +410,10 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			}
 		}
 		return retval + "\n";
+	}
+
+	private static String generateErrorMessage(String cause, String error, String message) {
+		return "{\"result\":\"" + cause + "\", \"message\":\"" + error + "\", \"details\":\"" + message + "\"}";
 	}
 
 }

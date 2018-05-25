@@ -75,6 +75,7 @@ public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+		registry.addResourceHandler("/notebooks/app/**").addResourceLocations("classpath:/static/notebooks/");
 	}
 
 	/**

@@ -43,6 +43,10 @@ public class OperationJson {
 	@Getter
 	@Setter
 	private String path;
+
+	@Getter
+	@Setter
+	private String postprocess;
 	
 	@Getter
 	@Setter

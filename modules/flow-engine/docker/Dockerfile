@@ -30,7 +30,11 @@ RUN chown -R sofia:sofia /usr/local && \
     chown -R sofia:sofia /var/log/logs-s4c && \
     chown -R sofia:sofia ./target && \
     chown -R sofia:sofia /opt/nodeRed && \
-    chown sofia:sofia app.jar
+    chown sofia:sofia app.jar && \
+    chmod -R 777 ./target && \
+    chmod -R 777 /var/log && \
+    chmod -R 777 /usr/local && \
+    chmod -R 777 /opt/nodeRed
     
 USER sofia
 

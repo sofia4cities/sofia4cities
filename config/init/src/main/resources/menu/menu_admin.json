@@ -34,6 +34,22 @@
 					},
 					"icon": "",
 					"url": "https://rancher.sofia4cities.com/login/"
+				},
+				{
+					"title": {
+						"EN": "ControlPanel Rest APIs",
+						"ES": "APIs Rest ControlPanel"
+					},
+					"icon": "",
+					"url": "/controlpanel/swagger-ui.html"
+				},				
+				{
+					"title": {
+						"EN": "IoTBroker Rest Gateway",
+						"ES": "IoTBroker Rest Gateway"
+					},
+					"icon": "",
+					"url": "/iotbroker/swagger-ui.html"
 				}
 			]
 		},		
@@ -70,14 +86,6 @@
 					"url": "/controlpanel/configurations/list"
 				},
 				{
-					"title": {
-						"EN": "Web Projects Management",
-						"ES": "Gestión Proyectos Web"
-					},
-					"icon": "",
-					"url": "/controlpanel/webprojects/list"
-				},
-				{
 				    "title": {
 						"EN": "Data Models Management",
 						"ES": "Gestión DataModels"
@@ -99,8 +107,8 @@
 		},
 		{
 			"title": {
-				"EN": "DATA MODELLING",
-				"ES": "MODELADO DE DATOS"
+				"EN": "DEVELOPMENT",
+				"ES": "DESARROLLO"
 			},
 			"icon": "flaticon-network",
 			"url": "",
@@ -112,51 +120,7 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/ontologies/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "DEVICES",
-				"ES": "DISPOSITIVOS"
-			},
-			"icon": "flaticon-truck",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "Devices Management",
-						"ES": "Gestión de Dispositivos"
-					},
-					"icon": "",
-					"url": "/controlpanel/devices/list"
 				},
-				{
-					"title": {
-						"EN": "Devices Simulator Management",
-						"ES": "Gestión de Simulaciones de Dispositivos"
-					},
-					"icon": "",
-					"url": "/controlpanel/devicesimulation/list"
-				},
-				{
-					"title": {
-						"EN": "Device Status",
-						"ES": "Estado de Dispositivos"
-					},
-					"icon": "",
-					"url": "/controlpanel/devices/management/show"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "INGEST & PROCESS",
-				"ES": "INGESTA Y PROCESADO"
-			},
-			"icon": "flaticon-car",
-			"url": "",
-			"submenu": [	
 				{
 					"title": {
 						"EN": "Flow Engine Management",
@@ -167,11 +131,27 @@
 				},
 				{
 					"title": {
-						"EN": "Twitter Streams Management",
-						"ES": "Gestión de Escuchas Twitter"
+						"EN": "APIs Management",
+						"ES": "Gestión de APIs"
 					},
 					"icon": "",
-					"url": "/controlpanel/twitter/scheduledsearch/list"
+					"url": "/controlpanel/apimanager/list"
+				},
+				{
+					"title": {
+						"EN": "Notebooks Management",
+						"ES": "Gestión de Notebooks"
+					},
+					"icon": "",
+					"url": "/controlpanel/notebooks/list"
+				},
+				{
+					"title": {
+						"EN": "Web Projects Management",
+						"ES": "Gestión Proyectos Web"
+					},
+					"icon": "",
+					"url": "/controlpanel/webprojects/list"
 				}
 			]
 		},
@@ -219,27 +199,43 @@
 		},
 		{
 			"title": {
-				"EN": "API MANAGER",
-				"ES": "API MANAGER"
+				"EN": "DEVICES",
+				"ES": "DISPOSITIVOS"
 			},
-			"icon": "flaticon-multimedia",
+			"icon": "flaticon-truck",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "APIs Management",
-						"ES": "Gestión de APIs"
+						"EN": "Device Templates",
+						"ES": "Definición de Devices"
 					},
 					"icon": "",
-					"url": "/controlpanel/apimanager/list"
+					"url": "/controlpanel/devices/list"
 				},
 				{
 					"title": {
-						"EN": "Tokens Management",
-						"ES": "Gestión de Tokens"
+						"EN": "Devices Management",
+						"ES": "Gestión de Dispositivos"
 					},
 					"icon": "",
-					"url": "/controlpanel/apimanager/token/list"
+					"url": "/controlpanel/devices/management/list"
+				},
+				{
+					"title": {
+						"EN": "Device Simulator Management",
+						"ES": "Gestión de Simulaciones de Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devicesimulation/list"
+				},
+				{
+					"title": {
+						"EN": "Device Status",
+						"ES": "Estado de Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devices/management/show"
 				}
 			]
 		},
@@ -311,7 +307,7 @@
 				},
 				{
 					"title": {
-						"EN": "JSON import Tools",
+						"EN": "Data Import Tools",
 						"ES": "Herramientas de importación"
 					},
 					"icon": "",

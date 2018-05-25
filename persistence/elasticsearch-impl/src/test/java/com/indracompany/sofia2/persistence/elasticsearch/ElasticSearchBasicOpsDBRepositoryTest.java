@@ -31,179 +31,164 @@ import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 @Ignore
 public class ElasticSearchBasicOpsDBRepositoryTest {
-	
-	public final static String TEST_INDEX = "test"+System.currentTimeMillis();
+
+	public final static String TEST_INDEX = "test" + System.currentTimeMillis();
 	public final static String TEST_INDEX_ONLINE = TEST_INDEX + "_online";
-	
+
 	@Autowired
 	ElasticSearchBasicOpsDBRepository repository;
-	
+
 	@Autowired
 	ElasticSearchManageDBRepository manage;
-	
-	private String JSON_TEST = "{" +
-             "\"name\":\"skyji\"," +
-             "\"job\":\"Admin\"," +
-             "\"location\":\"India\"" +
-             "}";
-	
-	private String JSON_TEST_UPDATE = "{" +
-            "\"name\":\"pepe\"," +
-            "\"job\":\"pepe\"," +
-            "\"location\":\"pepe\"" +
-            "}";
-	
+
+	private String JSON_TEST = "{" + "\"name\":\"skyji\"," + "\"job\":\"Admin\"," + "\"location\":\"India\"" + "}";
+
+	private String JSON_TEST_UPDATE = "{" + "\"name\":\"pepe\"," + "\"job\":\"pepe\"," + "\"location\":\"pepe\"" + "}";
+
 	private String SQL_TEST = "select * from ";
-	
-	
+
 	@Before
-	public  void doBefore() throws Exception {	
+	public void doBefore() throws Exception {
 		log.info("up process...");
 		manage.createTable4Ontology(TEST_INDEX_ONLINE, "");
 	}
-	
+
 	@After
-	public  void tearDown() {
+	public void tearDown() {
 		log.info("teardown process...");
 		try {
 			manage.removeTable4Ontology(TEST_INDEX_ONLINE);
 		} catch (Exception e) {
-			log.info("Issue deleting table4ontology "+e);
+			log.info("Issue deleting table4ontology " + e);
 		}
-		
+
 	}
-	
+
 	@Test
 	public void testInsertAndGet() {
 		try {
 			log.info("testInsertAndGet");
-			
-			String id = repository.insert(TEST_INDEX_ONLINE, JSON_TEST);
-			 
-			log.info("Returned inserted object with id "+id);
-			
+
+			String id = repository.insert(TEST_INDEX_ONLINE, "", JSON_TEST);
+
+			log.info("Returned inserted object with id " + id);
+
 			String resultById = repository.findById(TEST_INDEX_ONLINE, id);
-			 
-			log.info("Returned searched object with this data "+resultById);
-			
+
+			log.info("Returned searched object with this data " + resultById);
+
 			log.info("testInsertAndGet END ");
-			
+
 			Assert.assertTrue(!resultById.isEmpty());
 		} catch (Exception e) {
 			Assert.fail("testInsertAndGet failure. " + e);
 		}
 	}
-	
+
 	@Test
 	public void testInsertCountDelete() {
 		try {
 			log.info("testInsertCountDelete");
-			
-			String id = repository.insert(TEST_INDEX_ONLINE, JSON_TEST);
-			log.info("Returned inserted object with id "+id);
-			 
+
+			String id = repository.insert(TEST_INDEX_ONLINE, "", JSON_TEST);
+			log.info("Returned inserted object with id " + id);
+
 			long many = repository.count(TEST_INDEX_ONLINE);
-			log.info("Returned count object with type "+TEST_INDEX_ONLINE+" size: "+many );
-			 
+			log.info("Returned count object with type " + TEST_INDEX_ONLINE + " size: " + many);
+
 			long size = repository.deleteNativeById(TEST_INDEX_ONLINE, id);
-			log.info("Returned delete object with type "+TEST_INDEX_ONLINE+" size: "+size +" id "+id );
+			log.info("Returned delete object with type " + TEST_INDEX_ONLINE + " size: " + size + " id " + id);
 			Thread.sleep(10000);
-			 
+
 			many = repository.count(TEST_INDEX_ONLINE);
-			log.info("Returned count object after deleting with type "+TEST_INDEX_ONLINE+" size: "+many );
-			
+			log.info("Returned count object after deleting with type " + TEST_INDEX_ONLINE + " size: " + many);
+
 			log.info("testInsertCountDelete END ");
-			
+
 			Assert.assertTrue(!id.isEmpty());
 		} catch (Exception e) {
 			Assert.fail("testInsertCountDelete failure. " + e);
 		}
 	}
-	
+
 	@Test
 	public void testInsertUpdate() {
 		try {
-			
+
 			log.info("testInsertUpdate");
-			
-			String id = repository.insert(TEST_INDEX_ONLINE, JSON_TEST);
-			log.info("Returned inserted object with id "+id);
-			 
+
+			String id = repository.insert(TEST_INDEX_ONLINE, "", JSON_TEST);
+			log.info("Returned inserted object with id " + id);
+
 			long many = repository.updateNativeByObjectIdAndBodyData(TEST_INDEX_ONLINE, id, JSON_TEST_UPDATE);
-			log.info("Returned count updateNativeByObjectIdAndBodyData "+TEST_INDEX_ONLINE+" id: "+id+" count:"+many );
-			 
+			log.info("Returned count updateNativeByObjectIdAndBodyData " + TEST_INDEX_ONLINE + " id: " + id + " count:"
+					+ many);
+
 			String resultById = repository.findById(TEST_INDEX_ONLINE, id);
-			 
-			log.info("Returned searched object with this data "+resultById);
-			
+
+			log.info("Returned searched object with this data " + resultById);
+
 			log.info("testInsertUpdate END ");
-			
-			Assert.assertTrue(many==1);
+
+			Assert.assertTrue(many == 1);
 		} catch (Exception e) {
 			Assert.fail("testInsertCountDelete failure. " + e);
 		}
 	}
-	
+
 	@Test
 	public void testSearchQuery() {
 		try {
-			
+
 			log.info("testSearchQuery");
-			
-			String id = repository.insert(TEST_INDEX_ONLINE, JSON_TEST);
-			log.info("Returned inserted object with id "+id);
-			 
+
+			String id = repository.insert(TEST_INDEX_ONLINE, "", JSON_TEST);
+			log.info("Returned inserted object with id " + id);
+
 			List<String> listData = repository.findAll(TEST_INDEX_ONLINE);
-			log.info("Returned list of found objects "+listData);
-			
-			String sql = SQL_TEST+" "+TEST_INDEX_ONLINE;
-			
+			log.info("Returned list of found objects " + listData);
+
+			String sql = SQL_TEST + " " + TEST_INDEX_ONLINE;
+
 			String outpoutSQL = repository.querySQLAsJson(TEST_INDEX_ONLINE, sql);
-			
-			log.info("Returned SQL "+outpoutSQL);
-			
-			
-			
+
+			log.info("Returned SQL " + outpoutSQL);
+
 			log.info("testSearchQuery END ");
-			
-			Assert.assertTrue(outpoutSQL!=null);
+
+			Assert.assertTrue(outpoutSQL != null);
 		} catch (Exception e) {
 			Assert.fail("testInsertCountDelete failure. " + e);
 		}
 	}
-	
+
 	@Test
 	public void testSearchQueryNative() {
 		try {
-			
+
 			log.info("testSearchQuery");
-			
-			String id = repository.insert(TEST_INDEX_ONLINE, JSON_TEST);
-			log.info("Returned inserted object with id "+id);
-			 
+
+			String id = repository.insert(TEST_INDEX_ONLINE, "", JSON_TEST);
+			log.info("Returned inserted object with id " + id);
+
 			List<String> listData = repository.findAll(TEST_INDEX_ONLINE);
-			log.info("Returned list of found objects "+listData);
-			
-			
+			log.info("Returned list of found objects " + listData);
+
 			String output = repository.queryNativeAsJson(TEST_INDEX_ONLINE, ESBaseApi.queryAll);
-			
-			log.info("query native :"+output);
+
+			log.info("query native :" + output);
 			log.info("testSearchQuery END ");
-			
-			Assert.assertTrue(output!=null);
+
+			Assert.assertTrue(output != null);
 		} catch (Exception e) {
 			Assert.fail("testInsertCountDelete failure. " + e);
 		}
 	}
-
-
-	
 
 }
