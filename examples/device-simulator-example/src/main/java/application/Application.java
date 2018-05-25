@@ -50,7 +50,7 @@ public class Application {
 
 	public static void main(String[] args) {
 
-		String url = "tcp://rancher.sofia4cities.com:1883";
+		String url = "tcp://localhost:1883";
 		int devices = MAX_DEVICES;
 		if (args.length > 0) {
 			int paramN = Integer.valueOf(args[0]).intValue();

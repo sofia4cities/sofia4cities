@@ -344,6 +344,7 @@ public class ApiManagerHelper {
 		Api api = apiRepository.findById(apiId);
 
 		model.addAttribute("api", api);
+		model.addAttribute("apiSwaggerUI", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerUI));
 		model.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
 		model.addAttribute("apiServices", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerJson));
 	}

@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DeviceConnectionThread implements Runnable {
 
 	private static final String deviceTemplate = "Device Master";
-	private static final String token = "56686a5a0d7e497d9cafbbbd4b2563ee";
+	private static final String token = "a16b9e7367734f04bc720e981fcf483f";
 	private static final int timeout = 50;
 	private double latitude;
 	private double longitude;
