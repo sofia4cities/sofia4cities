@@ -1,11 +1,10 @@
 package com.indracompany.sofia2.android.healthcheckapp;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -40,7 +39,7 @@ public class FormActivity extends AppCompatActivity {
     private String pref_env;
 
     private void loadPreferences(){
-        pref_env = preferences.getString("EnvSelect","s4citiespro.westeurope.cloudapp.azure.com");
+        pref_env = preferences.getString("EnvSelect","rancher.sofia4cities.com");
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
