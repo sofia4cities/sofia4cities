@@ -30,22 +30,22 @@ import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Device;
+
 public interface DeviceRepository extends JpaRepository<Device, String> {
 
-	List<Device> findByClientPlatform(String id);
+	List<Device> findByClientPlatform(ClientPlatform clientPlatform);
 
 	List<Device> findByClientPlatformAndIdentification(ClientPlatform clientPlatform, String identification);
 
-	List<Device> findByClientPlatformAndIdentification(String clientPlatformId, String identification);
+	@Query("SELECT d FROM Device as d WHERE d.clientPlatform.id=:clientId AND d.identification=:identification")
+	List<Device> findByClientPlatformAndIdentification(@Param("clientId") String clientPlatformId,
+			@Param("identification") String identification);
 
 	@Modifying
 	@Query("UPDATE Device d SET d.connected = :connected, d.disabled = :disabled WHERE d.updatedAt < :date")
-	int updateDeviceStatusByUpdatedAt(
-			@Param("connected") boolean connected,
-			@Param("disabled") boolean disabled,
+	int updateDeviceStatusByUpdatedAt(@Param("connected") boolean connected, @Param("disabled") boolean disabled,
 			@Param("date") Date date);
 
 	Device findById(String id);
-
 
 }

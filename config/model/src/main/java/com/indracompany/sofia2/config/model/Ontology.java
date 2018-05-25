@@ -55,8 +55,7 @@ public class Ontology extends AuditableEntityWithUUID {
 	private static final long serialVersionUID = 1L;
 
 	public enum RtdbDatasource {
-		Mongo, ElasticSearch;
-
+		Mongo, ElasticSearch, Kudu
 	}
 
 	public enum RtdbCleanLapse {
@@ -181,6 +180,17 @@ public class Ontology extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private boolean allowsCypherFields;
+
+	@Column(name = "ALLOW_CREATE_TOPIC", nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private boolean allowsCreateTopic;
+
+	@Column(name = "TOPIC", length = 256)
+	@Getter
+	@Setter
+	private String topic;
 
 	public void addOntologyUserAccess(OntologyUserAccess ontologyUserAccess) {
 		ontologyUserAccess.setOntology(this);

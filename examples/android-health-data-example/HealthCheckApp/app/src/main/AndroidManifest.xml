@@ -3,9 +3,6 @@
     package="com.indracompany.sofia2.android.healthcheckapp">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -24,15 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main"
-            android:parentActivityName=".LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.indracompany.sofia2.android.healthcheckapp.LoginActivity" />
-        </activity>
+        <activity android:name=".MainHealthActivity"></activity>
+        <activity android:name=".FormActivity" />
+        <activity android:name=".HistActivity" />
+        <activity android:name=".FeedbackActivity" />
+        <activity android:name=".SpecialistActivity" />
+        <activity android:name=".CitiInboxActivity" />
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".AdviseActivity"></activity>
     </application>
 
 </manifest>

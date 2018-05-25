@@ -34,6 +34,7 @@ import com.indracompany.sofia2.commons.testing.IntegrationTest;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology.AccessType;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
@@ -48,7 +49,6 @@ import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 @RunWith(SpringRunner.class)
@@ -86,7 +86,7 @@ public class ReferenceSecurityTest {
 		user.setEmail(faker.internet().emailAddress());
 		user.setFullName(faker.name().fullName());
 		user.setPassword("changeIt!");
-		user.setRole( roleRepository.findById(Role.Type.ROLE_DEVELOPER.name()) );
+		user.setRole(roleRepository.findById(Role.Type.ROLE_DEVELOPER.name()));
 		final String userId = UUID.randomUUID().toString();
 		user.setUserId(userId);
 		userService.createUser(user);
@@ -105,13 +105,15 @@ public class ReferenceSecurityTest {
 		ontology.setRtdbToHdb(false);
 		ontology.setUser(subjectUser);
 		ontologyService.createOntology(ontology);
-		subjectOntology = ontologyService.getOntologyByIdentification(ontology.getIdentification(), subjectUser.getUserId());
+		subjectOntology = ontologyService.getOntologyByIdentification(ontology.getIdentification(),
+				subjectUser.getUserId());
 
 		final ClientPlatform clientPlatform = new ClientPlatform();
 		final String clientPlatformIdentification = UUID.randomUUID().toString();
 		clientPlatform.setIdentification(clientPlatformIdentification);
 		clientPlatform.setUser(subjectUser);
-		//		clientPlatformService.createClientAndToken(Arrays.asList(subjectOntology), clientPlatform);
+		// clientPlatformService.createClientAndToken(Arrays.asList(subjectOntology),
+		// clientPlatform);
 		clientPlatformService.createClientAndToken(new ArrayList<>(), clientPlatform);
 		subjectClientPlatform = clientPlatformService.getByIdentification(clientPlatformIdentification);
 
@@ -129,11 +131,12 @@ public class ReferenceSecurityTest {
 
 	@Before
 	public void tearDown() {
-		//TODO: Delete created items (depends on JPA configuration)
+		// TODO: Delete created items (depends on JPA configuration)
 	}
 
 	@Test
-	public void given_OneValidToken_When_ASessionIsCreatedAndCheckedAndFinallyClosed_TheSessionReturnsTheCorrectParametersAndThenItIsClosed() throws AuthenticationException, AuthorizationException {
+	public void given_OneValidToken_When_ASessionIsCreatedAndCheckedAndFinallyClosed_TheSessionReturnsTheCorrectParametersAndThenItIsClosed()
+			throws AuthenticationException, AuthorizationException {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
@@ -147,7 +150,8 @@ public class ReferenceSecurityTest {
 	}
 
 	@Test
-	public void given_OneInvalidToken_When_ASessionIsCreated_Then_ItReturnsAnInvalidSession() throws AuthenticationException {
+	public void given_OneInvalidToken_When_ASessionIsCreated_Then_ItReturnsAnInvalidSession()
+			throws AuthenticationException {
 		final Optional<IoTSession> session = security.authenticate("INVALID_TOKEN",
 				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString(), "");
 
@@ -155,28 +159,33 @@ public class ReferenceSecurityTest {
 	}
 
 	@Test
-	public void given_OneNotValidSessionKey_When_TheSessionIsChecked_Then_ItRetrunsThatTheSessionIsNotAcctive() throws AuthorizationException {
+	public void given_OneNotValidSessionKey_When_TheSessionIsChecked_Then_ItRetrunsThatTheSessionIsNotAcctive()
+			throws AuthorizationException {
 		Assert.assertFalse(security.checkSessionKeyActive("NOT_EXISTENT_SESSIONKEY"));
 	}
 
 	@Test
-	public void given_OneValidClientSessionPlatform_When_ItCreatesASession_Then_ItIsAuthorizedForUsingTheOntologyAssociated() throws AuthenticationException, AuthorizationException {
+	public void given_OneValidClientSessionPlatform_When_ItCreatesASession_Then_ItIsAuthorizedForUsingTheOntologyAssociated()
+			throws AuthenticationException, AuthorizationException {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
 				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString(), "");
 
-		Assert.assertTrue(security.checkAuthorization(SSAPMessageTypes.INSERT, subjectOntology.getIdentification(), session.get().getSessionKey()));
+		Assert.assertTrue(security.checkAuthorization(SSAPMessageTypes.INSERT, subjectOntology.getIdentification(),
+				session.get().getSessionKey()));
 	}
 
 	@Test
-	public void given_OneValidClientSessionPlatform_When_ItCreatesASession_Then_ItIsNotAuthorizedForUsingNotAuthorizedOntologies()  throws AuthenticationException, AuthorizationException {
+	public void given_OneValidClientSessionPlatform_When_ItCreatesASession_Then_ItIsNotAuthorizedForUsingNotAuthorizedOntologies()
+			throws AuthenticationException, AuthorizationException {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
 				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString(), "");
 
-		Assert.assertFalse(security.checkAuthorization(SSAPMessageTypes.INSERT, "NOT_ASSIGNED_ONTOLOGY", session.get().getSessionKey()));
+		Assert.assertFalse(security.checkAuthorization(SSAPMessageTypes.INSERT, "NOT_ASSIGNED_ONTOLOGY",
+				session.get().getSessionKey()));
 	}
 
 }

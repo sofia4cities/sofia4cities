@@ -3,15 +3,22 @@
 	"rol": "ROLE_DATAVIEWER",
 	"noSession": "/console/login",
 	"navigation": [
-				
 		{
 			"title": {
-				"EN": "VISUALIZATION",
-				"ES": "VISUALIZACIÓN"
+				"EN": "SHARE & USE",
+				"ES": "SHARE & USE"
 			},
-			"icon": "flaticon-graph",
+			"icon": "flaticon-cart",
 			"url": "",
-			"submenu": [			
+			"submenu": [
+				{
+					"title": {
+						"EN": "My Market",
+						"ES": "Mi Market"
+					},
+					"icon": "",
+					"url": "/controlpanel/marketasset/list"
+				},							
 				{
 					"title": {
 						"EN": "My Dashboards",

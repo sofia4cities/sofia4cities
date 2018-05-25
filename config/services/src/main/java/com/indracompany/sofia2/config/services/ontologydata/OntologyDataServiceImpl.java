@@ -53,7 +53,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 	public enum EncryptionOperations {
 		encrypt, decrypt
 	}
-	
+
 	@Autowired
 	private OntologyRepository ontologyRepository;
 
@@ -62,12 +62,12 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 	final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
 
 	final public static String ENCRYPT_PROPERTY = "encrypted";
-	
-	//TODO this is a basic functionality.
-	//TODO it has to be improved. For instance, initVector should be random.
-	//TODO review AES best practices to improve this class.
+
+	// TODO this is a basic functionality.
+	// TODO it has to be improved. For instance, initVector should be random.
+	// TODO review AES best practices to improve this class.
 	final static String key = "Bar12345Bar12345"; // 128 bit key
-    final static String initVector = "RandomInitVector"; // 16 bytes IV
+	final static String initVector = "RandomInitVector"; // 16 bytes IV
 
 	public void checkOntologySchemaCompliance(final JsonNode data, final Ontology ontology)
 			throws DataSchemaValidationException {
@@ -124,16 +124,16 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		final String body = operationModel.getBody();
 		final String user = operationModel.getUser();
 		final String clientConnection = operationModel.getClientConnection();
-		final String clientPlatformId = operationModel.getClientPlatformId();
-		final String clientPlatoformInstance = operationModel.getClientPlatoformInstance();
+		final String deviceTemplate = operationModel.getDeviceTemplate();
+		final String device = operationModel.getDevice();
 		final String clientSession = operationModel.getClientSession();
 
 		final String timezoneId = ZoneId.systemDefault().toString();
 		final String timestamp = Calendar.getInstance(TimeZone.getTimeZone(timezoneId)).getTime().toString();
 		final long timestampMillis = System.currentTimeMillis();
 		final ContextData contextData = ContextData.builder(user, timezoneId, timestamp, timestampMillis)
-				.clientConnection(clientConnection).clientPatform(clientPlatformId)
-				.clientPatformInstance(clientPlatoformInstance).clientSession(clientSession).build();
+				.clientConnection(clientConnection).deviceTemplate(deviceTemplate).device(device)
+				.clientSession(clientSession).build();
 
 		final JsonNode jsonBody;
 		if (data == null)
@@ -179,7 +179,8 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			Entry<String, JsonNode> element = elements.next();
 			if (element != null) {
 				processProperty(allData, element.getKey(), element.getValue(), rootSchema,
-						path + "/" + element.getKey(), schemaPointer + "/" + "properties/" + element.getKey(), operation);
+						path + "/" + element.getKey(), schemaPointer + "/" + "properties/" + element.getKey(),
+						operation);
 			}
 		}
 	}
@@ -209,7 +210,8 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 							if (report.isSuccess()) {
 								notFound = false;
 
-								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer, operation);
+								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer,
+										operation);
 							}
 						} catch (ProcessingException e) {
 							// if it is not the valid schema it must be ignored
@@ -239,7 +241,8 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 							JsonSchema schema = factory.getJsonSchema(rootSchema, schemaPointer);
 							ProcessingReport report = schema.validate(miniData);
 							if (report.isSuccess()) {
-								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer, operation);
+								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer,
+										operation);
 							}
 						} catch (ProcessingException e) {
 							// if it is not the valid schema it must be ignored
@@ -260,7 +263,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 							case decrypt:
 								dataProcessed = BasicEncryption.decrypt(key, initVector, dataToProcess);
 								break;
-								
+
 							default:
 								throw new IllegalArgumentException("Operation not soported");
 							}
@@ -303,7 +306,8 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 				checkOntologySchemaCompliance(instance, ontology);
 				try {
 					String bodyWithDataContext = addContextData(operationModel, instance);
-					String encryptedDataInBODY = encryptionOperation(bodyWithDataContext, ontology, EncryptionOperations.encrypt);
+					String encryptedDataInBODY = encryptionOperation(bodyWithDataContext, ontology,
+							EncryptionOperations.encrypt);
 					encryptedData.add(encryptedDataInBODY);
 				} catch (IOException e) {
 					throw new RuntimeException("Error working with JSON data", e);
@@ -313,7 +317,8 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			checkOntologySchemaCompliance(dataNode, ontology);
 			try {
 				String bodyWithDataContext = addContextData(operationModel, null);
-				String encryptedDataInBODY = encryptionOperation(bodyWithDataContext, ontology, EncryptionOperations.encrypt);
+				String encryptedDataInBODY = encryptionOperation(bodyWithDataContext, ontology,
+						EncryptionOperations.encrypt);
 				encryptedData.add(encryptedDataInBODY);
 			} catch (IOException e) {
 				throw new RuntimeException("Error working with JSON data", e);
@@ -325,7 +330,8 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 	}
 
 	@Override
-	public String decrypt(String data, String ontologyName, String user) throws OntologyDataUnauthorizedException, OntologyDataJsonProblemException {
+	public String decrypt(String data, String ontologyName, String user)
+			throws OntologyDataUnauthorizedException, OntologyDataJsonProblemException {
 		final Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
 		if (ontology.getUser().getUserId().equals(user)) {
 			try {

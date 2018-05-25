@@ -35,7 +35,6 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.config.model.TwitterListening;
 import com.indracompany.sofia2.config.services.twitter.TwitterListeningService;
-import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.streaming.twitter.persistence.PeristenceService;
 
 import lombok.Getter;

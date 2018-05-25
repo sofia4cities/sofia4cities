@@ -25,12 +25,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-
-@ConditionalOnProperty(
-		prefix="sofia2.iotbroker.plugable.gateway.rest",
-		name="enable",
-		havingValue="true"
-		)
+@ConditionalOnProperty(prefix = "sofia2.iotbroker.plugable.gateway.rest", name = "enable", havingValue = "true")
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
@@ -40,23 +35,16 @@ public class SwaggerConfig {
 
 	@Bean
 	public Docket api() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.rest"))
-				//				.apis(RequestHandlerSelectors.basePackage("com.indracompany.sofia2.iotbroker"))
-				.paths(PathSelectors.any())
-				.build()
-				.host(host)
-				.apiInfo(apiInfo());
+		return new Docket(DocumentationType.SWAGGER_2).select()
+				.apis(RequestHandlerSelectors
+						.basePackage("com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.rest"))
+				// .apis(RequestHandlerSelectors.basePackage("com.indracompany.sofia2.iotbroker"))
+				.paths(PathSelectors.any()).build().host(host).apiInfo(apiInfo());
 	}
 
 	private ApiInfo apiInfo() {
-		final ApiInfo apiInfo = new ApiInfo("Sofia4Cities IoT rest gateway",
-				"Sofia4Cities IoT rest gateway",
-				"v1.0.0",
-				"",
-				"select4citiesminsait@gmail.com",
-				"Apache License 2.0",
+		final ApiInfo apiInfo = new ApiInfo("onesait Platform IoT Rest Gateway", "onesait Platform IoT Rest Gateway",
+				"v1.0.0", "", "select4citiesminsait@gmail.com", "Apache License 2.0",
 				"https://github.com/sofia4cities/sofia4cities/blob/master/LICENSE");
 
 		return apiInfo;

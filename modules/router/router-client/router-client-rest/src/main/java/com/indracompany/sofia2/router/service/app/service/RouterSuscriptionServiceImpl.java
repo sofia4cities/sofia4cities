@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.indracompany.sofia2.router.client.RouterClient;
-import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
 
@@ -27,28 +26,28 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service("routerSuscriptionServiceImpl")
 @Slf4j
-public class RouterSuscriptionServiceImpl implements RouterSuscriptionService, RouterClient<SuscriptionModel,OperationResultModel >{
+public class RouterSuscriptionServiceImpl
+		implements RouterSuscriptionService, RouterClient<SuscriptionModel, OperationResultModel> {
 
 	@Value("${sofia2.flowengine.home.base:http://localhost:19100/router/router/}")
 	private String routerStandaloneURL;
 
-	
 	public OperationResultModel execute(SuscriptionModel model) {
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
-		
-		
+
 		String operation = model.getOperationType().name();
-		
-		OperationResultModel quote=new OperationResultModel();
-		
-		if (operation.equalsIgnoreCase("SUSCRIBE") || operation.equalsIgnoreCase(SuscriptionModel.OperationType.SUSCRIBE.name())) {
-			quote = restTemplate.postForObject(routerStandaloneURL+"/suscribe",model, OperationResultModel.class);
+
+		OperationResultModel quote = new OperationResultModel();
+
+		if (operation.equalsIgnoreCase("SUSCRIBE")
+				|| operation.equalsIgnoreCase(SuscriptionModel.OperationType.SUSCRIBE.name())) {
+			quote = restTemplate.postForObject(routerStandaloneURL + "/suscribe", model, OperationResultModel.class);
+		} else if (operation.equalsIgnoreCase("UNSUSCRIBE")
+				|| operation.equalsIgnoreCase(SuscriptionModel.OperationType.UNSUSCRIBE.name())) {
+			quote = restTemplate.postForObject(routerStandaloneURL + "/unsuscribe", model, OperationResultModel.class);
 		}
-		else if  (operation.equalsIgnoreCase("UNSUSCRIBE") || operation.equalsIgnoreCase(SuscriptionModel.OperationType.UNSUSCRIBE.name())) {
-			quote = restTemplate.postForObject(routerStandaloneURL+"/unsuscribe",model, OperationResultModel.class);
-		}
-		
+
 		log.info(quote.toString());
 		return quote;
 	}
@@ -62,9 +61,5 @@ public class RouterSuscriptionServiceImpl implements RouterSuscriptionService, R
 	public OperationResultModel unSuscribe(SuscriptionModel model) throws Exception {
 		return execute(model);
 	}
-
-	
-
-	
 
 }

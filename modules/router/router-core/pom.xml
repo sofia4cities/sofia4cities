@@ -118,7 +118,7 @@
 			<version>${version.camel}</version>
 		</dependency>
 		
-			<dependency>
+		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-kafka</artifactId>
 			<version>${version.camel}</version>

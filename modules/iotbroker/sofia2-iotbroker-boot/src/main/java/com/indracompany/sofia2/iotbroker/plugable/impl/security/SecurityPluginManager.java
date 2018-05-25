@@ -20,27 +20,27 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.SecurityPlugin;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 @Component
 public class SecurityPluginManager implements SecurityPlugin {
 
-
 	@Autowired
 	private List<SecurityPlugin> plugins;
 
-	//TODO: Calls with hystrix ... or camel ...
+	// TODO: Calls with hystrix ... or camel ...
 	@Override
-	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance, String sessionKey)  {
+	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance,
+			String sessionKey) {
 		final List<IoTSession> sessions = new ArrayList<>();
 
-		for(final SecurityPlugin p : plugins) {
+		for (final SecurityPlugin p : plugins) {
 			p.authenticate(token, clientPlatform, clientPlatformInstance, sessionKey).ifPresent(sessions::add);
 		}
 
-		if(!sessions.isEmpty()) {
+		if (!sessions.isEmpty()) {
 			return Optional.of(sessions.get(0));
 		}
 
@@ -50,7 +50,7 @@ public class SecurityPluginManager implements SecurityPlugin {
 	@Override
 	public boolean closeSession(String sessionKey) {
 		boolean ret = false;
-		for(final SecurityPlugin p : plugins) {
+		for (final SecurityPlugin p : plugins) {
 			ret |= p.closeSession(sessionKey);
 		}
 
@@ -61,7 +61,7 @@ public class SecurityPluginManager implements SecurityPlugin {
 	@Override
 	public boolean checkSessionKeyActive(String sessionKey) {
 		boolean ret = false;
-		for(final SecurityPlugin p : plugins) {
+		for (final SecurityPlugin p : plugins) {
 			ret |= p.checkSessionKeyActive(sessionKey);
 		}
 		return ret;
@@ -71,7 +71,7 @@ public class SecurityPluginManager implements SecurityPlugin {
 	@Override
 	public boolean checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey) {
 		boolean ret = false;
-		for(final SecurityPlugin p : plugins) {
+		for (final SecurityPlugin p : plugins) {
 			ret |= p.checkAuthorization(messageType, ontology, sessionKey);
 		}
 		return ret;
@@ -82,16 +82,15 @@ public class SecurityPluginManager implements SecurityPlugin {
 	public Optional<IoTSession> getSession(String sessionKey) {
 
 		final List<IoTSession> ks = new ArrayList<>();
-		for(final SecurityPlugin p : plugins) {
+		for (final SecurityPlugin p : plugins) {
 			p.getSession(sessionKey).ifPresent(ks::add);
 		}
 
-		if(!ks.isEmpty()) {
+		if (!ks.isEmpty()) {
 			return Optional.of(ks.get(0));
 		} else {
 			return Optional.empty();
 		}
 	}
-
 
 }

@@ -87,7 +87,7 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	}
 
 	@Override
-	public String insert(String ontology, String instance) throws DBPersistenceException {
+	public String insert(String ontology, String schema, String instance) throws DBPersistenceException {
 		log.debug("insertInstance", ontology, instance);
 		try {
 			ObjectId objectId = mongoDbConnector.insert(database, ontology, util.prepareQuotes(instance));
@@ -99,8 +99,8 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	}
 
 	@Override
-	public List<BulkWriteResult> insertBulk(String ontology, List<String> instances, boolean order, boolean includeIds)
-			throws DBPersistenceException {
+	public List<BulkWriteResult> insertBulk(String ontology, String schema, List<String> instances, boolean order,
+			boolean includeIds) throws DBPersistenceException {
 		ArrayList<String> dataToInsert = new ArrayList<String>(instances.size());
 		for (String document : instances) {
 			dataToInsert.add(util.prepareQuotes(document));

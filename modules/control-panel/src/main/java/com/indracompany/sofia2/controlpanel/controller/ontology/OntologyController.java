@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.indracompany.sofia2.commons.kafka.KafkaService;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.User;
@@ -43,6 +44,7 @@ import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
+import com.indracompany.sofia2.controlpanel.services.ontology.OntologyLogicService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +60,12 @@ public class OntologyController {
 	private EntityDeletionService entityDeletionService;
 	@Autowired
 	private UserService userService;
+
+	@Autowired(required = false)
+	private KafkaService kafkaService;
+
+	@Autowired
+	private OntologyLogicService ontologyLogicService;
 
 	@Autowired
 	private AppWebUtils utils;
@@ -94,11 +102,19 @@ public class OntologyController {
 		return "ontologies/create";
 	}
 
-	@GetMapping(value = "/createwizard", produces = "text/html")
-	public String createWizard(Model model, @Valid Ontology ontology, BindingResult bindingResult) {
+	/*
+	 * @GetMapping(value = "/createwizard", produces = "text/html") public String
+	 * createWizard(Model model, @Valid Ontology ontology, BindingResult
+	 * bindingResult) {
+	 * 
+	 * if (bindingResult.hasErrors()) model.addAttribute("ontology", new
+	 * Ontology()); populateForm(model); return "ontologies/createwizard"; }
+	 */
 
-		if (bindingResult.hasErrors())
-			model.addAttribute("ontology", new Ontology());
+	@GetMapping(value = "/createwizard", produces = "text/html")
+	public String createWizard(Model model) {
+
+		model.addAttribute("ontology", new Ontology());
 		populateForm(model);
 		return "ontologies/createwizard";
 	}
@@ -112,9 +128,22 @@ public class OntologyController {
 			return "redirect:/ontologies/create";
 		}
 		try {
+
+			String ontologyName = ontology.getIdentification();
+			boolean topicCreated = false;
+
+			if (ontology.isAllowsCreateTopic()) {
+				if (kafkaService != null) {
+					topicCreated = kafkaService.createTopicForOntology(ontologyName);
+				}
+			}
+
+			if (topicCreated == true) {
+				ontology.setTopic(kafkaService.getTopicName(ontologyName));
+			}
 			User user = userService.getUser(utils.getUserId());
 			ontology.setUser(user);
-			ontologyService.createOntology(ontology);
+			ontologyLogicService.createOntology(ontology);
 
 		} catch (OntologyServiceException e) {
 			log.error("Cannot create ontology because of:" + e.getMessage());

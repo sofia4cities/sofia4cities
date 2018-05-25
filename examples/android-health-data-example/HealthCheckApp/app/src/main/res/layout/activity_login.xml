@@ -8,6 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/colorSecondary"
     tools:context="com.indracompany.sofia2.android.healthcheckapp.LoginActivity">
 
     <!-- Login progress -->
@@ -70,6 +71,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_sign_in"
+                android:textColor="@color/colorAccent"
+                android:background="@color/colorPrimaryDark"
                 android:textStyle="bold" />
 
         </LinearLayout>

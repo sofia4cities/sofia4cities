@@ -9,9 +9,13 @@ spring:
   application.name: sofia2-flow-engine
   ## JPA Config
   datasource:
-    url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/sofia2_s4c?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root
     password: changeIt!
+    driver-class-name: com.mysql.jdbc.Driver
+    test-while-idle: true
+    test-on-borrow: true
+    validation-query: SELECT 1    
   jpa:
     ## Hibernate Properties
     # The SQL dialect makes Hibernate generate better SQL for the chosen database
@@ -34,7 +38,7 @@ sofia2: #Config Sofia2 specific
          interval.sec: 30
          initial.delay.sec: 20
       admin.url: http://localhost:10000
-      node.path: node4
+      node.path: node
       audit.enabled: true
       launcher:
          path: /opt/nodeRed/Flow-Engine-Manager/

@@ -13,9 +13,6 @@
  */
 package com.indracompany.sofia2.controlpanel.services.twitter;
 
-import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,15 +62,14 @@ public class TwitterControlService {
 		task.setSingleton(false);
 		task.setCronExpression("0/20 * * ? * * *");
 
-//		Calendar end = Calendar.getInstance();
-//		end.add(Calendar.MINUTE, 2);
+		// Calendar end = Calendar.getInstance();
+		// end.add(Calendar.MINUTE, 2);
 
 		task.setStartAt(twitterListening.getDateFrom());// twitterListening.getDateFrom());
 		task.setEndAt(twitterListening.getDateTo());// witterListening.getDateTo());
 		ScheduleResponseInfo response = taskService.addJob(task);
 		twitterListening.setJobName(response.getJobName());
 		this.twitterListeningService.updateListening(twitterListening);
-		
 
 	}
 
@@ -82,18 +78,18 @@ public class TwitterControlService {
 		operation.setJobName(twitterListening.getJobName());
 		if (operation.getJobName() != null) {
 			this.taskService.unscheduled(operation);
-//			twitterListening.setJobName(null);
-//			twitterListening.setDateTo(new Date());
-//			this.twitterListeningService.updateListening(twitterListening);
+			// twitterListening.setJobName(null);
+			// twitterListening.setDateTo(new Date());
+			// this.twitterListeningService.updateListening(twitterListening);
 		}
-			
+
 	}
 
 	public void updateTwitterListening(TwitterListening twitterListening) {
 		this.twitterListeningService.updateListening(twitterListening);
 		twitterListening = this.twitterListeningService.getListenById(twitterListening.getId());
 		this.unscheduleTwitterListening(twitterListening);
-		if(twitterListening.getDateTo().getTime() > System.currentTimeMillis())
+		if (twitterListening.getDateTo().getTime() > System.currentTimeMillis())
 			this.scheduleTwitterListening(twitterListening);
 	}
 

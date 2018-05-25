@@ -25,6 +25,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyIndicationMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyLeaveMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyLogMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyQueryMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
@@ -32,24 +33,21 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyUnsubscribeMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 
-@JsonTypeInfo(use=Id.NAME)
-@JsonSubTypes({
-	@JsonSubTypes.Type(SSAPBodyDeleteByIdMessage.class),
-	@JsonSubTypes.Type(SSAPBodyDeleteMessage.class),
-	@JsonSubTypes.Type(SSAPBodyEmptyMessage.class),
-	@JsonSubTypes.Type(SSAPBodyInsertMessage.class),
-	@JsonSubTypes.Type(SSAPBodyJoinMessage.class),
-	@JsonSubTypes.Type(SSAPBodyLeaveMessage.class),
-	@JsonSubTypes.Type(SSAPBodyQueryMessage.class),
-	@JsonSubTypes.Type(SSAPBodyReturnMessage.class),
-	@JsonSubTypes.Type(SSAPBodyUpdateByIdMessage.class),
-	@JsonSubTypes.Type(SSAPBodyUpdateMessage.class),
-	@JsonSubTypes.Type(SSAPBodySubscribeMessage.class),
-	@JsonSubTypes.Type(SSAPBodyUnsubscribeMessage.class),
-	@JsonSubTypes.Type(SSAPBodyIndicationMessage.class),
-	@JsonSubTypes.Type(SSAPBodyCommandMessage.class)
+@JsonTypeInfo(use = Id.NAME)
+@JsonSubTypes({ @JsonSubTypes.Type(SSAPBodyDeleteByIdMessage.class), @JsonSubTypes.Type(SSAPBodyDeleteMessage.class),
+		@JsonSubTypes.Type(SSAPBodyEmptyMessage.class), @JsonSubTypes.Type(SSAPBodyInsertMessage.class),
+		@JsonSubTypes.Type(SSAPBodyJoinMessage.class), @JsonSubTypes.Type(SSAPBodyLeaveMessage.class),
+		@JsonSubTypes.Type(SSAPBodyQueryMessage.class), @JsonSubTypes.Type(SSAPBodyReturnMessage.class),
+		@JsonSubTypes.Type(SSAPBodyUpdateByIdMessage.class), @JsonSubTypes.Type(SSAPBodyUpdateMessage.class),
+		@JsonSubTypes.Type(SSAPBodySubscribeMessage.class), @JsonSubTypes.Type(SSAPBodyUnsubscribeMessage.class),
+		@JsonSubTypes.Type(SSAPBodyIndicationMessage.class), @JsonSubTypes.Type(SSAPBodyCommandMessage.class),
+		@JsonSubTypes.Type(SSAPBodyLogMessage.class)
+
 })
 public abstract class OneSSAPBodyMessageMixin {
-	@JsonIgnore public abstract boolean isSessionKeyMandatory();
-	@JsonIgnore public abstract boolean isOntologyMandatory();
+	@JsonIgnore
+	public abstract boolean isSessionKeyMandatory();
+
+	@JsonIgnore
+	public abstract boolean isOntologyMandatory();
 }

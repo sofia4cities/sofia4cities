@@ -32,60 +32,85 @@ public class RouterFlowDigitalTwinManagerService {
 
 	@Autowired
 	private RouterDigitalTwinOpsServiceImpl routerDigitalTwinOpsServiceImpl;
-	
+
 	@Autowired
 	private CamelContext camelContext;
-	
+
 	private String executeDigitalTwinOpsRoute = "direct:execute-digitaltwin-operations";
-	
-	public OperationResultModel startDigitalTwinBrokerFlow(DigitalTwinCompositeModel compositeModel, Exchange exchange) {
+
+	public OperationResultModel startDigitalTwinBrokerFlow(DigitalTwinCompositeModel compositeModel,
+			Exchange exchange) {
 		log.debug("startBrokerFlow: Notification Model arrived");
 
 		ProducerTemplate t = camelContext.createProducerTemplate();
-		DigitalTwinCompositeModel result = (DigitalTwinCompositeModel)t.requestBody(executeDigitalTwinOpsRoute, compositeModel);
+		DigitalTwinCompositeModel result = (DigitalTwinCompositeModel) t.requestBody(executeDigitalTwinOpsRoute,
+				compositeModel);
 		return result.getOperationResultModel();
-		
+
 	}
-	
+
 	public void executeDigitalTwinOperations(Exchange exchange) {
 		log.debug("executeDigitalTwinOperations: Begin");
-		
+
 		DigitalTwinCompositeModel compositeModel = (DigitalTwinCompositeModel) exchange.getIn().getBody();
 		DigitalTwinModel model = compositeModel.getDigitalTwinModel();
-		String EVENT = model.getEvent().name();
-		
+
+		String event = model.getEvent() != null ? model.getEvent().name() : null;
+		String action = model.getActionName();
+
 		OperationResultModel fallback = new OperationResultModel();
 		fallback.setResult("NO_RESULT");
 		fallback.setStatus(false);
 		fallback.setMessage("Operation Not Executed due to lack of Event");
 		compositeModel.setOperationResultModel(fallback);
-		
+
+		if (null != event && event.trim().length() > 0) {
+			this.dispathEvent(exchange, compositeModel, event);
+		} else if (null != action && action.trim().length() > 0) {
+			this.dispathAction(exchange, compositeModel);
+		}
+
+		exchange.getIn().setBody(compositeModel);
+
+		log.debug("executeDigitalTwinOperations: End");
+
+	}
+
+	private void dispathEvent(Exchange exchange, DigitalTwinCompositeModel compositeModel, String event) {
 		try {
-			if(EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.PING.name()) ||
-					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.REGISTER.name()) ||
-					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.RULE.name()) ||
-					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.FLOW.name()) ||
-					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.NOTEBOOK.name())||
-					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.CUSTOM.name())) {
+			if (event.equalsIgnoreCase(DigitalTwinModel.EventType.PING.name())
+					|| event.equalsIgnoreCase(DigitalTwinModel.EventType.REGISTER.name())
+					|| event.equalsIgnoreCase(DigitalTwinModel.EventType.RULE.name())
+					|| event.equalsIgnoreCase(DigitalTwinModel.EventType.FLOW.name())
+					|| event.equalsIgnoreCase(DigitalTwinModel.EventType.NOTEBOOK.name())
+					|| event.equalsIgnoreCase(DigitalTwinModel.EventType.CUSTOM.name())) {
 				OperationResultModel result = routerDigitalTwinOpsServiceImpl.insertEvent(compositeModel);
 				compositeModel.setOperationResultModel(result);
-				
-			}else if (EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.LOG.name())) {
-				OperationResultModel result =  routerDigitalTwinOpsServiceImpl.insertLog(compositeModel);
+
+			} else if (event.equalsIgnoreCase(DigitalTwinModel.EventType.LOG.name())) {
+				OperationResultModel result = routerDigitalTwinOpsServiceImpl.insertLog(compositeModel);
 				compositeModel.setOperationResultModel(result);
-			
-			}else if (EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.SHADOW.name())) {
-				OperationResultModel result =routerDigitalTwinOpsServiceImpl.updateShadow(compositeModel);
+
+			} else if (event.equalsIgnoreCase(DigitalTwinModel.EventType.SHADOW.name())) {
+				OperationResultModel result = routerDigitalTwinOpsServiceImpl.updateShadow(compositeModel);
 				compositeModel.setOperationResultModel(result);
-				
+
 			}
 
 		} catch (Exception e) {
-			log.error("executeDigitalTwinOperations: Exception "+e.getMessage(), e);
+			log.error("executeDigitalTwinOperations: Exception " + e.getMessage(), e);
 		}
-		
-		exchange.getIn().setBody(compositeModel);
-		
-		log.debug("executeDigitalTwinOperations: End");
+
+	}
+
+	private void dispathAction(Exchange exchange, DigitalTwinCompositeModel compositeModel) {
+		try {
+			OperationResultModel result = routerDigitalTwinOpsServiceImpl.insertAction(compositeModel);
+			compositeModel.setOperationResultModel(result);
+
+		} catch (Exception e) {
+			log.error("executeDigitalTwinOperations: Exception " + e.getMessage(), e);
+		}
+
 	}
 }

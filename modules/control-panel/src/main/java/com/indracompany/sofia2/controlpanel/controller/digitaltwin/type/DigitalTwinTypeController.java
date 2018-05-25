@@ -95,13 +95,24 @@ public class DigitalTwinTypeController {
 		try {
 			User user = userService.getUser(utils.getUserId());
 			digitalTwinType.setUser(user);
+			log.info("DigitalTwin is going to be created.");
 			digitalTwinTypeService.createDigitalTwinType(digitalTwinType, httpServletRequest);
 			// Create collections on mongo for properties and actions
-			mongoManageRepo.createTable4Ontology("TwinProperties"
-					+ digitalTwinType.getName().substring(0, 1).toUpperCase() + digitalTwinType.getName().substring(1),
-					"{}");
-			mongoManageRepo.createTable4Ontology("TwinActions" + digitalTwinType.getName().substring(0, 1).toUpperCase()
-					+ digitalTwinType.getName().substring(1), "{}");
+			List<String> tables = mongoManageRepo.getListOfTables();
+			tables.replaceAll(String::toUpperCase);
+
+			if (!tables.contains(("TwinProperties" + digitalTwinType.getName().substring(0, 1).toUpperCase()
+					+ digitalTwinType.getName().substring(1)).toUpperCase())) {
+				mongoManageRepo
+						.createTable4Ontology("TwinProperties" + digitalTwinType.getName().substring(0, 1).toUpperCase()
+								+ digitalTwinType.getName().substring(1), "{}");
+			}
+			if (!tables.contains(("TwinActions" + digitalTwinType.getName().substring(0, 1).toUpperCase()
+					+ digitalTwinType.getName().substring(1)).toUpperCase())) {
+				mongoManageRepo
+						.createTable4Ontology("TwinActions" + digitalTwinType.getName().substring(0, 1).toUpperCase()
+								+ digitalTwinType.getName().substring(1), "{}");
+			}
 		} catch (DigitalTwinServiceException e) {
 			log.error("Cannot create digital twin type because of:" + e.getMessage());
 			utils.addRedirectException(e, redirect);
@@ -116,7 +127,7 @@ public class DigitalTwinTypeController {
 		return "digitaltwintypes/list";
 	}
 
-	@GetMapping(value = "/show/{id}")
+	@GetMapping(value = "/show/{id}", produces = "text/html")
 	public String show(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
 		DigitalTwinType type = digitalTwinTypeService.getDigitalTwinTypeById(id);
 		if (type != null) {

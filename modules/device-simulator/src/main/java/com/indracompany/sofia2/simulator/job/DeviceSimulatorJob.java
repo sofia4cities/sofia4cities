@@ -107,7 +107,7 @@ public class DeviceSimulatorJob {
 				if (!ontologySchema.path(field).path("enum").isMissingNode())
 					((ObjectNode) fieldsSchema).put(field, ontologySchema.path(field).get("enum").get(0).asText());
 				else {
-					if (field.equals(DATE_VAR))
+					if (field.equals(DATE_VAR) || ontologySchema.path(field).get("format") != null)
 						((ObjectNode) fieldsSchema).put(field, this.getCurrentDate());
 					else
 						((ObjectNode) fieldsSchema).put(field, "");
@@ -151,7 +151,7 @@ public class DeviceSimulatorJob {
 					if (!fieldNode.path(field).path("enum").isMissingNode())
 						((ObjectNode) objectNode).put(field, fieldNode.path(field).get("enum").get(0).asText());
 					else {
-						if (field.equals(DATE_VAR))
+						if (field.equals(DATE_VAR) || fieldNode.path(field).get("format") != null)
 							((ObjectNode) objectNode).put(field, this.getCurrentDate());
 						else
 							((ObjectNode) objectNode).put(field, "");
@@ -202,7 +202,7 @@ public class DeviceSimulatorJob {
 					if (!fieldNode.path(field).path("enum").isMissingNode())
 						((ObjectNode) objectNode).put(field, fieldNode.path(field).get("enum").get(0).asText());
 					else {
-						if (field.equals(DATE_VAR))
+						if (field.equals(DATE_VAR) || fieldNode.path(field).get("format") != null)
 							((ObjectNode) objectNode).put(field, this.getCurrentDate());
 						else
 							((ObjectNode) objectNode).put(field, "");

@@ -19,18 +19,21 @@ import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.UserApi;
 
 public interface ApiManagerService {
-	
-	public List<Api> loadAPISByFilter(String filter, String state, String user, String loggeduser) ;
+
+	public List<Api> loadAPISByFilter(String filter, String state, String user, String loggeduser);
 
 	public String createApi(Api api, String objetoOperaciones, String objetoAutenticacion);
 
 	public Integer calculateNumVersion(String numversionData);
 
-	public void updateApi(Api apiMultipartMap, String deprecateApis, String operationsObject, String authenticationObject);
+	public void updateApi(Api apiMultipartMap, String deprecateApis, String operationsObject,
+			String authenticationObject);
 
 	public UserApi updateAuthorization(String apiId, String userId);
 
 	public void removeAuthorizationById(String id);
+
+	public void removeAuthorizationByApiAndUser(String apiId, String userId);
 
 	public byte[] getImgBytes(String id);
 

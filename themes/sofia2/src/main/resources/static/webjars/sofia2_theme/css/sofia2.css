@@ -444,8 +444,8 @@ Page Header
     border-bottom: 1px solid #332f36; }
     .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .sidebar-search .input-group .form-control,
     .page-sidebar .sidebar-search .input-group .form-control {
-      background-color: #212529;
-      color: #4e5d6f; }
+     background-color: #212529;
+	 color: #b4bac2; }
       .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .sidebar-search .input-group .form-control::-moz-placeholder,
       .page-sidebar .sidebar-search .input-group .form-control::-moz-placeholder {
         color: #4e5d6f;

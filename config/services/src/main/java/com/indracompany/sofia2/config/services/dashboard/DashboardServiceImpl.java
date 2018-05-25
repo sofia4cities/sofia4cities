@@ -320,7 +320,7 @@ public class DashboardServiceImpl implements DashboardService {
 				if (dashboard.getAuthorizations() != null) {
 					List<DashboardAccessDTO> access = objectMapper.readValue(dashboard.getAuthorizations(), objectMapper
 							.getTypeFactory().constructCollectionType(List.class, DashboardAccessDTO.class));
-					for (Iterator iterator = access.iterator(); iterator.hasNext();) {
+					for (Iterator<DashboardAccessDTO> iterator = access.iterator(); iterator.hasNext();) {
 						DashboardAccessDTO dashboardAccessDTO = (DashboardAccessDTO) iterator.next();
 						DashboardUserAccess dua = new DashboardUserAccess();
 						dua.setDashboard(d);
