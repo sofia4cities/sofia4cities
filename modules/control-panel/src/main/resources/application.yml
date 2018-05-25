@@ -57,7 +57,10 @@ sofia2: #Config Sofia2 specific
       password: 
       driverClassName: org.apache.hive.jdbc.HiveDriver
    database.impala:
-      url: jdbc:hive2://localhost:21050/default;auth=noSasl   
+      url: jdbc:hive2://localhost:21050/default;auth=noSasl
+   database.kudu:
+      numreplicas: 1
+      address: localhost:7051
    urls:
     iotbroker: http://localhost:19000
     iotbroker.services: http://localhost:19000/sib/services
