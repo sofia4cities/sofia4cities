@@ -174,6 +174,7 @@ var DigitalTwinCreateController = function() {
 					logica = logica.substr(1, logica.length-2);
 				}
 				AceEditor.setValue(logica);
+				AceEditor.setReadOnly(true);
 			}
 			
 			

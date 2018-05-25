@@ -1,11 +1,20 @@
 package com.indracompany.sofia2.android.healthcheckapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -13,8 +22,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -27,31 +39,80 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
     private RequestAdapter mAdapter;
     private RecyclerView mItemsRV;
     private ArrayList<RequestData> mRequestArray = new ArrayList<>();
-    List<RequestData> mRequestData;
+
+    private final int MAX_RETRIES = 3;
+    int mGetRetries = MAX_RETRIES;
 
     String mAccessToken = "";
+    String mUsername = "";
+    String mInput = "";
+
+    int clickedElement = 0;
+    String clickedId = "";
+
+    SharedPreferences preferences;
+    private String pref_env;
+
+    private void loadPreferences(){
+        pref_env = preferences.getString("EnvSelect","s4citiespro.westeurope.cloudapp.azure.com");
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_specialist);
 
-        mAccessToken = getIntent().getStringExtra("accessToken");
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        loadPreferences();
 
-        mItemsRV = (RecyclerView) findViewById(R.id.list_main);
+        mAccessToken = getIntent().getStringExtra("accessToken");
+        mUsername = getIntent().getStringExtra("username");
+
+        getSupportActionBar().setTitle(mUsername);
+
+        mItemsRV = (RecyclerView) findViewById(R.id.list_spec);
         mItemsRV.setLayoutManager(new LinearLayoutManager(this));
         mItemsRV.setHasFixedSize(true);
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        else if (id == R.id.action_settings) {
+            Intent mSettingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(mSettingsIntent);
+            return true;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
     @Override
     protected void onResume() {
         super.onResume();
+        loadPreferences();
         new GetFromS4CAsyncTask().execute((Void) null);
     }
 
     @Override
     public void onListItemClick(int clickedItemId) {
-
+        clickedElement = clickedItemId;
+        //createAndShowAlertDialog();
+        Intent mIntent = new Intent();
+        mIntent = new Intent(SpecialistActivity.this,AdviseActivity.class);
+        mIntent.putExtra("accessToken",mAccessToken);
+        mIntent.putExtra("username",mUsername);
+        startActivity(mIntent);
     }
 
     public class GetFromS4CAsyncTask extends AsyncTask<Void, Void, Integer> {
@@ -61,7 +122,7 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/specialistInterface/\\PendingRequests";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/specialistInterface/\\PendingRequests";
             URL url = null;
             int responseCode = 500;
             try {
@@ -95,7 +156,7 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
                     connection.disconnect();
 
                     ja =  new JSONArray(responseOutput.toString());
-                    mRequestData = loadRequestDataFromJson(ja);
+                    mRequestArray = loadRequestDataFromJson(ja);
 
 
                 }
@@ -117,7 +178,6 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
                 e.printStackTrace();
             }
 
-            // TODO: register the new account here.
             return responseCode;
         }
 
@@ -128,13 +188,19 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
                 loadRequestData();
             }
             else{
-                Toast.makeText(SpecialistActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
-                new GetFromS4CAsyncTask().execute((Void) null);
+                mGetRetries--;
+                if(mGetRetries == 0){
+                    mGetRetries = MAX_RETRIES;
+                    Toast.makeText(SpecialistActivity.this,"Could not connect to S4C Platform",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    new GetFromS4CAsyncTask().execute((Void) null);
+                }
             }
         }
     }
-    public List<RequestData> loadRequestDataFromJson(JSONArray arrayFromS4c){
-        List<RequestData> mRequestData = new ArrayList<>(arrayFromS4c.length()+1);
+    public ArrayList<RequestData> loadRequestDataFromJson(JSONArray arrayFromS4c){
+        ArrayList<RequestData> mRequestData = new ArrayList<>(arrayFromS4c.length()+1);
         JSONObject data = new JSONObject();
         JSONObject contextData = new JSONObject();
 
@@ -143,8 +209,9 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
             try{
                 data = arrayFromS4c.getJSONObject(i).getJSONObject("value").getJSONObject("specialistInbox");
                 contextData = arrayFromS4c.getJSONObject(i).getJSONObject("value").getJSONObject("contextData");
+                clickedId = arrayFromS4c.getJSONObject(i).getJSONObject("value").getString("_id");
 
-                dummyRequestData.setUsername(data.getString("username"));
+                dummyRequestData.setUsername(data.getString("patient"));
                 dummyRequestData.setPending(data.getString("pending"));
 
             }
@@ -158,6 +225,118 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
     }
 
     public void loadRequestData(){
-        mItemsRV.setAdapter(mAdapter);
+        mItemsRV.setAdapter(new RequestAdapter(mRequestArray,SpecialistActivity.this));
+    }
+
+    private void createAndShowAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Please input your recommendation");
+        // Set up the input
+        final TextInputEditText input = new TextInputEditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                mInput = input.getText().toString().trim();
+                new PostToInboxAsyncTask().execute((Void) null);
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                finish();
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    class PostToInboxAsyncTask extends AsyncTask<Void, Void, Integer> {
+
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInboxInterface";
+            URL url = null;
+            int responseCode = 500;
+            try {
+                url = new URL(urlS);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            try{
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.setRequestMethod("POST");
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(10000);
+                connection.setAllowUserInteraction(false);
+                connection.setUseCaches(false);
+                connection.setRequestProperty("Authorization", "Bearer "+mAccessToken);
+                connection.setRequestProperty("Content-Type","application/json");
+
+                JSONObject healthFrame = new JSONObject();
+                JSONObject citizenInbox =  new JSONObject();
+                citizenInbox.put("feedback",mInput);
+                citizenInbox.put("specialist",mUsername);
+                healthFrame.put("citizenInbox",citizenInbox);
+
+
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(healthFrame.toString());
+                writer.flush();
+                writer.close();
+                os.close();
+
+                connection.connect();
+                responseCode = connection.getResponseCode();
+
+                if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                    final StringBuilder output = new StringBuilder("Request URL " + url);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String line = "";
+                    StringBuilder responseOutput = new StringBuilder();
+                    while((line = br.readLine()) != null ) {
+                        responseOutput.append(line);
+                    }
+                    br.close();
+                    connection.disconnect();
+
+                }
+                else{
+                    int code = connection.getResponseCode();
+                    String msg = connection.getResponseMessage();
+                    String dummy = connection.getRequestMethod();
+                }
+
+            }
+            catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return responseCode;
+        }
+
+        @Override
+        protected void onPostExecute(Integer responseCode) {
+            super.onPostExecute(responseCode);
+            if(responseCode == HttpURLConnection.HTTP_OK){
+                Toast.makeText(SpecialistActivity.this,"Feedback sent",Toast.LENGTH_SHORT).show();
+                mRequestArray.remove(clickedElement);
+            }
+            else{
+                Toast.makeText(SpecialistActivity.this,"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

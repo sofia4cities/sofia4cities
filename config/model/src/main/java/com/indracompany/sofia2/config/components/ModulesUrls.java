@@ -21,7 +21,6 @@ import lombok.Data;
 @Data
 public class ModulesUrls {
 
-	public Map<String, Urls> sofia2;
+	public Map<String, Urls> open_platform;
 
-	
 }

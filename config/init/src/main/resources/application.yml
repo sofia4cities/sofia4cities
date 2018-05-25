@@ -74,7 +74,7 @@ logging:
       org.springframework: INFO
       com.example.boot.thymeleaf: INFO
       com.indracompany: DEBUG
-      org.hibernate: DEBUG
+      org.hibernate: INFO
 
 
  

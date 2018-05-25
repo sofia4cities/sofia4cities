@@ -178,11 +178,12 @@ public class DigitalTwinDeviceController {
 		}
 	}
 
-	@GetMapping(value = "/generateProject/{identification}/{compile}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@GetMapping(value = "/generateProject/{identification}/{compile}/{sensehat}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public ResponseEntity<InputStreamResource> generateProject(@PathVariable("identification") String identification,
-			@PathVariable("compile") Boolean compile) throws FileNotFoundException {
+			@PathVariable("compile") Boolean compile, @PathVariable("sensehat") Boolean sensehat)
+			throws FileNotFoundException {
 
-		File zipFile = digitalTwinDeviceHelper.generateProject(identification, compile);
+		File zipFile = digitalTwinDeviceHelper.generateProject(identification, compile, sensehat);
 
 		HttpHeaders respHeaders = new HttpHeaders();
 		respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);

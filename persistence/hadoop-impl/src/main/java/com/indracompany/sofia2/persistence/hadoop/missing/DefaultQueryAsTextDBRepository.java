@@ -14,6 +14,8 @@
  */
 package com.indracompany.sofia2.persistence.hadoop.missing;
 
+import static com.indracompany.sofia2.persistence.hadoop.common.HadoopMessages.NOT_SUPPORTED;
+
 import org.springframework.stereotype.Repository;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
@@ -25,20 +27,17 @@ public class DefaultQueryAsTextDBRepository implements QueryAsTextDBRepository {
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException(NOT_SUPPORTED);
 	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException(NOT_SUPPORTED);
 	}
 
 	@Override
 	public String querySQLAsJson(String ontology, String query, int offset) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException(NOT_SUPPORTED);
 	}
 
 }

@@ -139,10 +139,17 @@
 																		<p class="form-control-static-block bold" th:text="*{urlSchema}"> </p>
 																	</div>
 																</div>
-																<div class="col-md-6 col-sm-6 col-xs-12">
+																<div class="col-md-4 col-sm-6 col-xs-12">
 																	<div class="form-group">
-																		<label>IP</label>
-																		<p class="form-control-static-block bold" th:text="*{ip}">  </p>
+																		<label>Interface</label><span class="required"> (*)</span>
+																		<p class="form-control-static-block bold" id="interface" th:text="*{intrface}"/>
+																		
+																	</div>
+																</div>
+																<div class="col-md-2 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label>IPV6</label><span class="required"> (*)</span>
+																		<input type="checkbox" id="ipv6"  name="ipv6" th:field="*{ipv6}" disabled="disabled"/>
 																	</div>
 																</div>
 																<div class="col-md-6 col-sm-6 col-xs-12">
@@ -183,6 +190,9 @@
 																		</div>
 																		<div class="col-md-9">
 																			<input type="checkbox" id="compile"  name="compile"/><p style="display:inline;  padding-left: 10px" th:text="#{digitaltwindevice.maven.compile}">MAVEN</p>
+																		</div>
+																		<div class="col-md-9" style="padding-left: 123px;">
+																			<input type="checkbox" id="sensehat"  name="sensehat"/><p style="display:inline;  padding-left: 10px" th:text="#{digitaltwindevice.maven.sensehat}">SenseHat</p>
 																		</div>
 																	</div>
 																	<div class="btn-group" style="margin-top: 10px;">
@@ -299,9 +309,9 @@
 	$("#generateButton").on("click", function(){
 		var selected = $('input[name=project]:checked', '#digitaltwindevice_create_form').val()
 		if(selected=='maven'){
-			window.location.href = "/controlpanel/digitaltwindevices/generateProject/"+encodeURIComponent($("#identification").text())+"/"+$("#compile").val(); 
+			window.location.href = "/controlpanel/digitaltwindevices/generateProject/"+encodeURIComponent($("#identification").text())+"/"+$("#compile").val()+"/"+$("#sensehat").val(); 
 		}else {
-			
+			//TODO
 		}
 	});
 

@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
@@ -74,11 +73,10 @@ public class ApiManagerHelper {
 	ApiAuthenticationRepository apiAuthenticationRepository;
 	@Autowired
 	UserTokenRepository userTokenRepository;
-	
+
 	@Autowired
 	IntegrationResourcesService resourcesService;
-	
-	
+
 	@Autowired
 	UserService userService;
 	@Autowired
@@ -86,70 +84,65 @@ public class ApiManagerHelper {
 	@Autowired
 	AppWebUtils utils;
 
-	
-	
-	@Value("${apimanager.services.api:/api-manager/services}")
-	private String apiServices;
-	
-	
 	// To populate the List Api Form
 	public void populateApiManagerListForm(Model uiModel) {
 		List<User> users = userRepository.findAll();
-		
+
 		User user = this.userService.getUser(utils.getUserId());
-		
+		uiModel.addAttribute("apiServices", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerJson));
 		uiModel.addAttribute("users", users);
 		uiModel.addAttribute("states", Api.ApiStates.values());
 		uiModel.addAttribute("auths", userApiRepository.findByUser(user));
 	}
-	
+
 	// To populate the Create Api Form
 	public void populateApiManagerCreateForm(Model uiModel) {
 		List<Ontology> ontologies;
 		User user = this.userService.getUser(utils.getUserId());
-		
-		if (utils.getRole().equals(Role.Type.ROLE_DEVELOPER.toString())){
+
+		if (utils.getRole().equals(Role.Type.ROLE_DEVELOPER.toString())) {
 			ontologies = ontologyRepository.findByUserAndActiveTrue(user);
 		} else {
 			ontologies = ontologyRepository.findByActiveTrue();
 		}
-		
+
 		uiModel.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
-		uiModel.addAttribute("apiServices", apiServices);
-		
+		uiModel.addAttribute("apiServices", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerJson));
+
 		uiModel.addAttribute("categories", Api.ApiCategories.values());
 		uiModel.addAttribute("operations", new ArrayList<String>());
 		uiModel.addAttribute("ontologies", ontologies);
 		uiModel.addAttribute("api", new Api());
 	}
-	
+
 	// To populate de Api Create Form
 	public void populateApiManagerUpdateForm(Model uiModel, String apiId) {
-		
-		//POPULATE API TAB
+
+		// POPULATE API TAB
 		populateApiManagerCreateForm(uiModel);
-		
-		Api api= apiRepository.findById(apiId);
-		
+
+		Api api = apiRepository.findById(apiId);
+
 		List<ApiAuthentication> apiAuthenticacion = apiAuthenticationRepository.findAllByApi(api);
 		AuthenticationJson authenticacion = populateAuthenticationObject(apiAuthenticacion);
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
 		List<OperationJson> operations = populateOperationsObject(apiOperations);
-		
+
 		uiModel.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
-		uiModel.addAttribute("apiServices", apiServices);
+		uiModel.addAttribute("apiServices", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerJson));
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
-		
-		//POPULATE AUTH TAB
-		
+
+		// POPULATE AUTH TAB
+
 		uiModel.addAttribute("clients", toUserApiDTO(userApiRepository.findByApiId(apiId)));
-		uiModel.addAttribute("users", userRepository.findUserByIdentificationAndNoRol(utils.getUserId(), Role.Type.ROLE_ADMINISTRATOR.toString()));
+		uiModel.addAttribute("users", userRepository.findUserByIdentificationAndNoRol(utils.getUserId(),
+				Role.Type.ROLE_ADMINISTRATOR.toString()));
 	}
-	
+
 	private List<UserApiDTO> toUserApiDTO(List<UserApi> findByApiId) {
-		List<UserApiDTO> userApiDTOList= new ArrayList<UserApiDTO>();
+		List<UserApiDTO> userApiDTOList = new ArrayList<UserApiDTO>();
 		for (UserApi userApi : findByApiId) {
 			UserApiDTO userApiDTO = new UserApiDTO(userApi);
 			userApiDTOList.add(userApiDTO);
@@ -158,48 +151,48 @@ public class ApiManagerHelper {
 	}
 
 	public void populateApiManagerShowForm(Model uiModel, String apiId) {
-		
-		//POPULATE API TAB
-		Api api= apiRepository.findById(apiId);
-		
+
+		// POPULATE API TAB
+		Api api = apiRepository.findById(apiId);
+
 		List<ApiAuthentication> apiAuthenticacion = apiAuthenticationRepository.findAllByApi(api);
 		AuthenticationJson authenticacion = populateAuthenticationObject(apiAuthenticacion);
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
 		List<OperationJson> operations = populateOperationsObject(apiOperations);
 
 		uiModel.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
-		uiModel.addAttribute("apiServices", apiServices);
+		uiModel.addAttribute("apiServices", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerJson));
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
-		
-		//POPULATE AUTH TAB
+
+		// POPULATE AUTH TAB
 		uiModel.addAttribute("clients", userApiRepository.findByApiId(apiId));
 	}
-	
+
 	private AuthenticationJson populateAuthenticationObject(List<ApiAuthentication> apiAuthentications) {
-		if (apiAuthentications!=null && apiAuthentications.size()>0){
+		if (apiAuthentications != null && apiAuthentications.size() > 0) {
 			ApiAuthentication apiAuthentication = apiAuthentications.get(0);
 			AuthenticationJson authenticacion = new AuthenticationJson();
 			authenticacion.setType(apiAuthentication.getType());
 			authenticacion.setDescription(apiAuthentication.getDescription());
-			
-			List<List<Map<String, String>>> paramList = new ArrayList<List<Map<String,String>>>();
-			
+
+			List<List<Map<String, String>>> paramList = new ArrayList<List<Map<String, String>>>();
+
 			for (ApiAuthenticationParameter apiparam : apiAuthentication.getApiAuthenticationParameters()) {
-				List<Map<String, String>> params = new ArrayList<Map<String,String>>();
-				
+				List<Map<String, String>> params = new ArrayList<Map<String, String>>();
+
 				for (ApiAuthenticationAttribute apiAttrib : apiparam.getApiautenticacionattribs()) {
 					Map<String, String> attrib = new HashMap<String, String>();
 					attrib.put("key", apiAttrib.getName());
 					attrib.put("value", apiAttrib.getValue());
-					
+
 					params.add(attrib);
 				}
 				paramList.add(params);
 			}
 			authenticacion.setParams(paramList);
-			
+
 			return authenticacion;
 		}
 		return null;
@@ -216,10 +209,10 @@ public class ApiManagerHelper {
 			operationJson.setOperation(operation.getOperation().toString());
 			operationJson.setPath(operation.getPath());
 			operationJson.setEndpoint(operation.getEndpoint());
-			operationJson.setPostprocess(operation.getPostProcess());	
-			
+			operationJson.setPostprocess(operation.getPostProcess());
+
 			List<HeaderJson> headers = new ArrayList<HeaderJson>();
-			
+
 			for (ApiHeader header : operation.getApiheaders()) {
 				HeaderJson headerJson = new HeaderJson();
 				headerJson.setName(header.getName());
@@ -227,14 +220,14 @@ public class ApiManagerHelper {
 				headerJson.setType(header.getHeader_type());
 				headerJson.setValue(header.getHeader_value());
 				headerJson.setCondition(header.getHeader_condition());
-				
+
 				headers.add(headerJson);
 			}
-			
+
 			operationJson.setHeaders(headers);
-			
+
 			List<QueryStringJson> queryStrings = new ArrayList<QueryStringJson>();
-			
+
 			for (ApiQueryParameter apiQueryParameter : operation.getApiqueryparameters()) {
 				QueryStringJson queryStringJson = new QueryStringJson();
 				queryStringJson.setName(apiQueryParameter.getName());
@@ -243,26 +236,26 @@ public class ApiManagerHelper {
 				queryStringJson.setHeaderType(apiQueryParameter.getHeaderType().toString());
 				queryStringJson.setValue(apiQueryParameter.getValue());
 				queryStringJson.setCondition(apiQueryParameter.getCondition());
-				
+
 				queryStrings.add(queryStringJson);
 			}
 
 			operationJson.setQuerystrings(queryStrings);
-			
+
 			operations.add(operationJson);
 		}
 		return operations;
 
 	}
-	
+
 	public Api apiMultipartMap(ApiMultipart apiMultipart) {
 		Api api = new Api();
-		
+
 		api.setId(apiMultipart.getId());
-		
+
 		api.setIdentification(apiMultipart.getIdentification());
 		api.setApiType(apiMultipart.getApiType());
-		
+
 		api.setPublic(apiMultipart.isPublic());
 		api.setDescription(apiMultipart.getDescription());
 		api.setCategory(Api.ApiCategories.valueOf(apiMultipart.getCategory()));
@@ -271,26 +264,26 @@ public class ApiManagerHelper {
 		api.setEndpointExt(apiMultipart.getEndpointExt());
 		api.setMetaInf(apiMultipart.getMetaInf());
 		api.setImageType(apiMultipart.getImageType());
-		if (apiMultipart.getState()==null) {
+		if (apiMultipart.getState() == null) {
 			api.setState(Api.ApiStates.CREATED);
 		} else {
 			api.setState(Api.ApiStates.valueOf(apiMultipart.getState()));
 		}
-		
+
 		api.setSsl_certificate(apiMultipart.isSsl_certificate());
-		
+
 		api.setUser(this.userService.getUser(utils.getUserId()));
-		
-		if (apiMultipart.getCachetimeout()!=null && !apiMultipart.getCachetimeout().equals("")){
-			
+
+		if (apiMultipart.getCachetimeout() != null && !apiMultipart.getCachetimeout().equals("")) {
+
 			if (apiMultipart.getCachetimeout() > 1000 || apiMultipart.getCachetimeout() < 10) {
-				//throw new Exception("Cache Limits exceded");
+				// throw new Exception("Cache Limits exceded");
 			} else {
 				api.setCachetimeout(apiMultipart.getCachetimeout());
 			}
 		}
-		
-		if (apiMultipart.getApilimit()!=null && !apiMultipart.getApilimit().equals("")){
+
+		if (apiMultipart.getApilimit() != null && !apiMultipart.getApilimit().equals("")) {
 			if (apiMultipart.getApilimit() < 5) {
 				api.setApilimit(5);
 			} else if (apiMultipart.getApilimit() > 100) {
@@ -299,22 +292,24 @@ public class ApiManagerHelper {
 				api.setApilimit(apiMultipart.getApilimit());
 			}
 		}
-		
+
 		api.setCreatedAt(apiMultipart.getCreatedAt());
-		
-		
-//		if (apiMultipart.getImage()!=null && apiMultipart.getImage().getSize()>0 && !"image/png".equalsIgnoreCase(apiMultipart.getImage().getContentType()) && !"image/jpeg".equalsIgnoreCase(apiMultipart.getImage().getContentType())
-//				&& !"image/jpg".equalsIgnoreCase(apiMultipart.getImage().getContentType()) && !"application/octet-stream".equalsIgnoreCase(apiMultipart.getImage().getContentType())){
-//			return null;
-//		}
-//		
-		
+
+		// if (apiMultipart.getImage()!=null && apiMultipart.getImage().getSize()>0 &&
+		// !"image/png".equalsIgnoreCase(apiMultipart.getImage().getContentType()) &&
+		// !"image/jpeg".equalsIgnoreCase(apiMultipart.getImage().getContentType())
+		// && !"image/jpg".equalsIgnoreCase(apiMultipart.getImage().getContentType()) &&
+		// !"application/octet-stream".equalsIgnoreCase(apiMultipart.getImage().getContentType())){
+		// return null;
+		// }
+		//
+
 		try {
 			api.setImage(apiMultipart.getImage().getBytes());
 		} catch (Exception e) {
-			//throw new Exception("ERROR IMAGEN");
+			// throw new Exception("ERROR IMAGEN");
 		}
-		
+
 		api.setApiType(apiMultipart.getApiType());
 
 		return api;
@@ -322,16 +317,18 @@ public class ApiManagerHelper {
 
 	public void populateAutorizationForm(Model model) {
 		model.addAttribute("userapi", new UserApi());
-		model.addAttribute("users", userRepository.findUserByIdentificationAndNoRol(utils.getUserId(), Role.Type.ROLE_ADMINISTRATOR.toString()));
-	
-		if (utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.toString())){
+		model.addAttribute("users", userRepository.findUserByIdentificationAndNoRol(utils.getUserId(),
+				Role.Type.ROLE_ADMINISTRATOR.toString()));
+
+		if (utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
 			model.addAttribute("apis", apiRepository.findApisNotPublicAndPublishedOrDevelopment());
-			
+
 			List<UserApi> clients = userApiRepository.findAll();
 			model.addAttribute("clients", clients);
-		} else if (utils.getRole().equals(Role.Type.ROLE_DEVELOPER.toString())){
-			
-			model.addAttribute("apis", apiRepository.findApisByUserNotPublicAndPublishedOrDevelopment(utils.getUserId()));
+		} else if (utils.getRole().equals(Role.Type.ROLE_DEVELOPER.toString())) {
+
+			model.addAttribute("apis",
+					apiRepository.findApisByUserNotPublicAndPublishedOrDevelopment(utils.getUserId()));
 
 			List<UserApi> clients = userApiRepository.findByOwner(utils.getUserId());
 			model.addAttribute("clients", clients);
@@ -340,15 +337,16 @@ public class ApiManagerHelper {
 
 	public void populateUserTokenForm(Model model) {
 		User user = this.userService.getUser(utils.getUserId());
-		model.addAttribute("tokens", userTokenRepository.findByUser(user));	
+		model.addAttribute("tokens", userTokenRepository.findByUser(user));
 	}
 
 	public void populateApiManagerInvokeForm(Model model, String apiId) {
-		Api api= apiRepository.findById(apiId);
-		
+		Api api = apiRepository.findById(apiId);
+
 		model.addAttribute("api", api);
+		model.addAttribute("apiSwaggerUI", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerUI));
 		model.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
-		model.addAttribute("apiServices", apiServices);
+		model.addAttribute("apiServices", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerJson));
 	}
 
 }

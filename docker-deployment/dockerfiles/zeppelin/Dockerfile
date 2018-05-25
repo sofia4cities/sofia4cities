@@ -97,6 +97,13 @@ RUN echo "$LOG_TAG Cleanup" && \
     apt-get autoclean && \
     apt-get clean
 
+# Onesait platform interpreter and custom configuration
+RUN mkdir -p ${Z_HOME}/interpreter/onesaitplatform    
+
+COPY shiro.ini ${Z_HOME}/conf/
+COPY zeppelin-site.xml ${Z_HOME}/conf/
+COPY *.jar ${Z_HOME}/interpreter/onesaitplatform/    
+
 EXPOSE 8080
 
 ENTRYPOINT [ "/usr/bin/tini", "--" ]

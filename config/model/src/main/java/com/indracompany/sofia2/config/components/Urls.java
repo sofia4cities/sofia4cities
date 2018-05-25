@@ -31,4 +31,8 @@ public class Urls {
 
 	public Controlpanel controlpanel;
 
+	public DigitalTwinBroker digitalTwinBroker;
+
+	public Domain domain;
+
 }

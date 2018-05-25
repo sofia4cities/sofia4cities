@@ -171,13 +171,19 @@
 																		</div>
 																	</div>
 																</div>
-																<div class="col-md-6 col-sm-6 col-xs-12">
+																<div class="col-md-4 col-sm-6 col-xs-12">
 																	<div class="form-group">
-																		<label>IP</label><span class="required"> (*)</span>
+																		<label>Interface</label><span class="required"> (*)</span>
 																		<div class="input-icon ">
 																			<i class="fa fa-link"></i>
-																			<input class="form-control" id="ip" name="ip" maxlength="50" th:field="*{ip}" th:required="true" placeholder="IP"/>
+																			<input class="form-control" id="interface" name="interface" maxlength="50" th:field="*{intrface}" th:required="true" placeholder="Interface"/>
 																		</div>
+																	</div>
+																</div>
+																<div class="col-md-2 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label>IPV6</label><span class="required"> (*)</span>
+																		<input type="checkbox" id="ipv6"  name="ipv6" th:field="*{ipv6}"/>
 																	</div>
 																</div>
 																<div class="col-md-6 col-sm-6 col-xs-12">
@@ -189,7 +195,7 @@
 																		</div>
 																	</div>
 																</div>
-																<div class="col-md-6 col-sm-6 col-xs-12">
+																<div class="col-md-6 col-sm-12 col-xs-12">
 																	<div class="form-group">
 																		<label>ContextPath</label><span class="required"> (*)</span>
 																		<div class="input-icon ">

@@ -29,9 +29,11 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.persistence.hadoop.common.GeometryType;
+import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
+import com.indracompany.sofia2.persistence.hadoop.common.geometry.GeometryType;
 import com.indracompany.sofia2.persistence.hadoop.hive.table.HiveColumn;
 import com.indracompany.sofia2.persistence.hadoop.util.HiveFieldType;
 import com.indracompany.sofia2.persistence.hadoop.util.JsonFieldType;
@@ -42,43 +44,73 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class KuduTableGenerator {
 
-	public KuduTable builTable(String ontologyName, String schema) {
+	@Value("${sofia2.database.kudu.numreplicas:1}")
+	private int numReplicas;
+
+	@Value("${sofia2.database.kudu.address:localhost:7051}")
+	private String addresses;
+
+	public KuduTable builTable(String ontologyName, String schema) throws DBPersistenceException {
 
 		log.debug("generate kudu table for ontology " + ontologyName);
 
-		JSONObject props = getProperties(schema);
-		return build(ontologyName, props);
+		JSONObject root = getRoot(schema);
+
+		JSONObject props = getProperties(root);
+		List<String> requiredProps = getRequiredProps(root);
+
+		return build(ontologyName, props, requiredProps);
 	}
 
-	public JSONObject getProperties(String schema) {
+	public JSONObject getRoot(String schema) {
 
 		JSONObject jsonObj = new JSONObject(schema);
 
-		JSONObject properties = jsonObj.getJSONObject(JsonFieldType.PROPERTIES_FIELD);
+		if (jsonObj.has(JsonFieldType.PROPERTIES_FIELD)) {
+			JSONObject properties = jsonObj.getJSONObject(JsonFieldType.PROPERTIES_FIELD);
+			@SuppressWarnings("unchecked")
+			Iterator<String> it = properties.keys();
 
-		@SuppressWarnings("unchecked")
-		Iterator<String> it = properties.keys();
+			while (it.hasNext()) {
+				String key = it.next();
+				JSONObject o = (JSONObject) properties.get(key);
 
-		while (it.hasNext()) {
-			String key = it.next();
-			JSONObject o = (JSONObject) properties.get(key);
-
-			// Object ref = o.get("$ref");
-
-			if (o.has("$ref")) {
-				Object ref = o.get("$ref");
-				String refScript = ((String) ref).replace("#/", "");
-				JSONObject refMap = jsonObj.getJSONObject(refScript);
-				return refMap.getJSONObject(JsonFieldType.PROPERTIES_FIELD);
+				if (o.has("$ref")) {
+					Object ref = o.get("$ref");
+					String refScript = ((String) ref).replace("#/", "");
+					JSONObject refMap = jsonObj.getJSONObject(refScript);
+					return refMap;
+				}
 			}
 		}
 
+		return jsonObj;
+	}
+
+	public JSONObject getProperties(JSONObject jsonObj) {
+		JSONObject properties = jsonObj.getJSONObject(JsonFieldType.PROPERTIES_FIELD);
 		return properties;
 	}
 
-	public KuduTable build(String name, JSONObject props) {
-		KuduTable table = new KuduTable();
-		table.setName(name);
+	public List<String> getRequiredProps(JSONObject jsonObj) {
+
+		List<String> requiredProperties = new ArrayList<>();
+
+		if (jsonObj.has("required")) {
+			JSONArray array = jsonObj.getJSONArray("required");
+
+			for (int i = 0; i < array.length(); i++) {
+				requiredProperties.add(array.getString(i));
+			}
+		}
+
+		return requiredProperties;
+	}
+
+	public KuduTable build(String name, JSONObject props, List<String> requiredProperties)
+			throws DBPersistenceException {
+
+		KuduTable table = new KuduTable(name, numReplicas, addresses);
 
 		@SuppressWarnings("unchecked")
 		Iterator<String> it = props.keys();
@@ -91,12 +123,10 @@ public class KuduTableGenerator {
 			JSONObject o = (JSONObject) props.get(key);
 
 			if (isPrimitive(o)) {
-				HiveColumn column = new HiveColumn();
-				column.setName(key);
-				column.setColumnType(pickPrimitiveType(key, o));
-				table.getColumns().add(column);
+				table.getColumns()
+						.add(new HiveColumn(key, pickPrimitiveType(key, o), requiredProperties.contains(key)));
 			} else {
-				table.getColumns().addAll(pickType(key, o));
+				table.getColumns().addAll(pickType(key, o, requiredProperties));
 			}
 		}
 
@@ -150,29 +180,21 @@ public class KuduTableGenerator {
 		return result;
 	}
 
-	public List<HiveColumn> pickType(String key, JSONObject o) {
+	public List<HiveColumn> pickType(String key, JSONObject o, List<String> requiredProperties)
+			throws DBPersistenceException {
 
 		List<HiveColumn> columns = new ArrayList<>();
 
 		if (isGeometry(o)) {
 
-			HiveColumn latitude = new HiveColumn();
-			latitude.setName(key + HiveFieldType.LATITUDE_FIELD);
-			latitude.setColumnType("double");
-			columns.add(latitude);
-
-			HiveColumn longitude = new HiveColumn();
-			longitude.setName(key + HiveFieldType.LONGITUDE_FIELD);
-			longitude.setColumnType("double");
-			columns.add(longitude);
+			columns.add(new HiveColumn(key + HiveFieldType.LATITUDE_FIELD, "double", requiredProperties.contains(key)));
+			columns.add(
+					new HiveColumn(key + HiveFieldType.LONGITUDE_FIELD, "double", requiredProperties.contains(key)));
 
 		} else if (isTimestamp(o)) {
-
-			HiveColumn timestamp = new HiveColumn();
-			timestamp.setName(key);
-			timestamp.setColumnType(HiveFieldType.TIMESTAMP_FIELD);
-			columns.add(timestamp);
-
+			columns.add(new HiveColumn(key, HiveFieldType.TIMESTAMP_FIELD, requiredProperties.contains(key)));
+		} else {
+			throw new DBPersistenceException("The properties must be primitive, geometry or timestamp");
 		}
 
 		return columns;
@@ -197,23 +219,23 @@ public class KuduTableGenerator {
 	}
 
 	public HiveColumn getPrimaryId() {
-		return new HiveColumn(JsonFieldType.PRIMARY_ID_FIELD, HiveFieldType.STRING_FIELD);
+		return new HiveColumn(JsonFieldType.PRIMARY_ID_FIELD, HiveFieldType.STRING_FIELD, true);
 	}
 
 	public List<HiveColumn> getContexDataFields() {
 
 		List<HiveColumn> columns = new ArrayList<>();
 
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE, HiveFieldType.STRING_FIELD, false));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE, HiveFieldType.STRING_FIELD, false));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_DEVICE_TEMPLATE_CONNECTION, HiveFieldType.STRING_FIELD, false));
 
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_SESSION, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_USER, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMEZONE_ID, HiveFieldType.STRING_FIELD));
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMESTAMP, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_SESSION, HiveFieldType.STRING_FIELD, false));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_USER, HiveFieldType.STRING_FIELD, false));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMEZONE_ID, HiveFieldType.STRING_FIELD, false));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMESTAMP, HiveFieldType.STRING_FIELD, false));
 
-		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMESTAMP_MILLIS, HiveFieldType.BIGINT_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMESTAMP_MILLIS, HiveFieldType.BIGINT_FIELD, false));
 
 		return columns;
 	}

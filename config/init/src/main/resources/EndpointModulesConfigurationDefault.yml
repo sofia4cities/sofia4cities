@@ -1,6 +1,10 @@
 #Integration Resources
-sofia2:
-  urls:  
+open_platform:
+  urls:
+    domain:
+      base: http://localhost:18000/
+    digitalTwinBroker:
+      base: http://localhost:19300/digitaltwinbroker  
     iotbroker:
       base: http://localhost:19000/iotbroker
       advice: http://localhost:19000/iotbroker/advice
@@ -13,7 +17,7 @@ sofia2:
       base: http://localhost:20100/flowengine
       advice: http://localhost:5050/
     routerStandAlone:
-      base: http://localhost:20000/
+      base: http://localhost:20000/router
       advice: http://localhost:20000/router/router/advice/
       management: http://localhost:20000/router/management/
       router: http://localhost:20000/router/router/
