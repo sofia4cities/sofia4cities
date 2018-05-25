@@ -365,21 +365,7 @@ public class UserController {
 		return "redirect:/login?errorRegister";
 
 	}
-	@PostMapping(value = "/forgetUser")
-	public String forgetUser(@Valid User user, Model model,RedirectAttributes redirect, HttpServletRequest request,BindingResult bindingResult ) {
 
-		if (bindingResult.hasErrors()) {
-			model.addAttribute("usersId", this.utils.getUserId());
-			System.out.println("eeeeeeeeeeeeeeeeeeeee");
-			log.debug("Some user properties missing");
-			return "redirect:/forgetUser/";
-		}
-		System.out.println("adsads user:");
-
-		return "/users/update/"+this.utils.getUserId();
-		
-	}
-	
 	@GetMapping(value = "/forgetDataUser/{userId}")
 	public String forgetDataUser(Model model,RedirectAttributes redirect, @PathVariable(name = "userId") String userId ) {
 		
