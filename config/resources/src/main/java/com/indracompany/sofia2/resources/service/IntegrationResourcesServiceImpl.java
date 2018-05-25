@@ -41,10 +41,11 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 	}
 
 	public enum Module {
-		iotbroker, scriptingEngine, flowEngine, routerStandAlone, apiManager, controlpanel, digitalTwinBroker
+		iotbroker, scriptingEngine, flowEngine, routerStandAlone, apiManager, controlpanel, digitalTwinBroker, domain
 	}
 
 	public final static String SWAGGER_UI_SUFFIX = "swagger-ui.html";
+	public final static String LOCALHOST = "localhost";
 
 	@PostConstruct
 	public void getActiveProfile() {
@@ -65,6 +66,8 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 			switch (service) {
 			case base:
 				return this.urls.getControlpanel().getBase();
+			default:
+				break;
 
 			}
 		case iotbroker:
@@ -137,6 +140,15 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 			switch (service) {
 			case base:
 				return this.urls.getDigitalTwinBroker().getBase();
+			default:
+				break;
+			}
+		case domain:
+			switch (service) {
+			case base:
+				return this.urls.getDomain().getBase();
+			default:
+				break;
 			}
 		default:
 			break;
@@ -147,11 +159,21 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 	@Override
 	public Map<String, String> getSwaggerUrls() {
 		Map<String, String> map = new HashMap<>();
-		String controlpanel = this.urls.getControlpanel().getBase();
-		String iotbroker = this.urls.getIotbroker().getBase();
-		String apimanager = this.urls.getApiManager().getBase();
-		String router = this.urls.getRouterStandAlone().getBase();
-		String digitalTwinBroker = this.urls.getDigitalTwinBroker().getBase();
+		String base = this.urls.getDomain().getBase();
+		String controlpanel = base.endsWith("/") ? base.concat("/controlpanel")
+				: base.concat("/").concat("/controlpanel");
+		String iotbroker = base.endsWith("/") ? base.concat("/iotbroker") : base.concat("/").concat("/iotbroker");
+		String apimanager = base.endsWith("/") ? base.concat("/apimanager") : base.concat("/").concat("/apimanager");
+		String router = base.endsWith("/") ? base.concat("/router") : base.concat("/").concat("/router");
+		String digitalTwinBroker = base.endsWith("/") ? base.concat("/digitaltwinbroker")
+				: base.concat("/").concat("/digitaltwinbroker");
+		if (base.contains(LOCALHOST)) {
+			controlpanel = this.urls.getControlpanel().getBase();
+			iotbroker = this.urls.getIotbroker().getBase();
+			apimanager = this.urls.getApiManager().getBase();
+			router = this.urls.getRouterStandAlone().getBase();
+			digitalTwinBroker = this.urls.getDigitalTwinBroker().getBase();
+		}
 		map.put(Module.controlpanel.name(), controlpanel.endsWith("/") ? controlpanel.concat(SWAGGER_UI_SUFFIX)
 				: controlpanel.concat("/").concat(SWAGGER_UI_SUFFIX));
 		map.put(Module.iotbroker.name(), iotbroker.endsWith("/") ? iotbroker.concat(SWAGGER_UI_SUFFIX)

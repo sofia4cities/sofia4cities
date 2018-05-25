@@ -1519,7 +1519,7 @@ public class InitConfigDB {
 			client = this.clientPlatformRepository.findByIdentification("Device Master");
 			token = new Token();
 			token.setClientPlatform(client);
-			token.setToken("56686a5a0d7e497d9cafbbbd4b2563ee");
+			token.setToken("a16b9e7367734f04bc720e981fcf483f");
 			tokenRepository.save(token);
 		}
 

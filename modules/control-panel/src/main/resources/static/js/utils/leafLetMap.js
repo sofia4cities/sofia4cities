@@ -3,7 +3,7 @@ var markers = new Array();
 var filteredDevices = new Array();
 var setUpMap = function(id, legendJson) {
 	if(devices.length > 0){
-		mymap = L.map(id).setView([devices[0].location[0], devices[0].location[1]],6);
+		mymap = L.map(id).setView(getInitialLocation(),6);
 		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 		    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
 		    maxZoom: 18,
@@ -135,5 +135,22 @@ var drawMarkers = function (){
 		}
 	
 	}
+	
+}
+var getInitialLocation = function(){
+	var latitude =40.026086 ;
+	var longitude = -5.545651;
+	var result=[];
+	
+	for(var i= devices.length-1; i>=0 ; i--){
+		if(devices[i].location != null){
+			latitude = devices[i].location[0];
+			longitude = devices[i].location[1];
+			break;
+		}
+		
+	}
+	result= [latitude,longitude];
+	return result;
 	
 }
