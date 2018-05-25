@@ -80,7 +80,7 @@ public class DigitalTwinDeviceHelper {
 			pomTemplate = cfg.getTemplate("pomTemplate.ftl");
 			deviceApplicationTemplate = cfg.getTemplate("DeviceApplicationTemplate.ftl");
 			deviceConfigurationTemplate = cfg.getTemplate("applicationPropertiesTemplate.ftl");
-			swaggerConfigTemplate = cfg.getTemplate("swaggerConfigTemplate.ftl");
+			swaggerConfigTemplate = cfg.getTemplate("SwaggerConfigTemplate.ftl");
 		} catch (IOException e) {
 			log.error("Error configuring the template loader.", e);
 		}
