@@ -73,16 +73,26 @@
 			var operation = $("#operation").val();
 			if(operation=="custom"){
 				$("#eventName").removeAttr("disabled");
+				$("#event").show();
 			}else{
 				$("#eventName").val("");
 				$("#eventName").attr("disabled", "disabled");
+				$("#event").hide();
+			}
+			if(operation=="action"){
+				$("#action").show();
+				$("#actionName").removeAttr("disabled");
+			}else{
+				$("#action").hide();
+				$("#actionName").val("");
+				$("#actionName").attr("disabled", "disabled");
 			}
 
 		}
 		
 		function getQueryExecuted(){
 			
-			$("#Canvasrespuesta").load('/controlpanel/digitaltwindisplay/executeQuery', { 'type': $("#types").val(), 'device': $("#devices").val(), 'offset': $("#offset").val(), 'operation': $("#operation").val(), 'eventName': $("#eventName").val()},function(response,status,xhr){
+			$("#Canvasrespuesta").load('/controlpanel/digitaltwindisplay/executeQuery', { 'type': $("#types").val(), 'device': $("#devices").val(), 'offset': $("#offset").val(), 'operation': $("#operation").val(), 'eventName': $("#eventName").val(), 'actionName': $("#actionName").val()},function(response,status,xhr){
 				
 				queryResponse = $(response);				
 				
@@ -249,6 +259,7 @@
 																<option name="shadow" value="register"> REGISTER </option>
 																<option name="shadow" value="ping"> PING </option>
 																<option name="log" value="log"> LOG </option>
+																<option name="action" value="action"> ACTION </option>
 																<option name="notebook" value="notebook"> NOTEBOOK </option>
 																<option name="rule" value="rule"> RULE </option>
 																<option name="flow" value="flow"> FLOW </option>
@@ -256,9 +267,13 @@
 																<option name="custom" value="custom"> OTHER </option>
 															</select>
 														</fieldset>
-														<fieldset class="col-md-2">
+														<fieldset class="col-md-2" id="event" style="display:none;">
 															<label class="" th:text="#{digitaltwindisplay.custom.eventname} + ':'">Custom Event Name</label>									
 															<input  class="form-control" id="eventName" name="eventName" disabled="disabled" th:placeholder="#{digitaltwindisplay.custom.eventname}"/>
+														</fieldset>
+														<fieldset class="col-md-2" id="action" style="display:none;">
+															<label class="" th:text="#{digitaltwindisplay.action.actionname} + ':'">Action Name</label>									
+															<input  class="form-control" id="actionName" name="actionName" disabled="disabled" th:placeholder="#{digitaltwindisplay.action.actionname}"/>
 														</fieldset>
 														<fieldset id="fieldset_offset" class="col-md-3">
 															<label class="" th:text="#{digitaltwindisplay.offset} + ':'">Offset</label>																
