@@ -180,6 +180,13 @@
 																	
 																	<!-- URL -->
 																	<span  class="btn btn-sm green-haze sbold tooltips" data-container="body" data-placement="bottom" title="URL Dashboard" data-original-title="URL Dashboard" th:onclick="'javascript:showDashboardURLDialog(\'' + @{|/dashboards/view/${dashboard.id}} + '\');'"><i class="fa fa-link"></i></span>
+																
+																    <!-- DELETE -->
+																    <span sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" th:if="${dashboard.userAccessType=='EDIT'}" class="btn btn-sm btn-danger sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.deleteBtn} " th:data-original-title="#{gen.deleteBtn} " th:onclick="'deleteDashboardConfirmation(\''+${dashboard.id}+'\');'"><i class="fa fa-trash"></i></span>
+																	
+																	
+																	
+																
 																</div>
 															</td>
 														</tr>
@@ -224,6 +231,10 @@
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
 	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	
+
+	
+	
 	
 	
 	<script type="text/javascript" th:inline="javascript">	
@@ -274,6 +285,55 @@
 	
 	function navigateUrl(url){  window.location.href = url;	}
 	
+	var  deleteDashboardConfirmation = function (id){
+	
+		showConfirmDeleteDialog(id);	
+	} 
+	
+	
+	var showConfirmDeleteDialog = function(id){	
+
+		//i18 labels
+		var Close = headerReg.btnCancelar;
+		var Remove = headerReg.btnEliminar;
+		var Content = [[#{dashboards.del.confirm}]];
+		var Title = headerReg.titleConfirm + ':';
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn btn-sm btn-danger btn-outline',
+					action: function(){ 
+						console.log(id);
+						$.ajax({
+						    url: '/controlpanel/dashboards/'+id,
+						    type: 'DELETE',						  
+						    success: function(result) {
+						    	navigateUrl('/controlpanel/dashboards/list');
+						    }
+						});
+					}											
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+	}	
+
 	// MAIN WHEN READY
 	$( document ).ready(function() {
 	

@@ -26,6 +26,7 @@ import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.DeviceSimulation;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.TwitterListening;
 import com.indracompany.sofia2.config.model.User;
@@ -157,5 +158,17 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 		else
 			throw new Exception("Simulation is currently running");
 
+	}
+	
+	@Override
+	@Transactional
+	public void revokeAuthorizations(Ontology ontology) {
+		try {
+			ontologyUserAccessRepository.deleteByOntology(ontology);
+		} catch (Exception e) {
+			throw new OntologyServiceException("Couldn't delete ontology's authorizations");
+		}	
+		
+		
 	}
 }

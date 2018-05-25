@@ -76,9 +76,20 @@
 				
 				<!-- BEGIN USER NO-PARTNER -->						
 				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-user-toggler">
-					<a th:href="@{'/users/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" th:attr="data-original-title=${#strings.concat(#authentication.name,' ',#strings.listJoin(#authentication.authorities,' '))}" style="padding-right:8px !important;">
+					<a th:href="@{'/users/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" th:attr="data-original-title=${#strings.concat(#authentication.name,' ',#strings.listJoin(#authentication.authorities,' '))}" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="padding-right:8px !important;">
 						<i class="flaticon-user"></i> <span class="user-rol" th:classappend="${#strings.toLowerCase(#strings.listJoin(#authentication.authorities,' '))}" th:text="${#authentication.name}"> user</span> <!--  <span class="hidden-xs" th:text="${#authentication.authorities}">rol</span>-->
+						<i class="fa fa-angle-down"></i>
 					</a>
+					<ul class="dropdown-menu dropdown-menu-default">
+						<li>
+							<!-- <spring:message code="global_language_switch" arguments="English" var="lang_label" htmlEscape="false" />-->
+							<a th:href="@{'/users/show/' + ${#authentication.name}}"><span>View Data</span></a>
+						</li>
+						<li>				
+							<a th:href=" @{'/users/update/'+ ${#authentication.name}+'/true'}" th:text="#{user.template.data.update}"  ><span>Privacy preferences</span></a> 
+						</li>	
+																		
+					</ul>
 				</li>
 				<!-- END USER NO-PARTNER -->
 

@@ -1,6 +1,7 @@
 
 var DigitalTwinCreateController = function() {
 	
+	var beautify = ace.require("/src/main/resources/static/vendor/ace/ext-beautify.js");
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
 	var LIB_TITLE = 'Digital Twin Controller';	
@@ -543,6 +544,8 @@ var DigitalTwinCreateController = function() {
 				
 				
 				AceEditor = ace.edit("aceEditor");
+				beautify.beautify(editor.session);
+				
 				var logica = digitalTwinCreateJson.logic;
 					
 				if(logica.charAt(0) === '\"'){
@@ -583,7 +586,7 @@ var DigitalTwinCreateController = function() {
 		         .appendTo("#digitaltwintype_create_form");
 		        
 		     });
-			
+			 
 			$("#json").val(JSON.stringify(editor.get()));
 			$("#logic").val(JSON.stringify(ace.edit("aceEditor").getValue()));
 			$("#digitalType").val($("#type").val());
@@ -595,10 +598,12 @@ var DigitalTwinCreateController = function() {
 		addActionLogic: function(obj){
 			logControl ? console.log(LIB_TITLE + ': addActionLogic()') : '';
 			if(!AllActionsLogic.includes(obj.value)){
+				
 				AceEditor = ace.edit("aceEditor");
 				var js = AceEditor.getValue();
 				js = js + "\nvar onAction"+obj.value.substring(0,1).toUpperCase() + obj.value.substring(1)+"=function(data){ }";
 				AceEditor.setValue(js);
+				beautify.beautify(editor.session);
 				AllActionsLogic.push(obj.value);
 			}
 
@@ -700,5 +705,6 @@ jQuery(document).ready(function() {
 	DigitalTwinCreateController.load(digitalTwinCreateJson);
 	AceEditor = ace.edit("aceEditor");
 	AceEditor.setValue("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();\nfunction init(){}\nfunction main(){}");
+	beautify.beautify(editor.session);
 	DigitalTwinCreateController.init();
 });
