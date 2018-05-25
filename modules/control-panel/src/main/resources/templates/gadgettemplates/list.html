@@ -171,6 +171,8 @@
 																																																			
 																	<!-- EDIT -->
 																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/gadgettemplates/update/${gadgetTemplate.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	 <!-- DELETE -->
+																    <span  class="btn btn-sm btn-danger sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.deleteBtn} " th:data-original-title="#{gen.deleteBtn} " th:onclick="'deleteConfirmation(\''+${gadgetTemplate.id}+'\');'"><i class="fa fa-trash"></i></span>
 																	
 																</div>
 															</td>
@@ -237,11 +239,63 @@
 
 	</script>
 	
-	<script type="text/javascript">	
+	<script type="text/javascript" th:inline="javascript">	
 	var optionName = 'GADGETTEMPLATES';
 	
 	//<![CDATA[
 	function navigateUrl(url){  window.location.href = url;	}
+	
+var  deleteConfirmation = function (id){
+		
+		showConfirmDeleteDialog(id);	
+	} 
+	
+	
+	var showConfirmDeleteDialog = function(id){	
+
+		//i18 labels
+		var Close = headerReg.btnCancelar;
+		var Remove = headerReg.btnEliminar;
+		var Content = [[#{gadgettemplates.del.confirm}]];
+		var Title = headerReg.titleConfirm + ':';
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn btn-sm btn-danger btn-outline',
+					action: function(){ 
+						console.log(id);
+						$.ajax({
+						    url: '/controlpanel/gadgettemplates/'+id,
+						    type: 'DELETE',						  
+						    success: function(result) {
+						    	
+						    	
+						    	navigateUrl('/controlpanel/gadgettemplates/list');
+						    }
+						});
+					}											
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+	}	
+
 	
 	// MAIN WHEN READY
 	$( document ).ready(function() {
