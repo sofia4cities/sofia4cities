@@ -7,14 +7,14 @@
       "onesaitplatform.server.host": {
         "envName": null,
         "propertyName": "onesaitplatform.server.host",
-        "defaultValue": "s4citiespro.westeurope.cloudapp.azure.com",
+        "defaultValue": "<hostname>",
         "description": "Onesait Platform server host to connect to",
         "type": "textarea"
       },
       "onesaitplatform.server.port": {
         "envName": null,
         "propertyName": "onesaitplatform.server.port",
-        "defaultValue": "80",
+        "defaultValue": "<port>",
         "description": "Onesait Platform server port to connect to",
         "type": "textarea"
       },
