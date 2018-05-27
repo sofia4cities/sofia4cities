@@ -40,6 +40,7 @@ import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
@@ -116,7 +117,10 @@ public class DeviceManagerController {
 		model.addAttribute("commands", this.deviceService.getDeviceCommands(device));
 		model.addAttribute("query", query.replace(" limit 50", ""));
 		model.addAttribute("logs", this.deviceService.getLogInstances(result));
-		model.addAttribute("iotbrokerUrl", this.intregationResourcesService.getUrl(Module.iotbroker, ServiceUrl.base));
+		String iotbrokerurl = this.intregationResourcesService.getUrl(Module.iotbroker, ServiceUrl.base);
+		model.addAttribute("iotbrokerUrl",
+				iotbrokerurl.contains(IntegrationResourcesServiceImpl.LOCALHOST) ? iotbrokerurl
+						: this.intregationResourcesService.getUrl(Module.domain, ServiceUrl.base).concat("/iotbroker"));
 		return "devices/management/info";
 	}
 

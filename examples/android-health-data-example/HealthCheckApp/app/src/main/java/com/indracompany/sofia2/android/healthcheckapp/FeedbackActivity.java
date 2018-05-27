@@ -3,12 +3,14 @@ package com.indracompany.sofia2.android.healthcheckapp;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -33,17 +35,36 @@ public class FeedbackActivity extends AppCompatActivity {
 
     String mAccessToken = "";
     String mUsername = "";
+
+
+    SharedPreferences preferences;
+    private String pref_env;
+
+    private void loadPreferences(){
+        pref_env = preferences.getString("EnvSelect","rancher.sofia4cities.com");
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return true;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        loadPreferences();
 
         mAccessToken = getIntent().getStringExtra("accessToken");
         mUsername = getIntent().getStringExtra("username");
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.s4c_logo);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(mUsername);
 
 
         Button mIB = (Button) findViewById(R.id.ib_feedback);
@@ -97,7 +118,7 @@ public class FeedbackActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/specialistInterface";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/specialistInterface";
             URL url = null;
             int responseCode = 500;
             try {
@@ -191,8 +212,8 @@ public class FeedbackActivity extends AppCompatActivity {
 
             String command = params[0];
 
-            String data = "https://s4citiespro.westeurope.cloudapp.azure.com/controlpanel/management/"+command+"/api/9ad97800-0992-485c-ad8c-fb573649d7cb/user/specialistHealth";
-            String inbox = "https://s4citiespro.westeurope.cloudapp.azure.com/controlpanel/management/"+command+"/api/5eb1559a-f7f3-4e78-8a08-c9da44d71f0e/user/specialistHealth";
+            String data = "https://"+pref_env+"/controlpanel/management/"+command+"/api/9ad97800-0992-485c-ad8c-fb573649d7cb/user/specialistHealth";
+            String inbox = "https://"+pref_env+"/controlpanel/management/"+command+"/api/5eb1559a-f7f3-4e78-8a08-c9da44d71f0e/user/specialistHealth";
             URL urlInbox = null;
             URL urlData = null;
             int responseCode = 500;

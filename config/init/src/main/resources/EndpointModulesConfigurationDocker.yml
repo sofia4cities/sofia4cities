@@ -1,10 +1,12 @@
 #Integration Resources docker
 open_platform:
   urls: 
+    domain:
+      base: https://s4citiespro.westeurope.cloudapp.azure.com/
     digitalTwinBroker:
       base: http://digitaltwinbrokerservice:19300/digitaltwinbroker
     controlpanel:
-      base: http://s4citiespro.westeurope.cloudapp.azure.com/controlpanel
+      base: https://s4citiespro.westeurope.cloudapp.azure.com/controlpanel
     iotbroker:
       base: http://iotbrokerservice:19000/iotbroker
       advice: http://iotbrokerservice:19000/iotbroker/advice
@@ -15,7 +17,7 @@ open_platform:
       base: https://s4citiespro.westeurope.cloudapp.azure.com/flowengine/
       advice: https://s4citiespro.westeurope.cloudapp.azure.com/nodered/
     routerStandAlone:
-      base: http://localhost:20000/
+      base: https://s4citiespro.westeurope.cloudapp.azure.com/router
       advice: http://localhost:20000/router/router/advice/
       management: http://localhost:20000/router/management/
       router: http://localhost:20000/router/router/

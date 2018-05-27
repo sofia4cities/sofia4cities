@@ -333,7 +333,7 @@ public class DigitalTwinDeviceHelper {
 			s.close();
 
 			int result = process.waitFor();
-			log.info("Process exited with result %d and output %s%n", result, text);
+			log.info("Process exited with result {} and output {}", result, text);
 		} catch (Exception e) {
 			log.error("Error compiling project", e);
 		}

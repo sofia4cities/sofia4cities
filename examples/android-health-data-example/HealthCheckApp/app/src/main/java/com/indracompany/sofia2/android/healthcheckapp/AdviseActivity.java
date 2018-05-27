@@ -3,13 +3,16 @@ package com.indracompany.sofia2.android.healthcheckapp;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -40,17 +43,35 @@ public class AdviseActivity extends AppCompatActivity {
     String mInput;
     String mUsername;
 
+    SharedPreferences preferences;
+    private String pref_env;
+
+    private void loadPreferences(){
+        pref_env = preferences.getString("EnvSelect","rancher.sofia4cities.com");
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advise);
 
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        loadPreferences();
+
         mAccessToken = getIntent().getStringExtra("accessToken");
         mUsername = getIntent().getStringExtra("username");
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.s4c_logo);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        getSupportActionBar().setTitle(mUsername);
 
         mButton = (Button) findViewById(R.id.specialist_advise_button);
         mButton.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +99,7 @@ public class AdviseActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/citizenInterface/\\HistoricalData";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInterface/\\HistoricalData";
             URL url = null;
             int responseCode = 500;
             try {
@@ -214,7 +235,7 @@ public class AdviseActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/citizenInboxInterface";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInboxInterface";
             URL url = null;
             int responseCode = 500;
             try {

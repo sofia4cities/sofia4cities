@@ -273,11 +273,14 @@ public class InitConfigDB {
 		log.info("init_DigitalTwinDevice");
 		if (this.digitalTwinDeviceRepository.count() == 0) {
 			DigitalTwinDevice device = new DigitalTwinDevice();
+
+			// Turbine example
+
 			device.setContextPath("/turbine");
 			device.setDigitalKey("f0e50f5f8c754204a4ac601f29775c15");
 			device.setIdentification("TurbineHelsinki");
 			device.setIntrface("eth0");
-			device.setIpv6(true);
+			device.setIpv6(false);
 			device.setLatitude("60.17688297979675");
 			device.setLongitude("24.92333816559176");
 			device.setPort(10000);
@@ -331,6 +334,124 @@ public class InitConfigDB {
 			device.setTypeId(this.digitalTwinTypeRepository.findByName("Turbine"));
 			device.setUser(getUserDeveloper());
 			this.digitalTwinDeviceRepository.save(device);
+
+			// Sensehat example
+
+			device = new DigitalTwinDevice();
+			device.setContextPath("/sensehat");
+			device.setDigitalKey("f0e50f5f8c754204a4ac601f29775c15");
+			device.setIdentification("SensehatHelsinki");
+			device.setIntrface("eth0");
+			device.setIpv6(false);
+			device.setLatitude("60.17688297979675");
+			device.setLongitude("24.92333816559176");
+			device.setPort(10000);
+			device.setUrlSchema("http");
+			device.setUrl("https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker");
+			device.setLogic(
+					"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
+							+ System.getProperty("line.separator")
+							+ "var senseHatApi = Java.type('com.indracompany.sofia2.raspberry.sensehat.digitaltwin.api.SenseHatApi').getInstance();"
+							+ System.getProperty("line.separator") + "function init(){"
+							+ System.getProperty("line.separator")
+							+ "   senseHatApi.setJoystickUpListener('joystickEventUp');"
+							+ System.getProperty("line.separator")
+							+ "   senseHatApi.setJoystickDownListener('joystickEventDown')"
+							+ System.getProperty("line.separator")
+							+ "   senseHatApi.setJoystickLeftListener('joystickEventLeft');"
+							+ System.getProperty("line.separator")
+							+ "   senseHatApi.setJoystickRightListener('joystickEventRight');"
+							+ System.getProperty("line.separator")
+							+ "   senseHatApi.setJoystickMiddleListener('joystickEventMiddle');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Init SenseHatSpain shadow');"
+							+ System.getProperty("line.separator") + "   var sensorPress = senseHatApi.getPressure();"
+							+ System.getProperty("line.separator") + "   var sensorTemp = senseHatApi.getTemperature();"
+							+ System.getProperty("line.separator") + "   var sensorHum = senseHatApi.getHumidity();"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.setStatusValue('pressure', sensorPress);"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.setStatusValue('temperature', sensorTemp);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('humidity', sensorHum);"
+							+ System.getProperty("line.separator")
+							+ "    var temp = digitalTwinApi.getStatusValue('temperature');"
+							+ System.getProperty("line.separator")
+							+ "    var hum = digitalTwinApi.getStatusValue('humidity');"
+							+ System.getProperty("line.separator")
+							+ "    var pressure = digitalTwinApi.getStatusValue('pressure');"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.log('Temperature: ' + temp + ' - Humidity: ' + hum + ' - Pressure: '+ pressure);"
+							+ System.getProperty("line.separator") + "    digitalTwinApi.sendUpdateShadow();"
+							+ System.getProperty("line.separator") + "    digitalTwinApi.log('Send Update Shadow');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "function main(){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('New main execution');" + System.getProperty("line.separator")
+							+ "   var sensorPress = senseHatApi.getPressure();" + System.getProperty("line.separator")
+							+ "   var sensorTemp = senseHatApi.getTemperature();" + System.getProperty("line.separator")
+							+ "   var sensorHum = senseHatApi.getHumidity();" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.setStatusValue('pressure', sensorPress);"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.setStatusValue('temperature', sensorTemp);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('humidity', sensorHum);"
+							+ System.getProperty("line.separator") + "    digitalTwinApi.sendUpdateShadow();"
+							+ System.getProperty("line.separator") + "    digitalTwinApi.log('Send Update Shadow');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var joystickEventLeft=function(event){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick event to the left');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.sendCustomEvent('joystickEventLeft');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var joystickEventRight=function(event){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick event to the right');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.sendCustomEvent('joystickEventRight');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var joystickEventUp=function(event){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick event up');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.sendCustomEvent('joystickEventUp');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var joystickEventDown=function(event){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick event down');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.sendCustomEvent('joystickEventDown');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var joystickEventMiddle=function(event){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick event to the middle');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.sendCustomEvent('joystickEventMiddle');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var onActionJoystickRight=function(data){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick action to the right');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Right');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "function onActionJoystickLeft(data){\r\n"
+							+ "   digitalTwinApi.log('Received joystick action to the left');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Left');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var onActionJoystickUp=function(data){ " + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick action up');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Up');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var onActionJoystickDown=function(data){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick action down');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Down');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var onActionJoystickMiddle=function(data){ " + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick action to the middle');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Middle');"
+							+ System.getProperty("line.separator") + "}");
+			device.setTypeId(this.digitalTwinTypeRepository.findByName("Sensehat"));
+			device.setUser(getUserDeveloper());
+			this.digitalTwinDeviceRepository.save(device);
+
 		}
 	}
 
@@ -338,6 +459,9 @@ public class InitConfigDB {
 		log.info("init_DigitalTwinType");
 
 		if (this.digitalTwinTypeRepository.count() == 0) {
+
+			// Turbine example
+
 			DigitalTwinType type = new DigitalTwinType();
 			type.setName("Turbine");
 			type.setType("thing");
@@ -346,10 +470,10 @@ public class InitConfigDB {
 					"{\"title\":\"Turbine\",\"links\":{\"properties\":\"thing/Turbine/properties\",\"actions\":\"thing/Turbine/actions\",\"events\":\"thing/Turbine/events\"},\"description\":\"Wind Turbine for electricity generation\",\"properties\":{\"rotorSpeed\":{\"type\":\"int\",\"units\":\"rpm\",\"direction\":\"out\",\"description\":\"Rotor speed\"},\"maxRotorSpeed\":{\"type\":\"int\",\"units\":\"rpm\",\"direction\":\"in_out\",\"description\":\"Max allowed speed for the rotor\"},\"power\":{\"type\":\"double\",\"units\":\"wat/h\",\"direction\":\"out\",\"description\":\"Current Power generated by the turbine\"},\"alternatorTemp\":{\"type\":\"double\",\"units\":\"celsius\",\"direction\":\"out\",\"description\":\"Temperature of the alternator\"},\"nacelleTemp\":{\"type\":\"double\",\"units\":\"celsius\",\"direction\":\"out\",\"description\":\"Temperature into the nacelle\"},\"windDirection\":{\"type\":\"int\",\"units\":\"degrees\",\"direction\":\"out\",\"description\":\"Wind direction\"}},\"actions\":{\"connectElectricNetwork\":{\"description\":\"Connect the turbine to the electric network to provide power\"},\"disconnectElectricNetwork\":{\"description\":\"Disconnect the turbine to the electric network to prevent problems\"},\"limitRotorSpeed\":{\"description\":\"Limits the rotor speed\"}},\"events\":{\"register\":{\"description\":\"Register the device into the plaform\"},\"updateshadow\":{\"description\":\"Updates the shadow in the plaform\"},\"ping\":{\"description\":\"Ping the platform to keepalive the device\"},\"log\":{\"description\":\"Log information in plaform\"}}}");
 			type.setUser(getUserDeveloper());
 
-			Set<PropertyDigitalTwinType> properties = createPropertiesDT(type);
-			Set<ActionsDigitalTwinType> actions = createActionsDT(type);
-			Set<EventsDigitalTwinType> events = createEventsDT(type);
-			Set<LogicDigitalTwinType> logics = createLogicDT(type);
+			Set<PropertyDigitalTwinType> properties = createTurbinePropertiesDT(type);
+			Set<ActionsDigitalTwinType> actions = createTurbineActionsDT(type);
+			Set<EventsDigitalTwinType> events = createTurbineEventsDT(type);
+			Set<LogicDigitalTwinType> logics = createTurbineLogicDT(type);
 
 			type.setPropertyDigitalTwinTypes(properties);
 			type.setActionDigitalTwinTypes(actions);
@@ -357,10 +481,31 @@ public class InitConfigDB {
 			type.setLogicDigitalTwinTypes(logics);
 
 			this.digitalTwinTypeRepository.save(type);
+
+			// Sensehat example
+			type = new DigitalTwinType();
+			type.setName("Sensehat");
+			type.setType("thing");
+			type.setDescription("Raspberry with Sensehat");
+			type.setJson(
+					"{\"title\": \"Sensehat\",\"links\": {\"properties\": \"thing/Sensehat/properties\",\"actions\": \"thing/Sensehat/actions\",\"events\": \"thing/Sensehat/events\"},\"description\": \"Raspberry - Sensehat\",\"properties\": {\"temperature\": {\"type\": \"double\",\"units\": \"degrees\",\"direction\": \"out\",\"description\": \"Temperature\"},\"humidity\": {\"type\": \"double\",\"units\": \"milibars\",\"direction\": \"out\",\"description\": \"Humidity\"},\"pressure\": {\"type\": \"double\",\"units\": \"%\",\"direction\": \"out\",\"description\": \"Pressure\"}},\"actions\": {\"joystickUp\": {\"description\": \"Joysctick action up\"},\"joystickRight\": {\"description\": \"Joystick action to the right\"},\"joystickDown\": {\"description\": \"Joystick action down\"},\"joystickLeft\": {\"description\": \"Joystick action to the left\"},\"joystickMiddle\": {\"description\": \"Joystick action to the middle\"}},\"events\": {\"ping\": {\"description\": \"Ping\"},\"register\": {\"description\": \"Register\"},\"log\": {\"description\": \"Log information in platform\"},\"joystickEventRigth\": {\"description\": \"Send joystick event to the right\"},\"joystickEventLeft\": {\"description\": \"Send joystick event to the left\"},\"joystickEventUp\": {\"description\": \"Send joystick event up\"},\"joystickEventDown\": {\"description\": \"Send joystick event down\"},\"joystickEventMiddle\": {\"description\": \"Send joystick event to the middle\"},\"updateShadow\": {\"description\": \"Send joystick event to the right\"}}}");
+			type.setUser(getUserDeveloper());
+
+			Set<PropertyDigitalTwinType> propertiesSensehat = createSensehatPropertiesDT(type);
+			Set<ActionsDigitalTwinType> actionsSensehat = createSensehatActionsDT(type);
+			Set<EventsDigitalTwinType> eventsSensehat = createSensehatEventsDT(type);
+			Set<LogicDigitalTwinType> logicsSensehat = createSensehatLogicDT(type);
+
+			type.setPropertyDigitalTwinTypes(propertiesSensehat);
+			type.setActionDigitalTwinTypes(actionsSensehat);
+			type.setEventDigitalTwinTypes(eventsSensehat);
+			type.setLogicDigitalTwinTypes(logicsSensehat);
+
+			this.digitalTwinTypeRepository.save(type);
 		}
 	}
 
-	private Set<LogicDigitalTwinType> createLogicDT(DigitalTwinType type) {
+	private Set<LogicDigitalTwinType> createTurbineLogicDT(DigitalTwinType type) {
 		Set<LogicDigitalTwinType> logics = new HashSet<LogicDigitalTwinType>();
 		LogicDigitalTwinType logic = new LogicDigitalTwinType();
 		logic.setTypeId(type);
@@ -377,7 +522,7 @@ public class InitConfigDB {
 		return logics;
 	}
 
-	private Set<EventsDigitalTwinType> createEventsDT(DigitalTwinType type) {
+	private Set<EventsDigitalTwinType> createTurbineEventsDT(DigitalTwinType type) {
 		Set<EventsDigitalTwinType> events = new HashSet<EventsDigitalTwinType>();
 		EventsDigitalTwinType event = new EventsDigitalTwinType();
 		event.setName("ping");
@@ -422,7 +567,7 @@ public class InitConfigDB {
 		return events;
 	}
 
-	private Set<ActionsDigitalTwinType> createActionsDT(DigitalTwinType type) {
+	private Set<ActionsDigitalTwinType> createTurbineActionsDT(DigitalTwinType type) {
 		Set<ActionsDigitalTwinType> actions = new HashSet<ActionsDigitalTwinType>();
 		ActionsDigitalTwinType action = new ActionsDigitalTwinType();
 		action.setName("disconnectElectricNetwork");
@@ -445,7 +590,7 @@ public class InitConfigDB {
 		return actions;
 	}
 
-	private Set<PropertyDigitalTwinType> createPropertiesDT(DigitalTwinType type) {
+	private Set<PropertyDigitalTwinType> createTurbinePropertiesDT(DigitalTwinType type) {
 		Set<PropertyDigitalTwinType> props = new HashSet<PropertyDigitalTwinType>();
 		PropertyDigitalTwinType prop = new PropertyDigitalTwinType();
 		prop.setName("alternatorTemp");
@@ -498,6 +643,167 @@ public class InitConfigDB {
 		prop.setUnit("degrees");
 		prop.setDirection(Direction.OUT);
 		prop.setDescription("Wind direction");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		return props;
+	}
+
+	private Set<LogicDigitalTwinType> createSensehatLogicDT(DigitalTwinType type) {
+		Set<LogicDigitalTwinType> logics = new HashSet<LogicDigitalTwinType>();
+		LogicDigitalTwinType logic = new LogicDigitalTwinType();
+		logic.setTypeId(type);
+		logic.setLogic(
+				"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
+						+ System.getProperty("line.separator") + "function init(){}"
+						+ System.getProperty("line.separator") + "function main(){}"
+						+ System.getProperty("line.separator") + "var onActionConnectElectricNetwork=function(data){  }"
+						+ System.getProperty("line.separator")
+						+ "var onActionDisconnectElectricNetwork=function(data){ }"
+						+ System.getProperty("line.separator") + "var onActionLimitRotorSpeed=function(data){ }");
+
+		logics.add(logic);
+		return logics;
+	}
+
+	private Set<EventsDigitalTwinType> createSensehatEventsDT(DigitalTwinType type) {
+		Set<EventsDigitalTwinType> events = new HashSet<EventsDigitalTwinType>();
+		EventsDigitalTwinType event = new EventsDigitalTwinType();
+		event.setName("ping");
+		event.setStatus(true);
+		event.setType(Type.PING);
+		event.setDescription("Ping the platform to keepalive the device");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("updateshadow");
+		event.setStatus(true);
+		event.setType(Type.UPDATE_SHADOW);
+		event.setDescription("Updates the shadow in the plaform");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("log");
+		event.setStatus(true);
+		event.setType(Type.LOG);
+		event.setDescription("Log information in plaform");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("register");
+		event.setStatus(true);
+		event.setType(Type.REGISTER);
+		event.setDescription("Register the device into the plaform");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("joystickEventMiddle");
+		event.setStatus(true);
+		event.setType(Type.OTHER);
+		event.setDescription("Send joystick event to the middle");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("joystickEventRight");
+		event.setStatus(true);
+		event.setType(Type.OTHER);
+		event.setDescription("Send joystick event to the right");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("joystickEventLeft");
+		event.setStatus(true);
+		event.setType(Type.OTHER);
+		event.setDescription("Send joystick event to the left");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("joystickEventUp");
+		event.setStatus(true);
+		event.setType(Type.OTHER);
+		event.setDescription("Send joystick event up");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("joystickEventDown");
+		event.setStatus(true);
+		event.setType(Type.OTHER);
+		event.setDescription("Send joystick event down");
+		event.setTypeId(type);
+		events.add(event);
+
+		return events;
+	}
+
+	private Set<ActionsDigitalTwinType> createSensehatActionsDT(DigitalTwinType type) {
+		Set<ActionsDigitalTwinType> actions = new HashSet<ActionsDigitalTwinType>();
+		ActionsDigitalTwinType action = new ActionsDigitalTwinType();
+		action.setName("joystickUp");
+		action.setDescription("Joystick action up");
+		action.setTypeId(type);
+		actions.add(action);
+
+		action = new ActionsDigitalTwinType();
+		action.setName("joystickDown");
+		action.setDescription("Joystick action down");
+		action.setTypeId(type);
+		actions.add(action);
+
+		action = new ActionsDigitalTwinType();
+		action.setName("joystickLeft");
+		action.setDescription("Joystick action to the left");
+		action.setTypeId(type);
+		actions.add(action);
+
+		action = new ActionsDigitalTwinType();
+		action.setName("joystickRight");
+		action.setDescription("Joystick action to the right");
+		action.setTypeId(type);
+		actions.add(action);
+
+		action = new ActionsDigitalTwinType();
+		action.setName("joystickMiddle");
+		action.setDescription("Joystick action to the middle");
+		action.setTypeId(type);
+		actions.add(action);
+
+		return actions;
+	}
+
+	private Set<PropertyDigitalTwinType> createSensehatPropertiesDT(DigitalTwinType type) {
+		Set<PropertyDigitalTwinType> props = new HashSet<PropertyDigitalTwinType>();
+		PropertyDigitalTwinType prop = new PropertyDigitalTwinType();
+		prop.setName("temperature");
+		prop.setType("double");
+		prop.setUnit("degrees");
+		prop.setDirection(Direction.OUT);
+		prop.setDescription("Temperature");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		prop = new PropertyDigitalTwinType();
+		prop.setName("humidity");
+		prop.setType("double");
+		prop.setUnit("%");
+		prop.setDirection(Direction.OUT);
+		prop.setDescription("Humidity");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		prop = new PropertyDigitalTwinType();
+		prop.setName("pressure");
+		prop.setType("double");
+		prop.setUnit("milibars");
+		prop.setDirection(Direction.OUT);
+		prop.setDescription("Pressure");
 		prop.setTypeId(type);
 		props.add(prop);
 
@@ -1519,7 +1825,7 @@ public class InitConfigDB {
 			client = this.clientPlatformRepository.findByIdentification("Device Master");
 			token = new Token();
 			token.setClientPlatform(client);
-			token.setToken("56686a5a0d7e497d9cafbbbd4b2563ee");
+			token.setToken("a16b9e7367734f04bc720e981fcf483f");
 			tokenRepository.save(token);
 		}
 

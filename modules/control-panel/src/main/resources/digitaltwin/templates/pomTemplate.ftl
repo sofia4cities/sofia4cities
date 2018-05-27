@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-digital-twin-library</artifactId>
-			<version>0.0.1</version>
+			<version>0.0.2</version>
 		</dependency>
 		<dependency>
 		    <groupId>io.springfox</groupId>

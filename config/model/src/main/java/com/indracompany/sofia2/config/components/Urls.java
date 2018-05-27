@@ -33,4 +33,6 @@ public class Urls {
 
 	public DigitalTwinBroker digitalTwinBroker;
 
+	public Domain domain;
+
 }

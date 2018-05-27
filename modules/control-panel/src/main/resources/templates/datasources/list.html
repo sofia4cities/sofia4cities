@@ -187,6 +187,9 @@
 																	
 																	<!-- INDEXES -->
 																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->
+																    <!-- DELETE -->
+																    <span  class="btn btn-sm btn-danger sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.deleteBtn} " th:data-original-title="#{gen.deleteBtn} " th:onclick="'deleteConfirmation(\''+${datasource.id}+'\');'"><i class="fa fa-trash"></i></span>
+																	
 																</div>
 															</td>
 														</tr>
@@ -254,12 +257,63 @@
 
 	</script>
 	
-	<script type="text/javascript">	
+	<script type="text/javascript"  th:inline="javascript">	
 	var optionName = 'DATASOURCES';
 	
 	//<![CDATA[
 	function navigateUrl(url){  window.location.href = url;	}
 	
+	var  deleteConfirmation = function (id){
+		
+		showConfirmDeleteDialog(id);	
+	} 
+	
+	
+	var showConfirmDeleteDialog = function(id){	
+
+		//i18 labels
+		var Close = headerReg.btnCancelar;
+		var Remove = headerReg.btnEliminar;
+		var Content = [[#{datasources.del.confirm}]];
+		var Title = headerReg.titleConfirm + ':';
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn btn-sm btn-danger btn-outline',
+					action: function(){ 
+						console.log(id);
+						$.ajax({
+						    url: '/controlpanel/datasources/'+id,
+						    type: 'DELETE',						  
+						    success: function(result) {
+						    	
+						    	
+						    	navigateUrl('/controlpanel/datasources/list');
+						    }
+						});
+					}											
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+	}	
+
 	// MAIN WHEN READY
 	$( document ).ready(function() {
 	
