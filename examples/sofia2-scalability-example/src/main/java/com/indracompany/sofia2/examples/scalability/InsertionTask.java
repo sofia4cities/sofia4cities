@@ -35,6 +35,7 @@ public class InsertionTask implements Runnable{
 	private final String data;
 	private final int injector;
 	private final Date start;
+	private final int delay;
 	
 	private volatile boolean stop = false;
 	private volatile int sent = 0;
@@ -47,11 +48,12 @@ public class InsertionTask implements Runnable{
 	
 	
 	
-	public InsertionTask(Client client, String ontology, String data, int injector) {
+	public InsertionTask(Client client, String ontology, String data, int injector, int delay) {
 		this.client = client;
 		this.ontology = ontology;
 		this.data = data;
 		this.injector = injector;
+		this.delay = delay;
 		start = new Date();
 	}
 	
@@ -72,7 +74,7 @@ public class InsertionTask implements Runnable{
 				}
 			}
 			try {
-				Thread.sleep(100);
+				Thread.sleep(delay);
 			} catch (InterruptedException e) {
 				log.error("Error sleeping task");
 			}
