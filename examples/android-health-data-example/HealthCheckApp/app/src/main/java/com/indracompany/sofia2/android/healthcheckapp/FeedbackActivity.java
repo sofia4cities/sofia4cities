@@ -92,7 +92,7 @@ public class FeedbackActivity extends AppCompatActivity {
     private void createAndShowAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("GDPR Warning");
-        builder.setMessage("By proceeding you are accepting sharing your data with the selected specialist. You can revoke this at anytime");
+        builder.setMessage(R.string.gpdr_warning);
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 /*Intent firstIntent = new Intent(getApplicationContext(),MainActivity.class);
