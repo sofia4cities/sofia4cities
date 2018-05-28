@@ -91,7 +91,7 @@ sofia2: #Config Sofia2 specific
         consumer.maxPollRecords : 5000 
    analytics.notebook:
       zeppelinProtocol: http
-      zeppelinHostname: 192.168.99.100
+      zeppelinHostname: localhost
       zeppelinPort: 8080
       zeppelinPathname: 
       shiroAdminUsername: admin
