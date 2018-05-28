@@ -68,6 +68,10 @@
 				 	<option value="kafka">KAFKA</option>
 				</select>
 			</div>
+			<div style="float: right">
+				<span class="inj-cell-total">Average inserts per second last refresh:</span>
+				<span id="avg-throughputPeriod" class="inj-cell-total"></span>				
+			</div>
 			<div class="injectors inj-table">
 				<div class="inj-totals">
 					<div class="inj-cell-total-name inj-cell inj-cell-total">Total:</div>
@@ -258,6 +262,7 @@
 		        		totals.throughputPeriod = totals.throughputPeriod + response[i].throughputPeriod;
 		        	}
 		        	totals.number = i;
+		        	$("#avg-throughputPeriod").text(totals.throughputPeriod/i);
 		        	updateTotals(totals);
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {
@@ -331,6 +336,7 @@
 		    			$(".injectors").append(parent);
 		        	}
 		        	totals.number = i;
+		        	$("#avg-throughputPeriod").text(totals.throughputPeriod/i);
 		        	updateTotals(totals);
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {
