@@ -73,3 +73,8 @@ You can report an issue by creating a corresponding ticket in [Github Issues of 
 Sofia4Cities platform is licensed under [Apache Software License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
 See [`LICENSE`](LICENSE-full) and [`copyright.txt`](copyright.txt) for details.
+
+## Thanks to
+
+As a open source project, Sofia4Cities is using the [Open Source license of jProfiler (Java Profiler)](https://www.ej-technologies.com/products/jprofiler/overview.html)
+![](https://www.ej-technologies.com/images/product_banners/jprofiler_medium.png)
