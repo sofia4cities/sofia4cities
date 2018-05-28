@@ -218,7 +218,7 @@
 															<div class="col-md-6 col-sm-6 col-xs-12">
 																<div class="form-group">																
 																	<label class="description notAnimate" id="id_endpoint_label" for="id_endpoint" th:text="#{apimanager.endpoint}">EndPoint</label>
-																	<input id="id_endpoint_swagger" name="id_endpoint_swagger" class="form-control" type="text" maxlength="512" readonly="readonly" th:value="${apiServices} +${api.identification} + '/swagger.json'"/>
+																	<input id="id_endpoint_swagger" name="id_endpoint_swagger" class="form-control" type="text" maxlength="512" readonly="readonly" th:value="${apiSwaggerUI}+ ${apiServices}+ ${api.identification} + '/swagger.json'"/>
 																</div>		
 															</div>
 														</div>
