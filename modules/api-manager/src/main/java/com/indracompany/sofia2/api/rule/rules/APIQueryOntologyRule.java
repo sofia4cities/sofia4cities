@@ -42,7 +42,7 @@ import com.indracompany.sofia2.config.model.User;
 @Component
 @Rule
 public class APIQueryOntologyRule extends DefaultRuleBase {
-	
+
 	@Autowired
 	private ApiSecurityService apiSecurityService;
 	@Autowired
@@ -73,89 +73,94 @@ public class APIQueryOntologyRule extends DefaultRuleBase {
 		String method = (String) data.get(ApiServiceInterface.METHOD);
 		String body = (String) data.get(ApiServiceInterface.BODY);
 		String queryType = (String) data.get(ApiServiceInterface.QUERY_TYPE);
-		
-		
+
 		Ontology ontology = api.getOntology();
-		if (ontology!=null) {
+		if (ontology != null) {
 			data.put(ApiServiceInterface.IS_EXTERNAL_API, false);
-			
+
 			String queryDb = "";
 			String targetDb = "";
-			String formatResult="";
-			ODataDTO odata=null;
-			
-			ApiOperation customSQL = apiManagerService.getCustomSQL(pathInfo, api,method);
-			if (customSQL==null) {
-				 customSQL = apiManagerService.getCustomSQLDefault(pathInfo, api,method);
+			String formatResult = "";
+			ODataDTO odata = null;
+
+			ApiOperation customSQL = apiManagerService.getCustomSQL(pathInfo, api, method);
+			if (customSQL == null) {
+				customSQL = apiManagerService.getCustomSQLDefault(pathInfo, api, method);
 			}
-			
-			String objectId=apiManagerService.getObjectidFromPathQuery(pathInfo);
-			if (!objectId.equals("") && (queryType.equals("") || queryType.equals("NONE") )) {
-				queryDb = "db."+ontology.getIdentification()+".find({\"_id\":ObjectId('"+objectId+"')})";
-				data.put(ApiServiceInterface.QUERY,queryDb);
+
+			String objectId = apiManagerService.getObjectidFromPathQuery(pathInfo);
+			if (!objectId.equals("") && (queryType.equals("") || queryType.equals("NONE"))) {
+				queryDb = "db." + ontology.getIdentification() + ".find({\"_id\":ObjectId('" + objectId + "')})";
+				data.put(ApiServiceInterface.QUERY, queryDb);
 			}
-				
-						
+
 			HashSet<ApiQueryParameter> queryParametersCustomQuery = new HashSet<ApiQueryParameter>();
 			HashMap<String, String> queryParametersValues = new HashMap<String, String>();
-			if (customSQL!=null) {
-				
+			if (customSQL != null) {
+
 				data.put(ApiServiceInterface.API_OPERATION, customSQL);
-				
+
 				for (ApiQueryParameter queryparameter : customSQL.getApiqueryparameters()) {
 					String name = queryparameter.getName();
 					String value = queryparameter.getValue();
-					
-					if (matchParameter(name,ApiServiceInterface.QUERY)) queryDb=value;
-					else if (matchParameter(name,ApiServiceInterface.QUERY_TYPE)) queryType=value;
-					else if (matchParameter(name,ApiServiceInterface.TARGET_DB_PARAM)) targetDb=value;
-					//else if (matchParameter(name,ApiServiceInterface.FORMAT_RESULT)) formatResult=value;
-					else queryParametersCustomQuery.add(queryparameter);
-					
+
+					if (matchParameter(name, ApiServiceInterface.QUERY))
+						queryDb = value;
+					else if (matchParameter(name, ApiServiceInterface.QUERY_TYPE))
+						queryType = value;
+					else if (matchParameter(name, ApiServiceInterface.TARGET_DB_PARAM))
+						targetDb = value;
+					// else if (matchParameter(name,ApiServiceInterface.FORMAT_RESULT))
+					// formatResult=value;
+					else
+						queryParametersCustomQuery.add(queryparameter);
+
 				}
-				
-				queryParametersValues = apiManagerService.getCustomParametersValues(request, body,queryParametersCustomQuery);
-				
+
+				queryParametersValues = apiManagerService.getCustomParametersValues(request, body,
+						queryParametersCustomQuery, customSQL);
+
 				if (body.equals("")) {
-					queryDb = apiManagerService.buildQuery (queryDb, queryParametersValues);	
-				}
-				else queryDb = body;
+					queryDb = apiManagerService.buildQuery(queryDb, queryParametersValues);
+				} else
+					queryDb = body;
 			}
-			
+
 			data.put(ApiServiceInterface.QUERY_TYPE, queryType);
 			data.put(ApiServiceInterface.QUERY, queryDb);
 			data.put(ApiServiceInterface.TARGET_DB_PARAM, targetDb);
-			//data.put(ApiServiceInterface.FORMAT_RESULT, formatResult);
-			
+			// data.put(ApiServiceInterface.FORMAT_RESULT, formatResult);
+
 			data.put(ApiServiceInterface.OBJECT_ID, objectId);
 			data.put(ApiServiceInterface.ONTOLOGY, ontology);
-			
-			
-			//Guess type of operation!!!
-			
-		}
-		else {
+
+			// Guess type of operation!!!
+
+		} else {
 			data.put(ApiServiceInterface.IS_EXTERNAL_API, true);
-			
+
 		}
 	}
 
 	private static boolean matchParameter(String name, String match) {
 		String variable = match.replace("$", "");
-		
-		if (name.equalsIgnoreCase(match) || name.equalsIgnoreCase(variable)) return true;
-		else return false;
+
+		if (name.equalsIgnoreCase(match) || name.equalsIgnoreCase(variable))
+			return true;
+		else
+			return false;
 	}
-	
-	private ODataDTO parseOperationByQueryString(String objectId, String pathInfo, Api api, HttpServletRequest request) {
-		
+
+	private ODataDTO parseOperationByQueryString(String objectId, String pathInfo, Api api,
+			HttpServletRequest request) {
+
 		int index = pathInfo.lastIndexOf(api.getIdentification());
-		String queryPath = api.getEndpoint()+"/"+pathInfo.substring(index+api.getIdentification().length()+1);
-		
+		String queryPath = api.getEndpoint() + "/" + pathInfo.substring(index + api.getIdentification().length() + 1);
+
 		ODataDTO odata = null;
-		try{
-			odata= new ODataDTO(api.getIdentification(),objectId,queryPath, request.getParameterMap());
-		}catch(Exception e){
+		try {
+			odata = new ODataDTO(api.getIdentification(), objectId, queryPath, request.getParameterMap());
+		} catch (Exception e) {
 			System.out.println(e);
 		}
 		return odata;
