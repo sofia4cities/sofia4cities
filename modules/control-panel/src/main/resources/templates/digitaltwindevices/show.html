@@ -286,6 +286,14 @@
 		// init when Document is ready
 		
 		var aceEditor = ace.edit("aceEditor");
+		aceEditor.setTheme("ace/theme/monokai");
+		aceEditor.session.setMode("ace/mode/javascript");
+		aceEditor.setOptions({
+		    readOnly: true,
+		    highlightActiveLine: false,
+		    highlightGutterLine: false
+		})
+		aceEditor.renderer.$cursorLayer.element.style.opacity=0
 		aceEditor.setValue(logic);
 		
 	});
