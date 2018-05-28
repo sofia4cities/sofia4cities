@@ -95,7 +95,7 @@ public class DigitalTwinDeviceHelper {
 
 		DigitalTwinDevice device = digitalTwinDeviceRepo.findByIdentification(identificacion);
 		List<PropertyDigitalTwinType> propsDigitalTwin = propDigitalTwinTypeRepo.findByTypeId(device.getTypeId());
-		String logic = device.getLogic();
+		String logic = device.getTypeId().getLogic();
 
 		if (logic.startsWith("\"")) {
 			logic = logic.substring(1, logic.length() - 1);

@@ -22,7 +22,9 @@ sofia2:
         host: kafka
         port: 9092
         partitions: 1
-        replication: 1 
+        replication: 1
+   analytics.notebook:
+      zeppelinHostname: zeppelin       
         
 spring:
    datasource:  

@@ -34,8 +34,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.DigitalTwinType;
-import com.indracompany.sofia2.config.service.digitaltwin.device.DigitalTwinDeviceService;
-import com.indracompany.sofia2.config.service.digitaltwin.type.DigitalTwinTypeService;
+import com.indracompany.sofia2.config.services.digitaltwin.device.DigitalTwinDeviceService;
+import com.indracompany.sofia2.config.services.digitaltwin.type.DigitalTwinTypeService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel;

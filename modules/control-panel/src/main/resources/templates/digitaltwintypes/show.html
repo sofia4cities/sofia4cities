@@ -334,6 +334,14 @@
 		editor = new jsoneditor.JSONEditor(container, options, jsonSchema);
 		
 		var aceEditor = ace.edit("aceEditor");
+		aceEditor.setTheme("ace/theme/monokai");
+		aceEditor.session.setMode("ace/mode/javascript");
+		aceEditor.setOptions({
+		    readOnly: true,
+		    highlightActiveLine: false,
+		    highlightGutterLine: false
+		})
+		aceEditor.renderer.$cursorLayer.element.style.opacity=0
 		if(logic.startsWith("\"")){
 			logic = logic.substring(1,logic.length-1);
 		}
