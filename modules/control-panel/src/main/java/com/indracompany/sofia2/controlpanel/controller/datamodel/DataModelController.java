@@ -135,7 +135,7 @@ public class DataModelController {
 			return "redirect:/datamodels/list";
 
 		} catch (Exception e) {
-			log.error("Cannot create datamodel: "+ e.getMessage());
+			log.error("Cannot create datamodel: " + e.getMessage());
 			utils.addRedirectMessage("datamodel.error.created", redirect);
 			return "redirect:/datamodels/create";
 		}
@@ -156,7 +156,7 @@ public class DataModelController {
 				return "datamodels/create";
 			}
 		} catch (Exception e) {
-			log.error("Cannot update datamodel: "+ e.getMessage());
+			log.error("Cannot update datamodel: " + e.getMessage());
 			return "datamodels/create";
 		}
 	}
@@ -178,7 +178,7 @@ public class DataModelController {
 				return "datamodels/create";
 			}
 		} else {
-			return "redirect:/update/" + datamodel.getId();
+			return "redirect:/update/" + id;
 		}
 		model.addAttribute("Datamodel", datamodel);
 		log.debug("Data Mode has been update succesfully");

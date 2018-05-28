@@ -403,10 +403,16 @@
 														</div> 
 														<!-- PANEL-4 -->
 														<div class="tab-pane fade" id="tab_6_4">
+															<div id="errorSelectCheck" class="alert alert-danger" style="display:none">
+																
+																<strong >Error! </strong><span th:text=" #{user.template.error.subtab_3_4}"> If you click on forget button, your user will be deleted, you will lose access to the platform a won't be able to recover stored information.</span>
+															
+															</div>
 															<div class="alert alert-warning alert-dismissable">
 																<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
 																<strong th:text="#{user.template.warning.advice} ">Warning!</strong><span th:text=" #{user.template.warning.subtab_3_4}"> If you click on forget button, your user will be deleted, you will lose access to the platform a won't be able to recover stored information.</span>
 															</div>
+														
 																		
 															<!-- ONTOLOGY LIST -->
 															<div class="col-md-12">
@@ -414,7 +420,7 @@
 																<div>
 																	<br/>
 																	
-																	<input id="forgetMe" type="button" th:onclick="'javascript:navigateUrl(\'' + @{|/users/forgetDataUser/${user.userId}|} + '\');'" class="btn btn-square btn-warning" name="forgetMe" value="Forget data" style="margin-right:40px;  text-align: right;position: absolute; top: 50%;"/><br/> <br/>
+																	<input id="forgetMe" type="button" class="btn btn-square btn-warning" name="forgetMe" value="Forget data" style="margin-right:40px;  text-align: right;position: absolute; top: 50%;"/><br/> <br/>
 																</div>		
 															</div>
 														</div>
@@ -540,11 +546,11 @@
 
 	</script>
 	
-	<script type="text/javascript">	
+	<script th:inline="javascript">	
 	var optionName = 'ONTOLOGIES';
 	var ontologiesDelete = [];
 	var ontologiesRevoke = [];
-
+	var userId=[[${user.userId}]];
 	
 	//<![CDATA[
 	function navigateUrl(url){  window.location.href = url;	}
@@ -704,6 +710,16 @@
 		});
 		$('#tab_forgetAll').on('click', function(){
 			hideButtons();
+		});
+		$('#forgetMe').on('click', function(){
+			var checked = $('#deleteCheckbox').is(':checked');
+			if(checked){
+				$('#errorSelectCheck').hide();
+				navigateUrl("/controlpanel/users/forgetDataUser/" +userId+"/true");
+			}else{
+				$('#errorSelectCheck').show();
+			}
+				
 		});
 		
 

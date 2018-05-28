@@ -13,9 +13,7 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.user;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -66,8 +64,6 @@ public class UserController {
 	private OntologyService ontologyService;
 	@Autowired
 	private EntityDeletionService entityDeleteService;
-	
-
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/create", produces = "text/html")
@@ -87,14 +83,15 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/update/{id}/{bool}")
-	public String updateForm(@PathVariable("id") String id, @PathVariable(name = "bool", required = false) boolean bool, Model model) {
+	public String updateForm(@PathVariable("id") String id, @PathVariable(name = "bool", required = false) boolean bool,
+			Model model) {
 		// If non admin user tries to update any other user-->forbidden
 		if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
 			return "error/403";
 
 		this.populateFormData(model);
 		model.addAttribute("AccessToUpdate", bool);
-		
+
 		User user = this.userService.getUser(id);
 		// If user does not exist redirect to create
 		if (user == null)
@@ -104,75 +101,74 @@ public class UserController {
 
 		return "users/create";
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/deleteSimpleData")
-	public String deleteSimpleData(HttpServletRequest request, RedirectAttributes redirect, @RequestBody String data){ 
-	
+	public String deleteSimpleData(HttpServletRequest request, RedirectAttributes redirect, @RequestBody String data) {
+
 		try {
 			String[] ontologiesToDelete = request.getParameterValues("ontologiesDelete[]");
 
-			if(ontologiesToDelete == null) {
-				return "/users/update/"+ this.utils.getUserId()+"/true" ;
+			if (ontologiesToDelete == null) {
+				return "/users/update/" + this.utils.getUserId() + "/true";
 			}
-			for(String ontToDelete:ontologiesToDelete) {
-				System.out.println("remove: "+ ontToDelete + " \n");
+			for (String ontToDelete : ontologiesToDelete) {
+				System.out.println("remove: " + ontToDelete + " \n");
 				entityDeleteService.deleteOntology(ontToDelete, this.utils.getUserId());
 			}
 
-			return "/users/update/"+this.utils.getUserId()+"/false" ;
-			
-		}catch (UserServiceException e) {
+			return "/users/update/" + this.utils.getUserId() + "/false";
+
+		} catch (UserServiceException e) {
 			log.debug("Cannot update  data user");
 			utils.addRedirectMessage("user.remove.data.error", redirect);
-			return "/users/show/"+this.utils.getUserId();
+			return "/users/show/" + this.utils.getUserId();
 		}
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/revokeSimpleData")
-	public String revokeSimpleData(HttpServletRequest request, RedirectAttributes redirect, @RequestBody String data){ 
-		
+	public String revokeSimpleData(HttpServletRequest request, RedirectAttributes redirect, @RequestBody String data) {
+
 		try {
 			String[] ontologiesToRevoke = request.getParameterValues("ontologiesRevoke[]");
 			Ontology ont;
-			
-			if(ontologiesToRevoke == null) {
-				return "/users/update/"+ this.utils.getUserId()+"/true"   ;
+
+			if (ontologiesToRevoke == null) {
+				return "/users/update/" + this.utils.getUserId() + "/true";
 			}
-				for(String ontToRevoke : ontologiesToRevoke) {
-					System.out.println("revoke: "+ ontToRevoke + " \n");
-					
-					ont = ontologyService.getOntologyById(ontToRevoke, this.utils.getUserId());
-					entityDeleteService.revokeAuthorizations(ont);
-				}	
-			
-			return "/users/update/"+ this.utils.getUserId()+"/false"   ;
-			
-		}catch (UserServiceException e) {
+			for (String ontToRevoke : ontologiesToRevoke) {
+				System.out.println("revoke: " + ontToRevoke + " \n");
+
+				ont = ontologyService.getOntologyById(ontToRevoke, this.utils.getUserId());
+				entityDeleteService.revokeAuthorizations(ont);
+			}
+
+			return "/users/update/" + this.utils.getUserId() + "/false";
+
+		} catch (UserServiceException e) {
 			log.debug("Cannot update  data user");
 			utils.addRedirectMessage("user.remove.data.error", redirect);
-			return "/users/show/"+this.utils.getUserId();
-			
+			return "/users/show/" + this.utils.getUserId();
+
 		}
-		
+
 	}
-	
+
 	@PutMapping(value = "/update/{id}/{bool}")
-	public String update(@PathVariable("id") String id, @Valid User user, @PathVariable(name = "bool", required = false) boolean bool, BindingResult bindingResult,
+	public String update(@PathVariable("id") String id, @Valid User user,
+			@PathVariable(name = "bool", required = false) boolean bool, BindingResult bindingResult,
 			RedirectAttributes redirect, HttpServletRequest request, Model model) {
 
 		String newPass = request.getParameter("newpasswordbox");
 		String repeatPass = request.getParameter("repeatpasswordbox");
-		
-	
-		
+
 		if (bindingResult.hasErrors()) {
 			log.debug("Some user properties missing");
-			
-			return "redirect:/users/update/"+user.getUserId() +"/"+bool;
+
+			return "redirect:/users/update/" + user.getUserId() + "/" + bool;
 		}
-		
+
 		model.addAttribute("AccessToUpdate", bool);
 
 		if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
@@ -203,7 +199,8 @@ public class UserController {
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value = "/create")
-	public String create(@Valid User user, BindingResult bindingResult, RedirectAttributes redirect, HttpServletRequest request) {
+	public String create(@Valid User user, BindingResult bindingResult, RedirectAttributes redirect,
+			HttpServletRequest request) {
 		if (bindingResult.hasErrors()) {
 			log.debug("Some user properties missing");
 			utils.addRedirectMessage("user.create.error", redirect);
@@ -221,7 +218,7 @@ public class UserController {
 					return "redirect:/users/list";
 				}
 			}
-			
+
 			log.debug("Password is not valid");
 			utils.addRedirectMessage("user.create.error", redirect);
 			return "redirect:/users/create";
@@ -232,7 +229,6 @@ public class UserController {
 			return "redirect:/users/create";
 		}
 
-		
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
@@ -310,14 +306,13 @@ public class UserController {
 		return "users/show";
 
 	}
-	
+
 	private void populateFormData(Model model) {
 		model.addAttribute("roleTypes", this.userService.getAllRoles());
 		model.addAttribute("ontologies", this.ontologyService.getOntologiesByUserId(this.utils.getUserId()));
 		model.addAttribute("ontologies1", this.ontologyService.getOntologiesByUserId(this.utils.getUserId()));
 		model.addAttribute("ontologies2", this.ontologyService.getOntologiesByUserId(this.utils.getUserId()));
-	
-		
+
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -366,20 +361,24 @@ public class UserController {
 
 	}
 
-	@GetMapping(value = "/forgetDataUser/{userId}")
-	public String forgetDataUser(Model model,RedirectAttributes redirect, @PathVariable(name = "userId") String userId ) {
-		
-		try{
-			this.userService.deleteUser(userId);
-			return "redirect:/logout";
-				
-		}catch (UserServiceException e) {
-			log.debug("Cannot deleted  data user");
-			utils.addRedirectMessage("user.remove.data.error", redirect);
-			return "redirect:/users/show/"+this.utils.getUserId();
-			
-		}
-		
-		
+	@GetMapping(value = "/forgetDataUser/{userId}/{forgetMe}")
+	public String forgetDataUser(Model model, RedirectAttributes redirect, @PathVariable(name = "userId") String userId,
+			@PathVariable boolean forgetMe) {
+
+		if (forgetMe) {
+			try {
+				this.userService.deleteUser(userId);
+				return "redirect:/logout";
+
+			} catch (UserServiceException e) {
+				log.debug("Cannot deleted  data user");
+				utils.addRedirectMessage("user.remove.data.error", redirect);
+				return "redirect:/users/show/" + this.utils.getUserId();
+
+			}
+
+		} else
+			return "redirect:/users/show/" + this.utils.getUserId();
+
 	}
 }

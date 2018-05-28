@@ -165,13 +165,13 @@
 	     	<div class="modal-body">
 		      	<div id="contenido" class="wrappercontenido container-fluid quitapadding">
 		      		<h3 th:text="#{menu.modal.oauthtoken}">Oauth Token</h3>
-		      		<p th:text="#{menu.modal.bearer}+' '+${session.oauthToken}" class="dont-break-out"></p>
+		      		<a id="oauthTokenCopy"><p id="oauthToken" th:text="#{menu.modal.bearer}+' '+${session.oauthToken}" class="dont-break-out"></p></a>
 		      		<h3 th:text="#{menu.apis}">Apis</h3>
-		      		<h4 ><a th:text="#{menu.modal.controlpanel}" th:href="${session.apis?.controlpanel}">Control panel</a></h4>
-		      		<h4 ><a th:text="#{menu.modal.iotbroker}" th:href="${session.apis?.iotbroker}">IoTBroker</a></h4>
-		      		<h4 ><a th:text="#{menu.modal.apimanager}" th:href="${session.apis?.apiManager}">Api Manager</a></h4>
-		      		<h4 ><a th:text="#{menu.modal.router}" th:href="${session.apis?.routerStandAlone}">Router</a></h4>
-		      		<h4 ><a th:text="#{menu.modal.digitaltwinbroker}" th:href="${session.apis?.digitalTwinBroker}">Digital Twin broker</a></h4>
+		      		<h4 ><a target="_blank" th:text="#{menu.modal.controlpanel}" th:href="${session.apis?.controlpanel}">Control panel</a></h4>
+		      		<h4 ><a target="_blank" th:text="#{menu.modal.iotbroker}" th:href="${session.apis?.iotbroker}">IoTBroker</a></h4>
+		      		<h4 ><a target="_blank" th:text="#{menu.modal.apimanager}" th:href="${session.apis?.apiManager}">Api Manager</a></h4>
+		      		<h4 ><a target="_blank" th:text="#{menu.modal.router}" th:href="${session.apis?.routerStandAlone}">Router</a></h4>
+		      		<h4 ><a target="_blank" th:text="#{menu.modal.digitaltwinbroker}" th:href="${session.apis?.digitalTwinBroker}">Digital Twin broker</a></h4>
 		      		
 		      		
 		      	</div>
@@ -229,6 +229,14 @@
 			
 	<!-- HEADER DATA TO SEND TO HEADER CONTROLLER  --> 
 	<script type="text/javascript" th:inline="javascript"> 
+		$('#oauthTokenCopy').on('click', function(){
+			var element = "#oauthToken";
+			var $temp = $("<input/>");
+			$("body").append($temp);
+			$temp.val($(element).text()).select();
+			document.execCommand("copy");
+			$temp.remove();
+		});
 		var errores = [[${message}]];
 		var informacion = [[${info}]];		
 		var headerJson = { 
@@ -254,6 +262,7 @@
 			"deviceSimulationConfirm" : [[#{simulation.delete.confirm}]],
 			"menu": [[${menu}]]
 		};
+
 		// LOAD DATA TO USE IN HEADERCONTROLLER
 		// HEADER CONTROLLER LOAD AND INIT ITSELF
 	</script>
