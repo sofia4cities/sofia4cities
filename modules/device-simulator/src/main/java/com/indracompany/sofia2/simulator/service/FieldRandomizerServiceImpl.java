@@ -46,6 +46,8 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 	private static final String RANDOM_INTEGER = "RANDOM_INTEGER";
 	private static final String RANDOM_DATE = "RANDOM_DATE";
 	private static final String RANDOM_STRING = "RANDOM_STRING";
+	private static final String RANDOM_BOOLEAN = "RANDOM_BOOLEAN";
+	private static final String FIXED_BOOLEAN = "FIXED_BOOLEAN";
 	private static final String NULL = "NULL";
 	private static final String VALUE = "value";
 
@@ -175,6 +177,12 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				}
 
 				break;
+			case FIXED_BOOLEAN:
+				((ObjectNode) map.at(path)).put(finalField, json.path(field).get(VALUE).asBoolean(true));
+				break;
+			case RANDOM_BOOLEAN:
+				((ObjectNode) map.at(path)).put(finalField, this.randomizeBoolean());
+				break;
 			case NULL:
 
 				break;
@@ -213,5 +221,11 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 		ThreadLocalRandom th = ThreadLocalRandom.current();
 		return new Date(th.nextLong(from.getTime(), to.getTime()));
 
+	}
+
+	public boolean randomizeBoolean() {
+
+		Random random = new Random();
+		return random.nextBoolean();
 	}
 }

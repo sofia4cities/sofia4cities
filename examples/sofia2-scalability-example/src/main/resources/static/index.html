@@ -34,15 +34,15 @@
 			<div class="block-cell">
 				<div>
 					<label for="rest-url">Rest URL:</label>
-	    			<input class="rest-url url" name="rest-url" value="http://localhost:19000/iotbroker/"/>
+	    			<input class="rest-url url" name="rest-url" value="https://rancher.sofia4cities.com/iotbroker/"/>
 				</div>
 				<div>
 					<label for="mqtt-url">MQTT URL:</label>
-	    			<input class="mqtt-url url" name="mqtt-url" value="ssl://localhost:8883"/>
+	    			<input class="mqtt-url url" name="mqtt-url" value="tcp://rancher.sofia4cities.com:1883"/>
 				</div>
 				<div>
 					<label for="kafka-url">KAFKA URL:</label>
-	    			<input class="kafka-url url" name="kafka-url" value="localhost:9093"/>
+	    			<input class="kafka-url url" name="kafka-url" value="rancher.sofia4cities.com:9093"/>
 				</div>
 				<button class="btn-connect" onclick="btnConnect()">Store Values</button>
 			</div>
@@ -67,6 +67,10 @@
 				 	<option value="mqtt">MQTT</option>
 				 	<option value="kafka">KAFKA</option>
 				</select>
+			</div>
+			<div style="float: right">
+				<span class="inj-cell-total">Average inserts per second last refresh:</span>
+				<span id="avg-throughputPeriod" class="inj-cell-total"></span>				
 			</div>
 			<div class="injectors inj-table">
 				<div class="inj-totals">
@@ -258,6 +262,7 @@
 		        		totals.throughputPeriod = totals.throughputPeriod + response[i].throughputPeriod;
 		        	}
 		        	totals.number = i;
+		        	$("#avg-throughputPeriod").text(totals.throughputPeriod/i);
 		        	updateTotals(totals);
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {
@@ -331,6 +336,7 @@
 		    			$(".injectors").append(parent);
 		        	}
 		        	totals.number = i;
+		        	$("#avg-throughputPeriod").text(totals.throughputPeriod/i);
 		        	updateTotals(totals);
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {

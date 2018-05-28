@@ -90,6 +90,7 @@ public class ApiManagerHelper {
 
 		User user = this.userService.getUser(utils.getUserId());
 		uiModel.addAttribute("apiServices", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerJson));
+		uiModel.addAttribute("apiSwaggerUI", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerUI));
 		uiModel.addAttribute("users", users);
 		uiModel.addAttribute("states", Api.ApiStates.values());
 		uiModel.addAttribute("auths", userApiRepository.findByUser(user));
@@ -108,6 +109,7 @@ public class ApiManagerHelper {
 
 		uiModel.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
 		uiModel.addAttribute("apiServices", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerJson));
+		uiModel.addAttribute("apiSwaggerUI", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerUI));
 
 		uiModel.addAttribute("categories", Api.ApiCategories.values());
 		uiModel.addAttribute("operations", new ArrayList<String>());
@@ -130,6 +132,7 @@ public class ApiManagerHelper {
 
 		uiModel.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
 		uiModel.addAttribute("apiServices", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerJson));
+		uiModel.addAttribute("apiSwaggerUI", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerUI));
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
@@ -162,6 +165,7 @@ public class ApiManagerHelper {
 
 		uiModel.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
 		uiModel.addAttribute("apiServices", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerJson));
+		uiModel.addAttribute("apiSwaggerUI", resourcesService.getUrl(Module.apiManager, ServiceUrl.swaggerUI));
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
