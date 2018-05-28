@@ -99,7 +99,7 @@ public class AdviseActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInterface/\\HistoricalData";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInterface/HistoricalData";
             URL url = null;
             int responseCode = 500;
             try {
