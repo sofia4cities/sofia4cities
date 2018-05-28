@@ -104,8 +104,8 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			}
 
 			session.ifPresent((s) -> {
-
-				deviceManager.registerActivity(message, resp, s, info);
+				if (!s.getClientPlatform().equalsIgnoreCase("thermometer"))
+					deviceManager.registerActivity(message, resp, s, info);
 
 			});
 
