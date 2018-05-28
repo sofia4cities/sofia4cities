@@ -17,8 +17,11 @@
 
 buildImage()
 {
-	echo "Docker image generation with spotify plugin for Sofia2 module: "$1 
-	mvn clean package docker:build -Dmaven.test.skip=true
+	echo "Docker image generation with spotify plugin for Sofia2 module: "$2
+	#mvn clean package docker:build -Dmaven.test.skip=true
+	cp $1/target/*-exec.jar $1/docker/
+	docker build -t sofia2/$2:$3 .
+	rm $1/docker/*.jar
 }
 
 buildConfigDB()
@@ -37,12 +40,6 @@ buildRealTimeDB()
 {
 	echo "RealTimeDB image generation with Docker CLI: "
 	docker build -t sofia2/realtimedb:$1 .
-}
-
-buildElasticDB() 
-{
-	echo "ElasticDB image generation with Docker CLI: "
-	docker build -t sofia2/elasticdb:$1 .
 }
 
 buildNginx()
@@ -80,42 +77,8 @@ removeNodeRED()
 	rm nodered.zip		
 }
 
-echo "##########################################################################################"
-echo "#                                                                                        #"
-echo "#   _____             _                                                                  #"              
-echo "#  |  __ \           | |                                                                 #"            
-echo "#  | |  | | ___   ___| | _____ _ __                                                      #"
-echo "#  | |  | |/ _ \ / __| |/ / _ \ '__|                                                     #"
-echo "#  | |__| | (_) | (__|   <  __/ |                                                        #"
-echo "#  |_____/ \___/ \___|_|\_\___|_|                                                        #"                
-echo "#                                                                                        #"
-echo "# Sofia2 Docker Image generation                                                         #"
-echo "# arg1 (opt) --> -1 if only want to create images for modules layer (skip persistence)   #"
-echo "#                                                                                        #"
-echo "##########################################################################################"
-
-homepath=$PWD
-
-# Only create persistence layer
-if [ -z "$1" ]; then
-	# Generates images only if they are not present in local docker registry
-	if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/control-panel/
-		buildImage "Control Panel"
-	fi	
-	
-	if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
-		buildImage "IoT Broker"
-	fi
-	
-	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
-		cd $homepath/../modules/api-manager/	
-		buildImage "API Manager"
-	fi			
-fi
-
-if [ ! -z "$1" ]; then
+buildPersistence()
+{
 	echo "++++++++++++++++++++ Persistence layer generation..."
 	
 	# Generates images only if they are not present in local docker registry
@@ -139,15 +102,53 @@ if [ ! -z "$1" ]; then
 		buildQuasar latest
 	fi
 	
-	if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/elasticsearch
-		buildElasticDB latest
+	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+		cd $homepath/../config/init/docker
+		buildImage $homepath/../config/init/ init latest
+	fi		
+}
+
+echo "##########################################################################################"
+echo "#                                                                                        #"
+echo "#   _____             _                                                                  #"              
+echo "#  |  __ \           | |                                                                 #"            
+echo "#  | |  | | ___   ___| | _____ _ __                                                      #"
+echo "#  | |  | |/ _ \ / __| |/ / _ \ '__|                                                     #"
+echo "#  | |__| | (_) | (__|   <  __/ |                                                        #"
+echo "#  |_____/ \___/ \___|_|\_\___|_|                                                        #"                
+echo "#                                                                                        #"
+echo "# Sofia2 Docker Image generation                                                         #"
+echo "# arg1 (opt) --> -1 if only want to create images for modules layer (skip persistence)   #"
+echo "#                                                                                        #"
+echo "##########################################################################################"
+
+homepath=$PWD
+
+# Only create persistence layer
+if [ -z "$1" ]; then
+	# Generates images only if they are not present in local docker registry
+	if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/control-panel/docker
+		buildImage $homepath/../modules/control-panel controlpanel latest
 	fi	
 	
-	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
-		cd $homepath/../config/init/
-		buildImage "Config Init"
+	if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/docker	
+		buildImage $homepath/../modules/iotbroker/sofia2-iotbroker-boot iotbroker latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
+		cd $homepath/../modules/api-manager/docker
+		buildImage $homepath/../modules/api-manager apimanager latest
 	fi	
+	
+	# Persistence layer image generation
+	buildPersistence		
+fi
+
+if [ ! -z "$1" ]; then
+	# Persistence layer image generation
+	buildPersistence
 fi
 
 echo "Docker images successfully generated!"

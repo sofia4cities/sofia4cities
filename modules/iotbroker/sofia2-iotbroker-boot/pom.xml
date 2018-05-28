@@ -58,6 +58,8 @@
 			<artifactId>sofia2-router-core</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
+		
+		
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-ssap</artifactId>
@@ -113,6 +115,7 @@
 			<artifactId>spring-boot-admin-starter-client</artifactId>
 			<version>${spring-boot-admin-starter-client.version}</version>
 		</dependency>
+
 	</dependencies>
 
 	<repositories>
@@ -152,9 +155,9 @@
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<configuration>
-					<imageName>sofia2/iotbroker</imageName>
+					<imageName>${docker.image.username}/iotbroker</imageName>
 					<imageTags>
-						<imageTag>${sofia2.docker.version}</imageTag>
+						<imageTag>${project.version}</imageTag>
 					</imageTags>
 					<dockerDirectory>docker</dockerDirectory>
 					<resources>

@@ -1,0 +1,99 @@
+@charset "UTF-8";
+
+html, body {
+    font-family: Verdana,sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+button {
+	border-color: #525e64;
+    color: #525e64;
+    background-color: #eeeeee;
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+select {
+	border-color: #525e64;
+    color: #525e64;
+    background-color: #eeeeee;
+    padding: 7px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+input {
+	border: 1px solid #ccc;
+    border-radius: 4px
+}
+
+
+
+.inj-table{
+	width: 100%;
+	display: table;
+}
+
+.inj-row {
+	display: table-row;
+}
+
+.inj-header {
+	display: table-header-group;
+}
+.inj-totals {
+	display: table-header-group;
+}
+
+.inj-cell {
+	display: table-cell;
+}
+
+.inj-cell-total {
+	font-weight: bold;
+}
+
+.head > h1 {
+	text-align: center;
+}
+
+.block {
+	margin-bottom: 10px;
+	border: 1px solid #ccc!important;
+	padding: 20px;
+	border-radius: 5px;
+}
+
+.block-cell {
+	padding-left: 30px;
+	display: table-cell;
+}
+
+.injectors {
+	margin-top: 10px;
+}
+
+.url {
+	width: 100%;
+}
+
+.json{
+	width: 100%;
+}
+
+
+.inj-cell-total-throughput{
+	visibility: hidden;
+	width: 1px;
+}
+
+.inj-cell-throughput{
+	visibility: hidden;
+	width: 1px;
+}
+
+
+

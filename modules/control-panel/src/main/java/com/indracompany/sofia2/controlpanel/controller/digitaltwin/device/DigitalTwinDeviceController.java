@@ -43,7 +43,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.service.digitaltwin.device.DigitalTwinDeviceService;
+import com.indracompany.sofia2.config.services.digitaltwin.device.DigitalTwinDeviceService;
 import com.indracompany.sofia2.config.services.exceptions.DigitalTwinServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.helper.digitaltwin.device.DigitalTwinDeviceHelper;
@@ -178,11 +178,12 @@ public class DigitalTwinDeviceController {
 		}
 	}
 
-	@GetMapping(value = "/generateProject/{identification}/{compile}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@GetMapping(value = "/generateProject/{identification}/{compile}/{sensehat}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public ResponseEntity<InputStreamResource> generateProject(@PathVariable("identification") String identification,
-			@PathVariable("compile") Boolean compile) throws FileNotFoundException {
+			@PathVariable("compile") Boolean compile, @PathVariable("sensehat") Boolean sensehat)
+			throws FileNotFoundException {
 
-		File zipFile = digitalTwinDeviceHelper.generateProject(identification, compile);
+		File zipFile = digitalTwinDeviceHelper.generateProject(identification, compile, sensehat);
 
 		HttpHeaders respHeaders = new HttpHeaders();
 		respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);

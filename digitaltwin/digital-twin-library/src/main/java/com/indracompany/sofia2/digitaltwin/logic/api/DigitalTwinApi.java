@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class DigitalTwinApi {
+public class DigitalTwinApi implements DigitalTwinLogicAPI {
 
 	@Autowired
 	private EventManager eventManager;
@@ -43,6 +43,7 @@ public class DigitalTwinApi {
 	private static DigitalTwinApi instance;
 
 	@PostConstruct
+	@Override
 	public void init() {
 		instance = this;
 	}
@@ -51,10 +52,12 @@ public class DigitalTwinApi {
 		return instance;
 	}
 
+	@Override
 	public void log(String trace) {
 		eventManager.log(trace);
 	}
 
+	@Override
 	public void setStatusValue(String property, Object value) {
 		try {
 			digitalTwinStatus.setProperty(property, value);
@@ -63,6 +66,7 @@ public class DigitalTwinApi {
 		}
 	}
 
+	@Override
 	public Object getStatusValue(String property) {
 		try {
 			return digitalTwinStatus.getProperty(property);
@@ -72,12 +76,13 @@ public class DigitalTwinApi {
 		}
 	}
 
+	@Override
 	public void sendUpdateShadow() {
 		eventManager.updateShadow(digitalTwinStatus.toMap());
 	}
 
+	@Override
 	public void sendCustomEvent(String eventName) {
 		eventManager.sendCustomEvent(digitalTwinStatus.toMap(), eventName);
 	}
-
 }

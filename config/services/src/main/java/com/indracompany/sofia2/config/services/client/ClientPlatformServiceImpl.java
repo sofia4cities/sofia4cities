@@ -31,6 +31,8 @@ import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology.AccessType;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.Ontology.RtdbCleanLapse;
+import com.indracompany.sofia2.config.model.Ontology.RtdbDatasource;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
@@ -38,6 +40,7 @@ import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepositor
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.client.dto.DeviceCreateDTO;
+import com.indracompany.sofia2.config.services.datamodel.DataModelService;
 import com.indracompany.sofia2.config.services.exceptions.ClientPlatformServiceException;
 import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 import com.indracompany.sofia2.config.services.token.TokenService;
@@ -58,6 +61,11 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 	private TokenService tokenService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private DataModelService dataModelService;
+
+	private static final String LOG_ONTOLOGY_PREFIX = "LOG_";
+	private static final String LOG_DEVICE_DATA_MODEL = "DeviceLog";
 
 	@Override
 	public Token createClientAndToken(List<Ontology> ontologies, ClientPlatform clientPlatform)
@@ -220,7 +228,7 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 				.findByClientPlatform(clientPlatform);
 
 		if (cpoList != null && cpoList.size() > 0) {
-			for (Iterator iterator = cpoList.iterator(); iterator.hasNext();) {
+			for (Iterator<ClientPlatformOntology> iterator = cpoList.iterator(); iterator.hasNext();) {
 				ClientPlatformOntology clientPlatformOntology = (ClientPlatformOntology) iterator.next();
 				this.clientPlatformOntologyRepository.delete(clientPlatformOntology.getId());
 			}
@@ -265,18 +273,18 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 					uDevice.getClientPlatformOntologies(), new TypeReference<List<ClientPlatformOntology>>() {
 					})));
 		} catch (JsonParseException e) {
-			log.error("Exception reached "+e.getMessage(),e);
+			log.error("Exception reached " + e.getMessage(), e);
 		} catch (JsonMappingException e) {
-			log.error("Exception reached "+e.getMessage(),e);
+			log.error("Exception reached " + e.getMessage(), e);
 		} catch (IOException e) {
-			log.error("Exception reached "+e.getMessage(),e);
+			log.error("Exception reached " + e.getMessage(), e);
 		}
 
 	}
 
 	@Override
 	public void createOntologyRelation(Ontology ontology, ClientPlatform clientPlatform) {
-		
+
 		final ClientPlatformOntology relation = new ClientPlatformOntology();
 		relation.setClientPlatform(clientPlatform);
 		relation.setAccess(AccessType.ALL.name());
@@ -286,8 +294,39 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 				clientPlatform.getIdentification()) == null) {
 			this.clientPlatformOntologyRepository.save(relation);
 		}
-		
-	
+
+	}
+
+	@Override
+	public Ontology createDeviceLogOntology(String clientIdentification) {
+		ClientPlatform client = this.clientPlatformRepository.findByIdentification(clientIdentification);
+		Ontology logOntology = new Ontology();
+		logOntology.setDataModel(this.dataModelService.getDataModelByName(LOG_DEVICE_DATA_MODEL));
+		logOntology.setIdentification(LOG_ONTOLOGY_PREFIX + clientIdentification);
+		logOntology.setActive(true);
+		logOntology.setUser(client.getUser());
+		logOntology.setDescription("Ontology for logging devices related to client" + clientIdentification);
+		logOntology.setJsonSchema(this.dataModelService.getDataModelByName(LOG_DEVICE_DATA_MODEL).getJsonSchema());
+		logOntology.setPublic(true);
+		logOntology.setRtdbClean(true);
+		logOntology.setRtdbDatasource(RtdbDatasource.Mongo);
+		logOntology.setRtdbCleanLapse(RtdbCleanLapse.SixMonths);
+		logOntology = this.ontologyRepository.save(logOntology);
+		this.createOntologyRelation(logOntology, client);
+		return logOntology;
+
+	}
+
+	@Override
+	public Ontology getDeviceLogOntology(ClientPlatform client) {
+		return this.ontologyRepository
+				.findByIdentification((LOG_ONTOLOGY_PREFIX + client.getIdentification()).replaceAll(" ", ""));
+
+	}
+
+	public List<Token> getTokensByClientPlatformId(String clientPlatformId) {
+		ClientPlatform clientPlatform = clientPlatformRepository.findById(clientPlatformId);
+		return tokenService.getTokens(clientPlatform);
 	}
 
 }

@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.persistence.common.DescribeColumnData;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESDeleteService;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
@@ -214,6 +215,11 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 	public long deleteAfterExport(String ontology, String query) {
 
 		return this.eSDeleteService.deleteByQuery(ontology, ontology, query);
+	}
+
+	@Override
+	public List<DescribeColumnData> describeTable(String name) {
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 	}
 
 }

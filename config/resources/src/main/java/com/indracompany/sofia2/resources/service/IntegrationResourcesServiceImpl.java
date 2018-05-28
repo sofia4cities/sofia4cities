@@ -14,6 +14,9 @@
  */
 package com.indracompany.sofia2.resources.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +36,16 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 
 	private Urls urls;
 
-
 	public enum ServiceUrl {
 		base, advice, management, router, hawtio, swaggerUI, api, swaggerUIManagement, swaggerJson
 	}
 
 	public enum Module {
-		iotbroker, scriptingEngine, flowEngine, routerStandAlone, apiManager, controlpanel
+		iotbroker, scriptingEngine, flowEngine, routerStandAlone, apiManager, controlpanel, digitalTwinBroker, domain
 	}
 
+	public final static String SWAGGER_UI_SUFFIX = "swagger-ui.html";
+	public final static String LOCALHOST = "localhost";
 
 	@PostConstruct
 	public void getActiveProfile() {
@@ -49,7 +53,7 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 		String activeProfile = "default";
 		if (profiles.length > 0)
 			activeProfile = profiles[0];
-		else 
+		else
 			activeProfile = environment.getDefaultProfiles()[0];
 		this.urls = this.configurationService.getEndpointsUrls(activeProfile);
 	}
@@ -58,6 +62,14 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 	public String getUrl(Module module, ServiceUrl service) {
 
 		switch (module) {
+		case controlpanel:
+			switch (service) {
+			case base:
+				return this.urls.getControlpanel().getBase();
+			default:
+				break;
+
+			}
 		case iotbroker:
 			switch (service) {
 			case base:
@@ -124,9 +136,57 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 			}
 
 			break;
-
+		case digitalTwinBroker:
+			switch (service) {
+			case base:
+				return this.urls.getDigitalTwinBroker().getBase();
+			default:
+				break;
+			}
+		case domain:
+			switch (service) {
+			case base:
+				return this.urls.getDomain().getBase();
+			default:
+				break;
+			}
+		default:
+			break;
 		}
 		return "RESOURCE_URL_NOT_FOUND";
+	}
+
+	@Override
+	public Map<String, String> getSwaggerUrls() {
+		Map<String, String> map = new HashMap<>();
+		String base = this.urls.getDomain().getBase();
+		String controlpanel = base.endsWith("/") ? base.concat("/controlpanel")
+				: base.concat("/").concat("/controlpanel");
+		String iotbroker = base.endsWith("/") ? base.concat("/iotbroker") : base.concat("/").concat("/iotbroker");
+		String apimanager = base.endsWith("/") ? base.concat("/apimanager") : base.concat("/").concat("/apimanager");
+		String router = base.endsWith("/") ? base.concat("/router") : base.concat("/").concat("/router");
+		String digitalTwinBroker = base.endsWith("/") ? base.concat("/digitaltwinbroker")
+				: base.concat("/").concat("/digitaltwinbroker");
+		if (base.contains(LOCALHOST)) {
+			controlpanel = this.urls.getControlpanel().getBase();
+			iotbroker = this.urls.getIotbroker().getBase();
+			apimanager = this.urls.getApiManager().getBase();
+			router = this.urls.getRouterStandAlone().getBase();
+			digitalTwinBroker = this.urls.getDigitalTwinBroker().getBase();
+		}
+		map.put(Module.controlpanel.name(), controlpanel.endsWith("/") ? controlpanel.concat(SWAGGER_UI_SUFFIX)
+				: controlpanel.concat("/").concat(SWAGGER_UI_SUFFIX));
+		map.put(Module.iotbroker.name(), iotbroker.endsWith("/") ? iotbroker.concat(SWAGGER_UI_SUFFIX)
+				: iotbroker.concat("/").concat(SWAGGER_UI_SUFFIX));
+		map.put(Module.apiManager.name(), apimanager.endsWith("/") ? apimanager.concat(SWAGGER_UI_SUFFIX)
+				: apimanager.concat("/").concat(SWAGGER_UI_SUFFIX));
+		map.put(Module.routerStandAlone.name(),
+				router.endsWith("/") ? router.concat(SWAGGER_UI_SUFFIX) : router.concat("/").concat(SWAGGER_UI_SUFFIX));
+		map.put(Module.digitalTwinBroker.name(),
+				digitalTwinBroker.endsWith("/") ? digitalTwinBroker.concat(SWAGGER_UI_SUFFIX)
+						: digitalTwinBroker.concat("/").concat(SWAGGER_UI_SUFFIX));
+
+		return map;
 	}
 
 }

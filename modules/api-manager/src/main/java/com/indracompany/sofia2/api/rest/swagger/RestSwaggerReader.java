@@ -46,30 +46,29 @@ import io.swagger.models.parameters.Parameter;
 
 public class RestSwaggerReader {
 
-
 	private static final String INFO_VERSION = "Apache 2.0 License";
-	private static final String INFO_TITLE = "Sofia2Cities API Manager";
-	private static final String INFO_DESCRIPTION = "Select4Cities ";
+	private static final String INFO_TITLE = "onesait Platform  API Manager";
+	private static final String INFO_DESCRIPTION = "onesait Platform";
 
 	private static final String LICENSE_NAME = "1.0.0";
 	private static final String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0.html";
 	private static final String BASE_PATH = "/api-manager/server/api";
 
-	private static final String CONTACT_NAME = "The Sofia2 Select4Cities Team";
-	private static final String CONTACT_URL = "https://www.sofia4cities.com";
-	private static final String CONTACT_EMAIL = "select4citiesminsait@gmail.com";
-	
-	private static final String dataTypeValueSeparator="|";
+	private static final String CONTACT_NAME = "onesait Platform Team";
+	private static final String CONTACT_URL = "https://sofia2.com";
+	private static final String CONTACT_EMAIL = "supportsofia2@indra.es";
 
+	private static final String dataTypeValueSeparator = "|";
 
 	private static final String XSOFIA2APIKey = "X-SOFIA2-APIKey";
 	private static final String XSOFIAEXTENSION = "x-sofia2-extension";
 
 	private static List<String> PRODUCES = new ArrayList<String>(
 			Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_ATOM_XML, MediaType.TEXT_PLAIN));
-	private static List<String> CONSUMES = new ArrayList<String>(Arrays.asList(MediaType.APPLICATION_JSON,MediaType.APPLICATION_ATOM_XML));
-	
-	private static List<String> CACHEABLE = new ArrayList<String>(Arrays.asList("false","true"));
+	private static List<String> CONSUMES = new ArrayList<String>(
+			Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_ATOM_XML));
+
+	private static List<String> CACHEABLE = new ArrayList<String>(Arrays.asList("false", "true"));
 
 	private static Map<String, Response> responses = new HashMap<String, Response>();
 	private static List<Scheme> schemes = new ArrayList<Scheme>();
@@ -136,12 +135,12 @@ public class RestSwaggerReader {
 		swagger.setResponses(responses);
 
 		int version = apiDto.getVersion();
-		String vVersion="v"+version;
+		String vVersion = "v" + version;
 		String identification = apiDto.getIdentification();
-		
-		info.setDescription(INFO_DESCRIPTION + "- "+identification);
-		
-		swagger.setBasePath(BASE_PATH+"/"+vVersion+"/"+identification);
+
+		info.setDescription(INFO_DESCRIPTION + "- " + identification);
+
+		swagger.setBasePath(BASE_PATH + "/" + vVersion + "/" + identification);
 
 		swagger.setSchemes(schemes);
 
@@ -168,9 +167,11 @@ public class RestSwaggerReader {
 		api2.setAuthentication(null);
 		return api2;
 	}
-	
-	private void createPARAMETER(Swagger swagger,Operation op, String name, String description, String parameterType, String dataType, List<String> value) {
-		Parameter sofia2Api = RestSwaggerReaderHelper.populateParameter(swagger, name, description,	true, parameterType, dataType, null, value);
+
+	private void createPARAMETER(Swagger swagger, Operation op, String name, String description, String parameterType,
+			String dataType, List<String> value) {
+		Parameter sofia2Api = RestSwaggerReaderHelper.populateParameter(swagger, name, description, true, parameterType,
+				dataType, null, value);
 		op.addParameter(sofia2Api);
 		op.setConsumes(CONSUMES);
 		op.setProduces(PRODUCES);
@@ -199,17 +200,13 @@ public class RestSwaggerReader {
 		op.operationId(description.replaceAll(" ", "_"));
 
 		String method = operation.toLowerCase(Locale.US);
-				
-		createPARAMETER(swagger, 
-				op, 
-				ApiServiceInterface.AUTHENTICATION_HEADER, 
-				ApiServiceInterface.AUTHENTICATION_HEADER,
-				ApiQueryParameter.HeaderType.header.name(), 
-				ApiQueryParameter.DataType.string.name(),
-				null);
+
+		createPARAMETER(swagger, op, ApiServiceInterface.AUTHENTICATION_HEADER,
+				ApiServiceInterface.AUTHENTICATION_HEADER, ApiQueryParameter.HeaderType.header.name(),
+				ApiQueryParameter.DataType.string.name(), null);
 
 		swaggerPath = swaggerPath.set(method, op);
-		
+
 		for (ApiQueryParameterDTO apiQueryParameterDTO : queryParams) {
 
 			String desc = apiQueryParameterDTO.getDescription();
@@ -218,46 +215,35 @@ public class RestSwaggerReader {
 			String value = apiQueryParameterDTO.getValue();
 			String condition = apiQueryParameterDTO.getHeaderType().name();
 
-			Parameter parameter = RestSwaggerReaderHelper.populateParameter(swagger, 
-					name, 
-					desc, 
-					true, 
-					condition, 
-					type, 
-					null, 
-					splitStringValue(value));
-			
+			Parameter parameter = RestSwaggerReaderHelper.populateParameter(swagger, name, desc, true, condition, type,
+					null, splitStringValue(value));
+
 			op.addParameter(parameter);
 		}
-		
+
 		if (method.equalsIgnoreCase("GET")) {
-			createPARAMETER(swagger,
-					op, 
-					ApiServiceInterface.CACHEABLE, 
-					ApiServiceInterface.CACHEABLE, 
-					ApiQueryParameter.HeaderType.header.name(), 
-					ApiQueryParameter.DataType.string.name(),
-					CACHEABLE);
+			createPARAMETER(swagger, op, ApiServiceInterface.CACHEABLE, ApiServiceInterface.CACHEABLE,
+					ApiQueryParameter.HeaderType.header.name(), ApiQueryParameter.DataType.string.name(), CACHEABLE);
 		}
 
 	}
-	
-	 private static List<String> splitStringValue(String value) {
-		  List<String> enumValue=new ArrayList<>();
-		  if (value==null) return null;
-		  
-		  if (value.contains(RestSwaggerReader.dataTypeValueSeparator)==false) {
-			  enumValue.add(value);
-			  return enumValue;
-		  }
-		  else {
-			  StringTokenizer st = new StringTokenizer(value, RestSwaggerReader.dataTypeValueSeparator);
-			  while (st.hasMoreTokens()) {
-				  String token = st.nextToken();
-				  enumValue.add(token);
-			  }
-		  }
-		  return enumValue;
-	  }
+
+	private static List<String> splitStringValue(String value) {
+		List<String> enumValue = new ArrayList<>();
+		if (value == null)
+			return null;
+
+		if (value.contains(RestSwaggerReader.dataTypeValueSeparator) == false) {
+			enumValue.add(value);
+			return enumValue;
+		} else {
+			StringTokenizer st = new StringTokenizer(value, RestSwaggerReader.dataTypeValueSeparator);
+			while (st.hasMoreTokens()) {
+				String token = st.nextToken();
+				enumValue.add(token);
+			}
+		}
+		return enumValue;
+	}
 
 }

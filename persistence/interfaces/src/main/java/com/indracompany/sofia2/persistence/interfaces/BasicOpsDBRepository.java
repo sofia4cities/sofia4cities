@@ -26,10 +26,10 @@ import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 
 public interface BasicOpsDBRepository {
 
-	public String insert(String ontology, String instance) throws DBPersistenceException;
+	public String insert(String ontology, String schema, String instance) throws DBPersistenceException;
 
-	public List<BulkWriteResult> insertBulk(String ontology, List<String> instances, boolean order, boolean includeIds)
-			throws DBPersistenceException;
+	public List<BulkWriteResult> insertBulk(String ontology, String schema, List<String> instances, boolean order,
+			boolean includeIds) throws DBPersistenceException;
 
 	public long updateNative(String ontology, String updateStmt) throws DBPersistenceException;
 
@@ -71,6 +71,7 @@ public interface BasicOpsDBRepository {
 
 	public long deleteNativeById(String ontologyName, String objectId) throws DBPersistenceException;
 
-	public long updateNativeByObjectIdAndBodyData(String ontologyName, String objectId, String body) throws DBPersistenceException;
+	public long updateNativeByObjectIdAndBodyData(String ontologyName, String objectId, String body)
+			throws DBPersistenceException;
 
 }

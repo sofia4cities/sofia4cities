@@ -66,4 +66,10 @@ public class OperacionDTO implements Cloneable, Serializable {
 	@Setter
 	private ArrayList<ApiQueryParameterDTO> queryParams;
 
+	
+	@ApiModelProperty(value = "Postprocesado de la Operacion")
+	@Getter
+	@Setter
+	private String postProcess;
+
 }

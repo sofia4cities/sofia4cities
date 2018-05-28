@@ -20,13 +20,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Ontology.RtdbDatasource;
-import com.indracompany.sofia2.config.repository.OntologyRepository;
-import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchManageDBRepository;
+import com.indracompany.sofia2.persistence.common.DescribeColumnData;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
+import com.indracompany.sofia2.persistence.factory.ManageDBRepositoryFactory;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
-import com.indracompany.sofia2.persistence.mongodb.MongoNativeManageDBRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,93 +33,71 @@ import lombok.extern.slf4j.Slf4j;
 public class ManageDBPersistenceServiceFacade implements ManageDBRepository, NativeManageDBRepository {
 
 	@Autowired
-	private MongoNativeManageDBRepository mongoManage;
-
-	@Autowired
-	private ElasticSearchManageDBRepository elasticManage;
-
-	@Autowired
-	private OntologyRepository ontologyRepository;
-
-	private ManageDBRepository getInstance(String ontologyId) throws DBPersistenceException {
-		Ontology ds = ontologyRepository.findByIdentification(ontologyId);
-		RtdbDatasource dataSource = ds.getRtdbDatasource();
-		if (dataSource.name().equals("Mongo"))
-			return mongoManage;
-		else if (dataSource.name().equals("ElasticSearch"))
-			return elasticManage;
-		else
-			return mongoManage;
-	}
-
-	private ManageDBRepository getInstance(RtdbDatasource dataSource) throws DBPersistenceException {
-		if (dataSource.name().equals("Mongo"))
-			return mongoManage;
-		else if (dataSource.name().equals("ElasticSearch"))
-			return elasticManage;
-		else
-			return mongoManage;
-	}
+	private ManageDBRepositoryFactory manageDBRepositoryFactory;
 
 	public Map<String, Boolean> getStatusDatabase(RtdbDatasource dataSource) throws DBPersistenceException {
-		return getInstance(dataSource).getStatusDatabase();
+		return manageDBRepositoryFactory.getInstance(dataSource).getStatusDatabase();
 	}
 
 	public List<String> getListOfTables(RtdbDatasource dataSource) throws DBPersistenceException {
-		return getInstance(dataSource).getListOfTables();
+		return manageDBRepositoryFactory.getInstance(dataSource).getListOfTables();
 	}
 
 	public void createIndex(RtdbDatasource dataSource, String sentence) throws DBPersistenceException {
-		getInstance(dataSource).createIndex(sentence);
+		manageDBRepositoryFactory.getInstance(dataSource).createIndex(sentence);
+	}
+
+	public List<DescribeColumnData> describeTable(RtdbDatasource dataSource, String name) {
+		return manageDBRepositoryFactory.getInstance(dataSource).describeTable(name);
 	}
 
 	@Override
 	public String createTable4Ontology(String ontology, String schema) throws DBPersistenceException {
-		return getInstance(ontology).createTable4Ontology(ontology, schema);
+		return manageDBRepositoryFactory.getInstance(ontology).createTable4Ontology(ontology, schema);
 	}
 
 	@Override
 	public List<String> getListOfTables4Ontology(String ontology) throws DBPersistenceException {
-		return getInstance(ontology).getListOfTables4Ontology(ontology);
+		return manageDBRepositoryFactory.getInstance(ontology).getListOfTables4Ontology(ontology);
 	}
 
 	@Override
 	public void removeTable4Ontology(String ontology) throws DBPersistenceException {
-		getInstance(ontology).removeTable4Ontology(ontology);
+		manageDBRepositoryFactory.getInstance(ontology).removeTable4Ontology(ontology);
 
 	}
 
 	@Override
 	public void createIndex(String ontology, String attribute) throws DBPersistenceException {
-		getInstance(ontology).createIndex(ontology, attribute);
+		manageDBRepositoryFactory.getInstance(ontology).createIndex(ontology, attribute);
 
 	}
 
 	@Override
 	public void createIndex(String ontology, String nameIndex, String attribute) throws DBPersistenceException {
-		getInstance(ontology).createIndex(ontology, nameIndex, attribute);
+		manageDBRepositoryFactory.getInstance(ontology).createIndex(ontology, nameIndex, attribute);
 
 	}
 
 	@Override
 	public void dropIndex(String ontology, String indexName) throws DBPersistenceException {
-		getInstance(ontology).dropIndex(ontology, indexName);
+		manageDBRepositoryFactory.getInstance(ontology).dropIndex(ontology, indexName);
 
 	}
 
 	@Override
 	public List<String> getListIndexes(String ontology) throws DBPersistenceException {
-		return getInstance(ontology).getListIndexes(ontology);
+		return manageDBRepositoryFactory.getInstance(ontology).getListIndexes(ontology);
 	}
 
 	@Override
 	public String getIndexes(String ontology) throws DBPersistenceException {
-		return getInstance(ontology).getIndexes(ontology);
+		return manageDBRepositoryFactory.getInstance(ontology).getIndexes(ontology);
 	}
 
 	@Override
 	public void validateIndexes(String ontology, String schema) throws DBPersistenceException {
-		getInstance(ontology).validateIndexes(ontology, schema);
+		manageDBRepositoryFactory.getInstance(ontology).validateIndexes(ontology, schema);
 
 	}
 
@@ -152,7 +128,7 @@ public class ManageDBPersistenceServiceFacade implements ManageDBRepository, Nat
 
 	public String exportToJson(RtdbDatasource rtdbDatasource, String ontology, long startDateMillis)
 			throws DBPersistenceException {
-		return getInstance(rtdbDatasource).exportToJson(ontology, startDateMillis);
+		return manageDBRepositoryFactory.getInstance(rtdbDatasource).exportToJson(ontology, startDateMillis);
 
 	}
 
@@ -163,7 +139,15 @@ public class ManageDBPersistenceServiceFacade implements ManageDBRepository, Nat
 	}
 
 	public long deleteAfterExport(RtdbDatasource rtdbDatasource, String ontology, String query) {
-		return getInstance(rtdbDatasource).deleteAfterExport(ontology, query);
+		return manageDBRepositoryFactory.getInstance(rtdbDatasource).deleteAfterExport(ontology, query);
+	}
+
+	@Override
+	public List<DescribeColumnData> describeTable(String name) {
+
+		throw new DBPersistenceException(
+				"Method not executable, please use same definition with RtdbDatasource parameter");
+
 	}
 
 }

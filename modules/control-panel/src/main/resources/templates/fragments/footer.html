@@ -4,14 +4,14 @@
 	<div class="row">
 		<div class="col-md-9 col-sm-12 col-xs-12 ">
 			<div>  
-				<span class="m-link m-link--metal"  th:text="#{foot.app}">Sofia4Cities Control Panel © Minsait 2018</span>
+				<span class="m-link m-link--metal"  th:text="#{footer.app}">Sofia4Cities Control Panel © Minsait 2018</span>
 				<span class="sep">|</span>				
-				(<span class="m-link m-link--metal" th:text="'('+#{build.version}+')'">5.2.0</span>)
+				<span class="m-link m-link--metal" th:text="'('+#{build.version}+')'">5.2.0</span>
 				<span class="sep">|</span>
-				<a target="_blank" href="https://github.com/sofia4cities/sofia4cities" class="m-link m-link--metal" ><i class="fa fa-github"></i> <span th:text="#{foot.sourcecode}">Project Github</span></a>
+				<a target="_blank" th:href="@{#{footer.github.url}}" class="m-link m-link--metal" ><i class="fa fa-github"></i> <span th:text="#{footer.github}">Project Github</span></a>
 				<span class="sep">|</span>
-				<a href="http://www.apache.org/licenses/LICENSE-2.0" class="m-link m-link--metal"  th:text="#{foot.license}" >Legal Conditions</a>					
-				<span class="sep">|</span>
+				<a href="@{#{footer.license.url}}" class="m-link m-link--metal"  th:text="#{footer.license}" >Legal Conditions</a>					
+				<span class="sep">|</span> 
 			</div>
 		</div>
 		<div class="col-md-3 col-sm-12 col-xs-12">
@@ -32,13 +32,13 @@
 			<div class="modal-content" >
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="gridSystemModalLabel" th:text="#{foot.legal}">Terms and Conditions</h4>
+					<h4 class="modal-title" id="gridSystemModalLabel" th:text="#{footer.legal}">Terms and Conditions</h4>
 				</div>
 				<div class="modal-body"><!-- falta th:include="fragments/condicionesPartner::#contenido" -->
 					Terms and conditions (to-do)
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal" th:title="#{foot.close}" th:text="#{foot.close}"></button>
+					<button type="button" class="btn btn-default" data-dismiss="modal" th:title="#{gen.closeBtn}" th:text="#{gen.closeBtn}"></button>
 				</div>
 			</div>
 		</div>

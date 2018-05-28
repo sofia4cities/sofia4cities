@@ -19,7 +19,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +44,6 @@ public class PlannerController {
 	@Autowired
 	private AppWebUtils utils;
 
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
 	@GetMapping(value = "/list", produces = "text/html")
 	public String list(Model model, HttpServletRequest request) {
 
@@ -55,7 +53,6 @@ public class PlannerController {
 		return "planner/list";
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
 	@RequestMapping(method = RequestMethod.GET, value = "/unschedule/{jobName}")
 	public String unschedule(@PathVariable String jobName) {
 
@@ -63,7 +60,6 @@ public class PlannerController {
 		return "redirect:/planner/list";
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
 	@RequestMapping(method = RequestMethod.GET, value = "/pause/{jobName}")
 	public String pause(@PathVariable String jobName) {
 
@@ -71,7 +67,6 @@ public class PlannerController {
 		return "redirect:/planner/list";
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
 	@RequestMapping(method = RequestMethod.GET, value = "/resume/{jobName}")
 	public String resume(@PathVariable String jobName) {
 

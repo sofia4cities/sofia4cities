@@ -66,7 +66,8 @@ public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
 	@Bean
 	public ResourceBundleMessageSource messageSource() {
 		ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
-		resourceBundleMessageSource.setBasename("i18n/messages");
+		//resourceBundleMessageSource.setBasename("i18n/messages");
+		resourceBundleMessageSource.setBasenames("i18n/messages","i18n/project");
 		resourceBundleMessageSource.setDefaultEncoding("UTF-8");
 		return resourceBundleMessageSource;
 	}
@@ -74,6 +75,7 @@ public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+		registry.addResourceHandler("/notebooks/app/**").addResourceLocations("classpath:/static/notebooks/");
 	}
 
 	/**

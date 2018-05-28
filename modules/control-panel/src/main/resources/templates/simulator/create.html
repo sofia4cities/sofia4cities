@@ -210,6 +210,7 @@
 																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'string') AND (simulator eq 'NULL' OR #strings.contains(simulator,'STRING')))}" th:value="${simulator}" th:text="${simulator}"/>
 																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'number' OR #strings.toLowerCase(field.value) eq 'integer' ) AND (simulator == 'NULL' OR #strings.contains(simulator,'NUMBER')))}" th:value="${simulator}" th:text="${simulator}"/>
 																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'date') AND (simulator == 'NULL' OR #strings.contains(simulator,'DATE')))}" th:value="${simulator}" th:text="${simulator}"/>
+																		<option th:each="simulator : ${simulators}"  th:if="${(#strings.toLowerCase(field.value) eq 'boolean') AND (#strings.contains(simulator,'BOOLEAN')) }" th:value="${simulator}" th:text="${simulator}"/>
 																	</select>
 																	<input type="hidden" th:value="simulator+${field.key}"/>																	
 																</div>
@@ -382,6 +383,21 @@
 			<div class="form-group">
 				<label class="control-label" th:text="#{simulation.date.fixed} + ':'"> Value</label>
 				<input id="dateFixed" name="value" type="text" class="form-control datetime  no-remove" th:placeholder="#{simulation.date.fixed}"/>
+			</div>
+		</div>
+	</div>
+	<div id="FIXED_BOOLEAN" style="display: none">
+		<div class="col-md-3 col-sm-3 col-xs-6" >
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.boolean.fixed} + ':'"> Value</label>
+				<input id="booleanFixed" name="value" type="text" class="form-control datetime  no-remove" th:placeholder="#{simulation.boolean.fixed}"/>
+			</div>
+		</div>
+	</div>
+		<div id="RANDOM_BOOLEAN" style="display: none">
+		<div class="col-md-3 col-sm-3 col-xs-6" >
+			<div class="form-group">
+				<input type ="hidden" id="booleanRandom" name="value" class="form-control datetime  no-remove" th:placeholder="#{simulation.boolean.random}"/>
 			</div>
 		</div>
 	</div>

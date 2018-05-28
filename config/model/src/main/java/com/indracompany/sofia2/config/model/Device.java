@@ -21,7 +21,9 @@ package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -39,14 +41,15 @@ import lombok.Setter;
 public class Device extends AuditableEntityWithUUID {
 
 	public static enum StatusType {
-		OK, ERROR;
+		OK, ERROR, WARNING, COMPLETED, EXECUTED, UP, DOWN, CRITICAL
 	}
 
-	@Column(name = "CLIENT_PLATFORM", length = 255, unique = false, nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
 	@NotNull
 	@Getter
 	@Setter
-	private String clientPlatform;
+	private ClientPlatform clientPlatform;
 
 	@Column(name = "IDENTIFICATION", length = 255, unique = true, nullable = false)
 	@NotNull
@@ -76,12 +79,12 @@ public class Device extends AuditableEntityWithUUID {
 	@Setter
 	private String jsonActions;
 
-	@Column(name = "DESCRIPTION", nullable = true)
+	@Column(name = "PROTOCOL", nullable = true)
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
 	@Getter
 	@Setter
-	private String description;
+	private String protocol;
 
 	@Column(name = "SESSION_KEY", length = 512, nullable = false)
 	@NotNull
@@ -95,6 +98,14 @@ public class Device extends AuditableEntityWithUUID {
 	@Setter
 	private boolean disabled;
 
+	@Column(name = "tags")
+	@Getter
+	@Setter
+	private String tags;
 
+	@Column(name = "location")
+	@Getter
+	@Setter
+	private double[] location;
 
 }

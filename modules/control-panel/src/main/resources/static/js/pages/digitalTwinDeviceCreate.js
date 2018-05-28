@@ -26,6 +26,8 @@ var DigitalTwinCreateController = function() {
 		}
 	});
 	
+	
+	
 	$("#updateBtn").on('click',function(){
 		if($("#identification").val()!='' && $("#identification").val()!=undefined){
 			$("#logic").val(JSON.stringify(ace.edit("aceEditor").getValue().trim()));
@@ -88,10 +90,14 @@ var DigitalTwinCreateController = function() {
 		});
 	})
 	
+	$("#typeDigitalTwin").on('change',function(){
+		changeDigitalTwinType($("#typeDigitalTwin").val());
+	});
+	
 	var changeDigitalTwinType = function(type){
 		
 		$.ajax({
-			url : "/controlpanel/digitaltwindevices/getLogicFromType/"+type,
+			url : "/controlpanel/digitaltwindevices/getLogicFromType/"+type.trim(),
 			type : 'GET',
 			dataType: 'text',
 			contentType: 'text/plain',
@@ -123,6 +129,27 @@ var DigitalTwinCreateController = function() {
 			
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 			
+			// PROTOTYPEs
+			// ARRAY PROTOTYPE FOR CHECK UNIQUE PROPERTIES.
+			Array.prototype.unique = function() {
+				return this.filter(function (value, index, self) { 
+					return self.indexOf(value) === index;
+				});
+			};
+			
+			// ARRAY PROTROTYPE FOR REMOVE ELEMENT (not object) BY VALUE
+			Array.prototype.remove = function() {
+				var what, a = arguments, L = a.length, ax;				
+				while (L && this.length) {
+					what = a[--L];				
+					while ((ax = this.indexOf(what)) !== -1) {
+						console.log('AX: ' + ax);
+						this.splice(ax, 1);
+					}
+				}
+				return this;
+			};
+			
 			//LOAD DIGITAL TWIN TYPES 
 			logControl ? console.log('|---> Load Digital Twin Types') : '';
 			if($("#typesDigitalTwin").val()!="" && $("#typesDigitalTwin").val()!=undefined){
@@ -153,6 +180,7 @@ var DigitalTwinCreateController = function() {
 					logica = logica.substr(1, logica.length-2);
 				}
 				AceEditor.setValue(logica);
+				AceEditor.setReadOnly(true);
 			}
 			
 			
@@ -184,5 +212,13 @@ jQuery(document).ready(function() {
 	
 	DigitalTwinCreateController.load(digitalTwinCreateJson);
 	AceEditor = ace.edit("aceEditor");
+	AceEditor.setTheme("ace/theme/monokai");
+	AceEditor.session.setMode("ace/mode/javascript");
+	AceEditor.setOptions({
+	    readOnly: true,
+	    highlightActiveLine: false,
+	    highlightGutterLine: false
+	})
+	AceEditor.renderer.$cursorLayer.element.style.opacity=0
 	DigitalTwinCreateController.init();
 });

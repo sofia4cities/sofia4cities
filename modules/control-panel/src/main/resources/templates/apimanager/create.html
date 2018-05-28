@@ -27,11 +27,15 @@
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 
-		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND BOOSTRAP-TIMEPICKER  -->
+		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT , BOOSTRAP-TIMEPICKER AND CODEMIRROR  -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker3.min.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css}"/>
-		
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/lib/codemirror.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/neat.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/ambiance.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/material.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/neo.css}"/>
 
 	</head>	
 	
@@ -96,11 +100,15 @@
 								<ul class="nav nav-tabs pull-left">
 									<li id="tab-datos" class="active">
 										<a href="#tab_1" data-toggle="tab" aria-expanded="false">
-											<i class="flaticon-network font-grey-gallery"></i>									
-											<!-- FORM TITLE -->
-											<span th:if="${api?.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.template.create}"> New Api</span>
-											<span th:if="${api?.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.template.edit} + ' ' + ${api.identification}"> Update API </span>
-										</a>
+											<i class="flaticon-network font-grey-gallery"></i> <!-- FORM TITLE -->
+											<span th:if="${api?.id} == null"
+											class="caption-subject font-grey-gallery uppercase"
+											th:text="#{apimanager.template.create}"> New Api</span> <span
+											th:if="${api?.id} != null"
+											class="caption-subject font-grey-gallery uppercase"
+											th:text="#{apimanager.template.edit} + ' ' + ${api.identification}">
+												Update API </span>
+									</a>
 									</li>																	
 									<li id="tab-authorizations" class="" ><a href="#tab_2" data-toggle="tab" th:classappend="${api?.id} == null ? disabled : ''" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{apimanager.template.autorizations}" >AUTORIZACIONES </span></a></li>
 								</ul>
@@ -210,7 +218,7 @@
 															<div class="col-md-6 col-sm-6 col-xs-12">
 																<div class="form-group">																
 																	<label class="description notAnimate" id="id_endpoint_label" for="id_endpoint" th:text="#{apimanager.endpoint}">EndPoint</label>
-																	<input id="id_endpoint_swagger" name="id_endpoint_swagger" class="form-control" type="text" maxlength="512" readonly="readonly" th:value="${endpointBase} + 'swagger-ui.html?url='+ ${apiServices} +'/management/swagger/' + ${api.identification} + '/swagger.json'"/>
+																	<input id="id_endpoint_swagger" name="id_endpoint_swagger" class="form-control" type="text" maxlength="512" readonly="readonly" th:value="${apiSwaggerUI}+ ${apiServices}+ ${api.identification} + '/swagger.json'"/>
 																</div>		
 															</div>
 														</div>
@@ -420,7 +428,7 @@
 				                <input id="id_name_op_customsql" name="id_name_op_customsql" class="element text medium form-control" style="display:inline;width:50%;" type="text" maxlength="50" onblur="ApiCustomOpsController.validateName(this);"/>
 				                <br/><br/>
 				                <label class="description" th:text="#{apimanager.customsql.query}" th:title="#{apimanager.customsql.query.info}"></label>
-				                <input style="margin-left: 10px; margin-right: 20px; width: 95%" id="id_query_op_customsql" th:title="#{apimanager.customsql.query.info}" name="id_query_op_customsql" class="form-control" type="text" maxlength="512" onblur="ApiCustomOpsController.loadParamsQuery(this.value);"/>
+				                <input style="margin-left: 10px; margin-right: 20px; width: 95%" id="id_query_op_customsql" th:title="#{apimanager.customsql.query.info}" name="id_query_op_customsql" class="form-control" type="text" onblur="ApiCustomOpsController.loadParamsQuery(this.value);"/>
 				                <br/>
 			                     <div class="group_top_bg" th:text="#{apimanager.customsql.paramsquery}"/>
 			                     <div style="border:0px">
@@ -453,7 +461,25 @@
 				                        <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.description}"></label>
 				                        <input style="margin-left: 20px; margin-right: 20px; margin-bottom: 10px; width: 95%" id="id_desc_op_customsql" name="id_desc_op_customsql" class="form-control" type="text" maxlength="250"/>
 			                        </div>
-			                     </div>					
+			                     </div>
+			                     <div class="portlet light bordered">
+            						<div class="portlet-title">
+										<div class="caption">
+											<!-- FORM TITLE -->
+											<span class="caption-subject font-grey-gallery uppercase"  th:text="#{apimanager.customsql.postprocess}"> Post Process</span>
+											<input id="postProcessCheckbox" type="checkbox" style="margin-left: 5px" value="" onclick="loadCodeMirror()"></input>
+										</div>
+															
+										<div class="tools">
+											<a href="" id="portletToolPostProcess" class="expand" data-original-title="" title="" onclick="refreshCodeMirror()"> </a>									
+										</div>															
+									</div>
+									<div id="portletBody" class="portlet-body" style="display: none; height: auto;">
+					                     <div class="row">
+											<textarea   id="jsImportTextArea" name="id_postprocess_op_customsql"  th:required="true"  class="form-control"></textarea>
+					                     </div>
+				                     </div>
+			                     </div>
 							</div>					
 							<div class="modal-footer">
 						        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -477,6 +503,13 @@
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
 	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
+	<script th:src="@{/static/vendor/codemirror/lib/codemirror.js}"/>
+	<script th:src="@{/static/vendor/codemirror/mode/javascript/javascript.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/edit/matchbrackets.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/edit/closebrackets.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/selection/active-line.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/comment/comment.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/comment/continuecomment.js}" />
 	<!-- LOADING DEFAULT DATES IF NEEDED -->
 	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js}" type="text/javascript"></script>
 	
@@ -500,6 +533,7 @@
 	
 	var error="";
 	var operations = /*[[${operations}]]*/;
+	var myCodeMirrorJs;
 	var authentication;
 	var endpoint = /*[[${endpointBase}]]*/;
 	var currentLanguage = [[${lang}]];	
@@ -533,8 +567,45 @@
 		"apimanager_deleteBtn" : [[#{gen.deleteBtn}]]
 	};
 	
+	var handleCodeMirror = function () {			
+		myTextArea = document.getElementById('jsImportTextArea');
+		myCodeMirrorJs = CodeMirror.fromTextArea(myTextArea, {
+	    	mode: "text/javascript",
+	    	autoRefresh: {delay: 500},
+	    	autoCloseBrackets: true,
+	        matchBrackets: true,
+	        styleActiveLine: true,
+	        theme:"material",
+	        lineWrapping: true
+	
+	    });
+		myCodeMirrorJs.setSize("100%",200);
+	};
+	function refreshCodeMirror(){
+		setTimeout(function() {
+        	myCodeMirrorJs.refresh();
+        },600);
+	}
 
-						
+	$(document).ready(function(){
+		handleCodeMirror();
+	});
+	
+	function loadCodeMirror(){
+		var defaultExample = "// data is a string variable containing the query output \nvar dataArray = JSON.parse(data);\n\n// A string result must be returned\nreturn (JSON.stringify(dataArray));";
+		//$('#portletToolPostProcess').click();
+		if ($('#postProcessCheckbox').is(':checked')) {
+			myCodeMirrorJs.setValue(defaultExample);
+			$('#portletBody').is(':hidden') ? $('#portletToolPostProcess').click():null;
+		} else {
+			myCodeMirrorJs.setValue("");
+			$('#portletBody').is(':visible') ? $('#portletToolPostProcess').click():null;
+		}
+		//$('#portletBody').is(':hidden') ? $('#portletToolPostProcess').click() : $('#portletToolPostProcess').prop('checked', false);
+		//$('#portletBody').is(':visible') ? $('#portletToolPostProcess').prop('checked', true) : $('#portletToolPostProcess').click();
+		
+	}
+	
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF
 	

@@ -13,31 +13,55 @@
  */
 package com.indracompany.sofia2.ssap.body;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 public class SSAPBodyJoinMessage extends SSAPBodyMessage {
 
 	private String token;
-	private String clientPlatform;
-	private String clientPlatformInstance;
+	private String deviceTemplate;
+	private String device;
+	private String tags;
+	private JsonNode deviceConfiguration;
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
 
 	public String getToken() {
 		return token;
 	}
+
 	public void setToken(String token) {
 		this.token = token;
 	}
-	public String getClientPlatform() {
-		return clientPlatform;
+
+	public String getDeviceTemplate() {
+		return deviceTemplate;
 	}
-	public void setClientPlatform(String clientPlatform) {
-		this.clientPlatform = clientPlatform;
+
+	public void setDeviceTemplate(String deviceTemplate) {
+		this.deviceTemplate = deviceTemplate;
 	}
-	public String getClientPlatformInstance() {
-		return clientPlatformInstance;
+
+	public JsonNode getDeviceConfiguration() {
+		return deviceConfiguration;
 	}
-	public void setClientPlatformInstance(String clientPlatformInstance) {
-		this.clientPlatformInstance = clientPlatformInstance;
+
+	public void setDeviceConfiguration(JsonNode deviceConfiguration) {
+		this.deviceConfiguration = deviceConfiguration;
+	}
+
+	public String getDevice() {
+		return device;
+	}
+
+	public void setDevice(String device) {
+		this.device = device;
 	}
 
 	@Override

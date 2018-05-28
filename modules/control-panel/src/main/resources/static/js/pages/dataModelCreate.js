@@ -11,7 +11,7 @@ var dataModelCreateController  = function(){
 	
 	// CONTROLLER PRIVATE FUNCTIONS
 	
-	$("#createBtn").on('click',function(){
+	$("#createBtn").on('click',function(event){
 		event.preventDefault(); 
 		if($("#datamodelName").val()!='' && $("#datamodelName").val()!=undefined && $("#datamodelDescription").val()!='' && $("#datamodelDescription").val()!=undefined) {
 			dataModelCreateController.submitform();
@@ -28,7 +28,7 @@ var dataModelCreateController  = function(){
 	});
 
 	
-	$("#updateBtn").on('click',function(){
+	$("#updateBtn").on('click',function(event){
 		event.preventDefault(); 
 		if($("#datamodelName").val()!='' && $("#datamodelName").val()!=undefined && $("#datamodelDescription").val()!='' && $("#datamodelDescription").val()!=undefined){
 			dataModelCreateController.submitform();
@@ -94,12 +94,14 @@ var dataModelCreateController  = function(){
 		
         var myTextArea = document.getElementById('jsonSchemaDatamodel');
         var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
-        	mode: "text/x-yaml",
+        	mode: "application/ld+json",
+        	autoCloseBrackets: true,          
             lineNumbers: false,
             foldGutter: true,
             matchBrackets: true,
             styleActiveLine: true,
-            theme:"material",         
+            theme:"material",  
+            lineWrapping: true
 
         });
 		myCodeMirror.setSize("100%", 350);

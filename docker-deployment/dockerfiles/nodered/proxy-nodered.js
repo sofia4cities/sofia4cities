@@ -1,4 +1,4 @@
-var authServiceUrl='http://${SERVERNAME}/sofia2/flowengine/node/services/user/validate';
+var authServiceUrl='http://${SERVERNAME}/flowengine/node/services/user/validate';
 
 
 var http = require('http');
@@ -19,7 +19,9 @@ function serverProxy(_proxyPort, usersPorts) {
     proxyPort = _proxyPort;
 
     proxy = httpProxy.createProxyServer({});
-
+    proxy.on('error', (e) => {
+            console.log("Node-Red Manager. proxy-nodered.js. ERROR on proxyServer!  " + e );
+    });
 
     var serverProxy = http.createServer(function(req, res) {
 
@@ -124,7 +126,6 @@ function serverProxy(_proxyPort, usersPorts) {
     serverProxy.on('upgrade', function(req, socket, head) {
         var pathArray = req.url.split('/');
         var domain = pathArray[1];
-        console.log("DELETEME - req.url "+req.url);
         if (usersPorts[domain] != undefined) {
             proxy.ws(req, socket, head, {
                 target: 'http://localhost:' + usersPorts[domain]

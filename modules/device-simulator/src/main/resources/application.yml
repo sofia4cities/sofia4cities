@@ -19,10 +19,13 @@ spring:
   
    ## JPA Config
    datasource:
-      url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      url: jdbc:mysql://localhost:3306/sofia2_s4c?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password:
+      password: changeIt!
       driver-class-name: com.mysql.jdbc.Driver
+      test-while-idle: true
+      test-on-borrow: true
+      validation-query: SELECT 1      
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
@@ -35,8 +38,11 @@ quartz:
       # This property has to be configured in a profile in the pom.xml. Currently, it is configured in the parent project.
       url: "@sofia2.quartzURL@"
       username: root
-      password:
+      password: changeIt!
       driver-class-name: com.mysql.jdbc.Driver
+      test-while-idle: true
+      test-on-borrow: true
+      validation-query: SELECT 1
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database

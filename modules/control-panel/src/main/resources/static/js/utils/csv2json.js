@@ -31,7 +31,16 @@ function csvJSON(csv){
 		  var currentline=lines[i].split(separator);
 		  
 		  for(var j=0;j<headers.length;j++){
-			  obj[headers[j]] = currentline[j];
+			  if(isNaN(currentline[j])){
+				try{
+					obj[headers[j].replace(/\"/g, '')] = JSON.parse(currentline[j]);
+				}catch(e){
+					obj[headers[j].replace(/\"/g, '')] = currentline[j].replace(/\"/g, '');
+				}
+				  
+			  
+			  }else
+				  obj[headers[j].replace(/\"/g, '')] = parseFloat(currentline[j]);
 		  }
 
 		  result.push(obj);

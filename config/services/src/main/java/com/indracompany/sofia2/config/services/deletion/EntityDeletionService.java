@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.config.services.deletion;
 
 import com.indracompany.sofia2.config.model.DeviceSimulation;
+import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.TwitterListening;
 
 public interface EntityDeletionService {
@@ -26,4 +27,5 @@ public interface EntityDeletionService {
 	void deleteToken(String id);
 
 	void deleteDeviceSimulation(DeviceSimulation simulation) throws Exception;
+	void revokeAuthorizations(Ontology ontology); 
 }

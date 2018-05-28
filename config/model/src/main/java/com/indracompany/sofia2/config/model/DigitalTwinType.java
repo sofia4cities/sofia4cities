@@ -42,61 +42,61 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "DIGITAL_TWIN_TYPE")
-public class DigitalTwinType extends AuditableEntityWithUUID{
-	
+public class DigitalTwinType extends AuditableEntityWithUUID {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	public static enum MainType {
 		thing
 	}
-	
+
 	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter
 	private Set<PropertyDigitalTwinType> propertyDigitalTwinTypes = new HashSet<>();
-	
+
 	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter
 	private Set<ActionsDigitalTwinType> actionDigitalTwinTypes = new HashSet<>();
-	
+
 	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter
 	private Set<EventsDigitalTwinType> eventDigitalTwinTypes = new HashSet<>();
-	
+
 	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter
 	private Set<LogicDigitalTwinType> logicDigitalTwinTypes = new HashSet<>();
-	
+
 	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter
 	private Set<DigitalTwinDevice> digitalTwinDevices = new HashSet<>();
-	
+
 	@Column(name = "NAME", length = 50, unique = true, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	private String name;
-	
+
 	@Column(name = "TYPE", length = 50, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	private String type;
-	
+
 	@Column(name = "DESCRIPTION", length = 512)
 	@Getter
 	@Setter
 	private String description;
-	
+
 	@Column(name = "JSON", nullable = false)
 	@NotNull
 	@Lob
@@ -104,40 +104,42 @@ public class DigitalTwinType extends AuditableEntityWithUUID{
 	@Getter
 	@Setter
 	private String json;
-	
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
 	@Getter
 	@Setter
 	private User user;
-	
+
 	public void setTypeEnum(DigitalTwinType.MainType type) {
 		this.type = type.toString();
 	}
-	
+
 	@PostLoad
-	protected void trim(){
-		if(this.name!=null){
-			this.name=this.name.replaceAll(" ", "");
+	protected void trim() {
+		if (this.name != null) {
+			this.name = this.name.replaceAll(" ", "");
 		}
 	}
-	
+
 	@Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DigitalTwinType )) return false;
-        return getName() != null && getName().equals(((DigitalTwinType) o).getId());
-    }
-	
-    @Override
-    public int hashCode() {
-    	return java.util.Objects.hash(getName());
-    }
-    
-    @Override
-    public String toString() {
-    	return getName();
-    }
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof DigitalTwinType))
+			return false;
+		return getName() != null && getName().equals(((DigitalTwinType) o).getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return java.util.Objects.hash(getName());
+	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 
 }

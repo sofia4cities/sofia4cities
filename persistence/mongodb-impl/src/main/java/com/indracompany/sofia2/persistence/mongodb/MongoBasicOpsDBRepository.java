@@ -87,7 +87,7 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	}
 
 	@Override
-	public String insert(String ontology, String instance) throws DBPersistenceException {
+	public String insert(String ontology, String schema, String instance) throws DBPersistenceException {
 		log.debug("insertInstance", ontology, instance);
 		try {
 			ObjectId objectId = mongoDbConnector.insert(database, ontology, util.prepareQuotes(instance));
@@ -99,8 +99,8 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	}
 
 	@Override
-	public List<BulkWriteResult> insertBulk(String ontology, List<String> instances, boolean order, boolean includeIds)
-			throws DBPersistenceException {
+	public List<BulkWriteResult> insertBulk(String ontology, String schema, List<String> instances, boolean order,
+			boolean includeIds) throws DBPersistenceException {
 		ArrayList<String> dataToInsert = new ArrayList<String>(instances.size());
 		for (String document : instances) {
 			dataToInsert.add(util.prepareQuotes(document));
@@ -254,9 +254,11 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
+
 		log.debug("queryNativeAsJson", query, ontology);
+
 		try {
-			return JSON.serialize(queryNative(ontology, query, offset, limit));
+			return JSON.serialize(queryNativeMongo(ontology, query, offset, limit));
 		} catch (javax.persistence.PersistenceException e) {
 			log.error("find", e, query, ontology);
 			throw new PersistenceException(e);
@@ -279,16 +281,31 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 		log.debug("queryNative", query, ontology);
 		List<String> result = new ArrayList<>();
 		try {
+
+			MongoIterable<BasicDBObject> cursor = queryNativeMongo(ontology, query, offset, limit);
+			for (BasicDBObject obj : cursor) {
+				result.add(obj.toJson());
+			}
+			return result;
+		} catch (Exception e) {
+			log.error("find", e, query, ontology);
+			throw new PersistenceException(e);
+		}
+	}
+
+	private MongoIterable<BasicDBObject> queryNativeMongo(String ontology, String query, int offset, int limit) {
+
+		log.debug("queryNativeMongo", query, ontology);
+
+		try {
 			log.info("executing query:" + query);
 
 			MongoQueryAndParams mc = new MongoQueryAndParams();
 			mc.parseQuery(query, limit, offset);
 
 			MongoIterable<BasicDBObject> cursor = mongoDbConnector.find(database, ontology, mc, queryExecutionTimeout);
-			for (BasicDBObject obj : cursor) {
-				result.add(obj.toJson());
-			}
-			return result;
+
+			return cursor;
 		} catch (Exception e) {
 			log.error("find", e, query, ontology);
 			throw new PersistenceException(e);

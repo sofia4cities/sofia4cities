@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -57,17 +56,15 @@ public class ApiManagerController {
 	ApiManagerHelper apiManagerHelper;
 	@Autowired
 	private AppWebUtils utils;
-		
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
+
 	@GetMapping(value = "/create", produces = "text/html")
 	public String createForm(Model model) {
-		
+
 		apiManagerHelper.populateApiManagerCreateForm(model);
 
 		return "apimanager/create";
 	}
-	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
+
 	@GetMapping(value = "/update/{id}")
 	public String updateForm(@PathVariable("id") String id, Model model) {
 
@@ -75,47 +72,51 @@ public class ApiManagerController {
 
 		return "apimanager/create";
 	}
-	
+
 	@GetMapping(value = "/show/{id}", produces = "text/html")
 	public String show(@PathVariable("id") String id, Model model) {
-		
+
 		apiManagerHelper.populateApiManagerShowForm(model, id);
 
 		return "apimanager/show";
 	}
-	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
-	@GetMapping(value = "/list" , produces = "text/html")
-	public String list(Model model,	@RequestParam(required = false) String apiId, @RequestParam(required = false) String state, @RequestParam(required = false) String user) {		
-		
+
+	@GetMapping(value = "/list", produces = "text/html")
+	public String list(Model model, @RequestParam(required = false) String apiId,
+			@RequestParam(required = false) String state, @RequestParam(required = false) String user) {
+
 		apiManagerHelper.populateApiManagerListForm(model);
-		
+
 		model.addAttribute("apis", apiManagerService.loadAPISByFilter(apiId, state, user, utils.getUserId()));
-		
+
 		return "apimanager/list";
 	}
-	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
+
 	@PostMapping(value = "/create")
-	public String create(ApiMultipart api, BindingResult bindingResult, HttpServletRequest request, RedirectAttributes redirect) {
+	public String create(ApiMultipart api, BindingResult bindingResult, HttpServletRequest request,
+			RedirectAttributes redirect) {
 		if (bindingResult.hasErrors()) {
 			log.debug("Some user properties missing");
 			utils.addRedirectMessage("api.create.error", redirect);
 			return "redirect:/apimanager/create";
 		}
-		
-//		if (api.getMultipartImage()!=null && api.getMultipartImage().getSize()>0 && !"image/png".equalsIgnoreCase(api.getMultipartImage().getContentType()) && !"image/jpeg".equalsIgnoreCase(api.getMultipartImage().getContentType())
-//				&& !"image/jpg".equalsIgnoreCase(api.getMultipartImage().getContentType()) && !"application/octet-stream".equalsIgnoreCase(api.getMultipartImage().getContentType())){
-//			log.debug("Some user properties missing");
-//			utils.addRedirectMessage("user.create.error", redirect);
-//			return "redirect:/apimanager/create";
-//		}
-		
+
+		// if (api.getMultipartImage()!=null && api.getMultipartImage().getSize()>0 &&
+		// !"image/png".equalsIgnoreCase(api.getMultipartImage().getContentType()) &&
+		// !"image/jpeg".equalsIgnoreCase(api.getMultipartImage().getContentType())
+		// && !"image/jpg".equalsIgnoreCase(api.getMultipartImage().getContentType()) &&
+		// !"application/octet-stream".equalsIgnoreCase(api.getMultipartImage().getContentType())){
+		// log.debug("Some user properties missing");
+		// utils.addRedirectMessage("user.create.error", redirect);
+		// return "redirect:/apimanager/create";
+		// }
+
 		try {
 			String operationsObject = request.getParameter("operationsObject");
 			String authenticationObject = request.getParameter("authenticationObject");
-			
-			String apiId = apiManagerService.createApi(apiManagerHelper.apiMultipartMap(api), operationsObject, authenticationObject);
+
+			String apiId = apiManagerService.createApi(apiManagerHelper.apiMultipartMap(api), operationsObject,
+					authenticationObject);
 
 			return "redirect:/apimanager/show/" + utils.encodeUrlPathSegment(apiId, request);
 		} catch (ApiManagerServiceException e) {
@@ -124,25 +125,31 @@ public class ApiManagerController {
 			return "redirect:/apimanager/create";
 		}
 	}
-	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
-	@PutMapping(value="/update/{id}", produces = "text/html")
-	public String update(@PathVariable("id") String id, ApiMultipart api, BindingResult bindingResult, @RequestParam(required = false) String operationsObject, @RequestParam(required = false) String authenticationObject, @RequestParam(required = false) String deprecateApis, RedirectAttributes redirect) {
+
+	@PutMapping(value = "/update/{id}", produces = "text/html")
+	public String update(@PathVariable("id") String id, ApiMultipart api, BindingResult bindingResult,
+			@RequestParam(required = false) String operationsObject,
+			@RequestParam(required = false) String authenticationObject,
+			@RequestParam(required = false) String deprecateApis, RedirectAttributes redirect) {
 
 		if (bindingResult.hasErrors()) {
 			utils.addRedirectMessage("api.update.error", redirect);
 			return "redirect:/apimanager/update";
 		}
-//		if (api.getImagen()!=null && api.getImagen().getSize()>0 && !"image/png".equalsIgnoreCase(api.getImagen().getContentType()) && !"image/jpeg".equalsIgnoreCase(api.getImagen().getContentType())
-//				&& !"image/jpg".equalsIgnoreCase(api.getImagen().getContentType()) && !"application/octet-stream".equalsIgnoreCase(api.getImagen().getContentType())){
-//			LOG.error("Error. La imagen introducida no esta permitida");
-//			utils.addRedirectMessage("api.update.error", redirect);
-//			return "redirect:/apimanager/update";
-//		}
-		
+		// if (api.getImagen()!=null && api.getImagen().getSize()>0 &&
+		// !"image/png".equalsIgnoreCase(api.getImagen().getContentType()) &&
+		// !"image/jpeg".equalsIgnoreCase(api.getImagen().getContentType())
+		// && !"image/jpg".equalsIgnoreCase(api.getImagen().getContentType()) &&
+		// !"application/octet-stream".equalsIgnoreCase(api.getImagen().getContentType())){
+		// LOG.error("Error. La imagen introducida no esta permitida");
+		// utils.addRedirectMessage("api.update.error", redirect);
+		// return "redirect:/apimanager/update";
+		// }
+
 		try {
-			
-			apiManagerService.updateApi(apiManagerHelper.apiMultipartMap(api), deprecateApis, operationsObject, authenticationObject);
+
+			apiManagerService.updateApi(apiManagerHelper.apiMultipartMap(api), deprecateApis, operationsObject,
+					authenticationObject);
 
 			return "redirect:/apimanager/show/" + api.getId();
 		} catch (Exception e) {
@@ -151,12 +158,11 @@ public class ApiManagerController {
 			return "redirect:/apimanager/update";
 		}
 	}
-	
+
 	// AUTHORIZATIONS//
-	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
 	@RequestMapping(value = "/authorize/list", produces = "text/html")
-	public String index(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model model) {
+	public String index(@RequestParam(value = "page", required = false) Integer page,
+			@RequestParam(value = "size", required = false) Integer size, Model model) {
 		apiManagerHelper.populateAutorizationForm(model);
 		return "apimanager/authorize";
 	}
@@ -168,42 +174,43 @@ public class ApiManagerController {
 			UserApiDTO userApiDTO = new UserApiDTO(userApi);
 
 			return new ResponseEntity<UserApiDTO>(userApiDTO, HttpStatus.CREATED);
-		}catch (RuntimeException e) {
+		} catch (RuntimeException e) {
 			return new ResponseEntity<UserApiDTO>(HttpStatus.BAD_REQUEST);
 		}
-			
+
 	}
-	
+
 	@PostMapping(value = "/authorization/delete", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<String> deleteAuthorization(@RequestParam String id) {
 		try {
 			apiManagerService.removeAuthorizationById(id);
 			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
-		} catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
-	}	
-	
-	@RequestMapping(value = "/token/list" , produces = "text/html")
-	public String token(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model model, HttpServletRequest request) {
+	}
+
+	@RequestMapping(value = "/token/list", produces = "text/html")
+	public String token(@RequestParam(value = "page", required = false) Integer page,
+			@RequestParam(value = "size", required = false) Integer size, Model model, HttpServletRequest request) {
 		apiManagerHelper.populateUserTokenForm(model);
 		return "apimanager/token";
 	}
-	
-	@GetMapping(value = "/invoke/{id}" , produces = "text/html")
+
+	@GetMapping(value = "/invoke/{id}", produces = "text/html")
 	public String invoker(Model model, @PathVariable("id") String apiId) {
-		
+
 		apiManagerHelper.populateApiManagerInvokeForm(model, apiId);
-		
+
 		return "apimanager/invoke";
 	}
-		
+
 	@RequestMapping(value = "numVersion")
-	public @ResponseBody Integer numVersion(@RequestBody String numversionData){
+	public @ResponseBody Integer numVersion(@RequestBody String numversionData) {
 		return (apiManagerService.calculateNumVersion(numversionData));
 	}
-	
-	@RequestMapping(value="/{id}/getImage")
+
+	@RequestMapping(value = "/{id}/getImage")
 	public void showImg(@PathVariable("id") String id, HttpServletResponse response) {
 		byte[] buffer = apiManagerService.getImgBytes(id);
 		if (buffer.length > 0) {
@@ -221,36 +228,35 @@ public class ApiManagerController {
 			}
 		}
 	}
-	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
+
 	@GetMapping(value = "/updateState/{id}/{state}")
-	public String updateState(@PathVariable("id") String id, @PathVariable("state") String state, Model uiModel){
+	public String updateState(@PathVariable("id") String id, @PathVariable("state") String state, Model uiModel) {
 		apiManagerService.updateState(id, state);
 		return "redirect:/apimanager/list";
 	}
-	
+
 	@PostMapping(value = "/generateToken")
 	public @ResponseBody ResponseEntity<String> generateToken() {
 		try {
 			apiManagerService.generateToken(utils.getUserId());
 			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
-		} catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@RequestMapping(value = "/removeToken")
 	public @ResponseBody ResponseEntity<String> removeToken(@RequestBody String token) {
 		try {
 			apiManagerService.removeToken(utils.getUserId(), token);
 			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
-		} catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 }

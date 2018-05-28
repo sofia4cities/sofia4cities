@@ -18,9 +18,12 @@ import java.util.Optional;
 import com.indracompany.sofia2.persistence.common.AccessMode;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class SSAP2PersintenceUtil {
 
-	public static Optional<AccessMode>  formSSAPMessageType2TableAccesMode(SSAPMessageTypes rType) {
+	public static Optional<AccessMode> formSSAPMessageType2TableAccesMode(SSAPMessageTypes rType) {
 		Optional<AccessMode> optional = Optional.empty();
 		switch (rType) {
 		case INSERT:
@@ -35,10 +38,12 @@ public class SSAP2PersintenceUtil {
 		case QUERY:
 			optional = Optional.of(AccessMode.SELECT);
 			break;
+		default:
+			log.error("formSSAPMessageType2TableAccesMode " + rType.toString() + " not in case");
+			break;
 		}
 
 		return optional;
 	}
 
 }
-

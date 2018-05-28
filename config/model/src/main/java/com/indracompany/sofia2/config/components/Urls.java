@@ -14,7 +14,6 @@
  */
 package com.indracompany.sofia2.config.components;
 
-
 import lombok.Data;
 
 @Data
@@ -29,5 +28,11 @@ public class Urls {
 	public RouterStandAlone routerStandAlone;
 
 	public ApiManager apiManager;
+
+	public Controlpanel controlpanel;
+
+	public DigitalTwinBroker digitalTwinBroker;
+
+	public Domain domain;
 
 }

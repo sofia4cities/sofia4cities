@@ -81,6 +81,11 @@
 				
 				<!-- MAIN ROW -->
 				<div class="row">
+					<form id="delete_ontology_form" class="delete-ontology hide"  th:action="@{'/ontologies/'+${ontology.id}}"  method="post">
+													<input type="hidden" name="_method" value="DELETE"/>
+													<input id="delete-ontologyId" type="hidden" name="ontologyId" th:value="${ontology.id}"/>
+												</form>
+												<form role="form" id="ontology_create_form" th:object="${ontology}" method="post" class="form">
 					<div class="col-md-12">
 						<div class="portlet light bordered">
 							<div class="portlet-title tabbable-line">
@@ -126,7 +131,8 @@
 												</div>
 											</div>
 											<div class="col-md-12">
-												<form role="form" id="ontology_create_form" th:object="${ontology}" method="post" class="form">
+											<!-- AUXILIAR FORM TO DELETE ONTOLOGY -->
+											
 													<input id="datamodelid" class="hidden-validation" type="hidden" th:required="true" th:field="*{dataModel}" />											
 													<input id="jsonschema"  class="hidden-validation" type="hidden" th:required="true" th:field="*{jsonSchema}"  />
 													<input id="rtdb" name="rtdb" type="hidden" value="Mongo" th:field="*{rtdbDatasource}"/>
@@ -310,9 +316,10 @@
 																													<option value="number">number</option>
 																													<option value="integer">integer</option>
 																													<option value="geometry">geometry</option>
-																													<option value="timestamp">timestamp</option>
-																													<option value="binary">binary</option>																											
+																													<option value="file">file</option> 
+																													<option value="timestamp">timestamp</option>																														
 																													<option value="array">array</option>
+																													<option value="boolean">boolean</option>
 																												</select>
 																											</td>
 																											<td width="125px">
@@ -394,13 +401,9 @@
 															<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:OntologyCreateController.go(\'' + @{/ontologies/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 														</div>
 													</div>
-												</form>
 												
-												<!-- AUXILIAR FORM TO DELETE ONTOLOGY -->
-												<form id="delete_ontology_form" class="delete-ontology hide"  th:action="@{'/ontologies/'+${ontology.id}}"  method="post">
-													<input type="hidden" name="_method" value="DELETE"/>
-													<input id="delete-ontologyId" type="hidden" name="ontologyId" th:value="${ontology.id}"/>
-												</form>
+												
+												
 											</div>
 										</div>
 									</div>
@@ -481,6 +484,18 @@
 													<hr/>
 													<b th:text="#{ontology.rtdb.warning}">Warning!</b>
 												</div>
+												<!-- KAFKA SELECTION -->
+												
+												<div class="form-group">
+													<label class="" th:text="#{ontology.allowsCreateTopic} + ':'">Allow Create Topic</label>
+														<div class="mt-checkbox-list">
+															<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.allowsCreateTopic.help},data-title=#{ontology.allowsCreateTopic}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.allowsCreateTopic} +'?'">Allow Create Topic?</div>
+																<input  id="allowsCreateTopic" class="form-control no-remove"  name="allowsCreateTopic" type="checkbox"  th:field="*{allowsCreateTopic}" />
+																
+																	<span></span><!-- necesario por estilos. -->
+															</label>
+														</div>
+												</div>
 											<!-- RTDB CLEANSE SELECTION -->
 												<div class="form-group">
 													<label class="control-label" th:text="#{ontology.clean.options}">Cleanse Options</label>
@@ -497,17 +512,21 @@
 														<option value="SixMonths" th:text="#{ontology.clean.sixmonths}" ></option>
 														<option value="OneYear" th:text="#{ontology.clean.oneyear}" ></option>																												
 													</select>											
-							
+						
 													
 												</div>
+												
 											</div>
 										</div>									
 									</div>									
 								</div>							
 							</div>
 						</div><!-- END PORTLET BASIC  -->
+							
 					</div><!-- END COL-12 -->
+					</form>
 				</div><!-- END MAIN ROW -->
+			
 			</div><!-- END CONTENT BODY -->
 		</div><!-- END CONTENT page-content-wrapper -->
 	</div>
