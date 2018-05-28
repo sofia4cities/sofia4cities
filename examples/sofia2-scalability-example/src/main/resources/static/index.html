@@ -314,7 +314,7 @@
 			parent.append('<div class="inj-cell-timeAlive inj-cell">'+timeAlive+'</div>');
 			parent.append('<div class="inj-cell-throughputPeriod inj-cell">'+Math.round(throughputPeriod * 100) / 100+'</div>');
 			parent.append('<div class="inj-cell-averageResponseTime inj-cell">'+Math.round((1/throughputPeriod) * 100) / 100+'</div>');
-			parent.append('<button class="inj-cell" onClick="btnStart('+number+')">Start</button>');
+			//parent.append('<button class="inj-cell" onClick="btnStart('+number+')">Start</button>');
 			parent.append('<button class="inj-cell" onClick="btnRemove('+number+')">Remove</button>');			
 			return parent;
 		}
