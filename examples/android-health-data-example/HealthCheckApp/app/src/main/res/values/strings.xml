@@ -30,4 +30,6 @@
     <string name="action_store_form">Store on S4C Platform</string>
     <string name="action_send_form">Share data with a specialist</string>
 
+    <string name="gpdr_warning">By accepting you will authorize a specialist to view your data with the only purpose of giving you medical feedback. \n\nData access can be revoked at anytime at https://rancher.sofia4cities.com/controlpanel/ or by email at select4citiesminsait@gmail.com </string>
+
 </resources>

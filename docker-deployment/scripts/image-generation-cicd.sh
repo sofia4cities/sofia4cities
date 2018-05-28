@@ -287,6 +287,7 @@ fi
 if [[ "$1" == "scalability" ]]; then
 	cd $homepath/../../examples/sofia2-scalability-example/docker
 	buildScalability $homepath/../../examples/sofia2-scalability-example scalability latest
+	pushImage2Registry scalability latest
 fi
 
 if [ "$1" == -1 ]; then
