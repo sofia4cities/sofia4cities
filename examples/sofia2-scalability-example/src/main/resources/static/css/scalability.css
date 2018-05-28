@@ -84,3 +84,16 @@ input {
 	width: 100%;
 }
 
+
+.inj-cell-total-throughput{
+	visibility: hidden;
+	width: 1px;
+}
+
+.inj-cell-throughput{
+	visibility: hidden;
+	width: 1px;
+}
+
+
+
