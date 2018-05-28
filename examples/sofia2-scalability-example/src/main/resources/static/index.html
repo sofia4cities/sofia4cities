@@ -62,7 +62,8 @@
 			<div>Values updated every 5 seconds</div>
 			<div>
 				<button class="btn-add-injector" onClick="btnAddInjector()">Add Injector</button>
-				<button class="btn-refresh-status" onClick="btnRefresh()">Refresh Status</button>
+				<button class="btn-add-injector-10" onClick="btnAddInjctor10()">Add 10 Injectors</button>
+				<button class="btn-refresh-status" onClick="btnRefresh()">Refresh Status</button>				
 				<select class="combo-protocol">
 					<option value="rest">Rest</option>
 				 	<option value="mqtt">MQTT</option>
@@ -230,6 +231,13 @@
 		    });	
 		}
 		
+		function btnAddInjctor10(){
+			var i;
+			for (i = 0; i < 10; i++) { 
+				btnAddInjector();
+			}
+		}
+		
 		function btnAddInjector(){
 			var protocol = $('.combo-protocol option:selected').val();
 			injectors.add(protocol);
@@ -238,7 +246,8 @@
 			var status = parent.find(".inj-cell-status");
 			status.text("STOPPED");
 			status.css("color", "orange");
-			$(".injectors").append(parent);			
+			$(".injectors").append(parent);	
+			btnStart(injectors.number());
 		}
 		
 		function btnRefresh(){
@@ -309,7 +318,7 @@
 			parent.append('<div class="inj-cell-timeAlive inj-cell">'+timeAlive+'</div>');
 			parent.append('<div class="inj-cell-throughputPeriod inj-cell">'+Math.round(throughputPeriod * 100) / 100+'</div>');
 			parent.append('<div class="inj-cell-averageResponseTime inj-cell">'+Math.round((1/throughputPeriod) * 100) / 100+'</div>');
-			parent.append('<button class="inj-cell" onClick="btnStart('+number+')">Start</button>');
+			//parent.append('<button class="inj-cell" onClick="btnStart('+number+')">Start</button>');
 			parent.append('<button class="inj-cell" onClick="btnRemove('+number+')">Remove</button>');			
 			return parent;
 		}
