@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.service.digitaltwin.type;
+package com.indracompany.sofia2.config.services.digitaltwin.type;
 
 import lombok.Getter;
 import lombok.Setter;
