@@ -1,7 +1,6 @@
 
 var DigitalTwinCreateController = function() {
 	
-	var beautify = ace.require("/src/main/resources/static/vendor/ace/ext-beautify.js");
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
 	var LIB_TITLE = 'Digital Twin Controller';	
@@ -281,7 +280,7 @@ var DigitalTwinCreateController = function() {
 			required_by_default: true,
 			modes: ['code', 'text', 'tree', 'view'], // allowed modes
 			error: function (err) {
-				$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
+				//$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
 				return false;
 			},
 			onChange: function(){
@@ -289,7 +288,7 @@ var DigitalTwinCreateController = function() {
 				console.log('se modifica el editor en modo:' + editor.mode + ' contenido: ' + editor.getText());
 			}
 		};		
-		editor = new jsoneditor.JSONEditor(container, options, "");			
+		editor = new jsoneditor.JSONEditor(container, options, "{}");			
 	}
 	
 	// DELETE DIGITAL TWIN TYPE
@@ -544,8 +543,7 @@ var DigitalTwinCreateController = function() {
 				
 				
 				AceEditor = ace.edit("aceEditor");
-				beautify.beautify(editor.session);
-				
+			
 				var logica = digitalTwinCreateJson.logic;
 					
 				if(logica.charAt(0) === '\"'){
@@ -603,7 +601,7 @@ var DigitalTwinCreateController = function() {
 				var js = AceEditor.getValue();
 				js = js + "\nvar onAction"+obj.value.substring(0,1).toUpperCase() + obj.value.substring(1)+"=function(data){ }";
 				AceEditor.setValue(js);
-				beautify.beautify(editor.session);
+				
 				AllActionsLogic.push(obj.value);
 			}
 
@@ -699,12 +697,16 @@ var DigitalTwinCreateController = function() {
 	}
 }();
 
+
 // AUTO INIT CONTROLLER WHEN READY
 jQuery(document).ready(function() {
 	
 	DigitalTwinCreateController.load(digitalTwinCreateJson);
+	
 	AceEditor = ace.edit("aceEditor");
+	AceEditor.setTheme("ace/theme/monokai");
+	AceEditor.session.setMode("ace/mode/javascript");
 	AceEditor.setValue("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();\nfunction init(){}\nfunction main(){}");
-	beautify.beautify(editor.session);
+	
 	DigitalTwinCreateController.init();
 });

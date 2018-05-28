@@ -655,12 +655,102 @@ public class InitConfigDB {
 		logic.setTypeId(type);
 		logic.setLogic(
 				"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
-						+ System.getProperty("line.separator") + "function init(){}"
-						+ System.getProperty("line.separator") + "function main(){}"
-						+ System.getProperty("line.separator") + "var onActionConnectElectricNetwork=function(data){  }"
 						+ System.getProperty("line.separator")
-						+ "var onActionDisconnectElectricNetwork=function(data){ }"
-						+ System.getProperty("line.separator") + "var onActionLimitRotorSpeed=function(data){ }");
+						+ "var senseHatApi = Java.type('com.indracompany.sofia2.raspberry.sensehat.digitaltwin.api.SenseHatApi').getInstance();"
+						+ System.getProperty("line.separator") + "function init(){"
+						+ System.getProperty("line.separator")
+						+ "   senseHatApi.setJoystickUpListener('joystickEventUp');"
+						+ System.getProperty("line.separator")
+						+ "   senseHatApi.setJoystickDownListener('joystickEventDown')"
+						+ System.getProperty("line.separator")
+						+ "   senseHatApi.setJoystickLeftListener('joystickEventLeft');"
+						+ System.getProperty("line.separator")
+						+ "   senseHatApi.setJoystickRightListener('joystickEventRight');"
+						+ System.getProperty("line.separator")
+						+ "   senseHatApi.setJoystickMiddleListener('joystickEventMiddle');"
+						+ System.getProperty("line.separator") + "   digitalTwinApi.log('Init SenseHatSpain shadow');"
+						+ System.getProperty("line.separator") + "   var sensorPress = senseHatApi.getPressure();"
+						+ System.getProperty("line.separator") + "   var sensorTemp = senseHatApi.getTemperature();"
+						+ System.getProperty("line.separator") + "   var sensorHum = senseHatApi.getHumidity();"
+						+ System.getProperty("line.separator")
+						+ "   digitalTwinApi.setStatusValue('pressure', sensorPress);"
+						+ System.getProperty("line.separator")
+						+ "   digitalTwinApi.setStatusValue('temperature', sensorTemp);"
+						+ System.getProperty("line.separator")
+						+ "    digitalTwinApi.setStatusValue('humidity', sensorHum);"
+						+ System.getProperty("line.separator")
+						+ "    var temp = digitalTwinApi.getStatusValue('temperature');"
+						+ System.getProperty("line.separator")
+						+ "    var hum = digitalTwinApi.getStatusValue('humidity');"
+						+ System.getProperty("line.separator")
+						+ "    var pressure = digitalTwinApi.getStatusValue('pressure');"
+						+ System.getProperty("line.separator")
+						+ "    digitalTwinApi.log('Temperature: ' + temp + ' - Humidity: ' + hum + ' - Pressure: '+ pressure);"
+						+ System.getProperty("line.separator") + "    digitalTwinApi.sendUpdateShadow();"
+						+ System.getProperty("line.separator") + "    digitalTwinApi.log('Send Update Shadow');"
+						+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+						+ "function main(){" + System.getProperty("line.separator")
+						+ "   digitalTwinApi.log('New main execution');" + System.getProperty("line.separator")
+						+ "   var sensorPress = senseHatApi.getPressure();" + System.getProperty("line.separator")
+						+ "   var sensorTemp = senseHatApi.getTemperature();" + System.getProperty("line.separator")
+						+ "   var sensorHum = senseHatApi.getHumidity();" + System.getProperty("line.separator")
+						+ "   digitalTwinApi.setStatusValue('pressure', sensorPress);"
+						+ System.getProperty("line.separator")
+						+ "   digitalTwinApi.setStatusValue('temperature', sensorTemp);"
+						+ System.getProperty("line.separator")
+						+ "    digitalTwinApi.setStatusValue('humidity', sensorHum);"
+						+ System.getProperty("line.separator") + "    digitalTwinApi.sendUpdateShadow();"
+						+ System.getProperty("line.separator") + "    digitalTwinApi.log('Send Update Shadow');"
+						+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+						+ "var joystickEventLeft=function(event){" + System.getProperty("line.separator")
+						+ "   digitalTwinApi.log('Received joystick event to the left');"
+						+ System.getProperty("line.separator")
+						+ "   digitalTwinApi.sendCustomEvent('joystickEventLeft');"
+						+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+						+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+						+ "var joystickEventRight=function(event){" + System.getProperty("line.separator")
+						+ "   digitalTwinApi.log('Received joystick event to the right');"
+						+ System.getProperty("line.separator")
+						+ "   digitalTwinApi.sendCustomEvent('joystickEventRight');"
+						+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+						+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+						+ "var joystickEventUp=function(event){" + System.getProperty("line.separator")
+						+ "   digitalTwinApi.log('Received joystick event up');" + System.getProperty("line.separator")
+						+ "   digitalTwinApi.sendCustomEvent('joystickEventUp');" + System.getProperty("line.separator")
+						+ "   senseHatApi.showTextLedMatrix(event);" + System.getProperty("line.separator") + "}"
+						+ System.getProperty("line.separator") + "var joystickEventDown=function(event){"
+						+ System.getProperty("line.separator")
+						+ "   digitalTwinApi.log('Received joystick event down');"
+						+ System.getProperty("line.separator")
+						+ "   digitalTwinApi.sendCustomEvent('joystickEventDown');"
+						+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+						+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+						+ "var joystickEventMiddle=function(event){" + System.getProperty("line.separator")
+						+ "   digitalTwinApi.log('Received joystick event to the middle');"
+						+ System.getProperty("line.separator")
+						+ "   digitalTwinApi.sendCustomEvent('joystickEventMiddle');"
+						+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+						+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+						+ "var onActionJoystickRight=function(data){" + System.getProperty("line.separator")
+						+ "   digitalTwinApi.log('Received joystick action to the right');"
+						+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Right');"
+						+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+						+ "function onActionJoystickLeft(data){\r\n"
+						+ "   digitalTwinApi.log('Received joystick action to the left');"
+						+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Left');"
+						+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+						+ "var onActionJoystickUp=function(data){ " + System.getProperty("line.separator")
+						+ "   digitalTwinApi.log('Received joystick action up');" + System.getProperty("line.separator")
+						+ "   senseHatApi.showTextLedMatrix('Up');" + System.getProperty("line.separator") + "}"
+						+ System.getProperty("line.separator") + "var onActionJoystickDown=function(data){"
+						+ System.getProperty("line.separator")
+						+ "   digitalTwinApi.log('Received joystick action down');"
+						+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Down');"
+						+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+						+ "var onActionJoystickMiddle=function(data){ " + System.getProperty("line.separator")
+						+ "   digitalTwinApi.log('Received joystick action to the middle');"
+						+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Middle');"
+						+ System.getProperty("line.separator") + "}");
 
 		logics.add(logic);
 		return logics;
