@@ -214,18 +214,18 @@ var ApiCustomOpsController = function() {
         operation.querystrings.push(targetBDParameter);
         var querytypeBDParameter = {name: "queryType", condition: "CONSTANT", dataType: "string", value: $('#id_customsql_querytype').val() , description: "", headerType: "query"};
         operation.querystrings.push(querytypeBDParameter);
-        var path = "\\" + operation.identification;
-        if (customsql_queryparam.length>0){
-       	 	path=path + "?";
-        }
+        var path =  operation.identification;
+//        if (customsql_queryparam.length>0){
+//       	 	path=path + "?";
+//        }
         for (var i = 0; i < customsql_queryparam.length; i++) {
 	       	customsql_queryparam [i].dataType = $('#customsqlParamType_' + customsql_queryparam [i].name).val();
-	       	customsql_queryparam [i].headerType = "query";
+	       	customsql_queryparam [i].headerType = "path";
 	       	operation.querystrings.push(customsql_queryparam [i]);
-	       	path = path + "$" + customsql_queryparam [i].name + "={" + customsql_queryparam [i].name +"}";
-	       	if (i < customsql_queryparam.length-1){
-	       		path = path + "&";
-	       	}
+	       	path = path + "/{" + customsql_queryparam [i].name +"}";
+//	       	if (i < customsql_queryparam.length-1){
+//	       		path = path + "";
+//	       	}
         }
         operation.path = path;
     }

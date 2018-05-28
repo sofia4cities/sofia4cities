@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.MediaType;
 
@@ -73,6 +74,7 @@ public class RestSwaggerReader {
 	private static Map<String, Response> responses = new HashMap<String, Response>();
 	private static List<Scheme> schemes = new ArrayList<Scheme>();
 
+	private static List<String> EXCLUDE_PARAMS = Arrays.asList("query", "queryType", "targetdb");
 	static {
 
 		Response r1 = new Response();
@@ -188,7 +190,8 @@ public class RestSwaggerReader {
 		String path = operacionDTO.getPath();
 		if (!path.startsWith("/"))
 			path = "/" + path;
-		ArrayList<ApiQueryParameterDTO> queryParams = operacionDTO.getQueryParams();
+		List<ApiQueryParameterDTO> queryParams = operacionDTO.getQueryParams().stream()
+				.filter(p -> !EXCLUDE_PARAMS.contains(p.getName())).collect(Collectors.toList());
 
 		Path swaggerPath = swagger.getPath(path);
 		if (swaggerPath == null) {
