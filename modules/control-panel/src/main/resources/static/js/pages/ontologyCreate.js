@@ -488,7 +488,8 @@ var OntologyCreateController = function() {
 			// overwrite datamodel schema with loaded ontology schema generated with this datamodel  template.
 			var theSelectedModel = $("h3[data-model='"+ ontologyCreateReg.dataModelEditMode +"']");
 			var theSelectedModelType = theSelectedModel.closest('div .panel-collapse').parent().find("a").trigger('click');			
-			theSelectedModel.attr('data-schema',schema).trigger('click');			
+			theSelectedModel.attr('data-schema',schema).trigger('click');
+			
 		}		
 	}	
 	

@@ -3,6 +3,7 @@
     android:id="@+id/specialist_advise_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/colorSecondary"
     android:orientation="vertical">
 
     <Button

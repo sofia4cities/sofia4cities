@@ -1,14 +1,12 @@
 package com.indracompany.sofia2.android.healthcheckapp;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.widget.ProgressBar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -21,24 +19,42 @@ public class MainHealthActivity extends AppCompatActivity implements MainMenuAda
     protected String mAccessToken = "";
     protected String mUsername = "";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_health);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.s4c_logo);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
 
 
         mAccessToken = getIntent().getStringExtra("accessToken");
         mUsername = getIntent().getStringExtra("username");
+
+        getSupportActionBar().setTitle(mUsername);
 
         loadMenuItems();
         mItemsRV = (RecyclerView) findViewById(R.id.list_main);
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainHealthActivity.this);
         mItemsRV.setLayoutManager(layoutManager);
         mItemsRV.setHasFixedSize(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            Intent mSettingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(mSettingsIntent);
+            return true;
+        }
+        return true;
     }
 
     @Override
@@ -77,11 +93,13 @@ public class MainHealthActivity extends AppCompatActivity implements MainMenuAda
             case 0:
                 mIntent = new Intent(MainHealthActivity.this,FormActivity.class);
                 mIntent.putExtra("accessToken",mAccessToken);
+                mIntent.putExtra("username",mUsername);
                 startActivity(mIntent);
                 break;
             case 1:
                 mIntent = new Intent(MainHealthActivity.this,HistActivity.class);
                 mIntent.putExtra("accessToken",mAccessToken);
+                mIntent.putExtra("username",mUsername);
                 startActivity(mIntent);
                 break;
             case 2:

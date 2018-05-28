@@ -9,7 +9,6 @@
     android:layout_height="match_parent"
     android:layout_margin="5dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.indracompany.sofia2.android.healthcheckapp.HealthFrameFragment"
     tools:listitem="@layout/fragment_healthframe" />
 
 

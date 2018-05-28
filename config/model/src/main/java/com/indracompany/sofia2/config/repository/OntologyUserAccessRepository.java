@@ -16,6 +16,10 @@ package com.indracompany.sofia2.config.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
@@ -37,6 +41,10 @@ public interface OntologyUserAccessRepository extends JpaRepository<OntologyUser
 
 	List<OntologyUserAccess> findByOntology(Ontology ontology);
 
+	@Modifying
+	@Transactional
 	void deleteByOntology(Ontology ontology);
+
+	
 
 }

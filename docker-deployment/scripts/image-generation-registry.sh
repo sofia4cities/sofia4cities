@@ -73,6 +73,12 @@ buildZookeeper()
 	docker build -t $USERNAME/zookeeper-secured:$1 .
 }
 
+buildZeppelin()
+{
+	echo "Apache Zeppelin image generation with Docker CLI: "
+	docker build -t $USERNAME/notebook:$1 .
+}
+
 buildScalability() 
 {
 	echo "Scalability module example image generation with Docker CLI: "
@@ -267,7 +273,7 @@ if [ "$ONLYPERSISTENCE" = false ]; then
 	
 	if [[ "$(docker images -q $USERNAME/scalability 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../examples/sofia2-scalability-example/docker
-		buildScalability $homepath/../../examples/sofia2-scalability-example scalability latest
+		#buildScalability $homepath/../../examples/sofia2-scalability-example scalability latest
 	fi				
 fi
 
@@ -305,7 +311,7 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 
 		if [[ "$(docker images -q sofia2/zookeeper-secured 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/kafka-cluster/zookeeper
-		buildZookeeper latest
+		#buildZookeeper latest
 	fi	
 	
 	if [[ "$(docker images -q $USERNAME/nginx 2> /dev/null)" == "" ]]; then
@@ -322,6 +328,11 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 		cd $homepath/../../config/init/
 		#buildImage "Config Init"
 	fi
+	
+	if [[ "$(docker images -q $USERNAME/notebook 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/zeppelin
+		#buildImage "Zeppelin Notebooks"
+	fi	
 fi
 	
 echo "Docker images successfully generated!"
@@ -348,6 +359,7 @@ if [ "$PUSH2OCPREGISTRY" = true ]; then
 	pushImage2OCPRegistry scalability latest
 	pushImage2OCPRegistry zookeeper-secured latest
 	pushImage2OCPRegistry kafka-secured latest		
+	pushImage2OCPRegistry notebook latest
 fi
 
 if [ "$PUSH2PRIVREGISTRY" = true ]; then
@@ -372,6 +384,7 @@ if [ "$PUSH2PRIVREGISTRY" = true ]; then
 	pushImage2Registry scalability latest
 	pushImage2Registry zookeeper-secured latest
 	pushImage2Registry kafka-secured latest
+	pushImage2Registry notebook latest
 fi
 
 exit 0
