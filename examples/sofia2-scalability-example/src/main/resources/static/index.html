@@ -59,6 +59,7 @@
 		</div>
 		
 		<div class="block">
+			<div>Values updated every 5 seconds</div>
 			<div>
 				<button class="btn-add-injector" onClick="btnAddInjector()">Add Injector</button>
 				<button class="btn-refresh-status" onClick="btnRefresh()">Refresh Status</button>
@@ -67,10 +68,6 @@
 				 	<option value="mqtt">MQTT</option>
 				 	<option value="kafka">KAFKA</option>
 				</select>
-			</div>
-			<div style="float: right">
-				<span class="inj-cell-total">Average inserts per second last refresh:</span>
-				<span id="avg-throughputPeriod" class="inj-cell-total"></span>				
 			</div>
 			<div class="injectors inj-table">
 				<div class="inj-totals">
@@ -82,7 +79,8 @@
 					<div class="inj-cell-total-error inj-cell inj-cell-total"></div>
 					<div class="inj-cell-total-throughput inj-cell inj-cell-total"></div>
 					<div class="inj-cell-total-timeAlive inj-cell inj-cell-total"></div>
-					<div class="inj-cell-total-throughputPeriod inj-cell inj-cell-total"></div>		
+					<div class="inj-cell-total-throughputPeriod inj-cell inj-cell-total"></div>
+					<div class="inj-cell-total-averageResponseTime inj-cell inj-cell-total"></div>
 				</div>
 				<div class="inj-header">
 					<div class="inj-cell-name inj-cell">Injector</div>
@@ -91,9 +89,10 @@
 					<div class="inj-cell-sent inj-cell">Sent</div>
 					<div class="inj-cell-ok inj-cell">Correct</div>
 					<div class="inj-cell-error inj-cell">Errors</div>
-					<div class="inj-cell-throughput inj-cell">Inserts per second</div>
+					<div class="inj-cell-throughput inj-cell">Inserts per second (global)</div>
 					<div class="inj-cell-timeAlive inj-cell">Time alive (s)</div>
-					<div class="inj-cell-throughputPeriod inj-cell">Inserts per second last refresh</div>
+					<div class="inj-cell-throughputPeriod inj-cell">Inserts per second</div>
+					<div class="inj-cell-averageResponseTime inj-cell">Average Response Time (s)</div>
 				</div>
 			</div>
 		</div>
@@ -125,7 +124,8 @@
 					error: status.errors,
 					throughput: status.throughput,
 					timeAlive: status.timeAlive,
-					throughputPeriod: status.throughputPeriod
+					throughputPeriod: status.throughputPeriod,
+					averageResponseTime: 1 / status.throughputPeriod
 				}
 				return injector;
 			}			
@@ -250,7 +250,8 @@
 		        			errors: 0,
 		        			throughput: 0,
 		        			throughputPeriod: 0,
-		        			number: 0
+		        			number: 0,
+		        			averageResponseTime: 0
 		        	}
 		        	for (i = 0; i < response.length; i++) { 
 		        		var injector = $('.injector[id="inj-'+response[i].id+'"]');
@@ -262,7 +263,7 @@
 		        		totals.throughputPeriod = totals.throughputPeriod + response[i].throughputPeriod;
 		        	}
 		        	totals.number = i;
-		        	$("#avg-throughputPeriod").text(totals.throughputPeriod/i);
+		        	totals.averageResponseTime = 1 / (totals.throughputPeriod / i);
 		        	updateTotals(totals);
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {
@@ -278,6 +279,7 @@
     		injector.find('.inj-cell-throughput').text(Math.round(status.throughput * 100) / 100);
     		injector.find('.inj-cell-timeAlive').text(status.timeAlive/1000);
     		injector.find('.inj-cell-throughputPeriod').text(Math.round(status.throughputPeriod * 100) / 100);
+    		injector.find('.inj-cell-averageResponseTime').text(Math.round((1 / status.throughputPeriod) * 1000000) / 1000000);
 		}
 		
 		function updateTotals(totals){
@@ -287,6 +289,7 @@
     		$('.inj-cell-total-ok').text(totals.sent - totals.errors);
     		$('.inj-cell-total-throughput').text(Math.round(totals.throughput * 100) / 100);
     		$('.inj-cell-total-throughputPeriod').text(Math.round(totals.throughputPeriod * 100) / 100);
+    		$('.inj-cell-total-averageResponseTime').text(Math.round(totals.averageResponseTime * 1000000) / 1000000);
 		}
 		
 		function createInjector(number, protocol, sent, ok, error, throughput, timeAlive, throughputPeriod){
@@ -301,6 +304,7 @@
 			parent.append('<div class="inj-cell-throughput inj-cell">'+Math.round(throughput * 100) / 100+'</div>');
 			parent.append('<div class="inj-cell-timeAlive inj-cell">'+timeAlive+'</div>');
 			parent.append('<div class="inj-cell-throughputPeriod inj-cell">'+Math.round(throughputPeriod * 100) / 100+'</div>');
+			parent.append('<div class="inj-cell-averageResponseTime inj-cell">'+Math.round((1/throughputPeriod) * 100) / 100+'</div>');
 			parent.append('<button class="inj-cell" onClick="btnStart('+number+')">Start</button>');
 			parent.append('<button class="inj-cell" onClick="btnRemove('+number+')">Remove</button>');			
 			return parent;
@@ -336,7 +340,7 @@
 		    			$(".injectors").append(parent);
 		        	}
 		        	totals.number = i;
-		        	$("#avg-throughputPeriod").text(totals.throughputPeriod/i);
+		        	totals.averageResponseTime = 1 / (totals.throughputPeriod / i);
 		        	updateTotals(totals);
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {
