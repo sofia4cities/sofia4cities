@@ -539,7 +539,7 @@ var OntologyCreateController = function() {
 				console.log('se modifica el editor en modo:' + editor.mode + ' contenido: ' + editor.getText());
 			}
 		};		
-		editor = new jsoneditor.JSONEditor(container, options, "");			
+		editor = new jsoneditor.JSONEditor(container, options, {});			
 	}
 	
 	
