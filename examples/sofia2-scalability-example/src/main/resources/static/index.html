@@ -34,7 +34,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Demo</a></li>               
+            <li class="active"><a href="#">Demo Scalability</a></li>               
           </ul>         
         </div><!--/.nav-collapse -->
       </div>
@@ -357,7 +357,7 @@
 		    });	
 		}
 		
-		
+		// remove all injectors.
 		function removeAllInjectors(){
 			
 			var injectorsToRemove = [];
@@ -401,9 +401,7 @@
 			
 		}
 		
-		
-		
-		
+				
 		function btnAddInjctor10(){
 			var i;
 			for (i = 0; i < 10; i++) { 
@@ -473,31 +471,32 @@
 			var eachlabel = '';
 			 
 			if (totalGraph.length === 0){ 
-				myChart.data.labels.length=1;
+				myChart.data.labels.length = 1;
 				myChart.data.labels[0] = 0;
-				myChart.data.datasets[0].data.length=0;
-				myChart.data.datasets[1].data.length=0;
+				myChart.data.datasets[0].data.length = 0;
+				myChart.data.datasets[1].data.length = 0;
 				myChart.update();
+				return false;
+			}
 			
-			return false; }
 			
-			// mount data object: {\"labels\":[5,10,15,20,25,30,35,40,45,50],\"datasets\":[{\"data\":[86,114,106,106,107,111,133,221,783,2478],\"label\":\"Throughput\",\"borderColor\":\"#3e95cd\",\"fill\":false},{\"data\":[282,350,411,502,635,809,947,1402,3700,5267],\"label\":\"Average ResponseTime\",\"borderColor\":\"#8e5ea2\",\"fill\":false}]}
 			var throughputPeriodData    = totalGraph.map(e => e.throughputPeriod).join(",").split(",");
 			var averageResponseTimeData = totalGraph.map(e => e.averageResponseTime).join(",").split(",");
 			
 			// check if greater than 25 steps (125segs.)
-			if (throughputPeriodData.length >= 25){
-				lastLabel = myChart.data.labels[myChart.data.labels.length-1];
+			if (throughputPeriodData.length >= 15){
+			
+				lastLabel = myChart.data.labels[myChart.data.labels.length-1]+5;
 				lastThroughput = throughputPeriodData[throughputPeriodData.length-1];
 				lastAverage = averageResponseTimeData[averageResponseTimeData.length-1];
-				myChart.data.labels.length = 0;
-				myChart.data.labels.push(lastLabel);
-				totalGraph.length = 0;
-				totalGraph.push({"throughputPeriod": lastThroughput, "averageResponseTime": lastAverage });
 				
-				myChart.data.datasets[0].data.length=0;
+				myChart.data.labels.shift();
+				myChart.data.labels.push(lastLabel);
+				totalGraph.shift(); 
+				
+				myChart.data.datasets[0].data.shift();
 				myChart.data.datasets[0].data.push(lastThroughput);
-				myChart.data.datasets[1].data.length=0;
+				myChart.data.datasets[1].data.shift();
 				myChart.data.datasets[1].data.push(lastAverage);
 				myChart.update();		
 			} else {
