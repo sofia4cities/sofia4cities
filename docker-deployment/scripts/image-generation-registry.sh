@@ -81,6 +81,14 @@ buildScalability()
 	rm $1/docker/*.jar
 }
 
+buildChatbot()
+{
+	echo "Chatbot module example image generation with Docker CLI: "
+	cp $1/target/*-exec.jar $1/docker/
+	docker build -t $USERNAME/$2:$3 .
+	rm $1/docker/*.jar
+}
+
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
@@ -267,8 +275,13 @@ if [ "$ONLYPERSISTENCE" = false ]; then
 	
 	if [[ "$(docker images -q $USERNAME/scalability 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../examples/sofia2-scalability-example/docker
-		buildScalability $homepath/../../examples/sofia2-scalability-example scalability latest
-	fi				
+		#buildScalability $homepath/../../examples/sofia2-scalability-example scalability latest
+	fi		
+
+	if [[ "$(docker images -q $USERNAME/chatbot 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../examples/chatbot/docker
+	    #buildChatbot $homepath/../../examples/chatbot chatbot latest
+	fi	
 fi
 
 if [[ "$ONLYPERSISTENCE" = true ]]; then
@@ -300,12 +313,12 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 	
 	if [[ "$(docker images -q sofia2/kafka-secured 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/kafka-cluster/kafka
-		buildKafka latest
+		#buildKafka latest
 	fi	
 
 		if [[ "$(docker images -q sofia2/zookeeper-secured 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/kafka-cluster/zookeeper
-		buildZookeeper latest
+		#buildZookeeper latest
 	fi	
 	
 	if [[ "$(docker images -q $USERNAME/nginx 2> /dev/null)" == "" ]]; then
@@ -322,6 +335,11 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 		cd $homepath/../../config/init/
 		#buildImage "Config Init"
 	fi
+	
+	if [[ "$(docker images -q $USERNAME/notebook 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/zeppelin
+		#buildZeppelin latest
+	fi	
 fi
 	
 echo "Docker images successfully generated!"
@@ -346,6 +364,7 @@ if [ "$PUSH2OCPREGISTRY" = true ]; then
 	pushImage2OCPRegistry quasar latest 
 	pushImage2OCPRegistry configinit latest	
 	pushImage2OCPRegistry scalability latest
+	pushImage20CPRegistry chatbot latest
 	pushImage2OCPRegistry zookeeper-secured latest
 	pushImage2OCPRegistry kafka-secured latest		
 fi
@@ -370,6 +389,7 @@ if [ "$PUSH2PRIVREGISTRY" = true ]; then
 	pushImage2Registry quasar latest 
 	pushImage2Registry configinit latest 
 	pushImage2Registry scalability latest
+	pushImage2Registry chatbot latest
 	pushImage2Registry zookeeper-secured latest
 	pushImage2Registry kafka-secured latest
 fi

@@ -1,4 +1,4 @@
-package com.indracompany.sofia2.examples;
+package com.indracompany.sofia2.examples.chatbot;
 
 
 import org.springframework.boot.SpringApplication;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@ComponentScan("com.indracompany.sofia2")
+@ComponentScan("com.indracompany.sofia2.examples.chatbot")
 public class Application {
 
     public static void main(String[] args) {
