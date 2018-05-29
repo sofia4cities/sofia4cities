@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Load Testing Tool</title>
+	<title>S4C Load Testing Tool</title>
 	<script src="js/jquery-3.3.1.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/scalability.css">
 </head>
@@ -104,6 +104,10 @@
 	<div></div>
 
 	<script>
+		// total acummulated values.
+		var totalGraph = [];
+		
+		// injectors.
 		var injectors = (function() {
 			var number = 0;
 			var injectorList = [];
@@ -215,13 +219,23 @@
 		    });			
 		}
 		
+		// find index to remove injector on injector´s array.
+		function findWithAttr(array, attr, value) {
+			for(var i = 0; i < array.length; i += 1) {
+				if(array[i][attr] === value) {
+					return i;
+				}
+			}	
+		return -1;
+		}
+		
 		function btnRemove(injector) {
 			$.ajax({
 		        url: 'stopInjector?injector='+injector,
 		        type: 'GET',
 		        dataType: 'json',
 		        success: function (response){
-		        	injectors.remove(injector-1);
+		        	injectors.remove(findWithAttr(injectors.getInjectors(), 'name',injector));
 		        	var injectorHtml = $('.injector[id="inj-'+injector+'"]');
 		        	injectorHtml.remove();
 	            },
@@ -230,6 +244,8 @@
 	            }
 		    });	
 		}
+		
+		
 		
 		function btnAddInjctor10(){
 			var i;
@@ -251,6 +267,7 @@
 		}
 		
 		function btnRefresh(){
+			var totalObj = {};
 			$.ajax({
 		        url: 'status',
 		        type: 'GET',
@@ -278,6 +295,10 @@
 		        	totals.number = i;
 		        	totals.averageResponseTime = 1 / (totals.throughputPeriod / i);
 		        	updateTotals(totals);
+					
+					// updating values for graph
+					totalObj = {"throughputPeriod": totals.throughputPeriod, "averageResponseTime": totals.averageResponseTime };
+					if ( totals.throughputPeriod > 0 ){ totalGraph.push(totalObj); } 
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {
 	            	console.log("Error obtaining status");
