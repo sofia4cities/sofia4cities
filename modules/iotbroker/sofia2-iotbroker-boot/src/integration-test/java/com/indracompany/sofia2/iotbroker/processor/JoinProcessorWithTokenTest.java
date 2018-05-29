@@ -83,6 +83,7 @@ public class JoinProcessorWithTokenTest {
 	@Before
 	public void setup() throws SSAPProcessorException {
 		session = new IoTSession();
+		session.setClientPlatform("someDevice");
 		ssapJoin = SSAPMessageGenerator.generateJoinMessageWithToken();
 		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
 		when(securityPluginManager.getSession(any())).thenReturn(Optional.of(session));
