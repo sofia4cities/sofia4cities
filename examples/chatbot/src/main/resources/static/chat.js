@@ -60,7 +60,7 @@ function buttonPressed(msg){
 }
 
 function sendMsg(text){
-    var url = 'http://localhost:31000/chatbot/message?msg=' + text
+    var url = 'message?msg=' + text
     $.get(url, 
         function(returnedData){
             console.log(returnedData);
