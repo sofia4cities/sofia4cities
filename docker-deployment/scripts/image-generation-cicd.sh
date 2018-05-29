@@ -77,6 +77,14 @@ buildScalability()
 	rm $1/docker/*.jar
 }
 
+buildChatbot()
+{
+	echo "Chatbot module example image generation with Docker CLI: "
+        cp $1/target/*-exec.jar $1/docker/
+        docker build -t sofia2/$2:$3 .
+        rm $1/docker/*.jar
+}
+
 buildQuasar()
 {
 	echo "Quasar image generation with Docker CLI: "
@@ -290,6 +298,12 @@ if [[ "$1" == "scalability" ]]; then
 	pushImage2Registry scalability latest
 fi
 
+if [[ "$1" == "chatbot" ]]; then
+	cd $homepath/../../examples/chatbot/docker
+	buildChatbot $homepath/../../examples/chatbot chatbot latest
+	pushImage2Registry chatbot latest
+fi
+
 if [ "$1" == -1 ]; then
 	echo "++++++++++++++++++++ Persistence layer generation..."
 	
@@ -334,6 +348,7 @@ deleteImage flowengine
 deleteImage nginx
 deleteImage configinit
 deleteImage scalability
+deleteImage chatbot
 
 deleteUntaggedImages
 removeOrphanVolumes

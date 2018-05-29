@@ -862,7 +862,7 @@ var OntologyCreateController = function() {
 			// object item
 			if (ontology.items[i].type.toLowerCase() == "object"){
 				instance = instance + generateObject(ontology.items[i], "", parent);
-                if (i < minItems){
+                if (i < minItems -1){
                     instance = instance + ",";
                 }
 			}
@@ -873,7 +873,7 @@ var OntologyCreateController = function() {
                     valor = ontology.items[i].enum;
                 }				
                 instance = instance + generateBasicType(ontology.items[i].type, "", "", valor);
-                if (i < minItems){
+                if (i < minItems -1){
                     instance = instance + ",";
                 }
 				

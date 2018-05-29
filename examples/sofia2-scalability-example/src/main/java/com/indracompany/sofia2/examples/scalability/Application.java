@@ -36,9 +36,9 @@ public class Application {
 	@Bean
     public TaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(100);
-        executor.setQueueCapacity(100);
-        executor.setMaxPoolSize(100);
+        executor.setCorePoolSize(200);
+        executor.setQueueCapacity(200);
+        executor.setMaxPoolSize(200);
         executor.initialize();
         return executor;
     }

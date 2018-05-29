@@ -389,6 +389,7 @@ var ApiCustomOpsController = function() {
             }
             
             $('#id_name_op_customsql').prop('disabled', true);
+            loadParamsCustomValues(operation.querystrings);
         } else {
         	$('#id_name_op_customsql').val("");
         	$('#id_query_op_customsql').val("");
@@ -404,7 +405,7 @@ var ApiCustomOpsController = function() {
             $('#id_name_op_customsql').prop('disabled', false);
 
         }
-        loadParamsCustomValues(operation.querystrings);
+        
         $('#dialog-customsql').modal('toggle');
         setTimeout(function() {
         	myCodeMirrorJs.refresh();

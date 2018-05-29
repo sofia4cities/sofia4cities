@@ -79,7 +79,9 @@ sofia2: #Config Sofia2 specific
       kafka:
         enable: false
         host: localhost
-        port: 9092
+        port: 9095  
+        user: admin
+        password: admin-secret 
         partitions: 1
         replication: 1      
         prefix: ontology_

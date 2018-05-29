@@ -2,7 +2,7 @@ var me = {};
 me.avatar = "images/user.jpg";
 
 var you = {};
-you.avatar = "images/terminator.jpg";
+you.avatar = "images/city.png";
 
 function formatAMPM(date) {
     var hours = date.getHours();
@@ -60,7 +60,7 @@ function buttonPressed(msg){
 }
 
 function sendMsg(text){
-    var url = 'http://localhost:8080/message?msg=' + text
+    var url = 'http://localhost:31000/chatbot/message?msg=' + text
     $.get(url, 
         function(returnedData){
             console.log(returnedData);

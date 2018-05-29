@@ -133,7 +133,7 @@ public class ApiManagerAuditProcessor {
 
 	public ApiManagerAuditEvent completeEvent(Map<String, Object> retVal, ApiManagerAuditEvent event) {
 
-		if (event != null && event.getUser() == null || "".equals(event.getUser())) {
+		if (event != null && (event.getUser() == null || "".equals(event.getUser()))) {
 			log.debug("the user is null so set user to anonymous");
 			event.setUser(AuditConst.ANONYMOUS_USER);
 		}
