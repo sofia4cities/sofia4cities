@@ -1,6 +1,8 @@
 {
 	"title":"Stress Application",
-	"technologies":"JSON",
+	"technologies":"Java",
 	"description":"A Java Application for stress the plattform.",
-	"detailedDescription":"Download the jar"
+	"detailedDescription":"Download the jar",
+	"functionality":"function",
+	"id_endpoint":"https://rancher.sofia4cities.com/scalability"
 }

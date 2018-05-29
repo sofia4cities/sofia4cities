@@ -2161,9 +2161,9 @@ public class InitConfigDB {
 					"market/docs/SenseHatHelsinki.zip", "SenseHatHelsinki-0.0.1.jar");
 
 			// videos
-			createMarketAsset("15", "Videos", MarketAsset.MarketAssetState.APPROVED,
+			createMarketAsset("15", "Tutorials", MarketAsset.MarketAssetState.APPROVED,
 					MarketAsset.MarketAssetType.DOCUMENT, MarketAsset.MarketAssetPaymentMode.FREE, true,
-					"market/details/Countries.json", null, null, "market/docs/java-client.zip", "java-client.jar");
+					"market/details/Tutorials.json", null, null, "market/docs/README_Tutorials.md", "README.md");
 
 			// Health Check Android Application
 			createMarketAsset("16", "Health Check Android Application", MarketAsset.MarketAssetState.APPROVED,
