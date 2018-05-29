@@ -26,7 +26,7 @@ public class NotebookManagementController extends NotebookOpsRestServices {
 	private NotebookService notebookService;
 
 	@ApiOperation(value = "Runs paragraph synchronously")
-	@PostMapping(value = "/run/notebook/{notebookId}/paragraph/{paragraphId}")
+	@PostMapping(value = "/run/notebook/{notebookZepId}/paragraph/{paragraphId}")
 	public ResponseEntity<?> authorize(
 			@ApiParam(value = "Notebook Zeppelin Id", required = true) @PathVariable("notebookZepId") String notebookZepId,
 			@ApiParam(value = "Paragraph Id", required = true) @PathVariable(name = "paragraphId") String paragraphId,
@@ -36,10 +36,14 @@ public class NotebookManagementController extends NotebookOpsRestServices {
 		boolean authorized = this.notebookService.hasUserPermissionForNotebook(notebookZepId, userId);
 
 		if (authorized) {
-
+			try {
+				return this.notebookService.runParagraph(notebookZepId, paragraphId);
+			} catch (Exception e) {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
 
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
 	}
 }
