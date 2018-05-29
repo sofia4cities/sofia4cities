@@ -14,7 +14,10 @@
  */
 package com.indracompany.sofia2.flowengine.audit.aop;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+
+import java.util.Base64;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,6 +29,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.indracompany.sofia2.audit.bean.Sofia2AuditError;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
@@ -34,8 +38,11 @@ import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomain;
 import com.indracompany.sofia2.config.model.FlowDomain;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.FlowDomainRepository;
+import com.indracompany.sofia2.flowengine.api.rest.pojo.DecodedAuthentication;
 import com.indracompany.sofia2.flowengine.api.rest.service.FlowEngineValidationNodeService;
 import com.indracompany.sofia2.flowengine.audit.bean.FlowEngineAuditEvent;
+import com.indracompany.sofia2.flowengine.exception.NotAuthorizedException;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
@@ -54,6 +61,9 @@ public class FlowEngineAuditProcessorTest {
 	private final String USER_ID = "dummyUserId";
 	private final String RESULT_OK = "OK";
 	private final String RESULT_KO = "NOTOK";
+	private final String ONTOLOGY_ID = "dummyOntologyId";
+	private final String AUTHENTICATION = "user:pass";
+	private final String INSTANCE = "{\"dummy\":\"dummyvalue\"}";
 
 	@Before
 	public void setUp() {
@@ -72,6 +82,12 @@ public class FlowEngineAuditProcessorTest {
 		flowDomain.setIdentification(DOMAIN_ID);
 		flowDomain.setUser(getTestUser());
 		return flowDomain;
+	}
+
+	public DecodedAuthentication getDecodedAuthentication() {
+		DecodedAuthentication decodedAuth = new DecodedAuthentication(
+				Base64.getEncoder().encodeToString(AUTHENTICATION.getBytes()).toString());
+		return decodedAuth;
 	}
 
 	@Test
@@ -115,4 +131,114 @@ public class FlowEngineAuditProcessorTest {
 
 	}
 
+	@Test
+	public void given_get_event_incorrect_credentials() {
+
+		DecodedAuthentication decodedAuth = getDecodedAuthentication();
+
+		when(flowEngineValidationNodeService.decodeAuth(AUTHENTICATION)).thenReturn(decodedAuth);
+
+		when(flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
+				decodedAuth.getPassword())).thenThrow(new NotAuthorizedException(""));
+
+		FlowEngineAuditEvent event = flowEngineAuditProcessor.getEvent(ONTOLOGY_ID, "", QueryType.NATIVE.name(), null,
+				"message", AUTHENTICATION, OperationType.QUERY);
+
+		Assert.assertNull(event);
+
+	}
+
+	@Test
+	public void given_create_error_event() {
+		Exception ex = new Exception();
+		String message = "dummyMessage";
+
+		Sofia2AuditError event = flowEngineAuditProcessor.createErrorEvent(USER_ID, message, ex);
+
+		assertEquals(EventType.ERROR, event.getType());
+		Assert.assertNotNull(event.getMessage());
+		assertEquals(ex, event.getEx());
+		assertEquals(Module.FLOWENGINE, event.getModule());
+		assertEquals(USER_ID, event.getUser());
+
+	}
+
+	@Test
+	public void given_get_error_event_incorrect_credentials() {
+
+		DecodedAuthentication decodedAuth = getDecodedAuthentication();
+
+		when(flowEngineValidationNodeService.decodeAuth(AUTHENTICATION)).thenReturn(decodedAuth);
+
+		when(flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
+				decodedAuth.getPassword())).thenThrow(new NotAuthorizedException(""));
+
+		Sofia2AuditError error = flowEngineAuditProcessor.getErrorEvent("", AUTHENTICATION, new Exception());
+
+		Assert.assertNull(error);
+	}
+
+	@Test
+	public void given_get_error_event() {
+		Exception ex = new Exception();
+		String methodName = "dummyMethod";
+		FlowEngineDomain domain = FlowEngineDomain.builder().domain(DOMAIN_ID).build();
+
+		FlowDomain flowDomain = new FlowDomain();
+		flowDomain.setUser(getTestUser());
+
+		when(domainRepository.findByIdentification(DOMAIN_ID)).thenReturn(flowDomain);
+
+		Sofia2AuditError event = flowEngineAuditProcessor.getErrorEvent(methodName, domain, ex);
+
+		assertEquals(EventType.ERROR, event.getType());
+		Assert.assertNotNull(event.getMessage());
+		assertEquals(ex, event.getEx());
+		assertEquals(Module.FLOWENGINE, event.getModule());
+		assertEquals(USER_ID, event.getUser());
+	}
+
+	@Test
+	public void given_get_query_event() {
+
+		DecodedAuthentication decodedAuth = getDecodedAuthentication();
+		String query = "";
+
+		when(flowEngineValidationNodeService.decodeAuth(AUTHENTICATION)).thenReturn(decodedAuth);
+
+		when(flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
+				decodedAuth.getPassword())).thenReturn(getTestUser());
+
+		FlowEngineAuditEvent event = flowEngineAuditProcessor.getQueryEvent(ONTOLOGY_ID, query, QueryType.NATIVE.name(),
+				"", AUTHENTICATION);
+
+		assertEquals(EventType.FLOWENGINE, event.getType());
+		Assert.assertNull(event.getData());
+		assertEquals(ONTOLOGY_ID, event.getOntology());
+		assertEquals(query, event.getQuery());
+		assertEquals(Module.FLOWENGINE, event.getModule());
+		assertEquals(OperationType.QUERY.name(), event.getOperationType());
+		assertEquals(USER_ID, event.getUser());
+	}
+
+	@Test
+	public void given_get_insert_event() {
+
+		DecodedAuthentication decodedAuth = getDecodedAuthentication();
+
+		when(flowEngineValidationNodeService.decodeAuth(AUTHENTICATION)).thenReturn(decodedAuth);
+
+		when(flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
+				decodedAuth.getPassword())).thenReturn(getTestUser());
+
+		FlowEngineAuditEvent event = flowEngineAuditProcessor.getInsertEvent(ONTOLOGY_ID, INSTANCE, "", AUTHENTICATION);
+
+		assertEquals(EventType.FLOWENGINE, event.getType());
+		assertEquals(ONTOLOGY_ID, event.getOntology());
+		assertEquals(INSTANCE, event.getData());
+		Assert.assertNull(event.getQuery());
+		assertEquals(Module.FLOWENGINE, event.getModule());
+		assertEquals(OperationType.INSERT.name(), event.getOperationType());
+		assertEquals(USER_ID, event.getUser());
+	}
 }
