@@ -26,12 +26,10 @@ import org.springframework.ui.Model;
 
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.model.DigitalTwinType;
-import com.indracompany.sofia2.config.model.LogicDigitalTwinType;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
-import com.indracompany.sofia2.config.repository.LogicDigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.services.exceptions.DigitalTwinServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 
@@ -46,9 +44,6 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService {
 
 	@Autowired
 	private DigitalTwinTypeRepository digitalTwinTypeRepo;
-
-	@Autowired
-	private LogicDigitalTwinTypeRepository logicDigitalTwinTypeRepo;
 
 	@Autowired
 	private UserService userService;
@@ -82,9 +77,9 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService {
 	public String getLogicFromType(String type) {
 		DigitalTwinType digitalTwinType = digitalTwinTypeRepo.findByName(type);
 		if (digitalTwinType != null) {
-			LogicDigitalTwinType logic = logicDigitalTwinTypeRepo.findByTypeId(digitalTwinType);
+			String logic = digitalTwinType.getLogic();
 			if (logic != null) {
-				return logic.getLogic();
+				return logic;
 			} else {
 				log.error("Error, logic not found for Digital Twin Type: " + type);
 				return null;
@@ -107,9 +102,6 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService {
 					return;
 				}
 				digitalTwinDevice.setIp("");
-				digitalTwinDevice.setLogic(digitalTwinDevice.getLogic().replace("\\r", "")
-						.replace("\\n", System.getProperty("line.separator")).replace("\\t", "   ")
-						.replace("\\\"", "'"));
 				User user = userService.getUser(digitalTwinDevice.getUser().getUserId());
 				if (user != null) {
 					digitalTwinDevice.setUser(user);
@@ -133,6 +125,7 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService {
 		DigitalTwinDevice digitalTwinDevice = digitalTwinDeviceRepo.findById(id);
 		if (digitalTwinDevice != null) {
 			model.addAttribute("digitaltwindevice", digitalTwinDevice);
+			model.addAttribute("logic", digitalTwinDevice.getTypeId().getLogic());
 			model.addAttribute("typeDigital", digitalTwinDevice.getTypeId().getName());
 		} else {
 			log.error("DigitalTwinDevice with id:" + id + ", not found.");

@@ -76,6 +76,7 @@ public class DigitalTwinDeviceController {
 	@GetMapping(value = "/create")
 	public String create(Model model) {
 		model.addAttribute("digitaltwindevice", new DigitalTwinDevice());
+		model.addAttribute("logic", "");
 		model.addAttribute("typesDigitalTwin", this.digitalTwinDeviceService.getAllDigitalTwinTypeNames());
 		return "digitaltwindevices/create";
 	}
@@ -123,6 +124,7 @@ public class DigitalTwinDeviceController {
 		DigitalTwinDevice device = digitalTwinDeviceService.getDigitalTwinDeviceById(id);
 		if (device != null) {
 			model.addAttribute("digitaltwindevice", device);
+			model.addAttribute("logic", device.getTypeId().getLogic());
 			return "digitaltwindevices/show";
 		} else {
 			utils.addRedirectMessage("digitaltwindevice.notfound.error", redirect);

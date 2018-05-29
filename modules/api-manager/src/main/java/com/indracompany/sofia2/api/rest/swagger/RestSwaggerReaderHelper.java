@@ -131,6 +131,7 @@ public class RestSwaggerReaderHelper {
 						} else {
 							StringModel arrayModel = new StringModel();
 							// arrayModel.setItems(prop);
+							arrayModel.setType("string");
 							bp.setSchema(arrayModel);
 							// bp.setSchema(new RefModel("#/definitions/String"));
 

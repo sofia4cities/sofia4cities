@@ -88,7 +88,8 @@ public class KuduResultSetExtractor implements ResultSetExtractor<String> {
 					} else if (isGeometry(columnName)) {
 						try {
 							addToGeometry(columnName, rs.getDouble(i + 1), geometry);
-							obj.put("geometry", new JSONObject(mapper.writeValueAsString(geometry)));
+							obj.put(getGeometryColumnName(columnName),
+									new JSONObject(mapper.writeValueAsString(geometry)));
 
 						} catch (JSONException | JsonProcessingException e) {
 							log.error("", e);
@@ -153,6 +154,13 @@ public class KuduResultSetExtractor implements ResultSetExtractor<String> {
 		} else if (columnName.toLowerCase().endsWith(HiveFieldType.LONGITUDE_FIELD)) {
 			geometry.getCoordinates()[1] = value;
 		}
+	}
+
+	public String getGeometryColumnName(String columnName) {
+		String geometryColumnName = columnName;
+		geometryColumnName = geometryColumnName.replace(HiveFieldType.LATITUDE_FIELD, "");
+		geometryColumnName = geometryColumnName.replace(HiveFieldType.LONGITUDE_FIELD, "");
+		return geometryColumnName;
 	}
 
 }

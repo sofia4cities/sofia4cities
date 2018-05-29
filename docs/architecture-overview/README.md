@@ -26,7 +26,9 @@ These modules uses others components of the platform as:
 
 ## Components Diagram for IoT Flow
 This diagram show the main components involved in the IoT Flow of the platform.
-![Management Flow](iot_diagram.txt.png) 
+![Management Flow](iot_diagram.txt.png)
+(diagram generated with [PlantText](https://www.planttext.com))
+
 The flow is resolved by these modules:
 
 - IoTBroker: is the module on the adquisition layer, it receives a message/event from systems and devices in one of the protocols supported, validates the message, checks if device has access to send this message (by SecurityServices), finds configuration for the message in the ConfigDB (by ConfigServices), triggers the engines necessary to solve the flow (StreamingServices) and finally stores the message in the RealTimeDB (by OntologyServices).

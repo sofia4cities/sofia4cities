@@ -30,14 +30,12 @@ import com.indracompany.sofia2.config.model.ActionsDigitalTwinType;
 import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.EventsDigitalTwinType;
 import com.indracompany.sofia2.config.model.EventsDigitalTwinType.Type;
-import com.indracompany.sofia2.config.model.LogicDigitalTwinType;
 import com.indracompany.sofia2.config.model.PropertyDigitalTwinType;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ActionsDigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.EventsDigitalTwinTypeRepository;
-import com.indracompany.sofia2.config.repository.LogicDigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.PropertyDigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.services.exceptions.DigitalTwinServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -59,9 +57,6 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService {
 
 	@Autowired
 	EventsDigitalTwinTypeRepository evtDigitalTwinTypeRepo;
-
-	@Autowired
-	LogicDigitalTwinTypeRepository logicDigitalTwinTypeRepo;
 
 	@Autowired
 	private UserService userService;
@@ -119,9 +114,9 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService {
 
 	@Override
 	public String getLogicByDigitalId(String TypeId) {
-		LogicDigitalTwinType logic = logicDigitalTwinTypeRepo.findByTypeId(digitalTwinTypeRepo.findById(TypeId));
+		String logic = digitalTwinTypeRepo.findById(TypeId).getLogic();
 		if (logic != null) {
-			return logic.getLogic().replace("\\r", "");
+			return logic.replace("\\r", "");
 		}
 		return "";
 	}
@@ -152,7 +147,6 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService {
 			Set<PropertyDigitalTwinType> propertyDigitalTwinTypes = new HashSet<>();
 			Set<ActionsDigitalTwinType> actionDigitalTwinTypes = new HashSet<>();
 			Set<EventsDigitalTwinType> eventDigitalTwinTypes = new HashSet<>();
-			Set<LogicDigitalTwinType> logicDigitalTwinTypes = new HashSet<>();
 
 			JSONObject json;
 
@@ -217,20 +211,11 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService {
 					}
 				}
 
-				if (logic != null) {
-					LogicDigitalTwinType l = new LogicDigitalTwinType();
-					l.setTypeId(digitalTwinType);
-					l.setLogic(
-							logic.substring(1, logic.length() - 1).replace("\\n", System.getProperty("line.separator"))
-									.replace("\\r", "").replace("\\t", "   "));
-
-					logicDigitalTwinTypes.add(l);
-				}
-
 				digitalTwinType.setPropertyDigitalTwinTypes(propertyDigitalTwinTypes);
 				digitalTwinType.setActionDigitalTwinTypes(actionDigitalTwinTypes);
 				digitalTwinType.setEventDigitalTwinTypes(eventDigitalTwinTypes);
-				digitalTwinType.setLogicDigitalTwinTypes(logicDigitalTwinTypes);
+				digitalTwinType.setLogic(logic.substring(1, logic.length() - 1)
+						.replace("\\n", System.getProperty("line.separator")).replace("\\r", "").replace("\\t", "   "));
 				this.digitalTwinTypeRepo.save(digitalTwinType);
 			} else {
 				log.error("Invalid user");

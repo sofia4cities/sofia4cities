@@ -420,9 +420,7 @@ var DigitalTwinCreateController = function() {
 			});
 			
 			createEditor();
-			//Set jsoneditor with ping and register events by default
-			updateEvents('ping', 'Ping', true, 'PING');
-			updateEvents('register', 'Register', true, 'REGISTER');
+			
 			// INSERT MODE ACTIONS  (ontologyCreateReg.actionMode = NULL ) 
 			if ( digitalTwinCreateJson.actionMode === null){
 				logControl ? console.log('|---> Action-mode: INSERT') : '';
@@ -432,7 +430,7 @@ var DigitalTwinCreateController = function() {
 				logControl ? console.log('|---> Action-mode: UPDATE') : '';
 				
 				// if digitalTwinType has properties  we load it!.
-				propertiesJson = digitalTwinCreateJson.dproperties;			
+				propertiesJson = digitalTwinCreateJson.properties;			
 				if (propertiesJson.length > 0 ){
 					
 					// MOUNTING PROPERTIES ARRAY
