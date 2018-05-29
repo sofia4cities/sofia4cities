@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.streaming;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,51 +37,74 @@ public class KafkaProducerConfig {
 
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.host:localhost}")
 	private String kafkaHost;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.port:9092}")
 	private String kafkaPort;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.partitions:1}")
 	int partitions;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.replication:1}")
 	short replication;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.prefix:ontology_}")
 	private String ontologyPrefix;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.group:ontologyGroup}")
 	private String ontologyGroup;
-	
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.router.topic:router}")
 	private String topicRouter;
 
-    @Bean
-    public ProducerFactory<String, String> producerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost+":"+kafkaPort);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
-    }
+	@Value("${sofia2.iotbroker.plugable.gateway.kafka.user:admin}")
+	private String kafkaUser;
 
-    @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
-    }
-    
-    @Bean
-    public ProducerFactory<String, NotificationModel> operationFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost+":"+kafkaPort);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
-    }
-    
-    @Bean
-    public KafkaTemplate<String, NotificationModel> operationKafkaTemplate() {
-        return new KafkaTemplate<>(operationFactory());
-    }
-    
+	@Value("${sofia2.iotbroker.plugable.gateway.kafka.password:admin-secret}")
+	private String kafkaPassword;
+
+	private void applySecurity(Map<String, Object> config) {
+		if (kafkaPort.contains("9092") == false) {
+			config.put("security.protocol", "SASL_PLAINTEXT");
+			config.put("sasl.mechanism", "PLAIN");
+
+			config.put("sasl.jaas.config",
+					"org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" + kafkaUser
+							+ "\" password=\"" + kafkaPassword + "\";");
+		}
+	}
+
+	@Bean
+	public ProducerFactory<String, String> producerFactory() {
+		Map<String, Object> configProps = new HashMap<>();
+		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
+		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+
+		applySecurity(configProps);
+
+		return new DefaultKafkaProducerFactory<>(configProps);
+	}
+
+	@Bean
+	public KafkaTemplate<String, String> kafkaTemplate() {
+		return new KafkaTemplate<>(producerFactory());
+	}
+
+	@Bean
+	public ProducerFactory<String, NotificationModel> operationFactory() {
+		Map<String, Object> configProps = new HashMap<>();
+		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
+		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+		applySecurity(configProps);
+
+		return new DefaultKafkaProducerFactory<>(configProps);
+	}
+
+	@Bean
+	public KafkaTemplate<String, NotificationModel> operationKafkaTemplate() {
+		return new KafkaTemplate<>(operationFactory());
+	}
+
 }
