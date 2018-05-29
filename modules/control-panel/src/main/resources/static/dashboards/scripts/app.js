@@ -82,6 +82,712 @@
 (function () {
   'use strict';
 
+  LiveHTMLController.$inject = ["$log", "$scope", "$element", "$mdCompiler", "$compile", "datasourceSolverService", "sofia2HttpService", "interactionService", "utilsService"];
+  angular.module('s2DashboardFramework')
+    .component('livehtml', {
+      templateUrl: 'app/components/view/liveHTMLComponent/livehtml.html',
+      controller: LiveHTMLController,
+      controllerAs: 'vm',
+      bindings:{
+        id:"=?",
+        livecontent:"<",
+        datasource:"<",
+        datastatus:"=?"
+      }
+    });
+
+  /** @ngInject */
+  function LiveHTMLController($log, $scope, $element, $mdCompiler, $compile, datasourceSolverService,sofia2HttpService,interactionService,utilsService) {
+    var vm = this;
+    $scope.ds = [];
+    vm.status = "initial";
+
+    vm.$onInit = function(){
+      //register Gadget in interaction service when gadget has id
+      if(vm.id){
+        interactionService.registerGadget(vm.id);
+      }
+      //Activate incoming events
+      vm.unsubscribeHandler = $scope.$on(vm.id,eventLProcessor);
+      compileContent();
+    }
+
+   
+
+    $scope.parseDSArray = function(name){
+      var result=[];
+      var properties=[];
+      if(typeof name !="undefined" && name != null){
+      try {
+          for(var propertyName in $scope.ds[0]) {
+            properties.push(propertyName);
+          }
+          if(properties.indexOf(name) > -1){
+          for (var index = 0; index <  $scope.ds.length; index++) {             
+              
+                result.push($scope.ds[index][name]);               
+              }          
+            }        
+          
+      } catch (error) {
+        
+      }
+    }
+      return result;
+    }
+
+
+
+    vm.$onChanges = function(changes,c,d,e) {
+      if("datasource" in changes && changes["datasource"].currentValue){
+        refreshSubscriptionDatasource(changes.datasource.currentValue, changes.datasource.previousValue)
+      }
+      else{
+        compileContent();
+      }
+    };
+
+    $scope.getTime = function(){
+      var date  = new Date();
+      return date.getTime();
+    }
+
+    $scope.sendFilter = function(field, value){
+      var filterStt = {};
+      filterStt[field]={value: value, id: vm.id};
+      interactionService.sendBroadcastFilter(vm.id,filterStt);
+    }
+    
+    $scope.sendFilterChain = function(field, value){
+      var filterStt = angular.copy(vm.datastatus)||{};
+      filterStt[field]={value: value, id: vm.id};
+      interactionService.sendBroadcastFilter(vm.id,filterStt);
+    }
+
+    vm.insertSofia2Http = function(token, clientPlatform, clientPlatformId, ontology, data){
+      sofia2HttpService.insertSofia2Http(token, clientPlatform, clientPlatformId, ontology, data).then(
+        function(e){
+          console.log("OK Rest: " + JSON.stringify(e));
+        }).catch(function(e){
+          console.log("Fail Rest: " + JSON.stringify(e));
+        });
+    }
+
+    vm.$onDestroy = function(){
+      if($scope.unsubscribeHandler){
+        $scope.unsubscribeHandler();
+        $scope.unsubscribeHandler=null;
+        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
+      }
+    }
+
+    function compileContent(){
+      var parentElement = $element[0];
+      $mdCompiler.compile({
+        template: vm.livecontent
+      }).then(function (compileData) {
+        compileData.link($scope);
+        $element.empty();
+        $element.prepend(compileData.element)
+      });
+    }
+
+    function refreshSubscriptionDatasource(newDatasource, oldDatasource) {
+      if($scope.unsubscribeHandler){
+        $scope.unsubscribeHandler();
+        $scope.unsubscribeHandler=null;
+        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
+      }
+
+      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
+        {
+          type: newDatasource.type,
+          name: newDatasource.name,
+          refresh: newDatasource.refresh,
+          triggers: [{params:{filter:[],group:[],project:[]},emitTo:vm.id}]
+        }
+      );
+    };
+
+    function eventLProcessor(event,dataEvent){
+      if(dataEvent.type === "data" && dataEvent.data.length===0){
+        vm.type="nodata";
+      }
+      else{
+        switch(dataEvent.type){
+          case "data":
+            switch(dataEvent.name){
+              case "refresh":
+                if(vm.status === "initial" || vm.status === "ready"){
+                  $scope.ds = dataEvent.data;
+                }
+                else{
+                  console.log("Ignoring refresh event, status " + vm.status);
+                }
+                break;
+              case "add":
+                $scope.ds.concat(data);
+                break;
+              case "filter":
+                if(vm.status === "pending"){
+                  $scope.ds = dataEvent.data;
+                  vm.status = "ready";
+                }
+                break;
+              default:
+                console.error("Not allowed data event: " + dataEvent.name);
+                break;
+            } 
+            break;
+          case "filter":
+            vm.status = "pending";
+            vm.type = "loading";
+            if(!vm.datastatus){
+              vm.datastatus = {};
+            }
+            if(dataEvent.data.length){
+              for(var index in dataEvent.data){
+                vm.datastatus[angular.copy(dataEvent.data[index].field)] = {
+                  value: angular.copy(dataEvent.data[index].value),
+                  id: angular.copy(dataEvent.id)
+                }
+              }
+            }
+            else{
+              delete vm.datastatus[dataEvent.field];
+              if(Object.keys(vm.datastatus).length === 0 ){
+                vm.datastatus = undefined;
+              }
+            }
+            datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
+            break;
+          default:
+            console.error("Not allowed event: " + dataEvent.type);
+            break;
+        }
+      }
+      utilsService.forceRender($scope);
+    }
+
+    function buildFilterStt(dataEvent){
+      return {
+        filter: {
+          id: dataEvent.id,
+          data: dataEvent.data.map(
+            function(f){
+              //quotes for string identification
+              if(typeof f.value === "string"){
+                f.value = "\"" + f.value + "\""
+              }
+              return {
+                field: f.field,
+                op: "=",
+                exp: f.value
+              }
+            }
+          )
+        } , 
+        group:[], 
+        project:vm.projects
+      }
+    }
+  }
+})();
+
+(function () {
+  'use strict';
+
+  GadgetController.$inject = ["$log", "$scope", "$element", "$window", "$mdCompiler", "$compile", "datasourceSolverService", "sofia2HttpService", "interactionService", "utilsService", "leafletMarkerEvents", "leafletData"];
+  angular.module('s2DashboardFramework')
+    .component('gadget', {
+      templateUrl: 'app/components/view/gadgetComponent/gadget.html',
+      controller: GadgetController,
+      controllerAs: 'vm',
+      bindings:{
+        id:"<?",
+        gconfig:"=?",
+        gmeasures:"=?",
+        gdatasourceid:"=?",
+        datastatus:"=?"
+      }
+    });
+
+  /** @ngInject */
+  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService, interactionService, utilsService, leafletMarkerEvents, leafletData) {
+    var vm = this;
+    vm.ds = [];
+    vm.type = "loading";
+    vm.config = {};//Gadget database config
+    vm.measures = [];
+    vm.status = "initial";
+    vm.selected = [];
+    vm.notSmall=true;
+ 
+    //Chaining filters, used to propagate own filters to child elements
+    vm.filterChaining=true;
+
+    vm.$onInit = function(){
+      //register Gadget in interaction service when gadget has id
+      if(vm.id){
+        interactionService.registerGadget(vm.id);
+      }
+      //Activate incoming events
+      vm.unsubscribeHandler = $scope.$on(vm.id,eventGProcessor);
+      $scope.reloadContent();
+    }
+
+    $scope.reloadContent = function(){
+      /*Gadget Editor Mode*/
+      if(!vm.id){
+        //vm.config = vm.gconfig;//gadget config
+        if(!vm.config.config){
+          return;//Init editor triggered
+        }
+        if(typeof vm.config.config == "string"){
+          vm.config.config = JSON.parse(vm.config.config);
+        }
+        //vm.measures = vm.gmeasures;//gadget config
+        var projects = [];
+        for(var index=0; index < vm.measures.length; index++){
+          var jsonConfig = JSON.parse(vm.measures[index].config);
+          for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
+            if(!utilsService.isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },projects)){
+              projects.push({op:"",field:jsonConfig.fields[indexF]});
+            }
+          }
+          //add attribute for filter style marker to recover from datasource.
+          if(vm.config.type=="map" && typeof vm.config.config.jsonMarkers!=undefined && vm.config.config.jsonMarkers!=null && vm.config.config.jsonMarkers.length>0){
+            projects.push({op:"",field:vm.config.config.markersFilter});
+          }
+          vm.measures[index].config = jsonConfig;
+        }
+        sofia2HttpService.getDatasourceById(vm.ds).then(
+          function(datasource){
+            subscriptionDatasource(datasource.data, [], projects, []);
+          }
+        )
+      }
+      else{
+      /*View Mode*/
+        sofia2HttpService.getGadgetConfigById(
+          vm.id
+        ).then(
+          function(config){
+            vm.config=config.data;
+            vm.config.config = JSON.parse(vm.config.config);
+            return sofia2HttpService.getGadgetMeasuresByGadgetId(vm.id);
+          }
+        ).then(
+          function(measures){
+            vm.measures = measures.data;
+
+            vm.projects = [];
+            for(var index=0; index < vm.measures.length; index++){
+              var jsonConfig = JSON.parse(vm.measures[index].config);
+              for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
+                if(!utilsService.isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },vm.projects)){
+                  vm.projects.push({op:"",field:jsonConfig.fields[indexF]});
+                }
+              }
+               //add attribute for filter style marker to recover from datasource.
+             if(vm.config.type=="map" && typeof vm.config.config.jsonMarkers!=undefined && vm.config.config.jsonMarkers!=null && vm.config.config.jsonMarkers.length>0){
+              vm.projects.push({op:"",field:vm.config.config.markersFilter});
+             }
+              vm.measures[index].config = jsonConfig;
+            }
+            sofia2HttpService.getDatasourceById(vm.measures[0].datasource.id).then(
+              function(datasource){
+                subscriptionDatasource(datasource.data, [], vm.projects, []);
+              }
+            )
+          }
+        )
+      }
+    }
+
+    vm.$onChanges = function(changes) {
+
+    };
+
+    vm.$onDestroy = function(){
+      if(vm.unsubscribeHandler){
+        vm.unsubscribeHandler();
+        vm.unsubscribeHandler=null;
+        datasourceSolverService.unregisterDatasourceTrigger(vm.measures[0].datasource);
+      }
+    }
+
+    function subscriptionDatasource(datasource, filter, project, group) {
+
+      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
+        {
+          type: datasource.mode,
+          name: datasource.identification,
+          refresh: datasource.refresh,
+          triggers: [{params:{filter:filter, group:group, project:project},emitTo:vm.id}]
+        }
+      );
+    };
+
+    function processDataToGadget(data){ //With dynamic loading this will change
+      switch(vm.config.type){
+        case "line":
+        case "bar":
+        case "radar":
+        case "pie":
+          //Group X axis values
+          var allLabelsField = [];
+          for(var index=0; index < vm.measures.length; index++){
+            allLabelsField = allLabelsField.concat(data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)}));
+          }
+          allLabelsField = utilsService.sort_unique(allLabelsField);
+
+          //Match Y values
+          var allDataField = [];//Data values sort by labels
+          for(var index=0; index < vm.measures.length; index++){
+            var dataRawSerie = data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[1],ind)});
+            var labelRawSerie = data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)});
+            var sortedArray = [];
+            for(var indexf = 0; indexf < dataRawSerie.length; indexf++){
+              sortedArray[allLabelsField.indexOf(labelRawSerie[indexf])] = dataRawSerie[indexf];
+            }
+            allDataField.push(sortedArray);
+          }
+
+          vm.labels = allLabelsField;
+          vm.series = vm.measures.map (function(m){return m.config.name});
+
+          if(vm.config.type == "pie"){
+            vm.data = allDataField[0];
+          }
+          else{
+            vm.data = allDataField;
+          }
+
+          var baseOptionsChart = {
+            legend: {
+              display: true, 
+              labels: {
+                boxWidth: 11
+              }
+            }, 
+            maintainAspectRatio: false, 
+            responsive: true, 
+            responsiveAnimationDuration:500
+          };
+
+          vm.datasetOverride = vm.measures.map (function(m){return m.config.config});
+
+          vm.optionsChart = angular.merge({},vm.config.config,baseOptionsChart);
+
+          break;
+        case 'wordcloud':
+          //Get data in an array
+          var arrayWordSplited = data.reduce(function(a,b){return a.concat(b.value.split(" "))},[])//data.flatMap(function(d){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0]).split(" ")})
+          var hashWords = {};
+          var counterArray = []
+          for(var index = 0; index < arrayWordSplited.length; index++){
+            var word = arrayWordSplited[index];
+            if(word in hashWords){
+              counterArray[hashWords[word]].count++;
+            }
+            else{
+              hashWords[word]=counterArray.length;
+              counterArray.push({text:word,count:1});
+            }
+          }
+
+          vm.counterArray = counterArray.sort(function(a, b){
+            return b.count - a.count;
+          })
+          redrawWordCloud();
+          $scope.$on("$resize",redrawWordCloud);
+          break;
+        case "map":
+          leafletData.getDirectiveControls('lmap' + vm.id).then(function (controls) {
+            if(controls.markers){
+              controls.markers.clean();
+            }
+          });
+
+          vm.center = vm.center || vm.config.config.center;
+          //IF defined intervals for marker 
+          if(typeof vm.config.config.jsonMarkers!=undefined && vm.config.config.jsonMarkers!=null && vm.config.config.jsonMarkers.length>0){
+            var jsonMarkers = JSON.parse(vm.config.config.jsonMarkers);
+            
+            vm.markers = data.map(
+              function(d){
+                return {
+                  lat: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[0],0),
+                  lng: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[1],1),
+  
+                  message: vm.measures[0].config.fields.slice(3).reduce(
+                    function(a, b){
+                      return a + "<b>" + b + ":</b>&nbsp;" + utilsService.getJsonValueByJsonPath(d,b) + "<br/>";
+                    }
+                    ,""
+                  ),
+                  id: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[2],2),
+                  icon: utilsService.getMarkerForMap(utilsService.getJsonValueByJsonPath(d,vm.config.config.markersFilter,2),jsonMarkers),
+                }
+              }
+            )
+          
+          }else{
+          vm.markers = data.map(
+            function(d){
+              return {
+                lat: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[0],0),
+                lng: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[1],1),
+
+                message: vm.measures[0].config.fields.slice(3).reduce(
+                  function(a, b){
+                    return a + "<b>" + b + ":</b>&nbsp;" + utilsService.getJsonValueByJsonPath(d,b) + "<br/>";
+                  }
+                  ,""
+                ),
+                id: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[2],2)
+               
+              }
+            }
+          )
+        }
+
+          $scope.events = {
+            markers: {
+                enable: leafletMarkerEvents.getAvailableEvents(),
+            }
+          };
+          
+          //Init map events
+          var eventName = 'leafletDirectiveMarker.lmap' + vm.id + '.click';
+          $scope.$on(eventName, vm.clickMarkerMapEventProcessorEmitter);
+
+          redrawLeafletMap();
+          $scope.$on("$resize",redrawLeafletMap);
+          break;
+          case "table":
+          vm.data=data;
+          if(data.length>0){
+            var i = 0;
+            for(var propertyName in data[0]) {
+              vm.measures[i].config.order = propertyName;
+              i++;
+           }
+          }          
+          vm.config.config.tablePagination.limitOptions = vm.config.config.tablePagination.options.limitSelect ? [5, 10, 20, 50 ,100]  : undefined;
+          redrawTable();
+          $scope.$on("$resize",redrawTable);
+          break;
+      }
+
+      vm.type = vm.config.type;//Activate gadget
+      utilsService.forceRender($scope);
+    }
+
+    function redrawWordCloud(){
+      var element = $element[0];
+      var height = element.offsetHeight;
+      var width = element.offsetWidth;
+      var maxCount = vm.counterArray[0].count;
+      var minCount = vm.counterArray[vm.counterArray.length - 1].count;
+      var maxWordSize = width * 0.15;
+      var minWordSize = maxWordSize / 5;
+      var spread = maxCount - minCount;
+      if (spread <= 0) spread = 1;
+      var step = (maxWordSize - minWordSize) / spread;
+      vm.words = vm.counterArray.map(function(word) {
+          return {
+              text: word.text,
+              size: Math.round(maxWordSize - ((maxCount - word.count) * step)),
+              tooltipText: word.count + ' ocurrences'
+          }
+      })
+      vm.width = width;
+      vm.height = height;
+    }
+
+    function redrawTable(){
+     var element = $element[0];   
+      var width = element.offsetWidth;
+      
+      if(width<600){
+        vm.notSmall=false;
+      }else{
+        vm.notSmall=true;
+      }
+    }
+
+
+    function redrawLeafletMap(){
+      var element = $element[0];
+      var height = element.offsetHeight;
+      var width = element.offsetWidth;
+      vm.width = width;
+      vm.height = height;
+    }
+
+    function eventGProcessor(event,dataEvent){
+      if(dataEvent.type === "data" && dataEvent.data.length===0){
+        vm.type="nodata";
+        vm.status = "ready";
+      }
+      else{
+        switch(dataEvent.type){
+          case "data":
+            switch(dataEvent.name){
+              case "refresh":
+                if(vm.status === "initial" || vm.status === "ready"){
+                  processDataToGadget(dataEvent.data);
+                }
+                else{
+                  console.log("Ignoring refresh event, status " + vm.status);
+                }
+                break;
+              case "add":
+                //processDataToGadget(data);
+                break;
+              case "filter":
+                if(vm.status === "pending"){
+                  processDataToGadget(dataEvent.data);
+                  vm.status = "ready";
+                }
+                break;
+              case "drillup":
+                //processDataToGadget(data);
+                break;
+              case "drilldown":
+                //processDataToGadget(data);
+                break;
+              default:
+                console.error("Not allowed data event: " + dataEvent.name);
+                break;
+            } 
+            break;
+          case "filter":
+            vm.status = "pending";
+            //vm.type = "loading";
+            if(!vm.datastatus){
+              vm.datastatus = {};
+            }
+            if(dataEvent.data.length){
+              for(var index in dataEvent.data){
+                vm.datastatus[angular.copy(dataEvent.data[index].field)] = {
+                  value: angular.copy(dataEvent.data[index].value),
+                  id: angular.copy(dataEvent.id)
+                }
+              }
+            }
+            else{
+              delete vm.datastatus[dataEvent.field];
+              if(Object.keys(vm.datastatus).length === 0 ){
+                vm.datastatus = undefined;
+              }
+            }
+            datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
+            break;
+          default:
+            console.error("Not allowed event: " + dataEvent.type);
+            break;
+        }
+      }
+      utilsService.forceRender($scope);
+    }
+
+    function buildFilterStt(dataEvent){
+      return {
+        filter: {
+          id: dataEvent.id,
+          data: dataEvent.data.map(
+            function(f){
+              //quotes for string identification
+              if(typeof f.value === "string"){
+                f.value = "\"" + f.value + "\""
+              }
+              return {
+                field: f.field,
+                op: "=",
+                exp: f.value
+              }
+            }
+          )
+        } , 
+        group:[], 
+        project:vm.projects
+      }
+    }
+
+    //Chartjs click event
+    vm.clickChartEventProcessorEmitter = function(points, evt){
+      var originField;
+      var originValue;
+      switch(vm.config.type){
+        case "line":
+          //originField = vm.measures[0].config.fields[0];
+          //originValue = points[0]._model.label;
+          break;
+        case "bar":
+          //find serie x field if there are diferent x field in measures
+          for(var index in vm.data){
+            if(vm.data[index][points[0]._index]){
+              originField = vm.measures[index].config.fields[0];
+              break;
+            }
+          }
+          originValue = points[0]._model.label;
+          break;
+          case "radar":
+          //find serie x field if there are diferent x field in measures
+          for(var index in vm.data){
+            if(vm.data[index][points[0]._index]){
+              originField = vm.measures[index].config.fields[0];
+              break;
+            }
+          }
+          originValue = points[0]._chart.config.data.labels[points[0]._index];
+          break;
+        case "pie":
+          originField = vm.measures[0].config.fields[0];
+          originValue = points[0]._model.label;
+          break;
+      }
+      sendEmitterEvent(originField,originValue);
+    }
+
+    //leafletjs click marker event, by Point Id
+    vm.clickMarkerMapEventProcessorEmitter = function(event, args){
+      var originField = vm.measures[0].config.fields[2];
+      var originValue = args.model.id;
+      sendEmitterEvent(originField,originValue);
+    }
+
+    vm.selectItemTable = function (item) {
+      console.log(item, 'was selected');
+      for (var index = 0; index < vm.measures.length; index++) {
+        var element = vm.measures[index];
+        var originField = element.config.fields[0];
+        var originValue = item[element.config.order];
+        sendEmitterEvent(originField,originValue);
+      }      
+    };
+  
+
+    function sendEmitterEvent(originField,originValue){
+      if(vm.filterChaining){
+        var filterStt = angular.copy(vm.datastatus)||{}
+      }
+      else{
+        var filterStt = {}
+      }
+      filterStt[originField]={value: originValue, id: vm.id};
+      interactionService.sendBroadcastFilter(vm.id,filterStt);
+    }
+  }
+})();
+
+(function () {
+  'use strict';
+
   ElementController.$inject = ["$log", "$scope", "$mdDialog", "$sanitize", "$sce", "$rootScope", "gadgetManagerService"];
   angular.module('s2DashboardFramework')
     .component('element', {
@@ -2959,680 +3665,6 @@
 (function () {
   'use strict';
 
-  GadgetController.$inject = ["$log", "$scope", "$element", "$window", "$mdCompiler", "$compile", "datasourceSolverService", "sofia2HttpService", "interactionService", "utilsService", "leafletMarkerEvents", "leafletData"];
-  angular.module('s2DashboardFramework')
-    .component('gadget', {
-      templateUrl: 'app/components/view/gadgetComponent/gadget.html',
-      controller: GadgetController,
-      controllerAs: 'vm',
-      bindings:{
-        id:"<?",
-        gconfig:"=?",
-        gmeasures:"=?",
-        gdatasourceid:"=?",
-        datastatus:"=?"
-      }
-    });
-
-  /** @ngInject */
-  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService, interactionService, utilsService, leafletMarkerEvents, leafletData) {
-    var vm = this;
-    vm.ds = [];
-    vm.type = "loading";
-    vm.config = {};//Gadget database config
-    vm.measures = [];
-    vm.status = "initial";
-    vm.selected = [];
-    vm.notSmall=true;
- 
-    //Chaining filters, used to propagate own filters to child elements
-    vm.filterChaining=true;
-
-    vm.$onInit = function(){
-      //register Gadget in interaction service when gadget has id
-      if(vm.id){
-        interactionService.registerGadget(vm.id);
-      }
-      //Activate incoming events
-      vm.unsubscribeHandler = $scope.$on(vm.id,eventGProcessor);
-      $scope.reloadContent();
-    }
-
-    $scope.reloadContent = function(){
-      /*Gadget Editor Mode*/
-      if(!vm.id){
-        //vm.config = vm.gconfig;//gadget config
-        if(!vm.config.config){
-          return;//Init editor triggered
-        }
-        if(typeof vm.config.config == "string"){
-          vm.config.config = JSON.parse(vm.config.config);
-        }
-        //vm.measures = vm.gmeasures;//gadget config
-        var projects = [];
-        for(var index=0; index < vm.measures.length; index++){
-          var jsonConfig = JSON.parse(vm.measures[index].config);
-          for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
-            if(!utilsService.isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },projects)){
-              projects.push({op:"",field:jsonConfig.fields[indexF]});
-            }
-          }
-          vm.measures[index].config = jsonConfig;
-        }
-        sofia2HttpService.getDatasourceById(vm.ds).then(
-          function(datasource){
-            subscriptionDatasource(datasource.data, [], projects, []);
-          }
-        )
-      }
-      else{
-      /*View Mode*/
-        sofia2HttpService.getGadgetConfigById(
-          vm.id
-        ).then(
-          function(config){
-            vm.config=config.data;
-            vm.config.config = JSON.parse(vm.config.config);
-            return sofia2HttpService.getGadgetMeasuresByGadgetId(vm.id);
-          }
-        ).then(
-          function(measures){
-            vm.measures = measures.data;
-
-            vm.projects = [];
-            for(var index=0; index < vm.measures.length; index++){
-              var jsonConfig = JSON.parse(vm.measures[index].config);
-              for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
-                if(!utilsService.isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },vm.projects)){
-                  vm.projects.push({op:"",field:jsonConfig.fields[indexF]});
-                }
-              }
-              vm.measures[index].config = jsonConfig;
-            }
-            sofia2HttpService.getDatasourceById(vm.measures[0].datasource.id).then(
-              function(datasource){
-                subscriptionDatasource(datasource.data, [], vm.projects, []);
-              }
-            )
-          }
-        )
-      }
-    }
-
-    vm.$onChanges = function(changes) {
-
-    };
-
-    vm.$onDestroy = function(){
-      if(vm.unsubscribeHandler){
-        vm.unsubscribeHandler();
-        vm.unsubscribeHandler=null;
-        datasourceSolverService.unregisterDatasourceTrigger(vm.measures[0].datasource);
-      }
-    }
-
-    function subscriptionDatasource(datasource, filter, project, group) {
-
-      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
-        {
-          type: datasource.mode,
-          name: datasource.identification,
-          refresh: datasource.refresh,
-          triggers: [{params:{filter:filter, group:group, project:project},emitTo:vm.id}]
-        }
-      );
-    };
-
-    function processDataToGadget(data){ //With dynamic loading this will change
-      switch(vm.config.type){
-        case "line":
-        case "bar":
-        case "radar":
-        case "pie":
-          //Group X axis values
-          var allLabelsField = [];
-          for(var index=0; index < vm.measures.length; index++){
-            allLabelsField = allLabelsField.concat(data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)}));
-          }
-          allLabelsField = utilsService.sort_unique(allLabelsField);
-
-          //Match Y values
-          var allDataField = [];//Data values sort by labels
-          for(var index=0; index < vm.measures.length; index++){
-            var dataRawSerie = data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[1],ind)});
-            var labelRawSerie = data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)});
-            var sortedArray = [];
-            for(var indexf = 0; indexf < dataRawSerie.length; indexf++){
-              sortedArray[allLabelsField.indexOf(labelRawSerie[indexf])] = dataRawSerie[indexf];
-            }
-            allDataField.push(sortedArray);
-          }
-
-          vm.labels = allLabelsField;
-          vm.series = vm.measures.map (function(m){return m.config.name});
-
-          if(vm.config.type == "pie"){
-            vm.data = allDataField[0];
-          }
-          else{
-            vm.data = allDataField;
-          }
-
-          var baseOptionsChart = {
-            legend: {
-              display: true, 
-              labels: {
-                boxWidth: 11
-              }
-            }, 
-            maintainAspectRatio: false, 
-            responsive: true, 
-            responsiveAnimationDuration:500
-          };
-
-          vm.datasetOverride = vm.measures.map (function(m){return m.config.config});
-
-          vm.optionsChart = angular.merge({},vm.config.config,baseOptionsChart);
-
-          break;
-        case 'wordcloud':
-          //Get data in an array
-          var arrayWordSplited = data.reduce(function(a,b){return a.concat(b.value.split(" "))},[])//data.flatMap(function(d){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0]).split(" ")})
-          var hashWords = {};
-          var counterArray = []
-          for(var index = 0; index < arrayWordSplited.length; index++){
-            var word = arrayWordSplited[index];
-            if(word in hashWords){
-              counterArray[hashWords[word]].count++;
-            }
-            else{
-              hashWords[word]=counterArray.length;
-              counterArray.push({text:word,count:1});
-            }
-          }
-
-          vm.counterArray = counterArray.sort(function(a, b){
-            return b.count - a.count;
-          })
-          redrawWordCloud();
-          $scope.$on("$resize",redrawWordCloud);
-          break;
-        case "map":
-          leafletData.getDirectiveControls('lmap' + vm.id).then(function (controls) {
-            if(controls.markers){
-              controls.markers.clean();
-            }
-          });
-
-          vm.center = vm.center || vm.config.config.center;
-          vm.markers = data.map(
-            function(d){
-              return {
-                lat: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[0],0),
-                lng: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[1],1),
-
-                message: vm.measures[0].config.fields.slice(3).reduce(
-                  function(a, b){
-                    return a + "<b>" + b + ":</b>&nbsp;" + utilsService.getJsonValueByJsonPath(d,b) + "<br/>";
-                  }
-                  ,""
-                ),
-                id: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[2],2),
-                icon:L.divIcon({className: 'my-div-icon'})
-              }
-            }
-          )
-
-          $scope.events = {
-            markers: {
-                enable: leafletMarkerEvents.getAvailableEvents(),
-            }
-          };
-          
-          //Init map events
-          var eventName = 'leafletDirectiveMarker.lmap' + vm.id + '.click';
-          $scope.$on(eventName, vm.clickMarkerMapEventProcessorEmitter);
-
-          redrawLeafletMap();
-          $scope.$on("$resize",redrawLeafletMap);
-          break;
-          case "table":
-          vm.data=data;
-          if(data.length>0){
-            var i = 0;
-            for(var propertyName in data[0]) {
-              vm.measures[i].config.order = propertyName;
-              i++;
-           }
-          }          
-          vm.config.config.tablePagination.limitOptions = vm.config.config.tablePagination.options.limitSelect ? [5, 10, 20, 50 ,100]  : undefined;
-          redrawTable();
-          $scope.$on("$resize",redrawTable);
-          break;
-      }
-
-      vm.type = vm.config.type;//Activate gadget
-      utilsService.forceRender($scope);
-    }
-
-    function redrawWordCloud(){
-      var element = $element[0];
-      var height = element.offsetHeight;
-      var width = element.offsetWidth;
-      var maxCount = vm.counterArray[0].count;
-      var minCount = vm.counterArray[vm.counterArray.length - 1].count;
-      var maxWordSize = width * 0.15;
-      var minWordSize = maxWordSize / 5;
-      var spread = maxCount - minCount;
-      if (spread <= 0) spread = 1;
-      var step = (maxWordSize - minWordSize) / spread;
-      vm.words = vm.counterArray.map(function(word) {
-          return {
-              text: word.text,
-              size: Math.round(maxWordSize - ((maxCount - word.count) * step)),
-              tooltipText: word.count + ' ocurrences'
-          }
-      })
-      vm.width = width;
-      vm.height = height;
-    }
-
-    function redrawTable(){
-     var element = $element[0];   
-      var width = element.offsetWidth;
-      
-      if(width<600){
-        vm.notSmall=false;
-      }else{
-        vm.notSmall=true;
-      }
-    }
-
-
-    function redrawLeafletMap(){
-      var element = $element[0];
-      var height = element.offsetHeight;
-      var width = element.offsetWidth;
-      vm.width = width;
-      vm.height = height;
-    }
-
-    function eventGProcessor(event,dataEvent){
-      if(dataEvent.type === "data" && dataEvent.data.length===0){
-        vm.type="nodata";
-        vm.status = "ready";
-      }
-      else{
-        switch(dataEvent.type){
-          case "data":
-            switch(dataEvent.name){
-              case "refresh":
-                if(vm.status === "initial" || vm.status === "ready"){
-                  processDataToGadget(dataEvent.data);
-                }
-                else{
-                  console.log("Ignoring refresh event, status " + vm.status);
-                }
-                break;
-              case "add":
-                //processDataToGadget(data);
-                break;
-              case "filter":
-                if(vm.status === "pending"){
-                  processDataToGadget(dataEvent.data);
-                  vm.status = "ready";
-                }
-                break;
-              case "drillup":
-                //processDataToGadget(data);
-                break;
-              case "drilldown":
-                //processDataToGadget(data);
-                break;
-              default:
-                console.error("Not allowed data event: " + dataEvent.name);
-                break;
-            } 
-            break;
-          case "filter":
-            vm.status = "pending";
-            //vm.type = "loading";
-            if(!vm.datastatus){
-              vm.datastatus = {};
-            }
-            if(dataEvent.data.length){
-              for(var index in dataEvent.data){
-                vm.datastatus[angular.copy(dataEvent.data[index].field)] = {
-                  value: angular.copy(dataEvent.data[index].value),
-                  id: angular.copy(dataEvent.id)
-                }
-              }
-            }
-            else{
-              delete vm.datastatus[dataEvent.field];
-              if(Object.keys(vm.datastatus).length === 0 ){
-                vm.datastatus = undefined;
-              }
-            }
-            datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
-            break;
-          default:
-            console.error("Not allowed event: " + dataEvent.type);
-            break;
-        }
-      }
-      utilsService.forceRender($scope);
-    }
-
-    function buildFilterStt(dataEvent){
-      return {
-        filter: {
-          id: dataEvent.id,
-          data: dataEvent.data.map(
-            function(f){
-              //quotes for string identification
-              if(typeof f.value === "string"){
-                f.value = "\"" + f.value + "\""
-              }
-              return {
-                field: f.field,
-                op: "=",
-                exp: f.value
-              }
-            }
-          )
-        } , 
-        group:[], 
-        project:vm.projects
-      }
-    }
-
-    //Chartjs click event
-    vm.clickChartEventProcessorEmitter = function(points, evt){
-      var originField;
-      var originValue;
-      switch(vm.config.type){
-        case "line":
-          //originField = vm.measures[0].config.fields[0];
-          //originValue = points[0]._model.label;
-          break;
-        case "bar":
-          //find serie x field if there are diferent x field in measures
-          for(var index in vm.data){
-            if(vm.data[index][points[0]._index]){
-              originField = vm.measures[index].config.fields[0];
-              break;
-            }
-          }
-          originValue = points[0]._model.label;
-          break;
-          case "radar":
-          //find serie x field if there are diferent x field in measures
-          for(var index in vm.data){
-            if(vm.data[index][points[0]._index]){
-              originField = vm.measures[index].config.fields[0];
-              break;
-            }
-          }
-          originValue = points[0]._chart.config.data.labels[points[0]._index];
-          break;
-        case "pie":
-          originField = vm.measures[0].config.fields[0];
-          originValue = points[0]._model.label;
-          break;
-      }
-      sendEmitterEvent(originField,originValue);
-    }
-
-    //leafletjs click marker event, by Point Id
-    vm.clickMarkerMapEventProcessorEmitter = function(event, args){
-      var originField = vm.measures[0].config.fields[2];
-      var originValue = args.model.id;
-      sendEmitterEvent(originField,originValue);
-    }
-
-    vm.selectItemTable = function (item) {
-      console.log(item, 'was selected');
-      for (var index = 0; index < vm.measures.length; index++) {
-        var element = vm.measures[index];
-        var originField = element.config.fields[0];
-        var originValue = item[element.config.order];
-        sendEmitterEvent(originField,originValue);
-      }      
-    };
-  
-
-    function sendEmitterEvent(originField,originValue){
-      if(vm.filterChaining){
-        var filterStt = angular.copy(vm.datastatus)||{}
-      }
-      else{
-        var filterStt = {}
-      }
-      filterStt[originField]={value: originValue, id: vm.id};
-      interactionService.sendBroadcastFilter(vm.id,filterStt);
-    }
-  }
-})();
-
-(function () {
-  'use strict';
-
-  LiveHTMLController.$inject = ["$log", "$scope", "$element", "$mdCompiler", "$compile", "datasourceSolverService", "sofia2HttpService", "interactionService", "utilsService"];
-  angular.module('s2DashboardFramework')
-    .component('livehtml', {
-      templateUrl: 'app/components/view/liveHTMLComponent/livehtml.html',
-      controller: LiveHTMLController,
-      controllerAs: 'vm',
-      bindings:{
-        id:"=?",
-        livecontent:"<",
-        datasource:"<",
-        datastatus:"=?"
-      }
-    });
-
-  /** @ngInject */
-  function LiveHTMLController($log, $scope, $element, $mdCompiler, $compile, datasourceSolverService,sofia2HttpService,interactionService,utilsService) {
-    var vm = this;
-    $scope.ds = [];
-    vm.status = "initial";
-
-    vm.$onInit = function(){
-      //register Gadget in interaction service when gadget has id
-      if(vm.id){
-        interactionService.registerGadget(vm.id);
-      }
-      //Activate incoming events
-      vm.unsubscribeHandler = $scope.$on(vm.id,eventLProcessor);
-      compileContent();
-    }
-
-   
-
-    $scope.parseDSArray = function(name){
-      var result=[];
-      var properties=[];
-      if(typeof name !="undefined" && name != null){
-      try {
-          for(var propertyName in $scope.ds[0]) {
-            properties.push(propertyName);
-          }
-          if(properties.indexOf(name) > -1){
-          for (var index = 0; index <  $scope.ds.length; index++) {             
-              
-                result.push($scope.ds[index][name]);               
-              }          
-            }        
-          
-      } catch (error) {
-        
-      }
-    }
-      return result;
-    }
-
-
-
-    vm.$onChanges = function(changes,c,d,e) {
-      if("datasource" in changes && changes["datasource"].currentValue){
-        refreshSubscriptionDatasource(changes.datasource.currentValue, changes.datasource.previousValue)
-      }
-      else{
-        compileContent();
-      }
-    };
-
-    $scope.getTime = function(){
-      var date  = new Date();
-      return date.getTime();
-    }
-
-    $scope.sendFilter = function(field, value){
-      var filterStt = {};
-      filterStt[field]={value: value, id: vm.id};
-      interactionService.sendBroadcastFilter(vm.id,filterStt);
-    }
-    
-    $scope.sendFilterChain = function(field, value){
-      var filterStt = angular.copy(vm.datastatus)||{};
-      filterStt[field]={value: value, id: vm.id};
-      interactionService.sendBroadcastFilter(vm.id,filterStt);
-    }
-
-    vm.insertSofia2Http = function(token, clientPlatform, clientPlatformId, ontology, data){
-      sofia2HttpService.insertSofia2Http(token, clientPlatform, clientPlatformId, ontology, data).then(
-        function(e){
-          console.log("OK Rest: " + JSON.stringify(e));
-        }).catch(function(e){
-          console.log("Fail Rest: " + JSON.stringify(e));
-        });
-    }
-
-    vm.$onDestroy = function(){
-      if($scope.unsubscribeHandler){
-        $scope.unsubscribeHandler();
-        $scope.unsubscribeHandler=null;
-        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
-      }
-    }
-
-    function compileContent(){
-      var parentElement = $element[0];
-      $mdCompiler.compile({
-        template: vm.livecontent
-      }).then(function (compileData) {
-        compileData.link($scope);
-        $element.empty();
-        $element.prepend(compileData.element)
-      });
-    }
-
-    function refreshSubscriptionDatasource(newDatasource, oldDatasource) {
-      if($scope.unsubscribeHandler){
-        $scope.unsubscribeHandler();
-        $scope.unsubscribeHandler=null;
-        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
-      }
-
-      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
-        {
-          type: newDatasource.type,
-          name: newDatasource.name,
-          refresh: newDatasource.refresh,
-          triggers: [{params:{filter:[],group:[],project:[]},emitTo:vm.id}]
-        }
-      );
-    };
-
-    function eventLProcessor(event,dataEvent){
-      if(dataEvent.type === "data" && dataEvent.data.length===0){
-        vm.type="nodata";
-      }
-      else{
-        switch(dataEvent.type){
-          case "data":
-            switch(dataEvent.name){
-              case "refresh":
-                if(vm.status === "initial" || vm.status === "ready"){
-                  $scope.ds = dataEvent.data;
-                }
-                else{
-                  console.log("Ignoring refresh event, status " + vm.status);
-                }
-                break;
-              case "add":
-                $scope.ds.concat(data);
-                break;
-              case "filter":
-                if(vm.status === "pending"){
-                  $scope.ds = dataEvent.data;
-                  vm.status = "ready";
-                }
-                break;
-              default:
-                console.error("Not allowed data event: " + dataEvent.name);
-                break;
-            } 
-            break;
-          case "filter":
-            vm.status = "pending";
-            vm.type = "loading";
-            if(!vm.datastatus){
-              vm.datastatus = {};
-            }
-            if(dataEvent.data.length){
-              for(var index in dataEvent.data){
-                vm.datastatus[angular.copy(dataEvent.data[index].field)] = {
-                  value: angular.copy(dataEvent.data[index].value),
-                  id: angular.copy(dataEvent.id)
-                }
-              }
-            }
-            else{
-              delete vm.datastatus[dataEvent.field];
-              if(Object.keys(vm.datastatus).length === 0 ){
-                vm.datastatus = undefined;
-              }
-            }
-            datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
-            break;
-          default:
-            console.error("Not allowed event: " + dataEvent.type);
-            break;
-        }
-      }
-      utilsService.forceRender($scope);
-    }
-
-    function buildFilterStt(dataEvent){
-      return {
-        filter: {
-          id: dataEvent.id,
-          data: dataEvent.data.map(
-            function(f){
-              //quotes for string identification
-              if(typeof f.value === "string"){
-                f.value = "\"" + f.value + "\""
-              }
-              return {
-                field: f.field,
-                op: "=",
-                exp: f.value
-              }
-            }
-          )
-        } , 
-        group:[], 
-        project:vm.projects
-      }
-    }
-  }
-})();
-
-(function () {
-  'use strict';
-
   UtilsService.$inject = ["$http", "$log", "__env", "$rootScope"];
   angular.module('s2DashboardFramework')
     .service('utilsService', UtilsService);
@@ -3720,9 +3752,80 @@
         }    
         return fields;
       }
+     
+      vm.getMarkerForMap = function(value,jsonMarkers) {
+       
+        var result = {
+          type: 'vectorMarker',
+          icon: 'circle',
+          markerColor: 'blue',
+          iconColor:"white"
+        }
+        var found = false;
+        for (var index = 0; index < jsonMarkers.length && !found; index++) {
+          var limit = jsonMarkers[index];
+          var minUndefined = typeof limit.min=="undefined";
+          var maxUndefined = typeof limit.max=="undefined";    
+          
+          if(!minUndefined && !maxUndefined){
+            if(value<=limit.max && value>=limit.min){
+              result.icon=limit.icon;
+              result.markerColor=limit.markerColor;
+              result.iconColor=limit.iconColor;
+              found=true;
+            }
+          }else if (!minUndefined && maxUndefined){
+            if( value>=limit.min){
+              result.icon=limit.icon;
+              result.markerColor=limit.markerColor;
+              result.iconColor=limit.iconColor;
+              found=true;
+            }
+
+          }else if (minUndefined && !maxUndefined){
+            if( value<=limit.max){
+              result.icon=limit.icon;
+              result.markerColor=limit.markerColor;
+              result.iconColor=limit.iconColor;
+              found=true;
+            }
+
+          }
+          
+        }
+
+        return result;
+      }
+     
+
+     
+
   };
 })();
 
+var env = {};
+
+// Import variables if present (from env.js)
+if(window && window.__env){
+  Object.assign(env, window.__env);
+}
+else{//Default config
+  env.socketEndpointConnect = '/dashboardengine/dsengine/solver';
+  env.socketEndpointSend = '/dsengine/solver';
+  env.socketEndpointSubscribe = '/dsengine/broker';
+  env.endpointSofia2ControlPanel = '/controlpanel';
+  env.endpointSofia2DashboardEngine = '/dashboardengine';
+  env.enableDebug = false;
+  env.dashboardEngineUsername = '';
+  env.dashboardEnginePassword = '';
+  env.dashboardEngineLoginRest = '/loginRest';
+  env.dashboardEngineLoginRestTimeout = 5000;
+  env.sofia2RestUrl = 'http://rancher.sofia4cities.com/iotbroker/rest/client';
+}
+
+angular.module('s2DashboardFramework').constant('__env', env);
+
+!function(e,i,n){"use strict";var t=function(){return"lfobjyxxxxxxxx".replace(/[xy]/g,function(e){var i=16*Math.random()|0,n="x"==e?i:3&i|8;return n.toString(16)})},l=function(e){var i=e.type,n=e.name;return o(i,n)?"image":r(i,n)?"video":s(i,n)?"audio":"object"},o=function(e,i){return!(!e.match("image.*")&&!i.match(/\.(gif|png|jpe?g)$/i))},r=function(e,i){return!(!e.match("video.*")&&!i.match(/\.(og?|mp4|webm|3gp)$/i))},s=function(e,i){return!(!e.match("audio.*")&&!i.match(/\.(ogg|mp3|wav)$/i))},a=function(i){var n={key:t(),lfFile:i,lfFileName:i.name,lfFileType:i.type,lfTagType:l(i),lfDataUrl:e.URL.createObjectURL(i),isRemote:!1};return n},f=function(e,i,n){var o={name:i,type:n},r={key:t(),lfFile:void 0,lfFileName:i,lfFileType:n,lfTagType:l(o),lfDataUrl:e,isRemote:!0};return r},c=i.module("lfNgMdFileInput",["ngMaterial"]);c.directive("lfFile",function(){return{restrict:"E",scope:{lfFileObj:"=",lfUnknowClass:"="},link:function(e,i,n){var t=e.lfFileObj.lfDataUrl,l=e.lfFileObj.lfFileType,o=e.lfFileObj.lfTagType,r=e.lfUnknowClass;switch(o){case"image":i.replaceWith('<img src="'+t+'" />');break;case"video":i.replaceWith('<video controls><source src="'+t+'""></video>');break;case"audio":i.replaceWith('<audio controls><source src="'+t+'""></audio>');break;default:void 0==e.lfFileObj.lfFile&&(l="unknown/unknown"),i.replaceWith('<object type="'+l+'" data="'+t+'"><div class="lf-ng-md-file-input-preview-default"><md-icon class="lf-ng-md-file-input-preview-icon '+r+'"></md-icon></div></object>')}}}}),c.run(["$templateCache",function(e){e.put("lfNgMdFileinput.html",['<div layout="column" class="lf-ng-md-file-input" ng-model="'+t()+'">','<div layout="column" class="lf-ng-md-file-input-preview-container" ng-class="{\'disabled\':isDisabled}" ng-show="isDrag || (isPreview && lfFiles.length)">','<md-button aria-label="remove all files" class="close lf-ng-md-file-input-x" ng-click="removeAllFiles($event)" ng-hide="!lfFiles.length || !isPreview" >&times;</md-button>','<div class="lf-ng-md-file-input-drag">','<div layout="row" layout-align="center center" class="lf-ng-md-file-input-drag-text-container" ng-show="(!lfFiles.length || !isPreview) && isDrag">','<div class="lf-ng-md-file-input-drag-text">{{strCaptionDragAndDrop}}</div>',"</div>",'<div class="lf-ng-md-file-input-thumbnails" ng-if="isPreview == true">','<div class="lf-ng-md-file-input-frame" ng-repeat="lffile in lfFiles" ng-click="onFileClick(lffile)">','<div class="lf-ng-md-file-input-x" aria-label="remove {{lffile.lFfileName}}" ng-click="removeFile(lffile,$event)">&times;</div>','<lf-file lf-file-obj="lffile" lf-unknow-class="strUnknowIconCls"/>','<div class="lf-ng-md-file-input-frame-footer">','<div class="lf-ng-md-file-input-frame-caption">{{lffile.lfFileName}}</div>',"</div>","</div>","</div>",'<div class="clearfix" style="clear:both"></div>',"</div>","</div>",'<div layout="row" class="lf-ng-md-file-input-container" >','<div class="lf-ng-md-file-input-caption" layout="row" layout-align="start center" flex ng-class="{\'disabled\':isDisabled}" >','<md-icon class="lf-icon" ng-class="strCaptionIconCls"></md-icon>','<div flex class="lf-ng-md-file-input-caption-text-default" ng-show="!lfFiles.length">',"{{strCaptionPlaceholder}}","</div>",'<div flex class="lf-ng-md-file-input-caption-text" ng-hide="!lfFiles.length">','<span ng-if="isCustomCaption">{{strCaption}}</span>','<span ng-if="!isCustomCaption">','{{ lfFiles.length == 1 ? lfFiles[0].lfFileName : lfFiles.length+" files selected" }}',"</span>","</div>",'<md-progress-linear md-mode="determinate" value="{{floatProgress}}" ng-show="intLoading && isProgress"></md-progress-linear>',"</div>",'<md-button aria-label="remove all files" ng-disabled="isDisabled" ng-click="removeAllFiles()" ng-hide="!lfFiles.length || intLoading" class="md-raised lf-ng-md-file-input-button lf-ng-md-file-input-button-remove" ng-class="strRemoveButtonCls">','<md-icon class="lf-icon" ng-class="strRemoveIconCls"></md-icon> ',"{{strCaptionRemove}}","</md-button>",'<md-button aria-label="submit" ng-disabled="isDisabled" ng-click="onSubmitClick()" class="md-raised md-warn lf-ng-md-file-input-button lf-ng-md-file-input-button-submit" ng-class="strSubmitButtonCls" ng-show="lfFiles.length && !intLoading && isSubmit">','<md-icon class="lf-icon" ng-class="strSubmitIconCls"></md-icon> ',"{{strCaptionSubmit}}","</md-button>",'<md-button aria-label="browse" ng-disabled="isDisabled" ng-click="openDialog($event, this)" class="md-raised lf-ng-md-file-input-button lf-ng-md-file-input-button-brower" ng-class="strBrowseButtonCls">','<md-icon class="lf-icon" ng-class="strBrowseIconCls"></md-icon> ',"{{strCaptionBrowse}}",'<input type="file" aria-label="{{strAriaLabel}}" accept="{{accept}}" ng-disabled="isDisabled" class="lf-ng-md-file-input-tag" />',"</md-button>","</div>","</div>"].join(""))}]),c.filter("lfTrusted",["$sce",function(e){return function(i){return e.trustAsResourceUrl(i)}}]),c.directive("lfRequired",function(){return{restrict:"A",require:"ngModel",link:function(e,i,n,t){t&&(t.$validators.required=function(e,i){return e?e.length>0:!1})}}}),c.directive("lfMaxcount",function(){return{restrict:"A",require:"ngModel",link:function(e,i,n,t){if(t){var l=-1;n.$observe("lfMaxcount",function(e){var i=parseInt(e,10);l=isNaN(i)?-1:i,t.$validate()}),t.$validators.maxcount=function(e,i){return e?e.length<=l:!1}}}}}),c.directive("lfFilesize",function(){return{restrict:"A",require:"ngModel",link:function(e,i,n,t){if(t){var l=-1;n.$observe("lfFilesize",function(e){var i=/^[1-9][0-9]*(Byte|KB|MB)$/;if(i.test(e)){var n=["Byte","KB","MB"],o=e.match(i)[1],r=e.substring(0,e.indexOf(o));n.every(function(e,i){return o===e?(l=parseInt(r)*Math.pow(1024,i),!1):!0})}else l=-1;t.$validate()}),t.$validators.filesize=function(e,i){if(!e)return!1;var n=!0;return e.every(function(e,i){return e.lfFile.size>l?(n=!1,!1):!0}),n}}}}}),c.directive("lfTotalsize",function(){return{restrict:"A",require:"ngModel",link:function(e,n,t,l){if(l){var o=-1;t.$observe("lfTotalsize",function(e){var i=/^[1-9][0-9]*(Byte|KB|MB)$/;if(i.test(e)){var n=["Byte","KB","MB"],t=e.match(i)[1],r=e.substring(0,e.indexOf(t));n.every(function(e,i){return t===e?(o=parseInt(r)*Math.pow(1024,i),!1):!0})}else o=-1;l.$validate()}),l.$validators.totalsize=function(e,n){if(!e)return!1;var t=0;return i.forEach(e,function(e,i){t+=e.lfFile.size}),o>t}}}}}),c.directive("lfMimetype",function(){return{restrict:"A",require:"ngModel",link:function(e,i,t,l){if(l){var o;t.$observe("lfMimetype",function(e){var i=e.replace(/,/g,"|");o=new RegExp(i,"i"),l.$validate()}),l.$validators.mimetype=function(e,i){if(!e)return!1;var t=!0;return e.every(function(e,i){return e.lfFile!==n&&e.lfFile.type.match(o)?!0:(t=!1,!1)}),t}}}}}),c.directive("lfNgMdFileInput",["$q","$compile","$timeout",function(e,t,l){return{restrict:"E",templateUrl:"lfNgMdFileinput.html",replace:!0,require:"ngModel",scope:{lfFiles:"=?",lfApi:"=?",lfOption:"=?",lfCaption:"@?",lfPlaceholder:"@?",lfDragAndDropLabel:"@?",lfBrowseLabel:"@?",lfRemoveLabel:"@?",lfSubmitLabel:"@?",lfOnFileClick:"=?",lfOnSubmitClick:"=?",lfOnFileRemove:"=?",accept:"@?",ngDisabled:"=?",ngChange:"&?"},link:function(t,o,r,s){var c=i.element(o[0].querySelector(".lf-ng-md-file-input-tag")),u=i.element(o[0].querySelector(".lf-ng-md-file-input-drag")),d=i.element(o[0].querySelector(".lf-ng-md-file-input-thumbnails")),m=0;t.intLoading=0,t.floatProgress=0,t.isPreview=!1,t.isDrag=!1,t.isMutiple=!1,t.isProgress=!1,t.isCustomCaption=!1,t.isSubmit=!1,i.isDefined(r.preview)&&(t.isPreview=!0),i.isDefined(r.drag)&&(t.isDrag=!0),i.isDefined(r.multiple)?(c.attr("multiple","multiple"),t.isMutiple=!0):c.removeAttr("multiple"),i.isDefined(r.progress)&&(t.isProgress=!0),i.isDefined(r.submit)&&(t.isSubmit=!0),t.isDisabled=!1,i.isDefined(r.ngDisabled)&&t.$watch("ngDisabled",function(e){t.isDisabled=e}),t.strBrowseIconCls="lf-browse",t.strRemoveIconCls="lf-remove",t.strCaptionIconCls="lf-caption",t.strSubmitIconCls="lf-submit",t.strUnknowIconCls="lf-unknow",t.strBrowseButtonCls="md-primary",t.strRemoveButtonCls="",t.strSubmitButtonCls="md-accent",i.isDefined(r.lfOption)&&i.isObject(t.lfOption)&&(t.lfOption.hasOwnProperty("browseIconCls")&&(t.strBrowseIconCls=t.lfOption.browseIconCls),t.lfOption.hasOwnProperty("removeIconCls")&&(t.strRemoveIconCls=t.lfOption.removeIconCls),t.lfOption.hasOwnProperty("captionIconCls")&&(t.strCaptionIconCls=t.lfOption.captionIconCls),t.lfOption.hasOwnProperty("unknowIconCls")&&(t.strUnknowIconCls=t.lfOption.unknowIconCls),t.lfOption.hasOwnProperty("submitIconCls")&&(t.strSubmitIconCls=t.lfOption.submitIconCls),t.lfOption.hasOwnProperty("strBrowseButtonCls")&&(t.strBrowseButtonCls=t.lfOption.strBrowseButtonCls),t.lfOption.hasOwnProperty("strRemoveButtonCls")&&(t.strRemoveButtonCls=t.lfOption.strRemoveButtonCls),t.lfOption.hasOwnProperty("strSubmitButtonCls")&&(t.strSubmitButtonCls=t.lfOption.strSubmitButtonCls)),t.accept=t.accept||"",t.lfFiles=[],t[r.ngModel]=t.lfFiles,t.lfApi=new function(){var e=this;e.removeAll=function(){t.removeAllFiles()},e.removeByName=function(e){t.removeFileByName(e)},e.addRemoteFile=function(e,i,n){var l=f(e,i,n);t.lfFiles.push(l)}},t.strCaption="",t.strCaptionPlaceholder="Select file",t.strCaptionDragAndDrop="Drag & drop files here...",t.strCaptionBrowse="Browse",t.strCaptionRemove="Remove",t.strCaptionSubmit="Submit",t.strAriaLabel="",i.isDefined(r.ariaLabel)&&(t.strAriaLabel=r.ariaLabel),i.isDefined(r.lfPlaceholder)&&t.$watch("lfPlaceholder",function(e){t.strCaptionPlaceholder=e}),i.isDefined(r.lfCaption)&&(t.isCustomCaption=!0,t.$watch("lfCaption",function(e){t.strCaption=e})),t.lfDragAndDropLabel&&(t.strCaptionDragAndDrop=t.lfDragAndDropLabel),t.lfBrowseLabel&&(t.strCaptionBrowse=t.lfBrowseLabel),t.lfRemoveLabel&&(t.strCaptionRemove=t.lfRemoveLabel),t.lfSubmitLabel&&(t.strCaptionSubmit=t.lfSubmitLabel),t.openDialog=function(e,i){e&&l(function(){e.preventDefault(),e.stopPropagation();var i=e.target.children[2];i!==n&&c[0].click()},0)},t.removeAllFilesWithoutVaildate=function(){t.isDisabled||(t.lfFiles.length=0,d.empty())},t.removeAllFiles=function(e){t.removeAllFilesWithoutVaildate(),g()},t.removeFileByName=function(e,i){t.isDisabled||(t.lfFiles.every(function(i,n){return i.lfFileName==e?(t.lfFiles.splice(n,1),!1):!0}),g())},t.removeFile=function(e){t.lfFiles.every(function(n,l){return n.key==e.key?(i.isFunction(t.lfOnFileRemove)&&t.lfOnFileRemove(n,l),t.lfFiles.splice(l,1),!1):!0}),g()},t.onFileClick=function(e){i.isFunction(t.lfOnFileClick)&&t.lfFiles.every(function(i,n){return i.key==e.key?(t.lfOnFileClick(i,n),!1):!0})},t.onSubmitClick=function(){i.isFunction(t.lfOnSubmitClick)&&t.lfOnSubmitClick(t.lfFiles)},u.bind("dragover",function(e){e.stopPropagation(),e.preventDefault(),!t.isDisabled&&t.isDrag&&u.addClass("lf-ng-md-file-input-drag-hover")}),u.bind("dragleave",function(e){e.stopPropagation(),e.preventDefault(),!t.isDisabled&&t.isDrag&&u.removeClass("lf-ng-md-file-input-drag-hover")}),u.bind("drop",function(e){if(e.stopPropagation(),e.preventDefault(),!t.isDisabled&&t.isDrag){u.removeClass("lf-ng-md-file-input-drag-hover"),i.isObject(e.originalEvent)&&(e=e.originalEvent);var n=e.target.files||e.dataTransfer.files,l=t.accept.replace(/,/g,"|"),o=new RegExp(l,"i"),r=[];i.forEach(n,function(e,i){e.type.match(o)&&r.push(e)}),p(r)}}),c.bind("change",function(e){var i=e.files||e.target.files;p(i)});var p=function(e){if(!(e.length<=0)){t.lfFiles.map(function(e){return e.lfFileName});if(t.floatProgress=0,t.isMutiple){m=e.length,t.intLoading=m;for(var i=0;i<e.length;i++){var n=e[i];setTimeout(v(n),100*i)}}else{m=1,t.intLoading=m;for(var i=0;i<e.length;i++){var n=e[i];t.removeAllFilesWithoutVaildate(),v(n);break}}c.val("")}},g=function(){i.isFunction(t.ngChange)&&t.ngChange(),s.$validate()},v=function(e){b(e).then(function(i){var l=!1;if(t.lfFiles.every(function(i,t){var o=i.lfFile;return i.isRemote?!0:o.name!==n&&o.name==e.name?(o.size==e.size&&o.lastModified==e.lastModified&&(l=!0),!1):!0}),!l){var o=a(e);t.lfFiles.push(o)}0==t.intLoading&&g()},function(e){},function(e){})},b=function(i,n){var l=e.defer(),o=new FileReader;return o.onloadstart=function(){l.notify(0)},o.onload=function(e){},o.onloadend=function(e){l.resolve({index:n,result:o.result}),t.intLoading--,t.floatProgress=(m-t.intLoading)/m*100},o.onerror=function(e){l.reject(o.result),t.intLoading--,t.floatProgress=(m-t.intLoading)/m*100},o.onprogress=function(e){l.notify(e.loaded/e.total)},o.readAsArrayBuffer(i),l.promise}}}}])}(window,window.angular);
 (function () {
   'use strict';
 
@@ -4345,40 +4448,6 @@
 })();
 
 (function () {
-  'use strict';
-
-  angular.module('s2DashboardFramework').directive('draggable', function() {
-    return function(scope, element) {
-      // this gives us the native JS object
-      var el = element[0];
-
-      el.draggable = true;
-
-      el.addEventListener(
-        'dragstart',
-        function(e) {
-          e.dataTransfer.effectAllowed = 'move';
-          e.dataTransfer.setData('type', this.id);
-          this.classList.add('drag');
-          return false;
-        },
-        false
-      );
-
-      el.addEventListener(
-        'dragend',
-        function(e) {
-          this.classList.remove('drag');
-          return false;
-        },
-        false
-      );
-    }
-  });
-})();
-
-!function(e,i,n){"use strict";var t=function(){return"lfobjyxxxxxxxx".replace(/[xy]/g,function(e){var i=16*Math.random()|0,n="x"==e?i:3&i|8;return n.toString(16)})},l=function(e){var i=e.type,n=e.name;return o(i,n)?"image":r(i,n)?"video":s(i,n)?"audio":"object"},o=function(e,i){return!(!e.match("image.*")&&!i.match(/\.(gif|png|jpe?g)$/i))},r=function(e,i){return!(!e.match("video.*")&&!i.match(/\.(og?|mp4|webm|3gp)$/i))},s=function(e,i){return!(!e.match("audio.*")&&!i.match(/\.(ogg|mp3|wav)$/i))},a=function(i){var n={key:t(),lfFile:i,lfFileName:i.name,lfFileType:i.type,lfTagType:l(i),lfDataUrl:e.URL.createObjectURL(i),isRemote:!1};return n},f=function(e,i,n){var o={name:i,type:n},r={key:t(),lfFile:void 0,lfFileName:i,lfFileType:n,lfTagType:l(o),lfDataUrl:e,isRemote:!0};return r},c=i.module("lfNgMdFileInput",["ngMaterial"]);c.directive("lfFile",function(){return{restrict:"E",scope:{lfFileObj:"=",lfUnknowClass:"="},link:function(e,i,n){var t=e.lfFileObj.lfDataUrl,l=e.lfFileObj.lfFileType,o=e.lfFileObj.lfTagType,r=e.lfUnknowClass;switch(o){case"image":i.replaceWith('<img src="'+t+'" />');break;case"video":i.replaceWith('<video controls><source src="'+t+'""></video>');break;case"audio":i.replaceWith('<audio controls><source src="'+t+'""></audio>');break;default:void 0==e.lfFileObj.lfFile&&(l="unknown/unknown"),i.replaceWith('<object type="'+l+'" data="'+t+'"><div class="lf-ng-md-file-input-preview-default"><md-icon class="lf-ng-md-file-input-preview-icon '+r+'"></md-icon></div></object>')}}}}),c.run(["$templateCache",function(e){e.put("lfNgMdFileinput.html",['<div layout="column" class="lf-ng-md-file-input" ng-model="'+t()+'">','<div layout="column" class="lf-ng-md-file-input-preview-container" ng-class="{\'disabled\':isDisabled}" ng-show="isDrag || (isPreview && lfFiles.length)">','<md-button aria-label="remove all files" class="close lf-ng-md-file-input-x" ng-click="removeAllFiles($event)" ng-hide="!lfFiles.length || !isPreview" >&times;</md-button>','<div class="lf-ng-md-file-input-drag">','<div layout="row" layout-align="center center" class="lf-ng-md-file-input-drag-text-container" ng-show="(!lfFiles.length || !isPreview) && isDrag">','<div class="lf-ng-md-file-input-drag-text">{{strCaptionDragAndDrop}}</div>',"</div>",'<div class="lf-ng-md-file-input-thumbnails" ng-if="isPreview == true">','<div class="lf-ng-md-file-input-frame" ng-repeat="lffile in lfFiles" ng-click="onFileClick(lffile)">','<div class="lf-ng-md-file-input-x" aria-label="remove {{lffile.lFfileName}}" ng-click="removeFile(lffile,$event)">&times;</div>','<lf-file lf-file-obj="lffile" lf-unknow-class="strUnknowIconCls"/>','<div class="lf-ng-md-file-input-frame-footer">','<div class="lf-ng-md-file-input-frame-caption">{{lffile.lfFileName}}</div>',"</div>","</div>","</div>",'<div class="clearfix" style="clear:both"></div>',"</div>","</div>",'<div layout="row" class="lf-ng-md-file-input-container" >','<div class="lf-ng-md-file-input-caption" layout="row" layout-align="start center" flex ng-class="{\'disabled\':isDisabled}" >','<md-icon class="lf-icon" ng-class="strCaptionIconCls"></md-icon>','<div flex class="lf-ng-md-file-input-caption-text-default" ng-show="!lfFiles.length">',"{{strCaptionPlaceholder}}","</div>",'<div flex class="lf-ng-md-file-input-caption-text" ng-hide="!lfFiles.length">','<span ng-if="isCustomCaption">{{strCaption}}</span>','<span ng-if="!isCustomCaption">','{{ lfFiles.length == 1 ? lfFiles[0].lfFileName : lfFiles.length+" files selected" }}',"</span>","</div>",'<md-progress-linear md-mode="determinate" value="{{floatProgress}}" ng-show="intLoading && isProgress"></md-progress-linear>',"</div>",'<md-button aria-label="remove all files" ng-disabled="isDisabled" ng-click="removeAllFiles()" ng-hide="!lfFiles.length || intLoading" class="md-raised lf-ng-md-file-input-button lf-ng-md-file-input-button-remove" ng-class="strRemoveButtonCls">','<md-icon class="lf-icon" ng-class="strRemoveIconCls"></md-icon> ',"{{strCaptionRemove}}","</md-button>",'<md-button aria-label="submit" ng-disabled="isDisabled" ng-click="onSubmitClick()" class="md-raised md-warn lf-ng-md-file-input-button lf-ng-md-file-input-button-submit" ng-class="strSubmitButtonCls" ng-show="lfFiles.length && !intLoading && isSubmit">','<md-icon class="lf-icon" ng-class="strSubmitIconCls"></md-icon> ',"{{strCaptionSubmit}}","</md-button>",'<md-button aria-label="browse" ng-disabled="isDisabled" ng-click="openDialog($event, this)" class="md-raised lf-ng-md-file-input-button lf-ng-md-file-input-button-brower" ng-class="strBrowseButtonCls">','<md-icon class="lf-icon" ng-class="strBrowseIconCls"></md-icon> ',"{{strCaptionBrowse}}",'<input type="file" aria-label="{{strAriaLabel}}" accept="{{accept}}" ng-disabled="isDisabled" class="lf-ng-md-file-input-tag" />',"</md-button>","</div>","</div>"].join(""))}]),c.filter("lfTrusted",["$sce",function(e){return function(i){return e.trustAsResourceUrl(i)}}]),c.directive("lfRequired",function(){return{restrict:"A",require:"ngModel",link:function(e,i,n,t){t&&(t.$validators.required=function(e,i){return e?e.length>0:!1})}}}),c.directive("lfMaxcount",function(){return{restrict:"A",require:"ngModel",link:function(e,i,n,t){if(t){var l=-1;n.$observe("lfMaxcount",function(e){var i=parseInt(e,10);l=isNaN(i)?-1:i,t.$validate()}),t.$validators.maxcount=function(e,i){return e?e.length<=l:!1}}}}}),c.directive("lfFilesize",function(){return{restrict:"A",require:"ngModel",link:function(e,i,n,t){if(t){var l=-1;n.$observe("lfFilesize",function(e){var i=/^[1-9][0-9]*(Byte|KB|MB)$/;if(i.test(e)){var n=["Byte","KB","MB"],o=e.match(i)[1],r=e.substring(0,e.indexOf(o));n.every(function(e,i){return o===e?(l=parseInt(r)*Math.pow(1024,i),!1):!0})}else l=-1;t.$validate()}),t.$validators.filesize=function(e,i){if(!e)return!1;var n=!0;return e.every(function(e,i){return e.lfFile.size>l?(n=!1,!1):!0}),n}}}}}),c.directive("lfTotalsize",function(){return{restrict:"A",require:"ngModel",link:function(e,n,t,l){if(l){var o=-1;t.$observe("lfTotalsize",function(e){var i=/^[1-9][0-9]*(Byte|KB|MB)$/;if(i.test(e)){var n=["Byte","KB","MB"],t=e.match(i)[1],r=e.substring(0,e.indexOf(t));n.every(function(e,i){return t===e?(o=parseInt(r)*Math.pow(1024,i),!1):!0})}else o=-1;l.$validate()}),l.$validators.totalsize=function(e,n){if(!e)return!1;var t=0;return i.forEach(e,function(e,i){t+=e.lfFile.size}),o>t}}}}}),c.directive("lfMimetype",function(){return{restrict:"A",require:"ngModel",link:function(e,i,t,l){if(l){var o;t.$observe("lfMimetype",function(e){var i=e.replace(/,/g,"|");o=new RegExp(i,"i"),l.$validate()}),l.$validators.mimetype=function(e,i){if(!e)return!1;var t=!0;return e.every(function(e,i){return e.lfFile!==n&&e.lfFile.type.match(o)?!0:(t=!1,!1)}),t}}}}}),c.directive("lfNgMdFileInput",["$q","$compile","$timeout",function(e,t,l){return{restrict:"E",templateUrl:"lfNgMdFileinput.html",replace:!0,require:"ngModel",scope:{lfFiles:"=?",lfApi:"=?",lfOption:"=?",lfCaption:"@?",lfPlaceholder:"@?",lfDragAndDropLabel:"@?",lfBrowseLabel:"@?",lfRemoveLabel:"@?",lfSubmitLabel:"@?",lfOnFileClick:"=?",lfOnSubmitClick:"=?",lfOnFileRemove:"=?",accept:"@?",ngDisabled:"=?",ngChange:"&?"},link:function(t,o,r,s){var c=i.element(o[0].querySelector(".lf-ng-md-file-input-tag")),u=i.element(o[0].querySelector(".lf-ng-md-file-input-drag")),d=i.element(o[0].querySelector(".lf-ng-md-file-input-thumbnails")),m=0;t.intLoading=0,t.floatProgress=0,t.isPreview=!1,t.isDrag=!1,t.isMutiple=!1,t.isProgress=!1,t.isCustomCaption=!1,t.isSubmit=!1,i.isDefined(r.preview)&&(t.isPreview=!0),i.isDefined(r.drag)&&(t.isDrag=!0),i.isDefined(r.multiple)?(c.attr("multiple","multiple"),t.isMutiple=!0):c.removeAttr("multiple"),i.isDefined(r.progress)&&(t.isProgress=!0),i.isDefined(r.submit)&&(t.isSubmit=!0),t.isDisabled=!1,i.isDefined(r.ngDisabled)&&t.$watch("ngDisabled",function(e){t.isDisabled=e}),t.strBrowseIconCls="lf-browse",t.strRemoveIconCls="lf-remove",t.strCaptionIconCls="lf-caption",t.strSubmitIconCls="lf-submit",t.strUnknowIconCls="lf-unknow",t.strBrowseButtonCls="md-primary",t.strRemoveButtonCls="",t.strSubmitButtonCls="md-accent",i.isDefined(r.lfOption)&&i.isObject(t.lfOption)&&(t.lfOption.hasOwnProperty("browseIconCls")&&(t.strBrowseIconCls=t.lfOption.browseIconCls),t.lfOption.hasOwnProperty("removeIconCls")&&(t.strRemoveIconCls=t.lfOption.removeIconCls),t.lfOption.hasOwnProperty("captionIconCls")&&(t.strCaptionIconCls=t.lfOption.captionIconCls),t.lfOption.hasOwnProperty("unknowIconCls")&&(t.strUnknowIconCls=t.lfOption.unknowIconCls),t.lfOption.hasOwnProperty("submitIconCls")&&(t.strSubmitIconCls=t.lfOption.submitIconCls),t.lfOption.hasOwnProperty("strBrowseButtonCls")&&(t.strBrowseButtonCls=t.lfOption.strBrowseButtonCls),t.lfOption.hasOwnProperty("strRemoveButtonCls")&&(t.strRemoveButtonCls=t.lfOption.strRemoveButtonCls),t.lfOption.hasOwnProperty("strSubmitButtonCls")&&(t.strSubmitButtonCls=t.lfOption.strSubmitButtonCls)),t.accept=t.accept||"",t.lfFiles=[],t[r.ngModel]=t.lfFiles,t.lfApi=new function(){var e=this;e.removeAll=function(){t.removeAllFiles()},e.removeByName=function(e){t.removeFileByName(e)},e.addRemoteFile=function(e,i,n){var l=f(e,i,n);t.lfFiles.push(l)}},t.strCaption="",t.strCaptionPlaceholder="Select file",t.strCaptionDragAndDrop="Drag & drop files here...",t.strCaptionBrowse="Browse",t.strCaptionRemove="Remove",t.strCaptionSubmit="Submit",t.strAriaLabel="",i.isDefined(r.ariaLabel)&&(t.strAriaLabel=r.ariaLabel),i.isDefined(r.lfPlaceholder)&&t.$watch("lfPlaceholder",function(e){t.strCaptionPlaceholder=e}),i.isDefined(r.lfCaption)&&(t.isCustomCaption=!0,t.$watch("lfCaption",function(e){t.strCaption=e})),t.lfDragAndDropLabel&&(t.strCaptionDragAndDrop=t.lfDragAndDropLabel),t.lfBrowseLabel&&(t.strCaptionBrowse=t.lfBrowseLabel),t.lfRemoveLabel&&(t.strCaptionRemove=t.lfRemoveLabel),t.lfSubmitLabel&&(t.strCaptionSubmit=t.lfSubmitLabel),t.openDialog=function(e,i){e&&l(function(){e.preventDefault(),e.stopPropagation();var i=e.target.children[2];i!==n&&c[0].click()},0)},t.removeAllFilesWithoutVaildate=function(){t.isDisabled||(t.lfFiles.length=0,d.empty())},t.removeAllFiles=function(e){t.removeAllFilesWithoutVaildate(),g()},t.removeFileByName=function(e,i){t.isDisabled||(t.lfFiles.every(function(i,n){return i.lfFileName==e?(t.lfFiles.splice(n,1),!1):!0}),g())},t.removeFile=function(e){t.lfFiles.every(function(n,l){return n.key==e.key?(i.isFunction(t.lfOnFileRemove)&&t.lfOnFileRemove(n,l),t.lfFiles.splice(l,1),!1):!0}),g()},t.onFileClick=function(e){i.isFunction(t.lfOnFileClick)&&t.lfFiles.every(function(i,n){return i.key==e.key?(t.lfOnFileClick(i,n),!1):!0})},t.onSubmitClick=function(){i.isFunction(t.lfOnSubmitClick)&&t.lfOnSubmitClick(t.lfFiles)},u.bind("dragover",function(e){e.stopPropagation(),e.preventDefault(),!t.isDisabled&&t.isDrag&&u.addClass("lf-ng-md-file-input-drag-hover")}),u.bind("dragleave",function(e){e.stopPropagation(),e.preventDefault(),!t.isDisabled&&t.isDrag&&u.removeClass("lf-ng-md-file-input-drag-hover")}),u.bind("drop",function(e){if(e.stopPropagation(),e.preventDefault(),!t.isDisabled&&t.isDrag){u.removeClass("lf-ng-md-file-input-drag-hover"),i.isObject(e.originalEvent)&&(e=e.originalEvent);var n=e.target.files||e.dataTransfer.files,l=t.accept.replace(/,/g,"|"),o=new RegExp(l,"i"),r=[];i.forEach(n,function(e,i){e.type.match(o)&&r.push(e)}),p(r)}}),c.bind("change",function(e){var i=e.files||e.target.files;p(i)});var p=function(e){if(!(e.length<=0)){t.lfFiles.map(function(e){return e.lfFileName});if(t.floatProgress=0,t.isMutiple){m=e.length,t.intLoading=m;for(var i=0;i<e.length;i++){var n=e[i];setTimeout(v(n),100*i)}}else{m=1,t.intLoading=m;for(var i=0;i<e.length;i++){var n=e[i];t.removeAllFilesWithoutVaildate(),v(n);break}}c.val("")}},g=function(){i.isFunction(t.ngChange)&&t.ngChange(),s.$validate()},v=function(e){b(e).then(function(i){var l=!1;if(t.lfFiles.every(function(i,t){var o=i.lfFile;return i.isRemote?!0:o.name!==n&&o.name==e.name?(o.size==e.size&&o.lastModified==e.lastModified&&(l=!0),!1):!0}),!l){var o=a(e);t.lfFiles.push(o)}0==t.intLoading&&g()},function(e){},function(e){})},b=function(i,n){var l=e.defer(),o=new FileReader;return o.onloadstart=function(){l.notify(0)},o.onload=function(e){},o.onloadend=function(e){l.resolve({index:n,result:o.result}),t.intLoading--,t.floatProgress=(m-t.intLoading)/m*100},o.onerror=function(e){l.reject(o.result),t.intLoading--,t.floatProgress=(m-t.intLoading)/m*100},o.onprogress=function(e){l.notify(e.loaded/e.total)},o.readAsArrayBuffer(i),l.promise}}}}])}(window,window.angular);
-(function () {
     'use strict';
 
     RetryHttpProviderConfig.$inject = ["$httpProvider"];
@@ -4419,27 +4488,38 @@
     }
 
 })();
-var env = {};
+(function () {
+  'use strict';
 
-// Import variables if present (from env.js)
-if(window && window.__env){
-  Object.assign(env, window.__env);
-}
-else{//Default config
-  env.socketEndpointConnect = '/dashboardengine/dsengine/solver';
-  env.socketEndpointSend = '/dsengine/solver';
-  env.socketEndpointSubscribe = '/dsengine/broker';
-  env.endpointSofia2ControlPanel = '/controlpanel';
-  env.endpointSofia2DashboardEngine = '/dashboardengine';
-  env.enableDebug = false;
-  env.dashboardEngineUsername = '';
-  env.dashboardEnginePassword = '';
-  env.dashboardEngineLoginRest = '/loginRest';
-  env.dashboardEngineLoginRestTimeout = 5000;
-  env.sofia2RestUrl = 'http://rancher.sofia4cities.com/iotbroker/rest/client';
-}
+  angular.module('s2DashboardFramework').directive('draggable', function() {
+    return function(scope, element) {
+      // this gives us the native JS object
+      var el = element[0];
 
-angular.module('s2DashboardFramework').constant('__env', env);
+      el.draggable = true;
+
+      el.addEventListener(
+        'dragstart',
+        function(e) {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('type', this.id);
+          this.classList.add('drag');
+          return false;
+        },
+        false
+      );
+
+      el.addEventListener(
+        'dragend',
+        function(e) {
+          this.classList.remove('drag');
+          return false;
+        },
+        false
+      );
+    }
+  });
+})();
 
 (function () {
   'use strict';
@@ -4926,6 +5006,9 @@ angular.module('s2DashboardFramework').constant('__env', env);
 })();
 
 angular.module('s2DashboardFramework').run(['$templateCache', function($templateCache) {$templateCache.put('app/s2dashboard.html','<edit-dashboard ng-if=vm.editmode id=vm.id public=vm.public dashboard=vm.dashboard selectedpage=vm.selectedpage></edit-dashboard><ng-include src="\'app/partials/view/header.html\'"></ng-include><ng-include src="\'app/partials/view/sidenav.html\'"></ng-include><span><div ng-style="vm.dashboard.header.enable && {\'height\': \'calc(100% - \'+{{vm.dashboard.header.height}}+\'px\'+\')\'} || {\'height\': \'100%\'}" ng-repeat="page in vm.dashboard.pages" ng-if=vm.checkIndex($index)><page page=page gridoptions=vm.dashboard.gridOptions dashboardheader=vm.dashboard.header editmode=vm.editmode selectedlayer=vm.selectedlayer class=flex ng-if=vm.checkIndex($index)></page></div></span>');
+$templateCache.put('app/partials/view/filterTooltip.html','<b>Applied filters:</b> <span class=no-wrap ng-repeat="(field, data) in vm.datastatus"><br><label>{{field}}</label>:<label md-truncate>{{vm.generateFilterInfo(data)}}</label><md-button class="md-icon-button md-warn" aria-label="Delete filter" ng-click=vm.deleteFilter(data.id,field)><md-icon>delete</md-icon></md-button></span>');
+$templateCache.put('app/partials/view/header.html','<md-toolbar ng-if=vm.dashboard.header.enable layout=row class=md-hue-2 layout-align="space-between center" ng-style="{\'height\': + vm.dashboard.header.height + \'px\', \'background\': vm.dashboard.header.backgroundColor}"><md-headline layout=row layout-align="start center" class=left-margin-10><img ng-if=vm.dashboard.header.logo.filedata ng-src={{vm.dashboard.header.logo.filedata}} ng-style="{\'height\': + vm.dashboard.header.logo.height + \'px\'}"><span ng-style="{\'color\': vm.dashboard.header.textColor}">{{\'&nbsp;\' + vm.dashboard.header.title}}</span><md-icon ng-style="{\'color\': vm.dashboard.header.iconColor}" ng-if=vm.dashboard.navigation.showBreadcrumbIcon>keyboard_arrow_right</md-icon><span ng-style="{\'color\': vm.dashboard.header.pageColor}" ng-if=vm.dashboard.navigation.showBreadcrumb>{{vm.dashboard.pages[vm.selectedpage].title}}</span></md-headline><md-button class="md-mini md-icon-button" aria-label="Open Menu" ng-click=vm.sidenav.toggle();><md-tooltip md-direction=left>Toggle Menu</md-tooltip><md-icon>reorder</md-icon></md-button></md-toolbar>');
+$templateCache.put('app/partials/view/sidenav.html','<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id=left><header class=nav-header></header><md-content flex="" role=navigation class="_md flex"><md-subheader class=md-no-sticky>Pages</md-subheader><md-list class=md-hue-2><span ng-repeat="page in vm.dashboard.pages"><md-list-item md-colors="{background: ($index===vm.selectedpage ? \'primary\' : \'grey-A100\')}" ng-click=vm.setIndex($index) flex><md-icon>{{page.icon}}</md-icon><p>{{page.title}}</p></md-list-item></span></md-list></md-content></md-sidenav>');
 $templateCache.put('app/partials/edit/addGadgetDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Select Gadget to add</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container><label>Select gadget type</label><md-select ng-model=gadget md-on-open=loadGadgets()><md-option ng-value=gadget ng-repeat="gadget in gadgets"><em>{{gadget.identification}}</em></md-option></md-select></md-input-container><md-dialog-actions layout=row><span flex></span><md-button ng-click=cancel()>Cancel</md-button><md-button ng-click=addGadget()>Add Gadget</md-button></md-dialog-actions></form></md-dialog>');
 $templateCache.put('app/partials/edit/addGadgetTemplateDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Create using template?</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container><label>Select Template</label><md-select ng-model=template md-on-open=loadTemplates()><md-option ng-value=template ng-repeat="template in templates"><em>{{template.identification}}</em></md-option></md-select></md-input-container><md-dialog-actions layout=row><span flex></span><md-button ng-click=useTemplate()>Yes</md-button><md-button ng-click=noUseTemplate()>No</md-button></md-dialog-actions></form></md-dialog>');
 $templateCache.put('app/partials/edit/addGadgetTemplateParameterDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Select a content for the parameters</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container class=md-dialog-content><label>Datasource</label><md-select required md-autofocus placeholder="Select new templace datasource" ng-model=config.datasource md-on-open=loadDatasources() ng-change=loadDatasourcesFields()><md-option ng-value={name:datasource.identification,refresh:datasource.refresh,type:datasource.mode,id:datasource.id} ng-repeat="datasource in datasources">{{datasource.identification}}</md-option></md-select></md-input-container><div flex=""><md-content><md-list class=md-dense flex=""><md-list-item class=md-3-line ng-repeat="item in parameters"><div class=md-list-item-text layout=column><span>{{ item.label }}</span><md-input-container ng-if="item.type==\'labelsText\'" class=md-dialog-content><p>string value :</p><input type=text ng-model=item.value></md-input-container><md-input-container ng-if="item.type==\'labelsNumber\'" class=md-dialog-content><p>number value :</p><input type=number ng-model=item.value></md-input-container><md-input-container ng-if="item.type==\'labelsds\'" class=md-dialog-content><p>value :</p><md-select required md-autofocus placeholder="Select parameter from datasource" ng-model=item.value><md-option ng-value={field:datasourceField.field,type:datasourceField.type} ng-repeat="datasourceField in datasourceFields">{{datasourceField.field}}</md-option></md-select></md-input-container><md-input-container ng-if="item.type==\'labelsdspropertie\'" class=md-dialog-content><p>value :</p><md-select required md-autofocus placeholder="Select parameter from datasource" ng-model=item.value><md-option ng-value={field:datasourceField.field,type:datasourceField.type} ng-repeat="datasourceField in datasourceFields">{{datasourceField.field}}</md-option></md-select></md-input-container><md-input-container ng-if="item.type==\'selects\'" class=md-dialog-content><p>value :</p><md-select required md-autofocus placeholder="Select parameter value" ng-model=item.value><md-option ng-value=optionsValue ng-repeat="optionsValue in item.optionsValue">{{optionsValue}}</md-option></md-select></md-input-container></div></md-list-item></md-list></md-content></div><md-dialog-actions layout=row><span flex></span><md-button ng-click=save()>Ok</md-button></md-dialog-actions></form></md-dialog>');
@@ -4942,11 +5025,8 @@ $templateCache.put('app/partials/edit/editPageButtons.html','<div class=sidenav-
 $templateCache.put('app/partials/edit/editPageSidenav.html','<md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-4dp layout-padding" md-component-id=left md-is-locked-open=true><label class=md-headline>Grid Settings</label><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><md-input-container class=md-block flex-gt-sm><label>Dashboard Title</label><input ng-model=title></md-input-container></md-input-container><md-input-container class=flex><label>Grid Type</label><md-select aria-label="Grid type" ng-model=main.options.gridType ng-change=main.changedOptions() placeholder="Grid Type" class=flex><md-option value=fit>Fit to screen</md-option><md-option value=scrollVertical>Scroll Vertical</md-option><md-option value=scrollHorizontal>Scroll Horizontal</md-option><md-option value=fixed>Fixed</md-option><md-option value=verticalFixed>Vertical Fixed</md-option><md-option value=horizontalFixed>Horizontal Fixed</md-option></md-select></md-input-container><md-input-container class=flex><label>Compact Type</label><md-select aria-label="Compact type" ng-model=main.options.compactType ng-change=main.changedOptions() placeholder="Compact Type" class=flex><md-option value=none>None</md-option><md-option value=compactUp>Compact Up</md-option><md-option value=compactLeft>Compact Left</md-option><md-option value=compactLeft&Up>Compact Left & Up</md-option><md-option value=compactUp&Left>Compact Up & Left</md-option></md-select></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.swap ng-change=main.changedOptions() class=flex>Swap Items</md-checkbox><md-checkbox ng-model=main.options.pushItems ng-change=main.changedOptions() class=flex>Push Items</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.disablePushOnDrag ng-change=main.changedOptions() class=flex>Disable Push On Drag</md-checkbox><md-checkbox ng-model=main.options.disablePushOnResize ng-change=main.changedOptions() class=flex>Disable Push On Resize</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.pushDirections.north ng-change=main.changedOptions() class=flex>Push North</md-checkbox><md-checkbox ng-model=main.options.pushDirections.east ng-change=main.changedOptions() class=flex>Push East</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.pushDirections.south ng-change=main.changedOptions() class=flex>Push South</md-checkbox><md-checkbox ng-model=main.options.pushDirections.west ng-change=main.changedOptions() class=flex>Push West</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.draggable.enabled ng-change=main.changedOptions() class=flex>Drag Items</md-checkbox><md-checkbox ng-model=main.options.resizable.enabled ng-change=main.changedOptions() class=flex>Resize Items</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.pushResizeItems ng-change=main.changedOptions() class=flex>Push Resize Items</md-checkbox><md-input-container class=flex><label>Display grid lines</label><md-select aria-label="Display grid lines" ng-model=main.options.displayGrid placeholder="Display grid lines" ng-change=main.changedOptions()><md-option value=always>Always</md-option><md-option value=onDrag&Resize>On Drag & Resize</md-option><md-option value=none>None</md-option></md-select></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.minCols type=number placeholder="Min Grid Cols" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.maxCols type=number placeholder="Max Grid Cols" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.minRows type=number placeholder="Min Grid Rows" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.maxRows type=number placeholder="Max Grid Rows" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.margin min=0 max=30 step=1 type=number placeholder=Margin ng-change=main.changedOptions()></md-input-container><md-checkbox ng-model=main.options.outerMargin ng-change=main.changedOptions() class=flex>Outer Margin</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.mobileBreakpoint type=number placeholder="Mobile Breakpoint" ng-change=main.changedOptions()></md-input-container><md-checkbox ng-model=main.options.disableWindowResize ng-change=main.changedOptions() class=flex>Disable window resize</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.scrollToNewItems ng-change=main.changedOptions() class=flex>Scroll to new items</md-checkbox><md-checkbox ng-model=main.options.disableWarnings ng-change=main.changedOptions() class=flex>Disable console warnings</md-checkbox></div><label class=md-headline>Item Settings</label><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.maxItemCols type=number placeholder="Max Item Cols" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.minItemCols type=number placeholder="Min Item Cols" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.maxItemRows type=number placeholder="Max Item Rows" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.minItemRows type=number placeholder="Min Item Rows" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.maxItemArea type=number placeholder="Max Item Area" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.minItemArea type=number placeholder="Min Item Area" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.defaultItemRows type=number placeholder="Default Item Rows" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.defaultItemCols type=number placeholder="Default Item Cols" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.fixedColWidth type=number placeholder="Fixed Col Width" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.fixedRowHeight type=number placeholder="Fixed layout-row layout-align-start-center Height" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.keepFixedHeightInMobile ng-change=main.changedOptions() class=flex>Keep Fixed Height In Mobile</md-checkbox><md-checkbox ng-model=main.options.keepFixedWidthInMobile ng-change=main.changedOptions() class=flex>Keep Fixed Width In Mobile</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.enableEmptyCellClick ng-change=main.changedOptions() class=flex>Enable click to add</md-checkbox><md-checkbox ng-model=main.options.enableEmptyCellContextMenu ng-change=main.changedOptions() class=flex>Enable right click to add</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.enableEmptyCellDrop ng-change=main.changedOptions() class=flex>Enable drop to add</md-checkbox><md-checkbox ng-model=main.options.enableEmptyCellDrag ng-change=main.changedOptions() class=flex>Enable drag to add</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.emptyCellDragMaxCols type=number placeholder="Drag Max Cols" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.emptyCellDragMaxRows type=number placeholder="Drag Max Rows" ng-change=main.changedOptions()></md-input-container></div></md-sidenav>');
 $templateCache.put('app/partials/edit/layersDialog.html','<md-dialog aria-label=Layers><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Page Layers</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-dialog-content><md-subheader>Layers</md-subheader><md-list><md-list-item ng-repeat="layer in dashboard.pages[selectedpage].layers"><md-input-container flex=70><label>Layer name</label><input ng-model=layer.title required md-autofocus></md-input-container><md-input-container flex=30><md-button ng-if="!$first && dashboard.pages.length > 1" class="md-icon-button md-primary" aria-label=up ng-click=moveUpLayer($index)><md-icon>arrow_upward</md-icon></md-button><md-button ng-if="!$last && dashboard.pages.length > 1" class="md-icon-button md-primary" aria-label=down ng-click=moveDownLayer($index)><md-icon>arrow_downward</md-icon></md-button><md-button ng-if="dashboard.pages[selectedpage].layers.length > 1" class="md-icon-button md-warn" aria-label="Delete layer" ng-click=delete($index)><md-icon>remove_circle</md-icon></md-button></md-input-container></md-list-item></md-list><md-subheader>Add New Layer</md-subheader><md-list><md-list-item><md-input-container flex=70><label>Layer name</label><input ng-model=title required md-autofocus></md-input-container><md-input-container flex=30><md-button class="md-icon-button md-primary" aria-label="Add layer" ng-click=create()><md-icon>add_circle</md-icon></md-button></md-input-container></md-list-item></md-list></md-dialog-content><md-dialog-actions layout=row><span flex></span><md-button ng-click=hide() class=md-primary>Close</md-button></md-dialog-actions></form></md-dialog>');
 $templateCache.put('app/partials/edit/pagesDialog.html','<md-dialog aria-label=Pages><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Dashboard Pages</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-dialog-content><md-subheader>Pages</md-subheader><md-list><md-list-item ng-repeat="page in dashboard.pages"><md-input-container flex=35><label>Page name</label><input ng-model=page.title required md-autofocus></md-input-container><md-autocomplete flex=35 ng-disabled=false md-no-cache=false md-selected-item=ctrl.icons[$index] md-search-text-change=ctrl.searchTextChange(ctrl.searchText) md-search-text=page.icon md-selected-item-change=ctrl.selectedItemChange(item) md-items="icon in queryIcon(page.icon)" md-item-text=icon md-min-length=0 md-menu-class=autocomplete-custom-template md-floating-label="Select icon of page"><md-item-template><span class=item-title><md-icon>{{icon}}</md-icon><span>{{icon}}</span></span></md-item-template></md-autocomplete><md-input-container flex=35><label>Background Color</label><color-picker options="{restrictToFormat:false, preserveInputFormat:false}" ng-model=page.background.color></color-picker></md-input-container><lf-ng-md-file-input ng-change=onFilesChange($index) lf-api=apiUpload[$index] lf-files=auxUpload[$index].file lf-placeholder="" lf-browse-label="Change Background Img" accept=image/* progress lf-filesize=5MB lf-remove-label=""></lf-ng-md-file-input><md-input-container flex=30><md-button ng-if="!$first && dashboard.pages.length > 1" class="md-icon-button md-primary" aria-label=up ng-click=moveUpPage($index)><md-icon>arrow_upward</md-icon></md-button><md-button ng-if="!$last && dashboard.pages.length > 1" class="md-icon-button md-primary" aria-label=down ng-click=moveDownPage($index)><md-icon>arrow_downward</md-icon></md-button><md-button ng-if="dashboard.pages.length > 1" class="md-icon-button md-warn" aria-label="Delete page" ng-click=delete($index)><md-icon>remove_circle</md-icon></md-button></md-input-container></md-list-item></md-list><md-subheader>Add New Page</md-subheader><md-list><md-list-item><md-input-container flex=35><label>Page name</label><input ng-model=title required md-autofocus></md-input-container><md-autocomplete flex=35 ng-disabled=false md-no-cache=false md-selected-item=selectedIconItem md-search-text-change=ctrl.searchTextChange(ctrl.searchText) md-search-text=searchIconText md-selected-item-change=ctrl.selectedItemChange(item) md-items="icon in queryIcon(searchIconText)" md-item-text=icon md-min-length=0 md-menu-class=autocomplete-custom-template md-floating-label="Select icon of page"><md-item-template><span class=item-title><md-icon>{{icon}}</md-icon><span>{{icon}}</span></span></md-item-template></md-autocomplete><lf-ng-md-file-input lf-files=file lf-placeholder="" lf-browse-label="Change Background Img" accept=image/* progress lf-filesize=5MB lf-remove-label=""></lf-ng-md-file-input><md-input-container flex=30><md-button class="md-icon-button md-primary" aria-label="Add page" ng-click=create()><md-icon>add_circle</md-icon></md-button></md-input-container></md-list-item></md-list></md-dialog-content><md-dialog-actions layout=row><span flex></span><md-button ng-click=hide() class=md-primary>Close</md-button></md-dialog-actions></form></md-dialog>');
-$templateCache.put('app/partials/view/filterTooltip.html','<b>Applied filters:</b> <span class=no-wrap ng-repeat="(field, data) in vm.datastatus"><br><label>{{field}}</label>:<label md-truncate>{{vm.generateFilterInfo(data)}}</label><md-button class="md-icon-button md-warn" aria-label="Delete filter" ng-click=vm.deleteFilter(data.id,field)><md-icon>delete</md-icon></md-button></span>');
-$templateCache.put('app/partials/view/header.html','<md-toolbar ng-if=vm.dashboard.header.enable layout=row class=md-hue-2 layout-align="space-between center" ng-style="{\'height\': + vm.dashboard.header.height + \'px\', \'background\': vm.dashboard.header.backgroundColor}"><md-headline layout=row layout-align="start center" class=left-margin-10><img ng-if=vm.dashboard.header.logo.filedata ng-src={{vm.dashboard.header.logo.filedata}} ng-style="{\'height\': + vm.dashboard.header.logo.height + \'px\'}"><span ng-style="{\'color\': vm.dashboard.header.textColor}">{{\'&nbsp;\' + vm.dashboard.header.title}}</span><md-icon ng-style="{\'color\': vm.dashboard.header.iconColor}" ng-if=vm.dashboard.navigation.showBreadcrumbIcon>keyboard_arrow_right</md-icon><span ng-style="{\'color\': vm.dashboard.header.pageColor}" ng-if=vm.dashboard.navigation.showBreadcrumb>{{vm.dashboard.pages[vm.selectedpage].title}}</span></md-headline><md-button class="md-mini md-icon-button" aria-label="Open Menu" ng-click=vm.sidenav.toggle();><md-tooltip md-direction=left>Toggle Menu</md-tooltip><md-icon>reorder</md-icon></md-button></md-toolbar>');
-$templateCache.put('app/partials/view/sidenav.html','<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id=left><header class=nav-header></header><md-content flex="" role=navigation class="_md flex"><md-subheader class=md-no-sticky>Pages</md-subheader><md-list class=md-hue-2><span ng-repeat="page in vm.dashboard.pages"><md-list-item md-colors="{background: ($index===vm.selectedpage ? \'primary\' : \'grey-A100\')}" ng-click=vm.setIndex($index) flex><md-icon>{{page.icon}}</md-icon><p>{{page.title}}</p></md-list-item></span></md-list></md-content></md-sidenav>');
 $templateCache.put('app/components/edit/editDashboardComponent/edit.dashboard.html','<ng-include src="\'app/partials/edit/editDashboardButtons.html\'"></ng-include><ng-include src="\'app/partials/edit/editDashboardSidenav.html\'"></ng-include>');
 $templateCache.put('app/components/view/elementComponent/element.html','<gridster-item item=vm.element ng-style="{ \'border-width\': vm.element.border.width + \'px\', \'border-color\': vm.element.border.color, \'border-radius\': vm.element.border.radius + \'px\', \'border-style\': \'solid\'}"><div class="element-container fullcontainer"><md-toolbar ng-if=vm.element.header.enable class="widget-header md-hue-2" ng-style="{\'background\':vm.element.header.backgroundColor, \'height\': vm.element.header.height + \'px\'}"><div class=md-toolbar-tools><md-icon ng-style="{\'color\':vm.element.header.title.iconColor,\'font-size\' : \'20px\'}">{{vm.element.header.title.icon}}</md-icon><h5 flex ng-style="{\'color\':vm.element.header.title.textColor}" md-truncate>{{vm.element.header.title.text}}</h5><md-icon class=cursor-hand style="font-size: 20px;color:hsl(220, 23%, 20%);" ng-if=vm.datastatus tooltips tooltip-show-trigger=click tooltip-hide-trigger=click tooltip-close-button=true tooltip-size=small tooltip-template-url=app/partials/view/filterTooltip.html ng-attr-tooltip-side="{{vm.editmode?\'bottom\':\'bottom left\'}}">filter_list</md-icon><md-button ng-if=vm.editmode ng-click=vm.openEditContainerDialog() class=md-icon-button aria-label="Edit Container"><md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">format_paint</md-icon><md-tooltip>Edit container</md-tooltip></md-button><md-button ng-if="vm.editmode && vm.element.type == \'livehtml\'" ng-click=vm.openEditGadgetDialog() class=md-icon-button aria-label="Gadget Editor"><md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">mode_edit</md-icon><md-tooltip>Edit Gadget definition</md-tooltip></md-button><md-button ng-if=vm.editmode class="drag-handler md-icon-button"><md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">open_with</md-icon><md-tooltip>Move</md-tooltip></md-button><md-button ng-if=vm.editmode class="remove-button md-icon-button" ng-click=vm.deleteElement()><md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">delete</md-icon><md-tooltip>Remove</md-tooltip></md-button></div></md-toolbar><div ng-if="vm.editmode && !vm.element.header.enable" class=item-buttons><md-button ng-click=vm.openEditContainerDialog() class="md-raised md-icon-button" aria-label="Edit Container"><md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">format_paint</md-icon></md-button><md-button ng-click=vm.openEditGadgetDialog() ng-if="vm.element.type == \'livehtml\'" class="md-raised md-icon-button" aria-label="Gadget Editor"><md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">mode_edit</md-icon></md-button><md-button ng-if=vm.editmode class="drag-handler md-raised md-icon-button"><md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">open_with</md-icon></md-button><md-button ng-if=vm.editmode class="remove-button md-raised md-icon-button" ng-click=vm.deleteElement()><md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">delete</md-icon><md-tooltip>Remove</md-tooltip></md-button></div><livehtml ng-style="{\'background-color\':vm.element.backgroundColor, \'padding\': vm.element.padding + \'px\', \'height\': vm.calcHeight()}" ng-if="vm.element.type == \'livehtml\'" livecontent=vm.element.content datasource=vm.element.datasource ng-class=vm.element.id id=vm.element.id datastatus=vm.datastatus></livehtml><gadget ng-style="{\'background-color\':vm.element.backgroundColor, \'padding\': vm.element.padding + \'px\', \'display\': \'inline-block\', \'width\':\'100%\', \'height\': vm.calcHeight()}" ng-if="vm.element.type != \'livehtml\'" ng-class=vm.element.id id=vm.element.id datastatus=vm.datastatus></gadget></div></gridster-item>');
 $templateCache.put('app/components/view/gadgetComponent/gadget.html','<div class=spinner-margin-top ng-if="vm.type == \'loading\'" layout=row layout-sm=column layout-align=space-around><md-progress-circular md-diameter=60></md-progress-circular></div><div class=spinner-overlay ng-if="vm.status == \'pending\'" layout=row layout-sm=column layout-align=space-around><md-progress-linear md-mode=indeterminate></md-progress-linear></div><div ng-if="vm.type == \'nodata\'" layout=row layout-sm=column layout-align=space-around><h3>No data found</h3></div><canvas ng-if="vm.type == \'line\'" chart-dataset-override=vm.datasetOverride chart-click=vm.clickChartEventProcessorEmitter class="chart chart-line" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'bar\'" chart-dataset-override=vm.datasetOverride chart-click=vm.clickChartEventProcessorEmitter class="chart chart-bar" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'pie\'" chart-click=vm.clickChartEventProcessorEmitter class="chart chart-doughnut" chart-data=vm.data chart-labels=vm.labels chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'radar\'" chart-dataset-override=vm.datasetOverride chart-click=vm.clickChartEventProcessorEmitter class="chart chart-radar" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><word-cloud ng-if="vm.type == \'wordcloud\'" words=vm.words width=vm.width height=vm.height padding=0 use-tooltip=false use-transition=true></word-cloud><leaflet id="{{\'lmap\' + vm.id}}" ng-if="vm.type == \'map\'" lf-center=vm.center markers=vm.markers height={{vm.height}} width=100%></leaflet><md-table-container ng-style="{\'height\': \'calc(100% - \'+{{vm.config.config.tablePagination.style.trHeightFooter}}+\'px\'+\')\'}" ng-if="vm.type == \'table\'"><table md-table md-progress=promise md-row-select=vm.config.config.tablePagination.options.rowSelection ng-model=vm.selected><thead md-head ng-if=!vm.config.config.tablePagination.options.decapitate ng-style="{\'background-color\':vm.config.config.tablePagination.style.backGroundTHead}" md-order=vm.config.config.tablePagination.order><tr md-row ng-style="{\'height\':vm.config.config.tablePagination.style.trHeightHead}"><th ng-style="{\'color\':vm.config.config.tablePagination.style.textColorTHead}" md-column ng-repeat="measure in vm.measures" md-order-by={{measure.config.order}}><span>{{measure.config.name}}</span></th></tr></thead><tbody md-body><tr md-row md-auto-select=true md-on-select=vm.selectItemTable md-select=dat ng-style="{\'height\':vm.config.config.tablePagination.style.trHeightBody}" ng-repeat="dat in vm.data | orderBy: vm.config.config.tablePagination.order |  limitTo: vm.config.config.tablePagination.limit : (vm.config.config.tablePagination.page -1) * vm.config.config.tablePagination.limit"><td ng-style="{\'color\':vm.config.config.tablePagination.style.textColorBody}" md-cell ng-repeat="value in dat">{{value}}</td></tr></tbody></table></md-table-container><md-table-pagination ng-if="vm.type == \'table\'" md-limit=vm.config.config.tablePagination.limit md-limit-options="vm.notSmall ? vm.config.config.tablePagination.limitOptions : undefined" md-page=vm.config.config.tablePagination.page md-total={{vm.data.length}} md-page-select="vm.config.config.tablePagination.options.pageSelect && vm.notSmall" md-boundary-links="vm.config.config.tablePagination.options.boundaryLinks && vm.notSmall" ng-style="{\'background-color\':vm.config.config.tablePagination.style.backGroundTFooter,\'height\':vm.config.config.tablePagination.style.trHeightFooter, \'color\':vm.config.config.tablePagination.style.textColorFooter}"></md-table-pagination>');
-$templateCache.put('app/components/view/pageComponent/page.html','<div class=page-dashboard-container ng-style="{\'background-image\':\'url(\' + vm.page.background.filedata + \')\',\'background-color\': vm.page.background.color }"><span ng-repeat="layer in vm.page.layers"><gridster ng-style="vm.dashboardheader.enable && {\'height\': \'calc(100% - \'+{{vm.dashboardheader.height}}+\'px\'+\')\'} || {\'height\': \'100%\'}" ng-if="(vm.page.combinelayers || vm.page.selectedlayer == $index) " options=vm.gridoptions class=flex><element ng-style="{\'z-index\':$parent.$index*500+1}" ng-if=item.id element=item editmode=vm.editmode ng-repeat="item in layer.gridboard"></element></gridster></span></div>');
-$templateCache.put('app/components/view/liveHTMLComponent/livehtml.html','<div id=testhtml>{{1+1}}</div>');}]);
+$templateCache.put('app/components/view/liveHTMLComponent/livehtml.html','<div id=testhtml>{{1+1}}</div>');
+$templateCache.put('app/components/view/pageComponent/page.html','<div class=page-dashboard-container ng-style="{\'background-image\':\'url(\' + vm.page.background.filedata + \')\',\'background-color\': vm.page.background.color }"><span ng-repeat="layer in vm.page.layers"><gridster ng-style="vm.dashboardheader.enable && {\'height\': \'calc(100% - \'+{{vm.dashboardheader.height}}+\'px\'+\')\'} || {\'height\': \'100%\'}" ng-if="(vm.page.combinelayers || vm.page.selectedlayer == $index) " options=vm.gridoptions class=flex><element ng-style="{\'z-index\':$parent.$index*500+1}" ng-if=item.id element=item editmode=vm.editmode ng-repeat="item in layer.gridboard"></element></gridster></span></div>');}]);
