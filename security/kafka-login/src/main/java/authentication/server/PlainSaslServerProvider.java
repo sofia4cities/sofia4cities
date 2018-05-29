@@ -11,7 +11,9 @@ public class PlainSaslServerProvider extends Provider {
 
 	@SuppressWarnings("deprecation")
 	protected PlainSaslServerProvider() {
+		
 		super("Simple SASL/PLAIN Server Provider", 1.0, "Simple SASL/PLAIN Server Provider for Kafka");
+		System.out.println("--------------------------->PlainSaslServerProvider Initialize");
 		put("SaslServerFactory." + PlainSaslServer.PLAIN_MECHANISM, PlainSaslServerFactory.class.getName());
 	}
 

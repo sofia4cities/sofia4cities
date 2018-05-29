@@ -72,12 +72,6 @@ public class DigitalTwinType extends AuditableEntityWithUUID {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter
-	private Set<LogicDigitalTwinType> logicDigitalTwinTypes = new HashSet<>();
-
-	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter
-	@Setter
 	private Set<DigitalTwinDevice> digitalTwinDevices = new HashSet<>();
 
 	@Column(name = "NAME", length = 50, unique = true, nullable = false)
@@ -104,6 +98,14 @@ public class DigitalTwinType extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String json;
+
+	@Column(name = "LOGIC", nullable = false)
+	@NotNull
+	@Lob
+	@Type(type = "org.hibernate.type.TextType")
+	@Getter
+	@Setter
+	private String logic;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)

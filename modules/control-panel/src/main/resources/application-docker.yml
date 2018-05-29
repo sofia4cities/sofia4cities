@@ -18,11 +18,15 @@ sofia2:
    iotbroker.plugable:
      gateway:
       kafka:
-        enable: false
+        enable: true
         host: kafka
-        port: 9092
+        port: 9095  
+        user: admin
+        password: admin-secret 
         partitions: 1
-        replication: 1 
+        replication: 1
+   analytics.notebook:
+      zeppelinHostname: zeppelin       
         
 spring:
    datasource:  

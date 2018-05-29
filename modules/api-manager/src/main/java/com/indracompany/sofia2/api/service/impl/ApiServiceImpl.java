@@ -39,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -69,6 +70,9 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 
 	@Autowired
 	private RouterOperationsServiceFacade facade;
+
+	@Value("${sofia2.apimanager.cacheable:false}")
+	private static boolean CACHEABLE;
 
 	private Invocable invocable;
 
@@ -142,7 +146,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		String QUERY = (String) data.get(ApiServiceInterface.QUERY);
 		String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
 		String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
-		String CACHEABLE = (String) data.get(ApiServiceInterface.CACHEABLE);
+		// String CACHEABLE = (String) data.get(ApiServiceInterface.CACHEABLE);
 
 		User user = (User) data.get(ApiServiceInterface.USER);
 
@@ -166,7 +170,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 				.builder(ontology.getIdentification(), OperationType.valueOf(operationType.name()), user.getUserId(),
 						OperationModel.Source.APIMANAGER)
 				.body(body).queryType(QueryType.valueOf(QUERY_TYPE)).objectId(OBJECT_ID).deviceTemplate("")
-				.cacheable("true".equalsIgnoreCase(CACHEABLE) ? true : false).build();
+				.cacheable(CACHEABLE).build();
 
 		NotificationModel modelNotification = new NotificationModel();
 

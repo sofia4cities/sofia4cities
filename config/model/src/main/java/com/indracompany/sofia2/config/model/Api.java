@@ -51,15 +51,15 @@ import lombok.Setter;
 public class Api extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public static enum ApiStates {
 		CREATED, PUBLISHED, DELETED, DEPRECATED, DEVELOPMENT;
 	}
-	
+
 	public static enum ApiCategories {
-		ALL, ADVERTISING, BUSINESS, COMMUNICATION, EDUCATION, ENTERTAINMENT, MEDIA, MEDICAL, OTHER, SOCIAL, SPORTS, TOOLS, TRAVEL;
+		ALL, ADVERTISING, BUSSINESS, COMMUNICATION, EDUCATION, ENTERTAINMENT, MEDIA, MEDICAL, OTHER, SOCIAL, SPORTS, TOOLS, TRAVEL;
 	}
-	
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID")
@@ -75,7 +75,7 @@ public class Api extends AuditableEntityWithUUID {
 	private User user;
 
 	@Basic(fetch = FetchType.LAZY)
-	@Column(name = "IMAGE", length=100000)
+	@Column(name = "IMAGE", length = 100000)
 	@Lob
 	@Type(type = "org.hibernate.type.BinaryType")
 	@Getter
@@ -170,7 +170,6 @@ public class Api extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String apiType;
-	
 
 	@Column(name = "ASSESSMENT", precision = 10)
 	@Getter

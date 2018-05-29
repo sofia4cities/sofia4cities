@@ -218,7 +218,7 @@
 															<div class="col-md-6 col-sm-6 col-xs-12">
 																<div class="form-group">																
 																	<label class="description notAnimate" id="id_endpoint_label" for="id_endpoint" th:text="#{apimanager.endpoint}">EndPoint</label>
-																	<input id="id_endpoint_swagger" name="id_endpoint_swagger" class="form-control" type="text" maxlength="512" readonly="readonly" th:value="${apiServices} +${api.identification} + '/swagger.json'"/>
+																	<input id="id_endpoint_swagger" name="id_endpoint_swagger" class="form-control" type="text" maxlength="512" readonly="readonly" th:value="${apiSwaggerUI}+ ${apiServices}+ ${api.identification} + '/swagger.json'"/>
 																</div>		
 															</div>
 														</div>
@@ -309,9 +309,9 @@
 																						<label th:id="${operation.identification + '_LABEL'}" class="description bold" style="font-size: 14px; color: rgb(34, 48, 77); padding-right:15px; min-width: 200px;display: inline-block;" th:text="${operation.identification}"/>
 																						<input th:id="${operation.identification + '_Edit'}" class="btn btn-sm blue-hoki" type="button" th:value="#{gen.editBtn}" th:name="${operation.identification + '_Edit'}" style="float: right; position: relative;top: -40px;" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'" />
 																						<input th:id="${operation.identification + '_Eliminar'}" class="btn btn-sm red-sunglo" type="button" th:value="#{gen.deleteBtn}" th:name="${operation.identification + '_Eliminar'}" style="float: right;  margin-right: 4px;position: relative;top: -40px;" th:onclick="'javascript:ApiCustomOpsController.removeCustomSqlOp(\'' + ${operation.identification} + '\');'"/>
-																						<span th:id="${operation.identification + '_PATH'}" style="padding-right:15px; min-width: 250px;display: inline-block;"><span class="label label-success "><small>ENDPOINT</small></span> <span class="bold" th:text="${operation.path}">path</span></span>
+																						<span style="padding-right:15px; min-width: 250px;display: inline-block;"><span class="label label-success "><small>ENDPOINT</small></span> <span th:id="${operation.identification + '_PATH'}"  class="bold" th:text="${operation.path}">path</span></span>
 																						<span th:each="querystring : ${operation.querystrings}" th:if="${(querystring.name == '$query')}" th:id="${operation.identification + '_QUERY'}" style="padding-right: 30px; min-width: 150px; display: inline-block;"><span class="label label-info "><small>QUERY</small></span> <span class="bold" th:text="${querystring.value}"> query </span></span>
-																						<span th:id="${operation.identification + '_DESC'}" style="padding-left: 20px; display: inline-block;"><span class="label label-info "><small>DESC.</small></span> <span class="text-truncate-lg" th:text="${operation.description}"> Description </span></span>
+																						<span  style="padding-left: 20px; display: inline-block;"><span class="label label-info "><small>DESC.</small></span> <span th:id="${operation.identification + '_DESC'}" class="text-truncate-lg" th:text="${operation.description}"> Description </span></span>
 																					</div>
 																				</div>
 																			</div>

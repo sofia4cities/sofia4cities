@@ -79,7 +79,9 @@ sofia2: #Config Sofia2 specific
       kafka:
         enable: false
         host: localhost
-        port: 9092
+        port: 9095  
+        user: admin
+        password: admin-secret 
         partitions: 1
         replication: 1      
         prefix: ontology_
@@ -91,7 +93,7 @@ sofia2: #Config Sofia2 specific
         consumer.maxPollRecords : 5000 
    analytics.notebook:
       zeppelinProtocol: http
-      zeppelinHostname: 192.168.99.100
+      zeppelinHostname: localhost
       zeppelinPort: 8080
       zeppelinPathname: 
       shiroAdminUsername: admin

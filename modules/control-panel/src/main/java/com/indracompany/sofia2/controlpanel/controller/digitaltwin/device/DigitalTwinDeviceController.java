@@ -43,7 +43,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.service.digitaltwin.device.DigitalTwinDeviceService;
+import com.indracompany.sofia2.config.services.digitaltwin.device.DigitalTwinDeviceService;
 import com.indracompany.sofia2.config.services.exceptions.DigitalTwinServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.helper.digitaltwin.device.DigitalTwinDeviceHelper;
@@ -123,6 +123,7 @@ public class DigitalTwinDeviceController {
 		DigitalTwinDevice device = digitalTwinDeviceService.getDigitalTwinDeviceById(id);
 		if (device != null) {
 			model.addAttribute("digitaltwindevice", device);
+			model.addAttribute("logic", device.getTypeId().getLogic());
 			return "digitaltwindevices/show";
 		} else {
 			utils.addRedirectMessage("digitaltwindevice.notfound.error", redirect);
