@@ -1,4 +1,4 @@
-package com.indracompany.sofia2.examples;
+package com.indracompany.sofia2.examples.chatbot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class ApiRestController {
     
     private String postMsg(String msg) {
 
-    	String url = "https://minbots.hypersait.com/bot_s4c/";
+    	String url = "http://localhost:5003/ask_s4c_bot";
     	String requestJson = "{\"msg\":\""+msg+"\"}";
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
