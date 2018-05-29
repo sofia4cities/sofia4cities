@@ -85,16 +85,6 @@ RUN echo "$LOG_TAG Install R related packages" && \
     R -e "install.packages('devtools', repos='http://cran.us.r-project.org')" && \
     R -e "install.packages('Rcpp', repos='http://cran.us.r-project.org')" && \
     Rscript -e "library('devtools'); library('Rcpp'); install_github('ramnathv/rCharts')"
-    
-# Install Python packages
-RUN echo "$LOG_TAG Install Python packages" && \
-	apt-get -y install python3-pip && \
-	python3 -m pip install pandas && \
-	python3 -m pip install scipy && \
-	python3 -m pip install sklearn && \
-	python3 -m pip install matplotlib && \
-	apt-get install python3-tk && \
-	python3 -m pip install xgboost    
 
 COPY zeppelin-${Z_VERSION}.tar.gz /tmp/
 
@@ -106,13 +96,6 @@ RUN echo "$LOG_TAG Download Zeppelin binary" && \
 RUN echo "$LOG_TAG Cleanup" && \
     apt-get autoclean && \
     apt-get clean
-
-# Onesait platform interpreter and custom configuration
-RUN mkdir -p ${Z_HOME}/interpreter/onesaitplatform    
-
-COPY shiro.ini ${Z_HOME}/conf/
-COPY zeppelin-site.xml ${Z_HOME}/conf/
-COPY *.jar ${Z_HOME}/interpreter/onesaitplatform/    
 
 EXPOSE 8080
 
