@@ -17,11 +17,9 @@ package com.indracompany.sofia2.controlpanel.controller.digitaltwin.device.displ
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -148,10 +146,10 @@ public class DigitalTwinDisplayController {
 								+ d + "'}).sort({timestamp: -1}).limit(" + Integer.parseInt(offset) + ")");
 					}
 
-					List<String> lResults = mapper.readValue(queryResult, List.class);
-					lResults = processData(lResults);
-					for (String r : lResults) {
-						results.add(r);
+					JSONArray arrayResult = new JSONArray(queryResult);
+
+					for (int i = 0; i < arrayResult.length(); i++) {
+						results.add(arrayResult.getJSONObject(i).toString());
 					}
 				}
 			}
@@ -161,30 +159,7 @@ public class DigitalTwinDisplayController {
 			log.error("Error getting shadow devices");
 			model.addAttribute("queryResult",
 					utils.getMessage("querytool.query.native.error", "Error malformed query"));
-			return null;
+			return "digitaltwindisplay/show :: query";
 		}
-	}
-
-	private List<String> processData(List<String> queryResult) {
-		List<String> results = new ArrayList<String>();
-		try {
-
-			for (String result : queryResult) {
-				JSONObject json = new JSONObject(result);
-				Long timeInMillisecons = json.getJSONObject("timestamp").getLong("$date");
-
-				Date date = new Date(timeInMillisecons);
-				String dateFormatted = formatter.format(date);
-
-				JSONObject timestamp = new JSONObject();
-				timestamp.put("$date", dateFormatted);
-				json.put("timestamp", timestamp);
-
-				results.add(json.toString());
-			}
-		} catch (JSONException e) {
-			log.error("Error parsing query Result. {}", e);
-		}
-		return results;
 	}
 }
