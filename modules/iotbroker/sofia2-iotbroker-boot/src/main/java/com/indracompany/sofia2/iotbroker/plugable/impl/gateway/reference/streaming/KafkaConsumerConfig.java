@@ -26,8 +26,6 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.listener.AbstractMessageListenerContainer.AckMode;
-import org.springframework.kafka.listener.config.ContainerProperties;
 
 @ConditionalOnProperty(prefix = "sofia2.iotbroker.plugable.gateway.kafka", name = "enable", havingValue = "true")
 @EnableKafka
@@ -39,6 +37,12 @@ public class KafkaConsumerConfig {
 
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.port:9092}")
 	private String kafkaPort;
+
+	@Value("${sofia2.iotbroker.plugable.gateway.kafka.user:admin}")
+	private String kafkaUser;
+
+	@Value("${sofia2.iotbroker.plugable.gateway.kafka.password:admin-secret}")
+	private String kafkaPassword;
 
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.partitions:1}")
 	int partitions;
@@ -52,8 +56,11 @@ public class KafkaConsumerConfig {
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.group:ontologyGroup}")
 	private String ontologyGroup;
 
-	@Value("${sofia2.iotbroker.plugable.gateway.kafka.consumer.maxPollRecords:5000}")
+	@Value("${sofia2.iotbroker.plugable.gateway.kafka.consumer.maxPollRecords:50}")
 	private String maxPollRecords;
+
+	@Value("${sofia2.iotbroker.plugable.gateway.kafka.consumer.maxAge:5000}")
+	private String maxAge;
 
 	public ConsumerFactory<String, String> consumerFactory(String groupId) {
 		Map<String, Object> props = new HashMap<>();
@@ -62,7 +69,9 @@ public class KafkaConsumerConfig {
 		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
-		props.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, maxPollRecords);
+		props.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, maxAge);
+
+		applySecurity(props);
 
 		return new DefaultKafkaConsumerFactory<>(props);
 	}
@@ -75,9 +84,36 @@ public class KafkaConsumerConfig {
 		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
 		props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-		props.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, maxPollRecords);
+		props.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, maxAge);
+
+		applySecurity(props);
 
 		return new DefaultKafkaConsumerFactory<>(props);
+	}
+
+	public ConsumerFactory<String, String> consumerFactoryBatch(String groupId) {
+		Map<String, Object> props = new HashMap<>();
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
+		props.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, maxAge);
+
+		applySecurity(props);
+
+		return new DefaultKafkaConsumerFactory<>(props);
+	}
+
+	private void applySecurity(Map<String, Object> config) {
+		if (kafkaPort.contains("9092") == false) {
+			config.put("security.protocol", "SASL_PLAINTEXT");
+			config.put("sasl.mechanism", "PLAIN");
+
+			config.put("sasl.jaas.config",
+					"org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" + kafkaUser
+							+ "\" password=\"" + kafkaPassword + "\";");
+		}
 	}
 
 	@Bean
@@ -91,9 +127,7 @@ public class KafkaConsumerConfig {
 	@Bean
 	public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactoryBatch() {
 		ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		ContainerProperties props = factory.getContainerProperties();
-		props.setAckMode(AckMode.MANUAL);
-		factory.setConsumerFactory(consumerFactoryManualAck(ontologyGroup));
+		factory.setConsumerFactory(consumerFactoryBatch(ontologyGroup));
 		factory.setBatchListener(true);
 		return factory;
 	}

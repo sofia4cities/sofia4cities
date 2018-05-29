@@ -30,6 +30,7 @@ public class PlainServerCallbackHandler implements AuthenticateCallbackHandler {
 
 	@Override
 	public void configure(Map<String, ?> configs, String mechanism, List<AppConfigurationEntry> jaasConfigEntries) {
+		System.out.println("--------------------------->PlainServerCallbackHandler Initialize");
 		this.jaasConfigEntries = jaasConfigEntries;
 	}
 
@@ -56,6 +57,8 @@ public class PlainServerCallbackHandler implements AuthenticateCallbackHandler {
 			 * String expectedPassword = JaasContext.configEntryOption(jaasConfigEntries,
 			 * JAAS_USER_PREFIX + username, PlainLoginModule.class.getName());
 			 */
+			System.out.println("GET OPERATION "+username+":"+new String(password));
+			
 			boolean ret = false;
 			if (username.equals("admin")) {
 				String expectedPassword = "admin-secret";
@@ -74,6 +77,8 @@ public class PlainServerCallbackHandler implements AuthenticateCallbackHandler {
 				} catch (Exception e) {
 				}
 			}
+			
+			System.out.println("RETURN GET OPERATION "+username+":"+new String(password)+" RET "+ret);
 			return ret;
 		}
 	}
@@ -85,6 +90,9 @@ public class PlainServerCallbackHandler implements AuthenticateCallbackHandler {
 		String token = "/token/" + password;
 
 		String url = getBaseURL() + device + token;
+		
+		System.out.println("CALLING URL"+url);
+
 
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();

@@ -48,14 +48,14 @@ import io.swagger.models.parameters.Parameter;
 public class RestSwaggerReader {
 
 	private static final String INFO_VERSION = "Apache 2.0 License";
-	private static final String INFO_TITLE = "onesait Platform  API Manager";
-	private static final String INFO_DESCRIPTION = "onesait Platform";
+	private static final String INFO_TITLE = "Platform  API Manager";
+	private static final String INFO_DESCRIPTION = "Platform";
 
 	private static final String LICENSE_NAME = "1.0.0";
 	private static final String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0.html";
 	private static final String BASE_PATH = "/api-manager/server/api";
 
-	private static final String CONTACT_NAME = "onesait Platform Team";
+	private static final String CONTACT_NAME = "Platform Team";
 	private static final String CONTACT_URL = "https://sofia2.com";
 	private static final String CONTACT_EMAIL = "supportsofia2@indra.es";
 
@@ -74,7 +74,7 @@ public class RestSwaggerReader {
 	private static Map<String, Response> responses = new HashMap<String, Response>();
 	private static List<Scheme> schemes = new ArrayList<Scheme>();
 
-	private static List<String> EXCLUDE_PARAMS = Arrays.asList("query", "queryType", "targetdb");
+	private static List<String> EXCLUDE_PARAMS = Arrays.asList("query", "queryType", "targetdb", "cacheable");
 	static {
 
 		Response r1 = new Response();
@@ -224,10 +224,12 @@ public class RestSwaggerReader {
 			op.addParameter(parameter);
 		}
 
-		if (method.equalsIgnoreCase("GET")) {
-			createPARAMETER(swagger, op, ApiServiceInterface.CACHEABLE, ApiServiceInterface.CACHEABLE,
-					ApiQueryParameter.HeaderType.header.name(), ApiQueryParameter.DataType.string.name(), CACHEABLE);
-		}
+		// if (method.equalsIgnoreCase("GET")) {
+		// createPARAMETER(swagger, op, ApiServiceInterface.CACHEABLE,
+		// ApiServiceInterface.CACHEABLE,
+		// ApiQueryParameter.HeaderType.header.name(),
+		// ApiQueryParameter.DataType.string.name(), CACHEABLE);
+		// }
 
 	}
 

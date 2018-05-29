@@ -58,6 +58,10 @@
               projects.push({op:"",field:jsonConfig.fields[indexF]});
             }
           }
+          //add attribute for filter style marker to recover from datasource.
+          if(vm.config.type=="map" && typeof vm.config.config.jsonMarkers!=undefined && vm.config.config.jsonMarkers!=null && vm.config.config.jsonMarkers.length>0){
+            projects.push({op:"",field:vm.config.config.markersFilter});
+          }
           vm.measures[index].config = jsonConfig;
         }
         sofia2HttpService.getDatasourceById(vm.ds).then(
@@ -88,6 +92,10 @@
                   vm.projects.push({op:"",field:jsonConfig.fields[indexF]});
                 }
               }
+               //add attribute for filter style marker to recover from datasource.
+             if(vm.config.type=="map" && typeof vm.config.config.jsonMarkers!=undefined && vm.config.config.jsonMarkers!=null && vm.config.config.jsonMarkers.length>0){
+              vm.projects.push({op:"",field:vm.config.config.markersFilter});
+             }
               vm.measures[index].config = jsonConfig;
             }
             sofia2HttpService.getDatasourceById(vm.measures[0].datasource.id).then(
@@ -206,6 +214,29 @@
           });
 
           vm.center = vm.center || vm.config.config.center;
+          //IF defined intervals for marker 
+          if(typeof vm.config.config.jsonMarkers!=undefined && vm.config.config.jsonMarkers!=null && vm.config.config.jsonMarkers.length>0){
+            var jsonMarkers = JSON.parse(vm.config.config.jsonMarkers);
+            
+            vm.markers = data.map(
+              function(d){
+                return {
+                  lat: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[0],0),
+                  lng: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[1],1),
+  
+                  message: vm.measures[0].config.fields.slice(3).reduce(
+                    function(a, b){
+                      return a + "<b>" + b + ":</b>&nbsp;" + utilsService.getJsonValueByJsonPath(d,b) + "<br/>";
+                    }
+                    ,""
+                  ),
+                  id: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[2],2),
+                  icon: utilsService.getMarkerForMap(utilsService.getJsonValueByJsonPath(d,vm.config.config.markersFilter,2),jsonMarkers),
+                }
+              }
+            )
+          
+          }else{
           vm.markers = data.map(
             function(d){
               return {
@@ -219,9 +250,11 @@
                   ,""
                 ),
                 id: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[2],2)
+               
               }
             }
           )
+        }
 
           $scope.events = {
             markers: {

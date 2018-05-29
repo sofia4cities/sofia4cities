@@ -72,7 +72,10 @@ var optionsAtm = {
 // MAIN WHEN READY
 $( document ).ready(function() {
 
-	$.ajax({ url: "/digitaltwinbroker/sensehat/getSensehatDevices", type: 'GET',
+	$.ajax({ 
+		url: "https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker/sensehat/getSensehatDevices", 
+		type: 'GET',
+		crossDomain: true,
 		success: function (data) {			 
 			var devices = JSON.parse(data);
 			$.each(devices, function(key, object){
@@ -103,12 +106,12 @@ function setConnected(connected) {
 
 function connect() {
 	$("#devices").attr("disabled", "disabled");
-    var socket = new SockJS('/digitaltwinbroker/websocket');
+    var socket = new SockJS('https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker/websocket');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/api/custom/'+$("#devices").val(), function (notification) {
+        stompClient.subscribe('https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker/api/custom/'+$("#devices").val(), function (notification) {
         	//Joystick events
         	 var obj=JSON.parse(notification.body)
         	 
@@ -151,7 +154,7 @@ function connect() {
         		 $("#up").hide();
         	 }
         });
-       stompClient.subscribe('/api/shadow/' + $("#devices").val(), function (notification) {
+       stompClient.subscribe('https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker/api/shadow/' + $("#devices").val(), function (notification) {
     	   //Temp/Hum/Atm events
            var obj=JSON.parse(notification.body)
            
@@ -241,7 +244,7 @@ function sendCustomLeftEvent() {
 	 $("#down").hide();
 	 $("#left").show();
 	 $("#right").hide();
-    stompClient.send("/api/sendAction", {'Authorization': $("#digitaltwin_key").val()}, JSON.stringify({'id':$("#devices").val(),'name':'joystickLeft'}));
+    stompClient.send("https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker/api/sendAction", {'Authorization': $("#digitaltwin_key").val()}, JSON.stringify({'id':$("#devices").val(),'name':'joystickLeft'}));
 }
 
 function sendCustomRightEvent() {
@@ -253,7 +256,7 @@ function sendCustomRightEvent() {
 	 $("#down").hide();
 	 $("#left").hide();
 	 $("#right").show();
-    stompClient.send("/api/sendAction", {'Authorization': $("#digitaltwin_key").val()}, JSON.stringify({'id':$("#devices").val(),'name':'joystickRight'}));
+    stompClient.send("https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker/api/sendAction", {'Authorization': $("#digitaltwin_key").val()}, JSON.stringify({'id':$("#devices").val(),'name':'joystickRight'}));
 }
 
 function sendCustomUpEvent() {
@@ -265,7 +268,7 @@ function sendCustomUpEvent() {
 	 $("#down").hide();
 	 $("#left").hide();
 	 $("#right").hide();
-    stompClient.send("/api/sendAction", {'Authorization': $("#digitaltwin_key").val()}, JSON.stringify({'id':$("#devices").val(),'name':'joystickUp'}));
+    stompClient.send("https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker/api/sendAction", {'Authorization': $("#digitaltwin_key").val()}, JSON.stringify({'id':$("#devices").val(),'name':'joystickUp'}));
 }
 
 function sendCustomDownEvent() {
@@ -277,7 +280,7 @@ function sendCustomDownEvent() {
 	 $("#sendDown").css("background-color", "red");
 	 $("#sendLeft").css("background-color", "");
 	 $("#sendRight").css("background-color", "");
-    stompClient.send("/api/sendAction", {'Authorization': $("#digitaltwin_key").val()}, JSON.stringify({'id':$("#devices").val(),'name':'joystickDown'}));
+    stompClient.send("https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker/api/sendAction", {'Authorization': $("#digitaltwin_key").val()}, JSON.stringify({'id':$("#devices").val(),'name':'joystickDown'}));
 }
 
 

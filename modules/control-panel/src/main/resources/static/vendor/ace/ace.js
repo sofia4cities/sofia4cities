@@ -7671,19 +7671,28 @@ var Document = function(textOrLines) {
     };
     if ("aaa".split(/a/).length === 0) {
         this.$split = function(text) {
-            return text.replace(/\r\n|\r/g, "\n").split("\n");
+        	if(text!=undefined)
+        		return text.replace(/\r\n|\r/g, "\n").split("\n");
+        	else
+        		return "";
         };
     } else {
         this.$split = function(text) {
-            return text.split(/\r\n|\r|\n/);
+        	if(text!=undefined)
+        		return text.split(/\r\n|\r|\n/);
+        	else
+        		return "";
         };
     }
 
 
     this.$detectNewLine = function(text) {
-        var match = text.match(/^.*?(\r\n|\r|\n)/m);
-        this.$autoNewLine = match ? match[1] : "\n";
-        this._signal("changeNewLineMode");
+    	if(text!=undefined){
+    		var match = text.match(/^.*?(\r\n|\r|\n)/m);
+	        this.$autoNewLine = match ? match[1] : "\n";
+	        this._signal("changeNewLineMode");
+    	}
+      
     };
     this.getNewLineCharacter = function() {
         switch (this.$newLineMode) {

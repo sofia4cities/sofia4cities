@@ -334,6 +334,28 @@ var ApiCustomOpsController = function() {
 
         document.getElementById("divCUSTOMSQLS").style.display="block";
     }
+    function loadParamsCustomValues(querystrings){
+    	var labels = $('#customsql_paramsquery fieldset label');
+    	for(var i=0; i<labels.length; i++){
+    		var label = labels.get(i);
+    		var param = label.attributes.id.value;
+    		
+    		for(var j=0; j< querystrings.length; j++){
+    			var name = querystrings[j].name;
+    			if(name == param){
+    				
+    				var id = $('#customsqlParamType_'+param);
+    				id.val(querystrings[j].dataType);
+    				
+    			}
+    			
+    		}
+    		
+    		
+    		
+    		
+    	}
+    }
 
     function loadCustomSql (op_name){
         if (op_name!=null && op_name!=""){
@@ -355,6 +377,7 @@ var ApiCustomOpsController = function() {
             }
 
             loadParamsQueryValues(operation.querystrings);
+            
             if (operation.postprocess!=null && operation.postprocess!=""){
             	myCodeMirrorJs.setValue(operation.postprocess);
             	$('#postProcessCheckbox').prop('checked', true);
@@ -366,6 +389,7 @@ var ApiCustomOpsController = function() {
             }
             
             $('#id_name_op_customsql').prop('disabled', true);
+            loadParamsCustomValues(operation.querystrings);
         } else {
         	$('#id_name_op_customsql').val("");
         	$('#id_query_op_customsql').val("");
@@ -381,6 +405,7 @@ var ApiCustomOpsController = function() {
             $('#id_name_op_customsql').prop('disabled', false);
 
         }
+        
         $('#dialog-customsql').modal('toggle');
         setTimeout(function() {
         	myCodeMirrorJs.refresh();

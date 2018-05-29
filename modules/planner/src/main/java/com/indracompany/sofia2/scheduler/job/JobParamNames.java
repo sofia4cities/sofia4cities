@@ -14,10 +14,11 @@
 package com.indracompany.sofia2.scheduler.job;
 
 public class JobParamNames {
-	
-	public static String USERNAME = "username";
-	public static String SCHEDULER_TYPE = "schedulerType";
-	
-	private JobParamNames () { }
+
+	public static final String USERNAME = "username";
+	public static final String SCHEDULER_TYPE = "schedulerType";
+
+	private JobParamNames() {
+	}
 
 }
