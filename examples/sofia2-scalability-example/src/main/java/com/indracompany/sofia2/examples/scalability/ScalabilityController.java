@@ -82,7 +82,7 @@ public class ScalabilityController {
 
 	@PostMapping(value = "/startInjector", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseEntity<Injector> startInjector(@RequestParam int injector,
-			@RequestParam String protocol, @RequestBody String data) throws IOException {
+			@RequestParam String protocol, @RequestParam int delay, @RequestBody String data) throws IOException {
 
 		Client client;
 		Injector inject;
@@ -105,7 +105,7 @@ public class ScalabilityController {
 				}
 				client.connect(connection.getToken(), connection.getClientPlatform(),
 						connection.getClientPlatformInstance() + "-" + injector, true);
-				task = beanFactory.getBean(InsertionTask.class, client, connection.getOntology(), data, injector);
+				task = beanFactory.getBean(InsertionTask.class, client, connection.getOntology(), data, injector, delay);
 			} catch (Exception e) {
 				log.error("Error connectiong with the server", e);
 				return new ResponseEntity<Injector>(HttpStatus.INTERNAL_SERVER_ERROR);

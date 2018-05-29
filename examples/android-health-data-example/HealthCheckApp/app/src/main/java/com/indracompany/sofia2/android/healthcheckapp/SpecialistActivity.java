@@ -120,7 +120,7 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/specialistInterface/\\PendingRequests";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/specialistInterface/PendingRequests";
             URL url = null;
             int responseCode = 500;
             try {

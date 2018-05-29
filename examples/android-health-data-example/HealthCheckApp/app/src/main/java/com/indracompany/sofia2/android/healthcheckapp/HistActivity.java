@@ -24,6 +24,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class HistActivity extends AppCompatActivity {
 
@@ -82,7 +83,7 @@ public class HistActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInterface/\\HistoricalData";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInterface/HistoricalData";
             URL url = null;
             int responseCode = 500;
             try {

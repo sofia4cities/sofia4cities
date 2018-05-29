@@ -69,6 +69,8 @@
 				 	<option value="mqtt">MQTT</option>
 				 	<option value="kafka">KAFKA</option>
 				</select>
+				<label for="delay">Delay:</label>
+				<input id="delay" class="clientPlatformInstance" name="delay" value="0"/>
 			</div>
 			<div class="injectors inj-table">
 				<div class="inj-totals">
@@ -194,9 +196,10 @@
 			var status = $(".injector[id="+id+"]").find(".inj-cell-status");
 			var protocol = $(".injector[id="+id+"]").find(".inj-cell-protocol").text();
 			var ontology = $(".ontology").val();
+			var delay = $('#delay').val();
 			
 			$.ajax({
-		        url: 'startInjector?&injector='+injector+'&protocol='+protocol,
+		        url: 'startInjector?&injector='+injector+'&protocol='+protocol+'&delay='+delay,
 		        type: 'POST',
 		        contentType: 'application/json',
 		        data: data,
@@ -211,6 +214,7 @@
 	            }
 		    });			
 		}
+		
 		function btnRemove(injector) {
 			$.ajax({
 		        url: 'stopInjector?injector='+injector,

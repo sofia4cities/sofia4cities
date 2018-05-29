@@ -306,7 +306,7 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 	
 	if [[ "$(docker images -q sofia2/kafka-secured 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/kafka-cluster/kafka
-		buildKafka latest
+		#buildKafka latest
 	fi	
 
 		if [[ "$(docker images -q sofia2/zookeeper-secured 2> /dev/null)" == "" ]]; then
@@ -331,7 +331,7 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 	
 	if [[ "$(docker images -q $USERNAME/notebook 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/zeppelin
-		#buildImage "Zeppelin Notebooks"
+		buildZeppelin latest
 	fi	
 fi
 	

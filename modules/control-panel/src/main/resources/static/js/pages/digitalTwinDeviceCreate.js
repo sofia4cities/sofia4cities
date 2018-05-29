@@ -105,6 +105,9 @@ var DigitalTwinCreateController = function() {
 			success : function(data) {
 				if (data!="" && data != undefined) {
 					AceEditor = ace.edit("aceEditor");
+					if(data.startsWith("\"") || data.startsWith("'")){
+						data.substring(1,data.length-1);
+					}
 					AceEditor.setValue(data);
 				} else {
 					$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'error'}); 
