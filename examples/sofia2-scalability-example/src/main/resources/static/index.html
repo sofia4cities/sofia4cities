@@ -3,7 +3,6 @@
 <head>
 	<meta charset="UTF-8">
 	<title>S4C Load Testing Tool</title>
-	<script src="js/jquery-3.3.1.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/scalability.css">
 </head>
 <body>
@@ -58,6 +57,12 @@
 			<span class="session">disconnected</span>
 		</div>
 		
+		<!-- chart -->
+		<div id="chartContainer" class="block" style="height: 200px;">
+			<canvas id="line-chart" width="800" height="200"></canvas>	
+		</div>
+
+		
 		<div class="block">
 			<div>Values updated every 5 seconds</div>
 			<div>
@@ -101,12 +106,16 @@
 		</div>
 	</div>
 	
-	<div></div>
 
+	<script src="js/jquery-3.3.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
 	<script>
 		// total acummulated values.
 		var totalGraph = [];
-		
+		// preformatted graph data from totalGraph.
+		var graphData = {};
+		var count = 1;		
+				
 		// injectors.
 		var injectors = (function() {
 			var number = 0;
@@ -238,6 +247,12 @@
 		        	injectors.remove(findWithAttr(injectors.getInjectors(), 'name',injector));
 		        	var injectorHtml = $('.injector[id="inj-'+injector+'"]');
 		        	injectorHtml.remove();
+					if (injectors.getInjectors().length == 0){ 
+						// no injectors, remove graphdata.
+						totalGraph = [];
+						console.log('GRAPH DATA REMOVED.' + JSON.stringify(totalGraph));
+						
+					}
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {
 					alert("Error stoping injector")
@@ -268,6 +283,7 @@
 		
 		function btnRefresh(){
 			var totalObj = {};
+			
 			$.ajax({
 		        url: 'status',
 		        type: 'GET',
@@ -298,12 +314,60 @@
 					
 					// updating values for graph
 					totalObj = {"throughputPeriod": totals.throughputPeriod, "averageResponseTime": totals.averageResponseTime };
-					if ( totals.throughputPeriod > 0 ){ totalGraph.push(totalObj); } 
+					if ( totals.throughputPeriod > 0 ){ totalGraph.push(totalObj);  }
+					updateGraph();
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {
 	            	console.log("Error obtaining status");
 	            }
 		    });
+		}
+		
+		
+		// retrieve data from server, mount labels and series and update the graph.
+		function updateGraph(){
+			var newData = {};
+			var newLabels = '';
+			var eachlabel = '';
+			 
+			if (totalGraph.length === 0){ 
+				myChart.data.labels.length=1;
+				myChart.data.labels[0] = 0;
+				myChart.data.datasets[0].data.length=0;
+				myChart.data.datasets[1].data.length=0;
+				myChart.update();
+			
+			return false; }
+			
+			// mount data object: {\"labels\":[5,10,15,20,25,30,35,40,45,50],\"datasets\":[{\"data\":[86,114,106,106,107,111,133,221,783,2478],\"label\":\"Throughput\",\"borderColor\":\"#3e95cd\",\"fill\":false},{\"data\":[282,350,411,502,635,809,947,1402,3700,5267],\"label\":\"Average ResponseTime\",\"borderColor\":\"#8e5ea2\",\"fill\":false}]}
+			var throughputPeriodData    = totalGraph.map(e => e.throughputPeriod).join(",").split(",");
+			var averageResponseTimeData = totalGraph.map(e => e.averageResponseTime).join(",").split(",");
+			
+			// check if greater than 25 steps (125segs.)
+			if (throughputPeriodData.length >= 25){
+				lastLabel = myChart.data.labels[myChart.data.labels.length-1];
+				lastThroughput = throughputPeriodData[throughputPeriodData.length-1];
+				lastAverage = averageResponseTimeData[averageResponseTimeData.length-1];
+				myChart.data.labels.length = 0;
+				myChart.data.labels.push(lastLabel);
+				totalGraph.length = 0;
+				totalGraph.push({"throughputPeriod": lastThroughput, "averageResponseTime": lastAverage });
+				
+				myChart.data.datasets[0].data.length=0;
+				myChart.data.datasets[0].data.push(lastThroughput);
+				myChart.data.datasets[1].data.length=0;
+				myChart.data.datasets[1].data.push(lastAverage);
+				myChart.update();		
+			} else {
+			
+				// update chart.
+				myChart.data.labels.push(myChart.data.labels[myChart.data.labels.length-1]+5);
+				myChart.data.datasets[0].data.push(throughputPeriodData[throughputPeriodData.length-1]);
+				myChart.data.datasets[1].data.push(averageResponseTimeData[averageResponseTimeData.length-1]);
+				myChart.update();
+			}
+			
+			
 		}
 		
 		function updateInjector(injector, status){
@@ -403,14 +467,62 @@
 		    });
 		}
 		
-		$( document ).ready(function() {
-			getDataConnection();
-		    loadInjectors();
-		});
+		graphData = JSON.parse("{\"labels\":[0],\"datasets\":[{\"data\":[0],\"label\":\"Throughput\",\"id\": \"y-axis-0\",\"borderColor\":\"#3e95cd\",\"fill\":false},{\"data\":[0],\"label\":\"Average ResponseTime\",\"id\": \"y-axis-1\",\"borderColor\":\"#8e5ea2\",\"fill\":false}]}");
+		// chart 
+
 		
-		window.setInterval(function(){
-			btnRefresh();
-		}, 5000);
+		
+		var myChart = new Chart(document.getElementById("line-chart"), {
+			type: 'line',
+			data: graphData,
+		
+			options:{
+				title: {
+				  display: true,
+				  text: 'Injection graph: Throughput Period vs. average Response Time'
+				},
+				responsive:true,
+				maintainAspectRatio: false,
+				tooltips: {
+					mode: 'label'
+				},
+				responsive: true,
+				scales: {
+					 yAxes: [{						
+						position: "left",						
+						id: "y-axis-0",
+						ticks: {
+							beginAtZero: true
+						},
+						scaleLabel: {
+							display: true,
+							labelString: 'Throughput'
+						}
+					},
+					{						
+						position: "right",					   
+						id: "y-axis-1",
+						ticks: {
+								beginAtZero: true
+							},
+						scaleLabel: {
+							display: true,
+							labelString: 'Average Response Time'
+						}
+					}]
+				}
+			}
+		});
+
+	
+	$( document ).ready(function() {
+		getDataConnection();
+		loadInjectors();
+	});
+	
+	window.setInterval(function(){
+		btnRefresh();
+	}, 5000);
 		
 	</script>
 </body>
