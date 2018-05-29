@@ -12,6 +12,8 @@ management.security.enabled: false
 #security.basic.enabled: false
     
 sofia2: #Config Sofia2 specific
+   apimanager:
+      cacheable: false
    iotbroker.plugable:
       gateway:
          kafka:

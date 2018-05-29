@@ -14,6 +14,6 @@ COPY server.properties /etc/kafka/server.properties
 COPY kafka_server.jaas /etc/kafka/kafka_server.jaas
 COPY sofia2-kafka-login*.jar /usr/share/java/kafka/sofia2-kafka-login.jar
       
-EXPOSE 9093 9092 9999 7778 
+EXPOSE 9093 9092 9999 7778 9095
 
 ENTRYPOINT ["kafka-server-start", "/etc/kafka/server.properties"]
