@@ -13,3 +13,6 @@ This section includes a list of videotutorials explaining the core functionaliti
 
 ## Downloading and installing the development environment
 [Watch video](http://sofia2.org/owncloud/public.php?service=files&t=9e9fa3bcb5b1ade986ac0ab0927c0f97)
+
+## Creating and importing data from csv files
+[Watch video](http://sofia2.org/owncloud/public.php?service=files&t=d00f6eea8fb85a42619224303ba208e5)
