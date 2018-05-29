@@ -24,7 +24,7 @@ public class PlainLoginModule implements LoginModule {
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState,
 			Map<String, ?> options) {
 
-		System.out.println("PlainModule Initialize");
+		System.out.println("--------------------------->PlainModule Initialize");
 		System.out.println(options.toString());
 		String url = (String) options.get("url");
 		if (url != null) {
