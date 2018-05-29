@@ -249,7 +249,7 @@
 																<div class="col-md-12 col-sm-6 col-xs-12" style="margin-top: 45px;">
 																	<div id="aceEditor" style="position:relative;min-height:400px;"></div>
 																</div>
-																<input id="logic" name="logic" type="hidden" th:field="*{logic}"/>
+																<input id="logic" name="logic" type="hidden"/>
 															</div>
 														</div>
 													</div>
@@ -338,7 +338,7 @@
 		"language" : currentLanguage,
 		"confirmBtn" : [[#{gen.confirmBtn}]],
 		"removeBtn" : [[#{gen.deleteBtn}]],
-		"logic" : [[${digitaltwindevice?.logic}]],
+		"logic" : [[${logic}]],
 		"validations" : {
 			"duplicates": [[#{digitaltwintype.valid.duplicates}]],
 			"validform": [[#{digitaltwindevice.validform}]],

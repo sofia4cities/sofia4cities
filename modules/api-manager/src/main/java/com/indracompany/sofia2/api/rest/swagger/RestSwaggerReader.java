@@ -48,14 +48,14 @@ import io.swagger.models.parameters.Parameter;
 public class RestSwaggerReader {
 
 	private static final String INFO_VERSION = "Apache 2.0 License";
-	private static final String INFO_TITLE = "onesait Platform  API Manager";
-	private static final String INFO_DESCRIPTION = "onesait Platform";
+	private static final String INFO_TITLE = "Platform  API Manager";
+	private static final String INFO_DESCRIPTION = "Platform";
 
 	private static final String LICENSE_NAME = "1.0.0";
 	private static final String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0.html";
 	private static final String BASE_PATH = "/api-manager/server/api";
 
-	private static final String CONTACT_NAME = "onesait Platform Team";
+	private static final String CONTACT_NAME = "Platform Team";
 	private static final String CONTACT_URL = "https://sofia2.com";
 	private static final String CONTACT_EMAIL = "supportsofia2@indra.es";
 

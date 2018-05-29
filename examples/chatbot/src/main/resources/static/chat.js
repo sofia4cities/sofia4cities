@@ -60,7 +60,7 @@ function buttonPressed(msg){
 }
 
 function sendMsg(text){
-    var url = 'http://localhost:31000/chatbot/message?msg=' + text
+    var url = 'message?msg=' + text
     $.get(url, 
         function(returnedData){
             console.log(returnedData);
@@ -92,25 +92,3 @@ $('body > div > div > div:nth-child(2) > span').click(function(){
 
 //-- Clear Chat
 resetChat();
-
-//-- Print Messages
-//insertChat("me", "Hello Termi...", 0);  
-//insertChat("you", "Hi, Pablo", 1500);
-//insertChat("me", "What would you like to talk about today?", 3500);
-//insertChat("you", "Tell me a joke",7000);
-//insertChat("me", "Spaceman: Computer! Computer! Do we bring battery?!", 9500);
-//insertChat("you", "LOL", 12000);
-
-// Hasta la vista, baby
-// No problemo
-// Trust me
-// No. I have to stay functional until my mission is complete. Then it doesn't matter.
-// I need a vacation
-// I swear I will not kill anyone.
-
-//var txtWelcome = "I swear I will not kill anyone. Trust me."
-
-//-- Wellcome message
-//insertChat("you", txtWelcome, 10);
-
-//-- NOTE: No use time on insertChat.
