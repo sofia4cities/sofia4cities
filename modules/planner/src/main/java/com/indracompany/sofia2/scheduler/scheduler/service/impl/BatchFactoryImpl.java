@@ -26,40 +26,41 @@ import com.indracompany.sofia2.scheduler.scheduler.BatchScheduler;
 import com.indracompany.sofia2.scheduler.scheduler.service.BatchSchedulerFactory;
 
 import javassist.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
-public class BatchFactoryImpl implements BatchSchedulerFactory{
-	
+@Slf4j
+public class BatchFactoryImpl implements BatchSchedulerFactory {
+
 	@Autowired
 	List<BatchScheduler> schedulers;
-	
+
 	Map<String, BatchScheduler> schedulerMap;
 
 	@Autowired
 	public BatchFactoryImpl(List<BatchScheduler> schedulers) {
-		
+
 		this.schedulers = schedulers;
-		
-		schedulerMap = schedulers.stream().collect(
-	            Collectors.toMap(x -> {
-					try {
-						return x.getSchedulerName();
-					} catch (SchedulerException e) {
-						e.printStackTrace();
-					}
-					return null;
-				}, x -> x));
-			
+
+		schedulerMap = schedulers.stream().collect(Collectors.toMap(x -> {
+			try {
+				return x.getSchedulerName();
+			} catch (SchedulerException e) {
+				log.error("error loading schedulers ", e);
+			}
+			return null;
+		}, x -> x));
+
 	}
 
 	@Override
 	public BatchScheduler getScheduler(SchedulerType schedulerType) throws NotFoundException {
 		BatchScheduler scheduler = schedulerMap.get(schedulerType.getSchedulerName());
-		
+
 		if (scheduler == null) {
 			throw new NotFoundException("Scheduler for type " + schedulerType + " not found");
 		}
-		
+
 		return scheduler;
 
 	}
@@ -70,7 +71,7 @@ public class BatchFactoryImpl implements BatchSchedulerFactory{
 	}
 
 	@Override
-	public BatchScheduler getScheduler(String schedulerName) throws NotFoundException {		
+	public BatchScheduler getScheduler(String schedulerName) throws NotFoundException {
 		return getScheduler(SchedulerType.valueOf(schedulerName));
 	}
 

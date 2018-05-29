@@ -50,6 +50,9 @@ case $COMMAND in
     ;;
 esac
 
+# Env variable substitution
+grep -rl '${SERVER_NAME}' /etc/kafka | xargs sed -i 's/${SERVER_NAME}/'"$SERVER_NAME"'/g'
+
 #export JMX_PORT=${JMX_PORT:-9999}
 #export JOLOKIA_HOME=$base_dir
 #export JOLOKIA_JAR=$JOLOKIA_HOME/jolokia-jvm-1.5.0-agent.jar

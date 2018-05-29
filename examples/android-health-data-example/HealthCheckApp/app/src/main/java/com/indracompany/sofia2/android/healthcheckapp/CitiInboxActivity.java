@@ -100,7 +100,7 @@ public class CitiInboxActivity extends AppCompatActivity implements CitiInboxAda
         @Override
         protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInboxInterface/\\PendingRequests";
+            String urlS ="http://"+pref_env+"/api-manager/server/api/v1/citizenInboxInterface/PendingRequests";
             URL url = null;
             int responseCode = 500;
             try {
