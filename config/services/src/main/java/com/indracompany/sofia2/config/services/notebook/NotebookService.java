@@ -60,4 +60,7 @@ public interface NotebookService {
 	public List<Notebook> getNotebooks(String userId);
 
 	public boolean hasUserPermissionForNotebook(String zeppelinId, String userId);
+
+	public ResponseEntity<String> runParagraph(String zeppelinId, String paragraphId)
+			throws ClientProtocolException, URISyntaxException, IOException;
 }

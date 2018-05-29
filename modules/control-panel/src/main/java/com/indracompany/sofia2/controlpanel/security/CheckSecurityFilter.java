@@ -14,7 +14,6 @@
  */
 package com.indracompany.sofia2.controlpanel.security;
 
-
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -57,142 +56,138 @@ import groovy.util.logging.Slf4j;
 @Slf4j
 public class CheckSecurityFilter implements Filter {
 
-    private static final Logger logger = LoggerFactory.getLogger(CheckSecurityFilter.class);
+	private static final Logger logger = LoggerFactory.getLogger(CheckSecurityFilter.class);
 
-    private static final boolean CONDITION = true;
-    
-    private TokenExtractor tokenExtractor = new BearerTokenExtractor();
-    
-    @Autowired(required=false)
-    private ApplicationEventPublisher eventPublisher;
-    
-	@Autowired(required=false)
+	private static final boolean CONDITION = true;
+
+	private TokenExtractor tokenExtractor = new BearerTokenExtractor();
+
+	@Autowired(required = false)
+	private ApplicationEventPublisher eventPublisher;
+
+	@Autowired(required = false)
 	private JWTService jwtService;
-	
-	String[] presets = {"management"};
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        logger.debug("Initiating CheckSecurityFilter >> ");
-    }
-    
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response,FilterChain chain) throws IOException,
-            ServletException {
-    	Authentication info = null;
-    	String firstResult = null;
-    	
-        	HttpServletRequest req = (HttpServletRequest) request;
-        	
-        	
-        	String path = new UrlPathHelper().getPathWithinApplication(req);
-        	String[] states = path.split("/");
-        	if (states.length>0) {
-        		String firstPath = states[1];
-        		firstResult = Arrays.stream(presets)
-            	                           .filter(x -> x.equalsIgnoreCase(firstPath))
-            	                           .findFirst()
-            	                           .orElse(null);
-        	}
-        	
-            Authentication authentication = tokenExtractor.extract(req);
-            
-            if (authentication ==null && firstResult==null) {
-            	chain.doFilter(request, response); // Goes to default servlet.
-            }
-            
-            else if (authentication ==null && firstResult!=null) {
-            	((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        		((HttpServletResponse) response).setContentType("application/json;charset=UTF-8");
-        		((HttpServletResponse) response).getWriter().write("{\"error\": \"Path needs to be Authenticated, but no Authentication Header was found\"}");
-        		((HttpServletResponse) response).getWriter().flush();
-        		((HttpServletResponse) response).getWriter().close();
-            }
-            
-            else if (authentication !=null && firstResult!=null)
-            {
-            	info = getInfo(authentication,req);
-            	
-            	if (info==null  ) {
+	String[] presets = { "management", "notebook-ops" };
 
-            		((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            		((HttpServletResponse) response).setContentType("application/json;charset=UTF-8");
-            		((HttpServletResponse) response).getWriter().write("{\"error\": \"Incorrect or Expired Authorization Header, Status is UnAuthorized\"}");
-            		((HttpServletResponse) response).getWriter().flush();
-            		((HttpServletResponse) response).getWriter().close();
-            	}
-            	
-            	else {
-            		chain.doFilter(request, response); // Goes to default servlet.
-            		logout(req);
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
+		logger.debug("Initiating CheckSecurityFilter >> ");
+	}
 
-            	}
-            }
-            
-            else if (authentication !=null && firstResult==null) {
-            	((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        		((HttpServletResponse) response).setContentType("application/json;charset=UTF-8");
-        		((HttpServletResponse) response).getWriter().write("{\"error\": \"Incorrect State, Path not need to be Authenticated but Authorization Header was Found\"}");
-        		((HttpServletResponse) response).getWriter().flush();
-        		((HttpServletResponse) response).getWriter().close();
-            }
-            	
-    }
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		Authentication info = null;
+		String firstResult = null;
 
-    
-    Authentication getInfo(Authentication authentication,HttpServletRequest req) {
-    	OAuth2Authentication info = null; 
-    	try {
-         	
-         	if (authentication!=null) {
-         		 info = (OAuth2Authentication)jwtService.getAuthentication((String)authentication.getPrincipal());
-         		 UsernamePasswordAuthenticationToken authRequest = (UsernamePasswordAuthenticationToken)info.getUserAuthentication();
-         		 
-         	    SecurityContext securityContext = SecurityContextHolder.getContext();
-         	    securityContext.setAuthentication(authRequest);
+		HttpServletRequest req = (HttpServletRequest) request;
 
-         	    // Create a new session and add the security context.
-         	    HttpSession session = req.getSession(true);
-         	    session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
-         	    
-         	    publish(new AuthenticationSuccessEvent(authRequest));
-         		
-         		return info.getUserAuthentication();
-         	}
-         	else {
-         		logger.error("Authentication is not correct");
-         	}
-         	
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				BadCredentialsException bad = new BadCredentialsException("Could not obtain access token", e);
-				publish(new OAuth2AuthenticationFailureEvent(bad));
-				
+		String path = new UrlPathHelper().getPathWithinApplication(req);
+		String[] states = path.split("/");
+		if (states.length > 0) {
+			String firstPath = states[1];
+			firstResult = Arrays.stream(presets).filter(x -> x.equalsIgnoreCase(firstPath)).findFirst().orElse(null);
+		}
+
+		Authentication authentication = tokenExtractor.extract(req);
+
+		if (authentication == null && firstResult == null) {
+			chain.doFilter(request, response); // Goes to default servlet.
+		}
+
+		else if (authentication == null && firstResult != null) {
+			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			((HttpServletResponse) response).setContentType("application/json;charset=UTF-8");
+			((HttpServletResponse) response).getWriter()
+					.write("{\"error\": \"Path needs to be Authenticated, but no Authentication Header was found\"}");
+			((HttpServletResponse) response).getWriter().flush();
+			((HttpServletResponse) response).getWriter().close();
+		}
+
+		else if (authentication != null && firstResult != null) {
+			info = getInfo(authentication, req);
+
+			if (info == null) {
+
+				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				((HttpServletResponse) response).setContentType("application/json;charset=UTF-8");
+				((HttpServletResponse) response).getWriter()
+						.write("{\"error\": \"Incorrect or Expired Authorization Header, Status is UnAuthorized\"}");
+				((HttpServletResponse) response).getWriter().flush();
+				((HttpServletResponse) response).getWriter().close();
 			}
-    	return null;
-    }
-	
-    
-    void logout(HttpServletRequest req) {
 
-    	try {
-         	    HttpSession session = req.getSession();
-         	    session.removeAttribute("SPRING_SECURITY_CONTEXT");
-         	    
-         	    logger.info("Session Disconnected");
-			} catch (Exception e) {
-				logger.error(e.getMessage(),e);
-				
+			else {
+				chain.doFilter(request, response); // Goes to default servlet.
+				logout(req);
+
 			}
-    }
+		}
 
-    @Override
-    public void destroy() {
-        logger.debug("CheckSecurityFilter WebFilter >> ");
-    }
+		else if (authentication != null && firstResult == null) {
+			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			((HttpServletResponse) response).setContentType("application/json;charset=UTF-8");
+			((HttpServletResponse) response).getWriter().write(
+					"{\"error\": \"Incorrect State, Path not need to be Authenticated but Authorization Header was Found\"}");
+			((HttpServletResponse) response).getWriter().flush();
+			((HttpServletResponse) response).getWriter().close();
+		}
 
-    private void publish(ApplicationEvent event) {
-		if (eventPublisher!=null) {
+	}
+
+	Authentication getInfo(Authentication authentication, HttpServletRequest req) {
+		OAuth2Authentication info = null;
+		try {
+
+			if (authentication != null) {
+				info = (OAuth2Authentication) jwtService.getAuthentication((String) authentication.getPrincipal());
+				UsernamePasswordAuthenticationToken authRequest = (UsernamePasswordAuthenticationToken) info
+						.getUserAuthentication();
+
+				SecurityContext securityContext = SecurityContextHolder.getContext();
+				securityContext.setAuthentication(authRequest);
+
+				// Create a new session and add the security context.
+				HttpSession session = req.getSession(true);
+				session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+
+				publish(new AuthenticationSuccessEvent(authRequest));
+
+				return info.getUserAuthentication();
+			} else {
+				logger.error("Authentication is not correct");
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			BadCredentialsException bad = new BadCredentialsException("Could not obtain access token", e);
+			publish(new OAuth2AuthenticationFailureEvent(bad));
+
+		}
+		return null;
+	}
+
+	void logout(HttpServletRequest req) {
+
+		try {
+			HttpSession session = req.getSession();
+			session.removeAttribute("SPRING_SECURITY_CONTEXT");
+
+			logger.info("Session Disconnected");
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+
+		}
+	}
+
+	@Override
+	public void destroy() {
+		logger.debug("CheckSecurityFilter WebFilter >> ");
+	}
+
+	private void publish(ApplicationEvent event) {
+		if (eventPublisher != null) {
 			eventPublisher.publishEvent(event);
 		}
 	}
@@ -201,14 +196,8 @@ public class CheckSecurityFilter implements Filter {
 		return tokenExtractor;
 	}
 
-
-
 	public void setTokenExtractor(TokenExtractor tokenExtractor) {
 		this.tokenExtractor = tokenExtractor;
 	}
 
-
-
-    
-    
 }
