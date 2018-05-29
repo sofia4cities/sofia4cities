@@ -73,6 +73,12 @@ buildZookeeper()
 	docker build -t $USERNAME/zookeeper-secured:$1 .
 }
 
+buildZeppelin()
+{
+	echo "Apache Zeppelin image generation with Docker CLI: "
+	docker build -t $USERNAME/notebook:$1 .
+}
+
 buildScalability() 
 {
 	echo "Scalability module example image generation with Docker CLI: "
@@ -367,6 +373,7 @@ if [ "$PUSH2OCPREGISTRY" = true ]; then
 	pushImage20CPRegistry chatbot latest
 	pushImage2OCPRegistry zookeeper-secured latest
 	pushImage2OCPRegistry kafka-secured latest		
+	pushImage2OCPRegistry notebook latest
 fi
 
 if [ "$PUSH2PRIVREGISTRY" = true ]; then
@@ -392,6 +399,7 @@ if [ "$PUSH2PRIVREGISTRY" = true ]; then
 	pushImage2Registry chatbot latest
 	pushImage2Registry zookeeper-secured latest
 	pushImage2Registry kafka-secured latest
+	pushImage2Registry notebook latest
 fi
 
 exit 0
