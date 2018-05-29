@@ -125,6 +125,7 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService {
 		DigitalTwinDevice digitalTwinDevice = digitalTwinDeviceRepo.findById(id);
 		if (digitalTwinDevice != null) {
 			model.addAttribute("digitaltwindevice", digitalTwinDevice);
+			model.addAttribute("logic", digitalTwinDevice.getTypeId().getLogic());
 			model.addAttribute("typeDigital", digitalTwinDevice.getTypeId().getName());
 		} else {
 			log.error("DigitalTwinDevice with id:" + id + ", not found.");

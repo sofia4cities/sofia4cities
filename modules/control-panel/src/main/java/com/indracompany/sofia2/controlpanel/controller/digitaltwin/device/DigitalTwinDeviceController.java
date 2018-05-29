@@ -76,6 +76,7 @@ public class DigitalTwinDeviceController {
 	@GetMapping(value = "/create")
 	public String create(Model model) {
 		model.addAttribute("digitaltwindevice", new DigitalTwinDevice());
+		model.addAttribute("logic", "");
 		model.addAttribute("typesDigitalTwin", this.digitalTwinDeviceService.getAllDigitalTwinTypeNames());
 		return "digitaltwindevices/create";
 	}
