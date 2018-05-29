@@ -123,6 +123,7 @@ public class DigitalTwinDeviceController {
 		DigitalTwinDevice device = digitalTwinDeviceService.getDigitalTwinDeviceById(id);
 		if (device != null) {
 			model.addAttribute("digitaltwindevice", device);
+			model.addAttribute("logic", device.getTypeId().getLogic());
 			return "digitaltwindevices/show";
 		} else {
 			utils.addRedirectMessage("digitaltwindevice.notfound.error", redirect);

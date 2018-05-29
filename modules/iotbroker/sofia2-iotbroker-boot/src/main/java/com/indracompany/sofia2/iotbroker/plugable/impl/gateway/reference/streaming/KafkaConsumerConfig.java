@@ -40,6 +40,12 @@ public class KafkaConsumerConfig {
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.port:9092}")
 	private String kafkaPort;
 
+	@Value("${sofia2.iotbroker.plugable.gateway.kafka.user:admin}")
+	private String kafkaUser;
+
+	@Value("${sofia2.iotbroker.plugable.gateway.kafka.password:admin-secret}")
+	private String kafkaPassword;
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.partitions:1}")
 	int partitions;
 
@@ -64,6 +70,8 @@ public class KafkaConsumerConfig {
 		props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
 		props.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, maxPollRecords);
 
+		applySecurity(props);
+
 		return new DefaultKafkaConsumerFactory<>(props);
 	}
 
@@ -77,7 +85,20 @@ public class KafkaConsumerConfig {
 		props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 		props.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, maxPollRecords);
 
+		applySecurity(props);
+
 		return new DefaultKafkaConsumerFactory<>(props);
+	}
+
+	private void applySecurity(Map<String, Object> config) {
+		if (kafkaPort.contains("9092") == false) {
+			config.put("security.protocol", "SASL_PLAINTEXT");
+			config.put("sasl.mechanism", "PLAIN");
+
+			config.put("sasl.jaas.config",
+					"org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" + kafkaUser
+							+ "\" password=\"" + kafkaPassword + "\";");
+		}
 	}
 
 	@Bean

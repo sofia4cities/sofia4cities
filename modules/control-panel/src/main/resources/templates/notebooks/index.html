@@ -33,13 +33,13 @@
 	</head>	
 	
 	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
-	<body class="page-header-fixed  page-content-white page-sidebar-closed" style="background-color:#212529">
+	<body class="page-header-fixed  page-content-white page-sidebar-closed" style="background-color:transparent">
 
 	<!-- MAIN PAGE WRAPPER -->
 	<div class="page-wrapper">
 	
 		<!-- BEGIN HEADER INCLUDE -->
-		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top" style="display:none"></div>
 		<!-- END HEADER --> 
 		
 		<!-- HEADER AND CONTENT DIVIDER -->
@@ -100,7 +100,7 @@
 								observer.observe(elTarget, objConfig);
 		
 								function fnHandler () {
-									$(".dropdown-toggle").dropdown();
+									$(".dropdown-toggle:not(#close-session)").dropdown();
 
 									$(".dropdown.navbar-right").on("click",function(){
 										$(this).addClass("open");
@@ -165,6 +165,7 @@
 										/*iFrame view*/
 										if(location.hash.substring(location.hash.length-8)==="asIframe"){
 											$(".page-content").css("cssText","margin: 0px !important;padding-top:0px !important");
+											$("body").css("background-color","transparent");
 											$(".notebookContent").css("padding-top","0px");
 											$(".row").css("margin","0px");
 											$("#main").css("margin-top", "50px").css("height","initial");
@@ -172,15 +173,18 @@
 										/*Notebook view*/
 										else{
 											$(".page-header,footer,.page-sidebar-wrapper,.page-bar").css("display","block");
-											//$(".sidebar-menu,footer,#migas_pan").css("display","block");
+											$("body").css("background-color","#212529");
 											$(".noteAction").css("width", "calc(100% - 70px)","important");	
 											$(".noteAction").css("margin-left", "60px","important");
 											$(".row").css("margin","initial");
 											$("#main").css("margin-top", "initial").css("height","100%").css("width","100%");
 										}
+										$(".ui-grid-cell-contents").css("height","auto","important");
+										$(".ui-grid-header-cell-wrapper").css("height","auto","important");
 									}
 									/*No notebook view, configurations, interpreters,...*/
 									else{
+										$("body").css("background-color","#212529");
 										$(".page-header,footer,.page-sidebar-wrapper,.page-bar").css("display","block");
 										$("#main").css("width","calc(100% - 70px)","important").css("height","initial");;
 									}

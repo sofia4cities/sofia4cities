@@ -41,6 +41,12 @@ public class KafkaService {
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.port:9092}")
 	private String kafkaPort;
 
+	@Value("${sofia2.iotbroker.plugable.gateway.kafka.user:admin}")
+	private String kafkaUser;
+
+	@Value("${sofia2.iotbroker.plugable.gateway.kafka.password:admin-secret}")
+	private String kafkaPassword;
+
 	@Value("${sofia2.iotbroker.plugable.gateway.kafka.partitions:1}")
 	int partitions;
 
@@ -55,12 +61,24 @@ public class KafkaService {
 
 	private AdminClient adminAcl;
 
+	private void applySecurity(Properties config) {
+		if (kafkaPort.contains("9092") == false) {
+			config.put("security.protocol", "SASL_PLAINTEXT");
+			config.put("sasl.mechanism", "PLAIN");
+
+			config.put("sasl.jaas.config",
+					"org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" + kafkaUser
+							+ "\" password=\"" + kafkaPassword + "\";");
+		}
+	}
+
 	@PostConstruct
 	public void postKafka() {
 
 		try {
 			Properties config = new Properties();
 			config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
+			applySecurity(config);
 			adminAcl = AdminClient.create(config);
 		} catch (Exception e) {
 		}

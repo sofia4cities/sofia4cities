@@ -4,9 +4,6 @@ FROM confluentinc/cp-kafka:4.1.0
 LABEL module.maintainer "plataformasofia2@indra.es" \
       module.name="kafkabroker"
 
-# Default hostname
-ENV SERVER_NAME=localhost
-
 # Copy kafka plugin and config
 COPY kafka-server-start /usr/bin/kafka-server-start
 # COPY jolokia-jvm-1.5.0-agent.jar /usr/bin/jolokia-jvm-1.5.0-agent.jar
