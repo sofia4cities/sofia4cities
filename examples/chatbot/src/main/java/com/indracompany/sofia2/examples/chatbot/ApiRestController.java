@@ -35,7 +35,7 @@ public class ApiRestController {
     
     private String postMsg(String msg) {
 
-    	String url = "http://localhost:5003/ask_s4c_bot";
+    	String url = "http://s4citiespro.westeurope.cloudapp.azure.com/chatbot/ask_s4c_bot";
     	String requestJson = "{\"msg\":\""+msg+"\"}";
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.APPLICATION_JSON);
