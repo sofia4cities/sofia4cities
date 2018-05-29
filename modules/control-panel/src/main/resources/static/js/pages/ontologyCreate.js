@@ -531,7 +531,7 @@ var OntologyCreateController = function() {
 			required_by_default: true,
 			modes: ['code', 'text', 'tree', 'view'], // allowed modes
 			error: function (err) {
-				$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
+				//$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
 				return false;
 			},
 			onChange: function(){
@@ -539,7 +539,7 @@ var OntologyCreateController = function() {
 				console.log('se modifica el editor en modo:' + editor.mode + ' contenido: ' + editor.getText());
 			}
 		};		
-		editor = new jsoneditor.JSONEditor(container, options, {});			
+		editor = new jsoneditor.JSONEditor(container, options, "");			
 	}
 	
 	
