@@ -5,6 +5,8 @@
 	<title>S4C Load Testing Tool</title>
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/scalability.css">
+	<link rel="stylesheet" type="text/css" href="js/jquery-confirm/	jquery-confirm.css">
+
 	
 	<!-- WEB FONTs -->
 	<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
@@ -199,6 +201,7 @@
 	<script src="js/jquery-3.3.1.min.js"></script>
 	<script src="js/bootstrap.js"></script>
 	<script src="js/Chart.bundle.js"></script>
+	<script src="js/jquery-confirm/jquery-confirm.js"></script>
 	
 	<script>
 		// total acummulated values.
@@ -363,11 +366,37 @@
 			console.log('INJECTORS: ' + JSON.stringify(injectorsToRemove));
 			
 			if (injectorsToRemove.length == 0) { return; }
-			// iterate and remove each one
-			$.each(injectorsToRemove, function( index, object ) {
-			  console.log("Removing Injector: " + object.name );
-			  if ((object.name !== '')&&(object.name !== 'undefined')){  btnRemove(object.name);  }
-			});
+			
+			$.confirm({			
+			title: 'Remove All Injectors Confirmation:',
+			theme: 'dark',
+			style: 'red',
+			columnClass: 'medium',
+			content: 'Do you want to remove all Injectors?',
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: 'Remove',
+					btnClass: 'btn btn-sm btn-danger',
+					action: function(){ 
+						// iterate and remove each one
+						$.each(injectorsToRemove, function( index, object ) {
+						  console.log("Removing Injector: " + object.name );
+						  if ((object.name !== '')&&(object.name !== 'undefined')){  btnRemove(object.name);  }
+						});
+					}
+				},
+				close: {
+					text: 'Close',
+					btnClass: 'btn btn-sm btn-default ',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+			
 			
 			
 		}
