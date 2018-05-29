@@ -40,6 +40,10 @@
     padding:0;
     margin-top:30px;
 }
+.bot-orders{
+	margin-top:30px;
+	margin-bottom: 10px;
+}
 .frame > div:last-of-type{
     position:absolute;bottom:0;width:100%;display:flex;
 }
@@ -104,17 +108,19 @@ input:focus{
   cursor: pointer;
   outline: none;
   color: #fff;
-  background-color: #4CAF50;
+  background-color: #333;
   border: none;
   border-radius: 15px;
   box-shadow: 0 9px #999;
+  display: block;
+  margin-bottom: 15px;
 }
 .pressed:hover {
-	background-color: #3e8e41
+	background-color: #444
 }
 
 .pressed:active {
-  background-color: #3e8e41;
+  background-color: #444;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
