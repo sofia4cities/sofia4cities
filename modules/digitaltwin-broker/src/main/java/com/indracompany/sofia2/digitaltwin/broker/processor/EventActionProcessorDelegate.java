@@ -223,7 +223,7 @@ public class EventActionProcessorDelegate implements EventProcessor, ActionProce
 	public EventResponseMessage shadow(String apiKey, JSONObject data) throws JSONException {
 
 		// TODO Validate data with model
-
+		log.info("Shadow received");
 		if (data.get("id") == null) {
 			return new EventResponseMessage("id is required", HttpStatus.BAD_REQUEST);
 		}
@@ -254,12 +254,13 @@ public class EventActionProcessorDelegate implements EventProcessor, ActionProce
 			compositeModel.setDigitalTwinModel(model);
 			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
 
+			log.info("Send updateshadow to router");
 			OperationResultModel result = routerDigitalTwinService.updateShadow(compositeModel);
 			if (!result.isStatus()) {
 				log.info("EventActionProcessorDelegate -- getErrorCode: " + result.getErrorCode());
 				return new EventResponseMessage(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
 			}
-
+			log.info("The Shadow is going to be notified to demo");
 			this.notifyShadowSubscriptors(data);
 
 			return new EventResponseMessage(result.getMessage(), HttpStatus.OK);
@@ -502,9 +503,11 @@ public class EventActionProcessorDelegate implements EventProcessor, ActionProce
 	}
 
 	private void notifyShadowSubscriptors(JSONObject message) {
+		log.info("notifyShadowSubscriptors");
 		notifierExecutor.execute(new Runnable() {
 			@Override
 			public void run() {
+				log.info("notifyShadowSubscriptors execution");
 				digitalTwinWebsocketApi.notifyShadowMessage(message);
 			}
 		});
@@ -512,20 +515,24 @@ public class EventActionProcessorDelegate implements EventProcessor, ActionProce
 	}
 
 	private void notifyCustomSubscriptors(JSONObject message) {
+		log.info("notifyCustomSubscriptors");
 		notifierExecutor.execute(new Runnable() {
 			@Override
 			public void run() {
+				log.info("notifyCustomSubscriptors execution");
 				digitalTwinWebsocketApi.notifyCustomMessage(message);
 			}
 		});
 	}
 
 	private void notifyActionSubscriptors(JSONObject message) {
+		log.info("notifyActionSubscriptors");
 		// Notify to Gateways
 		for (ActionNotifier actionNotifier : actionNotifiers) {
 			notifierExecutor.execute(new Runnable() {
 				@Override
 				public void run() {
+					log.info("notifyActionSubscriptors execution");
 					actionNotifier.notifyActionMessage(message);
 				}
 			});

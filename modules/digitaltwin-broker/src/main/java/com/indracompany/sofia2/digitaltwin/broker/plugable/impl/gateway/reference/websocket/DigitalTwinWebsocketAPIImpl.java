@@ -58,9 +58,11 @@ public class DigitalTwinWebsocketAPIImpl implements DigitalTwinWebsocketAPI {
 	@Override
 	public void notifyShadowMessage(JSONObject message) {
 		try {
+			log.info("DigitalTwinWebsocketAPIImpl -- notifyShadowMessage: " + message);
 			String sourceTwin = message.get("id").toString();
+			log.info("DigitalTwinWebsocketAPIImpl -- notifyShadowMessage -- URL:  " + "/api/shadow/" + sourceTwin);
 			messagingTemplate.convertAndSend("/api/shadow/" + sourceTwin, message.toString());
-
+			log.info("Notify Shadow send.");
 		} catch (Exception e) {
 			log.error("Error notifing message", e);
 		}
@@ -69,9 +71,11 @@ public class DigitalTwinWebsocketAPIImpl implements DigitalTwinWebsocketAPI {
 	@Override
 	public void notifyCustomMessage(JSONObject message) {
 		try {
+			log.info("DigitalTwinWebsocketAPIImpl -- notifyCustomMessage: " + message);
 			String sourceTwin = message.get("id").toString();
+			log.info("DigitalTwinWebsocketAPIImpl -- notifyShadowMessage -- URL:  " + "/api/custom/" + sourceTwin);
 			messagingTemplate.convertAndSend("/api/custom/" + sourceTwin, message.toString());
-
+			log.info("Notify custom send.");
 		} catch (Exception e) {
 			log.error("Error notifing message", e);
 		}
@@ -80,9 +84,11 @@ public class DigitalTwinWebsocketAPIImpl implements DigitalTwinWebsocketAPI {
 	@Override
 	public void notifyActionMessage(JSONObject message) {
 		try {
+			log.info("DigitalTwinWebsocketAPIImpl -- notifyActionMessage: " + message);
 			String sourceTwin = message.get("id").toString();
+			log.info("DigitalTwinWebsocketAPIImpl -- notifyShadowMessage -- URL:  " + "/api/action/" + sourceTwin);
 			messagingTemplate.convertAndSend("/api/action/" + sourceTwin, message.toString());
-
+			log.info("Notify action send.");
 		} catch (Exception e) {
 			log.error("Error notifing message", e);
 		}
