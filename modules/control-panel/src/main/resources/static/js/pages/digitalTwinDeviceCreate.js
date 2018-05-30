@@ -16,8 +16,9 @@ var DigitalTwinCreateController = function() {
 	
 	
 	$("#createBtn").on('click',function(){
+		var editorLogic = $('.CodeMirror')[0].CodeMirror;
 		if($("#identification").val()!='' && $("#identification").val()!=undefined){
-			$("#logic").val(JSON.stringify(ace.edit("aceEditor").getValue().trim()));
+			$("#logic").val(JSON.stringify(editorLogic.getValue().trim()));
 			$("#typeSelected").val($("#typeDigitalTwin").val());
 			DigitalTwinCreateController.submitform();
 		}else{
@@ -29,8 +30,9 @@ var DigitalTwinCreateController = function() {
 	
 	
 	$("#updateBtn").on('click',function(){
+		var editorLogic = $('.CodeMirror')[0].CodeMirror;
 		if($("#identification").val()!='' && $("#identification").val()!=undefined){
-			$("#logic").val(JSON.stringify(ace.edit("aceEditor").getValue().trim()));
+			$("#logic").val(JSON.stringify(editorLogic.getValue().trim()));
 			$("#typeSelected").val($("#typeDigitalTwin").val());
 			DigitalTwinCreateController.submitform();
 		}else{
@@ -95,7 +97,7 @@ var DigitalTwinCreateController = function() {
 	});
 	
 	var changeDigitalTwinType = function(type){
-		
+		var editorLogic = $('.CodeMirror')[0].CodeMirror;
 		$.ajax({
 			url : "/controlpanel/digitaltwindevices/getLogicFromType/"+type.trim(),
 			type : 'GET',
@@ -104,11 +106,11 @@ var DigitalTwinCreateController = function() {
 			mimeType: 'text/plain',
 			success : function(data) {
 				if (data!="" && data != undefined) {
-					AceEditor = ace.edit("aceEditor");
+					
 					if(data.startsWith("\"") || data.startsWith("'")){
 						data.substring(1,data.length-1);
 					}
-					AceEditor.setValue(data);
+					editorLogic.setValue(data);
 				} else {
 					$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'error'}); 
 				}
@@ -118,6 +120,24 @@ var DigitalTwinCreateController = function() {
 			}
 		});
 	}
+	
+	// INIT CODEMIRROR
+	var handleCodeMirror = function () {
+		logControl ? console.log('handleCodeMirror() on -> logicEditor') : '';	
+		
+        var myTextArea = document.getElementById('logicEditor');
+        var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
+        	mode: "text/javascript",
+            lineNumbers: false,
+            foldGutter: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            theme:"material",    
+            readOnly: true
+
+        });
+		myCodeMirror.setSize("100%", 350);
+    }
 
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{
@@ -131,7 +151,7 @@ var DigitalTwinCreateController = function() {
 		init: function(){
 			
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
-			
+			handleCodeMirror();
 			// PROTOTYPEs
 			// ARRAY PROTOTYPE FOR CHECK UNIQUE PROPERTIES.
 			Array.prototype.unique = function() {
@@ -176,14 +196,13 @@ var DigitalTwinCreateController = function() {
 				var type = $("#typeDigital").val();
 				$("#typeDigitalTwin").val(type);
 				
-				AceEditor = ace.edit("aceEditor");
+				var editorLogic = $('.CodeMirror')[0].CodeMirror;
 				var logica = digitalTwinCreateJson.logic;
 					
 				if(logica.charAt(0) === '\"'){
 					logica = logica.substr(1, logica.length-2);
 				}
-				AceEditor.setValue(logica);
-				AceEditor.setReadOnly(true);
+				editorLogic.setValue(logica)
 			}
 			
 			
@@ -214,14 +233,6 @@ var DigitalTwinCreateController = function() {
 jQuery(document).ready(function() {
 	
 	DigitalTwinCreateController.load(digitalTwinCreateJson);
-	AceEditor = ace.edit("aceEditor");
-	AceEditor.setTheme("ace/theme/monokai");
-	AceEditor.session.setMode("ace/mode/javascript");
-	AceEditor.setOptions({
-	    readOnly: true,
-	    highlightActiveLine: false,
-	    highlightGutterLine: false
-	})
-	AceEditor.renderer.$cursorLayer.element.style.opacity=0
+	
 	DigitalTwinCreateController.init();
 });

@@ -16,7 +16,9 @@ package com.indracompany.sofia2.examples.scalability;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.BeanFactory;
@@ -88,6 +90,8 @@ public class ScalabilityController {
 		Injector inject;
 		InsertionTask task;
 
+		int appliedDelay = delay;
+		
 		synchronized (lock) {
 			try {
 				switch (protocol) {
@@ -99,13 +103,16 @@ public class ScalabilityController {
 					break;
 				case "kafka":
 					client = new ClientKafkaProducerWrapper(connection.getKafkaURL());
+					if (appliedDelay < 200) {
+						appliedDelay = 200;
+					}
 					break;
 				default:
 					return new ResponseEntity<Injector>(HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 				client.connect(connection.getToken(), connection.getClientPlatform(),
 						connection.getClientPlatformInstance() + "-" + injector, true);
-				task = beanFactory.getBean(InsertionTask.class, client, connection.getOntology(), data, injector, delay);
+				task = beanFactory.getBean(InsertionTask.class, client, connection.getOntology(), data, injector, appliedDelay);
 			} catch (Exception e) {
 				log.error("Error connectiong with the server", e);
 				return new ResponseEntity<Injector>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -122,10 +129,17 @@ public class ScalabilityController {
 	@GetMapping(value = "/status", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseEntity<List<InjectorStatus>> getStatus() {
 		ArrayList<InjectorStatus> statues = new ArrayList<InjectorStatus>();
-		for (InsertionTask task : tasks.values()) {
-			InjectorStatus status = task.getStatus();
-			statues.add(status);
-		}
+		Iterator<Entry<Injector, InsertionTask>> it = tasks.entrySet().iterator();
+	    while (it.hasNext()) {
+	    	Entry<Injector, InsertionTask> pair = (Entry<Injector, InsertionTask>)it.next();
+	        InsertionTask task = pair.getValue();
+	        if (task.isStopped()) {
+				it.remove();
+			} else {
+				InjectorStatus status = task.getStatus();
+				statues.add(status);
+			}
+	    }
 		return new ResponseEntity<List<InjectorStatus>>(statues, HttpStatus.OK);
 	}
 

@@ -214,8 +214,8 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService {
 				digitalTwinType.setPropertyDigitalTwinTypes(propertyDigitalTwinTypes);
 				digitalTwinType.setActionDigitalTwinTypes(actionDigitalTwinTypes);
 				digitalTwinType.setEventDigitalTwinTypes(eventDigitalTwinTypes);
-				digitalTwinType.setLogic(logic.substring(1, logic.length() - 1)
-						.replace("\\n", System.getProperty("line.separator")).replace("\\r", "").replace("\\t", "   "));
+				digitalTwinType.setLogic(logic.replace("\\n", System.getProperty("line.separator")).replace("\\r", "")
+						.replace("\\t", "   "));
 				this.digitalTwinTypeRepo.save(digitalTwinType);
 			} else {
 				log.error("Invalid user");
