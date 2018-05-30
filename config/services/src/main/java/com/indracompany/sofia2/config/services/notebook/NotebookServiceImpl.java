@@ -48,61 +48,61 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class NotebookServiceImpl implements NotebookService {
-	
+
 	@Autowired
 	private NotebookServiceConfiguration configuration;
-	
+
 	@Autowired
 	private NotebookRepository notebookRepository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	private String encryptRestUserpass() {
 		String key = configuration.getRestUsername() + ":" + configuration.getRestPass();
 		String encryptedKey = new String(Base64.encode(key.getBytes()), Charset.forName("UTF-8"));
 		key = "Basic " + encryptedKey;
 		return key;
 	}
-	
+
 	private Notebook sendZeppelinCreatePost(String path, String body, String name, User user) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		String idzep;
 		ResponseEntity<String> responseEntity;
-		
+
 		log.info("Creating notebook for user: " + user.getUserId() + " with name: " + name);
-		
+
 		try {
 			responseEntity = sendHttp(path, HttpMethod.POST, body, headers);
 		} catch (URISyntaxException e) {
 			log.error("The URI of the endpoint is invalid in creation POST");
 			throw new NotebookServiceException("The URI of the endpoint is invalid in creation POST: " + e);
-		} catch	(IOException e) {
+		} catch (IOException e) {
 			log.error("Exception in POST in creation POST");
 			throw new NotebookServiceException("Exception in POST in creation POST: ", e);
 		}
-		
+
 		int statusCode = responseEntity.getStatusCodeValue();
-		/*200 zeppelin 8, 201 zeppelin 7*/
-		if (statusCode/100 != 2) {
+		/* 200 zeppelin 8, 201 zeppelin 7 */
+		if (statusCode / 100 != 2) {
 			log.error("Exception executing creation POST, status code: " + statusCode);
 			throw new NotebookServiceException("Exception executing creation POST, status code: " + statusCode);
 		}
-		
-		try {	
+
+		try {
 			JSONObject createResponseObj = new JSONObject(responseEntity.getBody());
 			idzep = createResponseObj.getString("body");
 		} catch (JSONException e) {
 			log.error("Exception parsing answer in create post");
 			throw new NotebookServiceException("Exception parsing answer in create post: ", e);
-		}	
-		
+		}
+
 		Notebook nt = saveDBNotebook(name, idzep, user);
 		log.info("Notebook for user: " + user.getUserId() + " with name: " + name + ", successfully created");
 		return nt;
 	}
-	
+
 	public Notebook saveDBNotebook(String name, String idzep, User user) {
 		Notebook nt = new Notebook();
 		nt.setIdentification(name);
@@ -111,50 +111,50 @@ public class NotebookServiceImpl implements NotebookService {
 		notebookRepository.save(nt);
 		return nt;
 	}
-	
+
 	public Notebook createEmptyNotebook(String name, String userId) {
 		User user = userRepository.findByUserId(userId);
 		return sendZeppelinCreatePost("/api/notebook", "{'name': '" + name + "'}", name, user);
 	}
-	
+
 	public Notebook importNotebook(String name, String data, String userId) {
 		User user = userRepository.findByUserId(userId);
 		return sendZeppelinCreatePost("/api/notebook/import", data, name, user);
 	}
-	
+
 	public Notebook cloneNotebook(String name, String idzep, String userId) {
 		Notebook nt = notebookRepository.findByIdzep(idzep);
 		User user = userRepository.findByUserId(userId);
-		if (hasUserPermissionInNotebook(nt,user)) {
+		if (hasUserPermissionInNotebook(nt, user)) {
 			return sendZeppelinCreatePost("/api/notebook/" + idzep, "{'name': '" + name + "'}", name, user);
 		} else {
 			return null;
 		}
 	}
-	
+
 	public ResponseEntity<byte[]> exportNotebook(String id, String user) {
 		Notebook nt = notebookRepository.findByIdentification(id);
 		ResponseEntity<String> responseEntity;
 		JSONObject notebookJSONObject;
-		
-		if (hasUserPermissionInNotebook(nt,user)) {
+
+		if (hasUserPermissionInNotebook(nt, user)) {
 			try {
 				responseEntity = sendHttp("/api/notebook/export/" + nt.getIdzep(), HttpMethod.GET, "");
 			} catch (URISyntaxException e) {
 				log.error("The URI of the endpoint is invalid in creation POST");
 				throw new NotebookServiceException("The URI of the endpoint is invalid in creation POST: " + e);
-			} catch	(IOException e) {
+			} catch (IOException e) {
 				log.error("Exception in POST in creation POST");
 				throw new NotebookServiceException("Exception in POST in creation POST: ", e);
 			}
-			
+
 			int statusCode = responseEntity.getStatusCodeValue();
-			
+
 			if (statusCode != 200) {
 				log.error("Exception executing export notebook, status code: " + statusCode);
 				throw new NotebookServiceException("Exception executing export notebook, status code: " + statusCode);
 			}
-			
+
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.TEXT_PLAIN);
 			headers.set("Content-Disposition", "attachment; filename=\"" + nt.getIdentification() + ".json\"");
@@ -165,42 +165,41 @@ public class NotebookServiceImpl implements NotebookService {
 				log.error("Exception parsing answer in download notebook");
 				throw new NotebookServiceException("Exception parsing answer in download notebook: ", e);
 			}
-			return new ResponseEntity<byte[]>(
-					notebookJSONObject.toString().getBytes(Charset.forName("UTF-8")), headers,
+			return new ResponseEntity<byte[]>(notebookJSONObject.toString().getBytes(Charset.forName("UTF-8")), headers,
 					HttpStatus.OK);
-			
+
 		} else {
 			log.error("Exception executing export notebook, permission denied");
 			throw new NotebookServiceException("Error export notebook, permission denied");
 		}
 	}
-	
+
 	public void removeNotebook(String id, String user) {
 		ResponseEntity<String> responseEntity;
 		Notebook nt = notebookRepository.findByIdentification(id);
 		String name = nt.getIdentification();
-		
+
 		log.info("Delete notebook for user: " + user + " with name: " + name);
-		
-		if (hasUserPermissionInNotebook(nt,user)) {
-			
+
+		if (hasUserPermissionInNotebook(nt, user)) {
+
 			try {
 				responseEntity = sendHttp("/api/notebook/" + nt.getIdzep(), HttpMethod.DELETE, "");
 			} catch (URISyntaxException e) {
 				log.error("The URI of the endpoint is invalid in delete notebook");
 				throw new NotebookServiceException("The URI of the endpoint is invalid in delete notebook: " + e);
-			} catch	(IOException e) {
+			} catch (IOException e) {
 				log.error("Exception in POST in creation POST");
 				throw new NotebookServiceException("Exception in POST in delete notebook: ", e);
 			}
-			
+
 			int statusCode = responseEntity.getStatusCodeValue();
-			
+
 			if (statusCode != 200) {
 				log.error("Exception executing delete notebook, status code: " + statusCode);
 				throw new NotebookServiceException("Exception executing delete notebook, status code: " + statusCode);
 			}
-			
+
 			notebookRepository.delete(nt);
 			log.info("Notebook for user: " + user + " with name: " + name + ", successfully deleted");
 		} else {
@@ -208,53 +207,56 @@ public class NotebookServiceImpl implements NotebookService {
 			throw new NotebookServiceException("Error delete notebook, permission denied");
 		}
 	}
-	
+
 	public String loginOrGetWSToken() {
-		return loginOrGetWSTokenWithUserPass(configuration.getZeppelinShiroUsername(), configuration.getZeppelinShiroPass());
+		return loginOrGetWSTokenWithUserPass(configuration.getZeppelinShiroUsername(),
+				configuration.getZeppelinShiroPass());
 	}
-	
+
 	public String loginOrGetWSTokenAdmin() {
-		return loginOrGetWSTokenWithUserPass(configuration.getZeppelinShiroAdminUsername(), configuration.getZeppelinShiroAdminPass()) ;
+		return loginOrGetWSTokenWithUserPass(configuration.getZeppelinShiroAdminUsername(),
+				configuration.getZeppelinShiroAdminPass());
 	}
-	
+
 	private String loginOrGetWSTokenWithUserPass(String username, String password) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		ResponseEntity<String> responseEntity;
-		
+
 		try {
-			responseEntity = sendHttp("api/login", HttpMethod.POST, "userName=" + username + "&password=" + password, headers);
+			responseEntity = sendHttp("api/login", HttpMethod.POST, "userName=" + username + "&password=" + password,
+					headers);
 		} catch (URISyntaxException e) {
 			log.error("The URI of the endpoint is invalid in authentication POST");
 			throw new NotebookServiceException("The URI of the endpoint is invalid in authentication POST: " + e);
-		} catch	(IOException e) {
+		} catch (IOException e) {
 			log.error("Exception in POST in authentication POST");
 			throw new NotebookServiceException("Exception in POST in authentication POST: ", e);
 		}
-		
+
 		int statusCode = responseEntity.getStatusCodeValue();
-		
+
 		if (statusCode != 200) {
 			log.error("Exception executing authentication POST, status code: " + statusCode);
 			throw new NotebookServiceException("Exception executing authentication POST, status code: " + statusCode);
 		}
-		
+
 		return responseEntity.getBody();
-		
+
 	}
-	
+
 	public ResponseEntity<String> sendHttp(HttpServletRequest requestServlet, HttpMethod httpMethod, String body)
 			throws URISyntaxException, ClientProtocolException, IOException {
 		return sendHttp(requestServlet.getServletPath(), httpMethod, body);
 	}
-	
+
 	public ResponseEntity<String> sendHttp(String url, HttpMethod httpMethod, String body)
 			throws URISyntaxException, ClientProtocolException, IOException {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		return sendHttp(url, httpMethod, body, headers);
 	}
-	
+
 	public ResponseEntity<String> sendHttp(String url, HttpMethod httpMethod, String body, HttpHeaders headers)
 			throws URISyntaxException, ClientProtocolException, IOException {
 		RestTemplate restTemplate = new RestTemplate();
@@ -276,15 +278,16 @@ public class NotebookServiceImpl implements NotebookService {
 		return new ResponseEntity<String>(response.getBody(), responseHeaders,
 				HttpStatus.valueOf(response.getStatusCode().value()));
 	}
-	
+
 	public Notebook getNotebook(String identification, String userId) {
 		Notebook nt = notebookRepository.findByIdentification(identification);
-		if (hasUserPermissionInNotebook(nt,userId)) {
+		if (hasUserPermissionInNotebook(nt, userId)) {
 			return nt;
 		} else {
 			return null;
 		}
 	}
+
 	public List<Notebook> getNotebooks(String userId) {
 		User user = userRepository.findByUserId(userId);
 		if (!user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
@@ -296,11 +299,46 @@ public class NotebookServiceImpl implements NotebookService {
 
 	private boolean hasUserPermissionInNotebook(Notebook nt, String userId) {
 		User user = userRepository.findByUserId(userId);
-		return hasUserPermissionInNotebook( nt,user); 
+		return hasUserPermissionInNotebook(nt, user);
 	}
-	
+
 	private boolean hasUserPermissionInNotebook(Notebook nt, User user) {
-		return user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString()) || nt.getUser().getUserId().equals(user.getUserId()); 
+		return user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())
+				|| nt.getUser().getUserId().equals(user.getUserId());
+	}
+
+	@Override
+	public boolean hasUserPermissionForNotebook(String zeppelinId, String userId) {
+		Notebook nt = this.notebookRepository.findByIdzep(zeppelinId);
+		if (nt != null)
+			return this.hasUserPermissionInNotebook(nt, userId);
+		return false;
+	}
+
+	@Override
+	public ResponseEntity<String> runParagraph(String zeppelinId, String paragraphId)
+			throws ClientProtocolException, URISyntaxException, IOException {
+		ResponseEntity<String> responseEntity;
+		responseEntity = sendHttp("/api/notebook/run/".concat(zeppelinId).concat("/").concat(paragraphId),
+				HttpMethod.POST, "");
+		if (responseEntity.getStatusCode() == HttpStatus.OK) {
+			responseEntity = sendHttp("/api/notebook/".concat(zeppelinId).concat("/paragraph/").concat(paragraphId),
+					HttpMethod.GET, "");
+		}
+		return responseEntity;
+	}
+
+	@Override
+	public ResponseEntity<String> runAllParagraphs(String zeppelinId)
+			throws ClientProtocolException, URISyntaxException, IOException {
+		return sendHttp("/api/notebook/job/".concat(zeppelinId), HttpMethod.POST, "");
+	}
+
+	@Override
+	public ResponseEntity<String> getParagraphResult(String zeppelinId, String paragraphId)
+			throws ClientProtocolException, URISyntaxException, IOException {
+		return sendHttp("/api/notebook/".concat(zeppelinId).concat("/paragraph/").concat(paragraphId), HttpMethod.GET,
+				"");
 	}
 
 }

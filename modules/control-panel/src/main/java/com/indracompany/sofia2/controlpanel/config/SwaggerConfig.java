@@ -69,7 +69,7 @@ public class SwaggerConfig {
 		ParameterBuilder aParameterBuilder = new ParameterBuilder();
 		List<Parameter> aParameters = new ArrayList<Parameter>();
 
-		aParameterBuilder.name("Authorization").modelRef(new ModelRef("string")).parameterType("header").required(false)
+		aParameterBuilder.name("Authorization").modelRef(new ModelRef("string")).parameterType("header").required(true)
 				.build();
 		aParameters.add(aParameterBuilder.build());
 
@@ -115,6 +115,27 @@ public class SwaggerConfig {
 	@SuppressWarnings("unchecked")
 	private Predicate<String> buildPathSelectorApiOpsLogin() {
 		return or(regex("/api-ops/login.*"));
+	}
+
+	@Bean
+	public Docket NotebookOpsAPI() {
+
+		// Adding Header
+		ParameterBuilder aParameterBuilder = new ParameterBuilder();
+		List<Parameter> aParameters = new ArrayList<Parameter>();
+
+		aParameterBuilder.name("Authorization").modelRef(new ModelRef("string")).parameterType("header").required(true)
+				.build();
+		aParameters.add(aParameterBuilder.build());
+
+		return new Docket(DocumentationType.SWAGGER_2).groupName("notebook-ops").select()
+				.apis(RequestHandlerSelectors.any()).paths(buildPathSelectorNotebookOps()).build()
+				.globalOperationParameters(addRestParameters(aParameterBuilder, aParameters));
+	}
+
+	@SuppressWarnings("unchecked")
+	private Predicate<String> buildPathSelectorNotebookOps() {
+		return or(regex("/notebook-ops.*"));
 	}
 
 }

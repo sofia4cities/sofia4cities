@@ -167,7 +167,7 @@
 		      		<h3 th:text="#{menu.modal.oauthtoken}">Oauth Token</h3>
 		      		<a id="oauthTokenCopy"><p id="oauthToken" th:text="#{menu.modal.bearer}+' '+${session.oauthToken}" class="dont-break-out"></p></a>
 		      		<h3 th:text="#{menu.apis}">Apis</h3>
-		      		<h4 ><a target="_blank" th:text="#{menu.modal.controlpanel}" th:href="${session.apis?.controlpanel}">Control panel</a></h4>
+		      		<h4 ><a target="_blank" th:text="#{menu.modal.controlpanel}" th:href="${session.apis?.controlpanel}">Control panel: oauth, management, notebooks</a></h4>
 		      		<h4 ><a target="_blank" th:text="#{menu.modal.iotbroker}" th:href="${session.apis?.iotbroker}">IoTBroker</a></h4>
 		      		<h4 ><a target="_blank" th:text="#{menu.modal.apimanager}" th:href="${session.apis?.apiManager}">Api Manager</a></h4>
 		      		<h4 ><a target="_blank" th:text="#{menu.modal.router}" th:href="${session.apis?.routerStandAlone}">Router</a></h4>
