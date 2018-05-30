@@ -3,6 +3,6 @@
 	"technologies":"Java",
 	"description":"Chatbot application.",
 	"detailedDescription":"This is an Chatbot application",
-	"functionality":"function",
+	"functionality":"",
 	"id_endpoint":"http://rancher.sofia4cities.com/chatbotweb/chat.html"
 }

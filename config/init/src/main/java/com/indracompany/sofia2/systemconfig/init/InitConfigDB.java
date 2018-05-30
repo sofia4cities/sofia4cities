@@ -2117,7 +2117,7 @@ public class InitConfigDB {
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("9");
-			marketAsset.setIdentification("Data Import Tool Countries JSON");
+			marketAsset.setIdentification("Countries JSON");
 
 			marketAsset.setUser(getUserAdministrator());
 
@@ -2136,7 +2136,7 @@ public class InitConfigDB {
 			marketAssetRepository.save(marketAsset);
 
 			// Stress Application
-			createMarketAsset("10", "Stress Application", MarketAsset.MarketAssetState.APPROVED,
+			createMarketAsset("10", "StressApplication", MarketAsset.MarketAssetState.APPROVED,
 					MarketAsset.MarketAssetType.URLAPPLICATION, MarketAsset.MarketAssetPaymentMode.FREE, true,
 					"market/details/StressApplication.json", null, null, null, null);
 			// Chat bot
@@ -2145,17 +2145,17 @@ public class InitConfigDB {
 					"market/details/ChatBot.json", null, null, null, null);
 
 			// Chat bot telegram
-			createMarketAsset("12", "ChatBot Telegram", MarketAsset.MarketAssetState.APPROVED,
+			createMarketAsset("12", "ChatBotTelegram", MarketAsset.MarketAssetState.APPROVED,
 					MarketAsset.MarketAssetType.DOCUMENT, MarketAsset.MarketAssetPaymentMode.FREE, true,
 					"market/details/ChatBotTelegram.json", null, null, "market/docs/countries.json", "countries.json");
 
 			// Digital Twin Web
 			createMarketAsset("13", "SenseHatDemo", MarketAsset.MarketAssetState.APPROVED,
 					MarketAsset.MarketAssetType.WEBPROJECT, MarketAsset.MarketAssetPaymentMode.FREE, true,
-					"market/details/DigitalTwinSenseHatWeb.json", null, null, null, null);
+					"market/details/SenseHatDemo.json", null, null, null, null);
 
 			// Digital Twin Sense Hat
-			createMarketAsset("14", "Digital Twin Sense Hat", MarketAsset.MarketAssetState.APPROVED,
+			createMarketAsset("14", "DigitalTwinSenseHat", MarketAsset.MarketAssetState.APPROVED,
 					MarketAsset.MarketAssetType.APPLICATION, MarketAsset.MarketAssetPaymentMode.FREE, true,
 					"market/details/DigitalTwinSenseHat.json", "market/img/jar-file.jpg", "jpg",
 					"market/docs/SenseHatHelsinki.zip", "SenseHatHelsinki-0.0.1.jar");
@@ -2166,10 +2166,14 @@ public class InitConfigDB {
 					"market/details/Tutorials.json", null, null, "market/docs/README_Tutorials.md", "README.md");
 
 			// Health Check Android Application
-			createMarketAsset("16", "Health Check Android Application", MarketAsset.MarketAssetState.APPROVED,
+			createMarketAsset("16", "HealthCheckAndroidApplication", MarketAsset.MarketAssetState.APPROVED,
 					MarketAsset.MarketAssetType.APPLICATION, MarketAsset.MarketAssetPaymentMode.FREE, true,
 					"market/details/HealthCheckApplication.json", null, null, "market/docs/HealthCheckApp.zip",
 					"HealthCheckApp.apk");
+
+			createMarketAsset("17", "management", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.WEBPROJECT, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/IssueManagement.json", null, null, null, null);
 
 		}
 	}

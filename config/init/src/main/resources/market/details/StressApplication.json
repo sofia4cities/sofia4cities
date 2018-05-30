@@ -2,7 +2,7 @@
 	"title":"Stress Application",
 	"technologies":"Java",
 	"description":"A Java Application for stress the plattform.",
-	"detailedDescription":"Download the jar",
+	"detailedDescription":"A Java Application for stress the plattform.",
 	"functionality":"function",
 	"id_endpoint":"https://rancher.sofia4cities.com/scalability"
 }

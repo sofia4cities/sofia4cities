@@ -4,8 +4,8 @@ var IssueController = function() {
 	
 	//var apimanager = 'https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/oauth/token';
 	//var iotbroker = "https://s4citiespro.westeurope.cloudapp.azure.com/iotbroker/message";
-	var apimanager = 'http://rancher.sofia4cities.com/api-manager/oauth/token';
-	var iotbroker = "http://rancher.sofia4cities.com/iotbroker/message";
+	var apimanager = 'https://rancher.sofia4cities.com/api-manager/oauth/token';
+	var iotbroker = "https://rancher.sofia4cities.com/iotbroker/message";
 	//var apimanager = 'https://rancher.sofia4cities.com/api-manager/oauth/token';
 	//var iotbroker = "https://rancher.sofia4cities.com/iotbroker/message";
 	var ontology = 'Ticket';
