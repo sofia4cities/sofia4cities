@@ -19,7 +19,7 @@ The app features two different behaviors depending on the end-user profile. For 
 
 - After the welcome screen, the user will log in with the S4C credentials:
 
-<img src="./Screenshots/image004.png"  width="200" height="1000">
+<img src="./Screenshots/image004.png"  width="300" height="600">
 
 - Then the main menu app appears, with all the options available
 
