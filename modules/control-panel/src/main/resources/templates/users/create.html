@@ -444,8 +444,8 @@
 											<!-- REMOVE -->
 											<button th:if="${user.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'UserCreateController.deleteUser(\'' + ${user.userId} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 											<!-- REMOVE FOR TAB3 -->
-											<button th:if="${user.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" type="button" onclick="removeDataFunction(ontologiesDelete)"  value="RemoveTab3_1" id="delete_forgetData" class="btn btn-square btn-danger"  name="delete_forgetData" style="display:none;"  ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
-											<button th:if="${user.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" type="button" onclick="revokeDataFunction(ontologiesRevoke)"  value="RemoveTab3_2" id="delete_consent" class="btn btn-square btn-danger" name="delete_consent" style="display:none;"  ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+											<button th:if="${user.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" type="button" th:onclick="'removeDataFunction(ontologiesDelete, \'' + ${user.userId} + '\');'"  value="RemoveTab3_1" id="delete_forgetData" class="btn btn-square btn-danger"  name="delete_forgetData" style="display:none;"  ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+											<button th:if="${user.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" type="button" th:onclick="'revokeDataFunction(ontologiesRevoke, \'' + ${user.userId} + '\');'"  value="RemoveTab3_2" id="delete_consent" class="btn btn-square btn-danger" name="delete_consent" style="display:none;"  ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 															
 										
 											<span class="sep" th:text="#{gen.sepBtn}" id="orText"> or </span>
@@ -575,40 +575,43 @@
 		}
 	}
 	
-	function removeDataFunction( ontologiesToSend){ 
-			     $.ajax({                        
-		           type: "POST",                 
-		           url: "/controlpanel/users/deleteSimpleData",                    
-		           data: {'ontologiesDelete':ontologiesToSend},
-		           dataType: false,
-		           success: function(data)            
-		           {
-		        	   if(data!=null){
-	  		         		navigateUrl("/controlpanel"+data);
-	  		     	   }
- 		           },
- 		           error: function(data, status){
- 		        	 console.log("error: "+ data+ "\nstatus:" + status);
-		           }
-		         });
-	}		        
-      function revokeDataFunction( ontologiesToRevoke){ 
-  		  	
-  				$.ajax({                        
-  		           type: "POST",                 
-  		           url: "/controlpanel/users/revokeSimpleData",                    
-  		           data: {'ontologiesRevoke':ontologiesToRevoke},
-  		           dataType: false,
-  		           success: function(data)            
-  		           {
-  		        	   if(data!=null){
-	  		         		navigateUrl("/controlpanel"+data);
-	  		     	   }
-  		           },
-  		           error: function(data, status){
-  		        	 console.log("error: "+ data+ "\nstatus:" + status);
-		           }
-  	         });
+	function removeDataFunction(ontologiesToSend, userId){ 
+		
+     	$.ajax({                        
+          type: "POST",                 
+          url: "/controlpanel/users/deleteSimpleData/",                    
+          data:  JSON.stringify({"ontologies":ontologiesToSend, "userId" : userId}),
+          dataType: "json",
+          contentType: "application/json",
+          success: function(data){
+       	   	if(data!=null){
+		        navigateUrl("/controlpanel"+data.url);
+		    }
+           },
+           error: function(data, status){
+        	 console.log("error: "+ data+ "\nstatus:" + status);
+          }
+        });
+	}	
+	
+    function revokeDataFunction(ontologiesToRevoke, userId){ 
+    		
+		$.ajax({                        
+	          type: "POST",                 
+	          url: "/controlpanel/users/revokeSimpleData",                    
+	          data: JSON.stringify({"ontologies":ontologiesToRevoke, "userId" : userId}),
+	          dataType: "json",
+	          contentType: "application/json",
+	          success: function(data)            
+	          {
+	       	   if(data!=null){
+	         		navigateUrl("/controlpanel"+data.url);
+	     	   }
+	          },
+	          error: function(data, status){
+	       	 console.log("error: "+ data+ "\nstatus:" + status);
+	        }
+	    });
 	
 	}
 
