@@ -402,15 +402,18 @@
 		} ],
 		series : {
 			maxseries : 1,
-			options : {
-			}
+			options : {}
+				
+			
 		},
 		options:{
 			center:{
 				lat:30,
 				lng:30,
 				zoom:2
-			}
+			},
+			markersFilter:"",
+			jsonMarkers:""
 		}
 	}, {
 		type : "wordcloud",
@@ -619,6 +622,8 @@
 				case "transform":
 					mhtml += '<input onchange="refreshGadget()" class="gsoption form-control" data-live-search="true" data-width="100%"/>';
 					break;
+					
+				
 			}
 			mhtml	+= '</div>'
 		}
@@ -701,15 +706,40 @@
 	function refreshGadget(){
 		generateMeasuresArray();
 		if(measures.length > 0){
+			debugger
 	        var scope = angular.element(document.getElementsByTagName('gadget')[0]).scope();
 	        if(gtype === "map"){
+	        	//TODO meter aqui los resultados para pasarlos
 	        	if(!scope.$$childHead.vm.config.config && !$("#config").val()){
-	        		scope.$$childHead.vm.config = {config:"{\"center\":{\"lat\":30,\"lng\":30,\"zoom\":2}}",type:gtype};
+	        		scope.$$childHead.vm.config = {config:"{\"center\":{\"lat\":30,\"lng\":30,\"zoom\":2},\"markersFilter\":\"\",\"jsonMarkers\":\"\"}",type:gtype};
 	        	}
 	        	else{
-	        		if(!scope.$$childHead.vm.config.config) {
-	        			scope.$$childHead.vm.config = {config:$("#config").val(),type:gtype};
+	        		var lat;
+	        		var lng;
+	        		var zoom;
+	        		
+	        		if(typeof scope.$$childHead.vm.config.config != "undefined") {
+	        			lat = scope.$$childHead.vm.config.config.center.lat;
+	        			lng = scope.$$childHead.vm.config.config.center.lng;
+	        			zoom = scope.$$childHead.vm.config.config.center.zoom;
+	        		}else{
+	        			jsonConfig = JSON.parse($("#config").val());
+	        		
+	        			lat = jsonConfig.center.lat;
+	        			lng = jsonConfig.center.lng;
+	        			zoom = jsonConfig.center.zoom;
+	        			
 	        		}
+	        		debugger;
+	        		var gconfig = {center:{
+				    				lat:lat,
+				    				lng:lng,
+				    				zoom:zoom
+				    			},
+				    			markersFilter:$("#markersFilter").val(),
+				    			jsonMarkers:$("#jsonMarkers").val()
+				    			};
+	        		scope.$$childHead.vm.config = {config:gconfig,type:gtype};	
 	        	}
 	        }
 	        else{
@@ -796,219 +826,272 @@
 	var gtype = "";
 	var gfields = [];
 	function showConfigAndMeasures(type){
-		$("#icons").hide();
-		gtype = type;
-		if(gtype=="line" || gtype=="bar"){
-			if ( $('#configContainer').hasClass('hide') === true ){ 
-				$('#configContainer').removeClass('hide');
-			}
-			var jsonConfig;
-			if(!$("#config").val() || $("#config").val() === "{}"){
-				jsonConfig = {scales:{yAxes:[]}};
-			}
-			else{
-				jsonConfig = JSON.parse($("#config").val());
-			}
-			var gchtml = '<h4><i class="fa fa-wrench"></i> Gadget Axis config:</h4>';
-			for(var index=0; index<jsonConfig.scales.yAxes.length;index++){
-				//var gchtml = '';
-				var axis = jsonConfig.scales.yAxes[index];
-				var i =  parseInt(axis.id.slice(1));
-				
-				gchtml += '<div class="gcserie col-md-12">';
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">ID</label>';
-				gchtml += '<input disabled="disabled" class="form-control axis_id" data-live-search="true" data-width="100%" id="axis_id_' + i + '" value="#' + i + '"/>';
-				gchtml	+= '</div>'
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">Position</label>';
-				gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="position_' + i + '"><option selected="selected" value="left">left</option><option value="right">right</option></select>';
-				gchtml	+= '</div>'
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">Type</label>';
-				gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="type_' + i + '"><option selected="selected" value="linear">linear</option><option value="logarithmic">logarithmic</option></select>';
-				gchtml	+= '</div>'
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">Axis Label</label>';
-				gchtml += '<input onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="label_' + i + '"/>';
-				gchtml	+= '</div>'
-				if($(".gcserie").length > 0){
-					gchtml += '<button style="margin-top:26px;" onclick="removeAxes(' + $(".gcserie").length + ')" class="btn red-mint btn-sm btn-outline uppercase"><i class="la la-trash"></i> REMOVE </button>';
-				}
-				gchtml	+= '</div>';
-				$("#configGadget").append(gchtml);
-				$("#position_" + i).val(axis.position);
-				$("#type_" + i).val(axis.type);
-				$("#label_" + i).val(axis.scaleLabel.labelString);
-			}
-			if(!jsonConfig.scales.yAxes.length){
-				var i = 0;
-				var gchtml = '';
-				gchtml += '<div class="gcserie col-md-12">';
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">ID</label>';
-				gchtml += '<input disabled="disabled" class="form-control axis_id" data-live-search="true" data-width="100%" id="axis_id_' + i + '" value="#' + i + '"/>';
-				gchtml	+= '</div>'
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">Position</label>';
-				gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="position_' + i + '"><option selected="selected" value="left">left</option><option value="right">right</option></select>';
-				gchtml	+= '</div>'
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">Type</label>';
-				gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="type_' + i + '"><option selected="selected" value="linear">linear</option><option value="logarithmic">logarithmic</option></select>';
-				gchtml	+= '</div>'
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">Axis Label</label>';
-				gchtml += '<input onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="label_' + i + '"/>';
-				gchtml	+= '</div>'
-				$("#configGadget").html(gchtml);
-			}
-			
-		    } 
-		else if(gtype=="table" ){
-			
-			if ( $('#configContainer').hasClass('hide') === true ){ 
-				$('#configContainer').removeClass('hide');
-			}
-			var jsonConfig;
-			if(!$("#config").val() || $("#config").val() === "{}"){
-				
-				jsonConfig = {tablePagination :{      
-					      limit: 5,
-					      page: 1,
-					      order:'',
-					      limitOptions : [5, 10, 20, 50 ,100],
-					      style:{
-					    	  backGroundTHead: "#dfdfdf",
-					    	  backGroundTFooter: "#dfdfdf",
-					    	  trHeightHead: "30",
-					          trHeightBody: "30",
-					          trHeightFooter: "30",
-					          textColorTHead: "#555",
-					    	  textColorBody:"#555",
-					    	  textColorFooter:"#555"
-					      },
-					      options : {
-					        rowSelection: false,
-					        multiSelect: false,
-					        autoSelect: true,
-					        decapitate: false,
-					        largeEditDialog: false,
-					        boundaryLinks: true,
-					        limitSelect: true,
-					        pageSelect: true
-					      }
-					    }};
-			}
-			else{
-				jsonConfig = JSON.parse($("#config").val());
-			}
-			
-				 var gchtml = '<h4><i class="fa fa-wrench"></i>'+gadgetCreateJson.table_config+'</h4>';			
-				 var limit = jsonConfig.tablePagination.limit;
-			     var page = jsonConfig.tablePagination.page;
-			     var limitOptions = jsonConfig.tablePagination.limitOptions;
-			     var rowSelection =jsonConfig.tablePagination.options.rowSelection;
-			   //  var multiSelect= jsonConfig.tablePagination.options.multiSelect;
-			   //  var autoSelect= jsonConfig.tablePagination.options.autoSelect;
-			     var decapitate= jsonConfig.tablePagination.options.decapitate;
-			   //  var largeEditDialog= jsonConfig.tablePagination.options.largeEditDialog;
-			     var boundaryLinks= jsonConfig.tablePagination.options.boundaryLinks;
-			     var limitSelect= jsonConfig.tablePagination.options.limitSelect;
-			     var pageSelect= jsonConfig.tablePagination.options.pageSelect;
-			     
-			     var backGroundTHead= jsonConfig.tablePagination.style.backGroundTHead;
-			     var backGroundTFooter= jsonConfig.tablePagination.style.backGroundTFooter;
-			     var trHeightHead= jsonConfig.tablePagination.style.trHeightHead;
-			     var trHeightBody= jsonConfig.tablePagination.style.trHeightBody;
-			     var trHeightFooter= jsonConfig.tablePagination.style.trHeightFooter;
-			     var textColorTHead= jsonConfig.tablePagination.style.textColorTHead;
-			     var textColorBody= jsonConfig.tablePagination.style.textColorBody;
-			     var textColorFooter= jsonConfig.tablePagination.style.textColorFooter;
-			     
-				gchtml += '<div class="gcserie col-md-12">';
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.hide_header+'</label>';
-				 if(decapitate) decapitate = "checked";
-				gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="decapitate" ' + decapitate + '/>';
-				gchtml += '</div>';
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.selectable_rows+'</label>';
-				 if(rowSelection) rowSelection = "checked";
-				gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="rowSelection" ' + rowSelection + '/>';
-				gchtml += '</div>';
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.boundaryLinks+'</label>';
-				if(boundaryLinks) boundaryLinks = "checked";
-				gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="boundaryLinks" ' + boundaryLinks + '/>';
-				gchtml += '</div>'
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.limitSelect+'</label>';
-				if(limitSelect) limitSelect = "checked";
-				gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="limitSelect" ' + limitSelect + '/>';
-				gchtml += '</div>'
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.page_select+'</label>';
-				if(pageSelect) pageSelect = "checked";
-				gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="pageSelect" ' + pageSelect + '/>';
-				gchtml += '</div>'
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.pagination_limit+'</label>';
-				gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="limit">';
-				for(var i=0; i<limitOptions.length; i++){
-					gchtml += '<option selected="selected" value="'+limitOptions[i]+'">'+limitOptions[i]+'</option>';
-				}
-				gchtml +='</select>';			
-				gchtml	+= '</div>';
-				gchtml += '</div>'
-				gchtml += '<div class="gcserie col-md-12">';
-				gchtml += '<div class="form-group col-md-3">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.head_background_color+'</label>';				
-				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="backGroundTHead" type="color" value="'+backGroundTHead+'"/>'
-				gchtml += '</div>'
-				gchtml += '<div class="form-group col-md-3">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.footer_background_color+'</label>';				
-				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="backGroundTFooter" type="color" value="'+backGroundTFooter+'"/>'
-				gchtml += '</div>'
-				
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.head_height+'</label>';				
-				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="trHeightHead" type="number" min="0" value="'+trHeightHead+'"/>'
-				gchtml += '</div>'
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.body_row_height+'</label>';				
-				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="trHeightBody" type="number" min="0" value="'+trHeightBody+'"/>'
-				gchtml += '</div>'
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.footer_height+'</label>';				
-				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="trHeightFooter" type="number" min="0" value="'+trHeightFooter+'"/>'
-				gchtml += '</div>'
-				gchtml	+= '</div>'
-				gchtml += '<div class="gcserie col-md-12">';
-				gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.head_text_color+'</label>';				
-				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="textColorTHead" type="color" value="'+textColorTHead+'"/>'
-				gchtml += '</div>'
-					gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.body_text_color+'</label>';				
-				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="textColorBody" type="color" value="'+textColorBody+'"/>'
-				gchtml += '</div>'
-					gchtml += '<div class="form-group col-md-2">';
-				gchtml += '<label class="control-label">'+gadgetCreateJson.footer_text_color+'</label>';				
-				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="textColorFooter" type="color" value="'+textColorFooter+'"/>'
-				gchtml += '</div>'
-				
-				gchtml += '</div>'
-				gchtml	+= '</div>';
-				$("#configGadget").append(gchtml);				
-				$("#addMoreAxes").hide();				
-					
-		}
+		
 		$.get("/controlpanel/datasources/getSampleDatasource/" + $("#datasources").val(), function (jsonString){
-			
+			$("#icons").hide();
+			gfields = iterate(jsonString[0],"", []);
+			gtype = type;
+			if(gtype=="line" || gtype=="bar"){
+				if ( $('#configContainer').hasClass('hide') === true ){ 
+					$('#configContainer').removeClass('hide');
+				}
+				var jsonConfig;
+				if(!$("#config").val() || $("#config").val() === "{}"){
+					jsonConfig = {scales:{yAxes:[]}};
+				}
+				else{
+					jsonConfig = JSON.parse($("#config").val());
+				}
+				var gchtml = '<h4><i class="fa fa-wrench"></i> Gadget Axis config:</h4>';
+				for(var index=0; index<jsonConfig.scales.yAxes.length;index++){
+					//var gchtml = '';
+					var axis = jsonConfig.scales.yAxes[index];
+					var i =  parseInt(axis.id.slice(1));
+					
+					gchtml += '<div class="gcserie col-md-12">';
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">ID</label>';
+					gchtml += '<input disabled="disabled" class="form-control axis_id" data-live-search="true" data-width="100%" id="axis_id_' + i + '" value="#' + i + '"/>';
+					gchtml	+= '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">Position</label>';
+					gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="position_' + i + '"><option selected="selected" value="left">left</option><option value="right">right</option></select>';
+					gchtml	+= '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">Type</label>';
+					gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="type_' + i + '"><option selected="selected" value="linear">linear</option><option value="logarithmic">logarithmic</option></select>';
+					gchtml	+= '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">Axis Label</label>';
+					gchtml += '<input onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="label_' + i + '"/>';
+					gchtml	+= '</div>'
+					if($(".gcserie").length > 0){
+						gchtml += '<button style="margin-top:26px;" onclick="removeAxes(' + $(".gcserie").length + ')" class="btn red-mint btn-sm btn-outline uppercase"><i class="la la-trash"></i> REMOVE </button>';
+					}
+					gchtml	+= '</div>';
+					$("#configGadget").append(gchtml);
+					$("#position_" + i).val(axis.position);
+					$("#type_" + i).val(axis.type);
+					$("#label_" + i).val(axis.scaleLabel.labelString);
+				}
+				if(!jsonConfig.scales.yAxes.length){
+					var i = 0;
+					var gchtml = '';
+					gchtml += '<div class="gcserie col-md-12">';
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">ID</label>';
+					gchtml += '<input disabled="disabled" class="form-control axis_id" data-live-search="true" data-width="100%" id="axis_id_' + i + '" value="#' + i + '"/>';
+					gchtml	+= '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">Position</label>';
+					gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="position_' + i + '"><option selected="selected" value="left">left</option><option value="right">right</option></select>';
+					gchtml	+= '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">Type</label>';
+					gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="type_' + i + '"><option selected="selected" value="linear">linear</option><option value="logarithmic">logarithmic</option></select>';
+					gchtml	+= '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">Axis Label</label>';
+					gchtml += '<input onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="label_' + i + '"/>';
+					gchtml	+= '</div>'
+					$("#configGadget").html(gchtml);
+				}
+				
+			    } 
+			else if(gtype=="table" ){
+				
+				if ( $('#configContainer').hasClass('hide') === true ){ 
+					$('#configContainer').removeClass('hide');
+				}
+				var jsonConfig;
+				if(!$("#config").val() || $("#config").val() === "{}"){
+					
+					jsonConfig = {tablePagination :{      
+						      limit: 5,
+						      page: 1,
+						      order:'',
+						      limitOptions : [5, 10, 20, 50 ,100],
+						      style:{
+						    	  backGroundTHead: "#dfdfdf",
+						    	  backGroundTFooter: "#dfdfdf",
+						    	  trHeightHead: "30",
+						          trHeightBody: "30",
+						          trHeightFooter: "30",
+						          textColorTHead: "#555",
+						    	  textColorBody:"#555",
+						    	  textColorFooter:"#555"
+						      },
+						      options : {
+						        rowSelection: false,
+						        multiSelect: false,
+						        autoSelect: true,
+						        decapitate: false,
+						        largeEditDialog: false,
+						        boundaryLinks: true,
+						        limitSelect: true,
+						        pageSelect: true
+						      }
+						    }};
+				}
+				else{
+					jsonConfig = JSON.parse($("#config").val());
+				}
+				
+					 var gchtml = '<h4><i class="fa fa-wrench"></i>'+gadgetCreateJson.table_config+'</h4>';			
+					 var limit = jsonConfig.tablePagination.limit;
+				     var page = jsonConfig.tablePagination.page;
+				     var limitOptions = jsonConfig.tablePagination.limitOptions;
+				     var rowSelection =jsonConfig.tablePagination.options.rowSelection;
+				   //  var multiSelect= jsonConfig.tablePagination.options.multiSelect;
+				   //  var autoSelect= jsonConfig.tablePagination.options.autoSelect;
+				     var decapitate= jsonConfig.tablePagination.options.decapitate;
+				   //  var largeEditDialog= jsonConfig.tablePagination.options.largeEditDialog;
+				     var boundaryLinks= jsonConfig.tablePagination.options.boundaryLinks;
+				     var limitSelect= jsonConfig.tablePagination.options.limitSelect;
+				     var pageSelect= jsonConfig.tablePagination.options.pageSelect;
+				     
+				     var backGroundTHead= jsonConfig.tablePagination.style.backGroundTHead;
+				     var backGroundTFooter= jsonConfig.tablePagination.style.backGroundTFooter;
+				     var trHeightHead= jsonConfig.tablePagination.style.trHeightHead;
+				     var trHeightBody= jsonConfig.tablePagination.style.trHeightBody;
+				     var trHeightFooter= jsonConfig.tablePagination.style.trHeightFooter;
+				     var textColorTHead= jsonConfig.tablePagination.style.textColorTHead;
+				     var textColorBody= jsonConfig.tablePagination.style.textColorBody;
+				     var textColorFooter= jsonConfig.tablePagination.style.textColorFooter;
+				     
+					gchtml += '<div class="gcserie col-md-12">';
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.hide_header+'</label>';
+					 if(decapitate) decapitate = "checked";
+					gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="decapitate" ' + decapitate + '/>';
+					gchtml += '</div>';
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.selectable_rows+'</label>';
+					 if(rowSelection) rowSelection = "checked";
+					gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="rowSelection" ' + rowSelection + '/>';
+					gchtml += '</div>';
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.boundaryLinks+'</label>';
+					if(boundaryLinks) boundaryLinks = "checked";
+					gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="boundaryLinks" ' + boundaryLinks + '/>';
+					gchtml += '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.limitSelect+'</label>';
+					if(limitSelect) limitSelect = "checked";
+					gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="limitSelect" ' + limitSelect + '/>';
+					gchtml += '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.page_select+'</label>';
+					if(pageSelect) pageSelect = "checked";
+					gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="pageSelect" ' + pageSelect + '/>';
+					gchtml += '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.pagination_limit+'</label>';
+					gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="limit">';
+					for(var i=0; i<limitOptions.length; i++){
+						gchtml += '<option selected="selected" value="'+limitOptions[i]+'">'+limitOptions[i]+'</option>';
+					}
+					gchtml +='</select>';			
+					gchtml	+= '</div>';
+					gchtml += '</div>'
+					gchtml += '<div class="gcserie col-md-12">';
+					gchtml += '<div class="form-group col-md-3">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.head_background_color+'</label>';				
+					gchtml += '<input onchange="refreshGadget()" class=" form-control" id="backGroundTHead" type="color" value="'+backGroundTHead+'"/>'
+					gchtml += '</div>'
+					gchtml += '<div class="form-group col-md-3">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.footer_background_color+'</label>';				
+					gchtml += '<input onchange="refreshGadget()" class=" form-control" id="backGroundTFooter" type="color" value="'+backGroundTFooter+'"/>'
+					gchtml += '</div>'
+					
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.head_height+'</label>';				
+					gchtml += '<input onchange="refreshGadget()" class=" form-control" id="trHeightHead" type="number" min="0" value="'+trHeightHead+'"/>'
+					gchtml += '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.body_row_height+'</label>';				
+					gchtml += '<input onchange="refreshGadget()" class=" form-control" id="trHeightBody" type="number" min="0" value="'+trHeightBody+'"/>'
+					gchtml += '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.footer_height+'</label>';				
+					gchtml += '<input onchange="refreshGadget()" class=" form-control" id="trHeightFooter" type="number" min="0" value="'+trHeightFooter+'"/>'
+					gchtml += '</div>'
+					gchtml	+= '</div>'
+					gchtml += '<div class="gcserie col-md-12">';
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.head_text_color+'</label>';				
+					gchtml += '<input onchange="refreshGadget()" class=" form-control" id="textColorTHead" type="color" value="'+textColorTHead+'"/>'
+					gchtml += '</div>'
+						gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.body_text_color+'</label>';				
+					gchtml += '<input onchange="refreshGadget()" class=" form-control" id="textColorBody" type="color" value="'+textColorBody+'"/>'
+					gchtml += '</div>'
+						gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.footer_text_color+'</label>';				
+					gchtml += '<input onchange="refreshGadget()" class=" form-control" id="textColorFooter" type="color" value="'+textColorFooter+'"/>'
+					gchtml += '</div>'
+					
+					gchtml += '</div>'
+					gchtml	+= '</div>';
+					$("#configGadget").append(gchtml);				
+					$("#addMoreAxes").hide();				
+						
+			}		else if(gtype=="map" ){
+				
+				if ( $('#configContainer').hasClass('hide') === true ){ 
+					$('#configContainer').removeClass('hide');
+				}
+				
+				var jsonConfig;
+				if(!$("#config").val() || $("#config").val() === "{}"){
+					
+					jsonConfig = {  
+								center:{
+									lat:30,
+									lng:30,
+									zoom:2
+								},
+								markersFilter:"",
+								jsonMarkers:""
+						};
+				}
+				else{
+					jsonConfig = JSON.parse($("#config").val());
+				}
+		
+					 var gchtml = '<h4><i class="fa fa-wrench"></i>'+gadgetCreateJson.map_config+'</h4>';			
+					 var markersFilter = jsonConfig.markersFilter;
+					 var jsonMarkers="";
+					 if(jsonConfig.jsonMarkers!=null && typeof jsonConfig.jsonMarkers != "undefined"){
+				     	 jsonMarkers = jsonConfig.jsonMarkers;
+					 }				     
+					gchtml += '<div class="gcserie col-md-12">';
+					gchtml += '<div class="form-group col-md-2">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.marker_filter+'</label>';
+					gchtml += '<select  onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="markersFilter">';					
+						for(var o = 0 ; o < gfields.length;o++){
+							gchtml += '<option  value="' + gfields[o].field + '">' + gfields[o].field + '</option>'
+						}					
+					gchtml += '</select>';					
+					gchtml += '</div>';					
+					gchtml += '<div class="form-group col-md-8">';
+					gchtml += '<label class="control-label">'+gadgetCreateJson.json_marker+'</label>';					
+					gchtml += '<textarea id="jsonMarkers" onchange="refreshGadget()" class="gsoption form-control" data-live-search="true" data-width="100%" rows="5" data-min-rows="5"/>';				
+					gchtml += '</div>';					
+					gchtml += '</div>'
+					gchtml	+= '</div>';
+					$("#configGadget").append(gchtml);				
+					$("#addMoreAxes").hide();	
+					if(markersFilter!=null && markersFilter.length>0){
+						$("#markersFilter").val(markersFilter);
+					}
+					$("#jsonMarkers").val(jsonMarkers);
+					console.log("fin");
+						
+			}
 			if ( $('#measuresContainer').hasClass('hide') === true ){ $('#measuresContainer').removeClass('hide'); $('#viewer').removeClass('hide'); }
 			
-			gfields = iterate(jsonString[0],"", []);
+			
 		    stt = gadget.filter(function(g){return g.type == type})[0];
 		    if(measures.length == 0){
 		    	$("#measures").empty().append(addFormSttByType());
@@ -1103,8 +1186,11 @@
 	"head_text_color" : [[#{gadgets.head.text.color}]],
 	"body_text_color" :[[#{gadgets.body.text.color}]],
 	"footer_text_color" :[[#{gadgets.footer.text.color}]],
-	"measures" :[[#{gadgets.measures}]]
-	
+	"measures" :[[#{gadgets.measures}]],
+	"map_config" :[[#{gadgets.map.config}]],
+	"marker_filter" :[[#{gadgets.marker.filter}]],
+	"json_marker" :[[#{gadgets.json.marker}]],
+	"json_marker_info" :[[#{gadgets.json.marker.info}]]
 	
 	
 	};

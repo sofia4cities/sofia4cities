@@ -1,8 +1,8 @@
 @charset "UTF-8";
 
 html, body {
-    font-family: Verdana,sans-serif;
-    font-size: 15px;
+    font-family: "Open Sans",Verdana,sans-serif;
+    font-size: 14px;
     line-height: 1.5;
 }
 
@@ -41,6 +41,13 @@ input {
 	display: table-row;
 }
 
+.inj-row:nth-child(odd){
+ background-color: #EEE;	
+}
+.inj-row:nth-child(even){
+ background-color: #FFF;	
+}
+
 .inj-header {
 	display: table-header-group;
 }
@@ -50,6 +57,7 @@ input {
 
 .inj-cell {
 	display: table-cell;
+	vertical-align: middle;
 }
 
 .inj-cell-total {
@@ -95,5 +103,8 @@ input {
 	width: 1px;
 }
 
+.panel-title{ font-family: "Poppins";}
 
+.separator{ display: block; margin: 20px;}
 
+.btn-sep{ margin-bottom: 5px; margin-top: 5px; }

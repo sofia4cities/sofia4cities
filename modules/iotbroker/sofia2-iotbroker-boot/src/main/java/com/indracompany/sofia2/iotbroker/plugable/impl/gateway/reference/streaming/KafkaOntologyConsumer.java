@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.handler.annotation.Header;
@@ -76,7 +75,9 @@ public class KafkaOntologyConsumer {
 		return latch;
 	}
 
-	@KafkaListener(topicPattern = "${sofia2.iotbroker.plugable.gateway.kafka.topic.pattern}", containerFactory = "kafkaListenerContainerFactory")
+	// @KafkaListener(topicPattern =
+	// "${sofia2.iotbroker.plugable.gateway.kafka.topic.pattern}", containerFactory
+	// = "kafkaListenerContainerFactory")
 	public void listenToParition(@Payload String message, @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
 			@Header(KafkaHeaders.RECEIVED_TOPIC) String receivedTopic) {
 		log.info("Received Message: " + message + " from partition: " + partition + " received topic:" + receivedTopic);
@@ -104,21 +105,22 @@ public class KafkaOntologyConsumer {
 
 	}
 
-	// @KafkaListener(topicPattern =
-	// "${sofia2.iotbroker.plugable.gateway.kafka.topic.pattern}", containerFactory
-	// = "kafkaListenerContainerFactoryBatch")
+	@KafkaListener(topicPattern = "${sofia2.iotbroker.plugable.gateway.kafka.topic.pattern}", containerFactory = "kafkaListenerContainerFactoryBatch")
 	public void listenToParitionBatch(List<String> data,
 			@Header(KafkaHeaders.RECEIVED_PARTITION_ID) List<Integer> partitions,
-			@Header(KafkaHeaders.RECEIVED_TOPIC) String receivedTopic, @Header(KafkaHeaders.OFFSET) List<Long> offsets,
-			Acknowledgment ack) {
+			@Header(KafkaHeaders.RECEIVED_TOPIC) List<String> receivedTopicList,
+			@Header(KafkaHeaders.OFFSET) List<Long> offsets) {
 
 		String user = "administrator";
+		log.info("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
+		log.info("beginning to consume batch messages: " + data.size());
 
 		for (int i = 0; i < data.size(); i++) {
 			log.info("received message='{}' with partition-offset='{}'", data.get(i),
 					partitions.get(i) + "-" + offsets.get(i));
 
 			String message = data.get(i);
+			String receivedTopic = receivedTopicList.get(i);
 
 			String ontologyId = receivedTopic.replace(ontologyPrefix, "");
 
@@ -132,7 +134,7 @@ public class KafkaOntologyConsumer {
 
 			try {
 				routerService.insert(modelNotification);
-				ack.acknowledge();
+
 				// latch.countDown();
 			} catch (Exception e) {
 				log.error("Cannot process insert model into router from Kafka", e);
