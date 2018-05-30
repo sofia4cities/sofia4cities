@@ -49,7 +49,7 @@ public interface NotebookService {
 	public ResponseEntity<String> sendHttp(HttpServletRequest requestServlet, HttpMethod httpMethod, String body)
 			throws URISyntaxException, ClientProtocolException, IOException;
 
-	public ResponseEntity<String> sendHttp(String url, HttpMethod httpMethod, String body) 
+	public ResponseEntity<String> sendHttp(String url, HttpMethod httpMethod, String body)
 			throws URISyntaxException, ClientProtocolException, IOException;
 
 	public ResponseEntity<String> sendHttp(String url, HttpMethod httpMethod, String body, HttpHeaders headers)
@@ -58,4 +58,15 @@ public interface NotebookService {
 	public Notebook getNotebook(String identification, String userId);
 
 	public List<Notebook> getNotebooks(String userId);
+
+	public boolean hasUserPermissionForNotebook(String zeppelinId, String userId);
+
+	public ResponseEntity<String> runParagraph(String zeppelinId, String paragraphId)
+			throws ClientProtocolException, URISyntaxException, IOException;
+
+	public ResponseEntity<String> runAllParagraphs(String zeppelinId)
+			throws ClientProtocolException, URISyntaxException, IOException;
+
+	public ResponseEntity<String> getParagraphResult(String zeppelinId, String paragraphId)
+			throws ClientProtocolException, URISyntaxException, IOException;
 }
