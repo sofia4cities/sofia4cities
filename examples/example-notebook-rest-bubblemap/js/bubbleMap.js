@@ -1,4 +1,5 @@
 var loadBubbleMap = function(data){
+	$('.map').removeClass('hide');
     jQuery.when(
         jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js'),
         jQuery.getScript('https://code.highcharts.com/maps/highmaps.js'),
@@ -9,7 +10,7 @@ var loadBubbleMap = function(data){
         jQuery.Deferred(function( deferred ){
             jQuery( deferred.resolve );
         })
-        ).done(function(){
+        ).done(function(){		
         var H = Highcharts,
             map = H.maps['custom/world'],
             chart;

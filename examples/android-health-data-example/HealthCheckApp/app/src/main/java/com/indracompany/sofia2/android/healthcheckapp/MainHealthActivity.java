@@ -39,23 +39,6 @@ public class MainHealthActivity extends AppCompatActivity implements MainMenuAda
         mItemsRV.setHasFixedSize(true);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            Intent mSettingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
-            startActivity(mSettingsIntent);
-            return true;
-        }
-        return true;
-    }
 
     @Override
     protected void onResume() {
