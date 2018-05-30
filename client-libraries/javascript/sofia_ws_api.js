@@ -13,16 +13,17 @@ function SofiaClient() {
 			_this.config = config;
 		}
 		
-		this.onConnect = function (frame) {
+		this.onConnect = function (frame, callback) {
 			console.log('Connected: ' + frame);
 			_this.status = 'CONNECTED';
+			_this.join(callback);
 		}
 		
 		this.onError = function (error) {
 			console.log('error: ' + error);
 		}
 		
-		this.connect = function () {
+		this.connect = function (callback) {
 		
 			if (this.config === null) {
 				throw Error('Configuration required!');
@@ -52,7 +53,7 @@ function SofiaClient() {
 			
 			this.stompClient.connect({}, 
 					function (frame) {	
-						dfd.resolve(_this.onConnect(frame));
+						dfd.resolve(_this.onConnect(frame,callback));
 					}, 
 					function (err) {
 						dfd.reject(_this.onError(err));
@@ -115,10 +116,10 @@ function SofiaClient() {
 							+ '"@type": "SSAPBodyJoinMessage",'
 							+ '"token":"'
 							+ this.config.token
-							+ '","clientPlatform":"'
-							+ this.config.clientPlatform
-							+ '","clientPlatformInstance":"'
-							+ this.config.clientPlatformInstance
+							+ '","deviceTemplate":"'
+							+ this.config.deviceTemplate
+							+ '","device":"'
+							+ this.config.device
 							+ '"'
 							+ '}'
 							+ '}';

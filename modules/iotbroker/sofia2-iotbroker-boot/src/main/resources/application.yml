@@ -115,7 +115,9 @@ sofia2: #Config Sofia2 specific
         consumer.consumersCount : 10
         consumer.seekTo : beginning 
         consumer.group : kafkaGroup
-        consumer.maxPollRecords : 5000
+        consumer.maxPollRecords : 50
+        consumer.maxAge : 5000
+        
         
 ## LOGGING CONF
 logging:

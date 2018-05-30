@@ -87,5 +87,53 @@
         }    
         return fields;
       }
+     
+      vm.getMarkerForMap = function(value,jsonMarkers) {
+       
+        var result = {
+          type: 'vectorMarker',
+          icon: 'circle',
+          markerColor: 'blue',
+          iconColor:"white"
+        }
+        var found = false;
+        for (var index = 0; index < jsonMarkers.length && !found; index++) {
+          var limit = jsonMarkers[index];
+          var minUndefined = typeof limit.min=="undefined";
+          var maxUndefined = typeof limit.max=="undefined";    
+          
+          if(!minUndefined && !maxUndefined){
+            if(value<=limit.max && value>=limit.min){
+              result.icon=limit.icon;
+              result.markerColor=limit.markerColor;
+              result.iconColor=limit.iconColor;
+              found=true;
+            }
+          }else if (!minUndefined && maxUndefined){
+            if( value>=limit.min){
+              result.icon=limit.icon;
+              result.markerColor=limit.markerColor;
+              result.iconColor=limit.iconColor;
+              found=true;
+            }
+
+          }else if (minUndefined && !maxUndefined){
+            if( value<=limit.max){
+              result.icon=limit.icon;
+              result.markerColor=limit.markerColor;
+              result.iconColor=limit.iconColor;
+              found=true;
+            }
+
+          }
+          
+        }
+
+        return result;
+      }
+     
+
+     
+
   };
 })();

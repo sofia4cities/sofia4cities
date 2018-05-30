@@ -2134,7 +2134,77 @@ public class InitConfigDB {
 			marketAsset.setContentId("countries.json");
 
 			marketAssetRepository.save(marketAsset);
+
+			// Stress Application
+			createMarketAsset("10", "StressApplication", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.URLAPPLICATION, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/StressApplication.json", null, null, null, null);
+			// Chat bot
+			createMarketAsset("11", "ChatBot", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.URLAPPLICATION, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/ChatBot.json", null, null, null, null);
+
+			// Chat bot telegram
+			createMarketAsset("12", "ChatBotTelegram", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.DOCUMENT, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/ChatBotTelegram.json", null, null, "market/docs/countries.json", "countries.json");
+
+			// Digital Twin Web
+			createMarketAsset("13", "SenseHatDemo", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.WEBPROJECT, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/SenseHatDemo.json", null, null, null, null);
+
+			// Digital Twin Sense Hat
+			createMarketAsset("14", "DigitalTwinSenseHat", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.APPLICATION, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/DigitalTwinSenseHat.json", "market/img/jar-file.jpg", "jpg",
+					"market/docs/SenseHatHelsinki.zip", "SenseHatHelsinki-0.0.1.jar");
+
+			// videos
+			createMarketAsset("15", "Tutorials", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.DOCUMENT, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/Tutorials.json", null, null, "market/docs/README_Tutorials.md", "README.md");
+
+			// Health Check Android Application
+			createMarketAsset("16", "HealthCheckAndroidApplication", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.APPLICATION, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/HealthCheckApplication.json", null, null, "market/docs/HealthCheckApp.zip",
+					"HealthCheckApp.apk");
+
+			createMarketAsset("17", "management", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.WEBPROJECT, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/IssueManagement.json", null, null, null, null);
+
 		}
+	}
+
+	private void createMarketAsset(String id, String identification, MarketAsset.MarketAssetState state,
+			MarketAsset.MarketAssetType assetType, MarketAsset.MarketAssetPaymentMode paymentMode, boolean isPublic,
+			String jsonDesc, String image, String imageType, String content, String contentId) {
+
+		MarketAsset marketAsset = new MarketAsset();
+
+		marketAsset.setId(id);
+		marketAsset.setIdentification(identification);
+
+		marketAsset.setUser(getUserAdministrator());
+
+		marketAsset.setPublic(isPublic);
+		marketAsset.setState(state);
+		marketAsset.setMarketAssetType(assetType);
+		marketAsset.setPaymentMode(paymentMode);
+
+		marketAsset.setJsonDesc(loadFromResources(jsonDesc));
+		if (image != null) {
+			marketAsset.setImage(loadFileFromResources(image));
+			marketAsset.setImageType(imageType);
+		}
+
+		if (content != null) {
+			marketAsset.setContent(loadFileFromResources(content));
+			marketAsset.setContentId(contentId);
+		}
+		marketAssetRepository.save(marketAsset);
 	}
 
 	/*

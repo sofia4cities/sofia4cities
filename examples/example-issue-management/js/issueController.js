@@ -4,15 +4,15 @@ var IssueController = function() {
 	
 	//var apimanager = 'https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/oauth/token';
 	//var iotbroker = "https://s4citiespro.westeurope.cloudapp.azure.com/iotbroker/message";
-	var apimanager = 'http://localhost:19100/api-manager/oauth/token';
-	var iotbroker = "http://localhost:19000/iotbroker/message";
+	var apimanager = 'https://rancher.sofia4cities.com/api-manager/oauth/token';
+	var iotbroker = "https://rancher.sofia4cities.com/iotbroker/message";
 	//var apimanager = 'https://rancher.sofia4cities.com/api-manager/oauth/token';
 	//var iotbroker = "https://rancher.sofia4cities.com/iotbroker/message";
 	var ontology = 'Ticket';
-	var device = 'Ticketing App';
-	var token= 'e7ef0742d09d4de5a3687f0cfdf7f626';
+	var deviceTemplate = 'Ticketing App';
+	var token= '1c7954dd4c7c47e0916e8ea64e3c9967';
 
-	var deviceInstance = 'Ticketing App: Web';
+	var device= 'Web';
 	var config ={};
 	var queryAll= 'db.' + ontology + '.find()'
 	var queryType= 'NATIVE';
@@ -183,8 +183,8 @@ var IssueController = function() {
 
 			config['url'] = iotbroker;
 			config['token'] = token;
-			config['clientPlatform'] = device;
-			config['clientPlatformInstance'] = deviceInstance;
+			config['deviceTemplate'] = deviceTemplate;
+			config['device'] = device;
 			client.configure(config);
 			client.connect();
 			
