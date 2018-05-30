@@ -21,9 +21,15 @@ spring:
     username: root
     password: changeIt!
     driver-class-name: com.mysql.jdbc.Driver
-    test-while-idle: true
-    test-on-borrow: true
-    validation-query: SELECT 1    
+    tomcat:
+       # Number of ms to wait before throwing an exception if no connection is available.
+       max-wait: 10000
+       # Maximum number of active connections that can be allocated from this pool at the same time.
+       max-active: 100
+       # Validate the connection before borrowing it from the pool.
+       test-on-borrow: true
+       validation-query: SELECT 1
+       test-while-idle: true
   jpa:
     ## Hibernate Properties
     # The SQL dialect makes Hibernate generate better SQL for the chosen database

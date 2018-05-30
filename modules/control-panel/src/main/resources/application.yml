@@ -92,6 +92,7 @@ sofia2: #Config Sofia2 specific
         consumer.group : kafkaGroup
         consumer.maxPollRecords : 5000 
    analytics.notebook:
+      zeppelinGlobalTimeout: 120000
       zeppelinProtocol: http
       zeppelinHostname: localhost
       zeppelinPort: 8080
@@ -124,16 +125,16 @@ spring: ## General Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
       password: changeIt!
-      # Number of ms to wait before throwing an exception if no connection is available.
-      tomcat.max-wait: 10000
-      # Maximum number of active connections that can be allocated from this pool at the same time.
-      tomcat.max-active: 50
-      # Validate the connection before borrowing it from the pool.
-      tomcat.test-on-borrow: true
       driver-class-name: com.mysql.jdbc.Driver
-      test-while-idle: true
-      test-on-borrow: true
-      validation-query: SELECT 1      
+      tomcat:
+         # Number of ms to wait before throwing an exception if no connection is available.
+         max-wait: 10000
+         # Maximum number of active connections that can be allocated from this pool at the same time.
+         max-active: 50
+         # Validate the connection before borrowing it from the pool.
+         test-on-borrow: true
+         validation-query: SELECT 1
+         test-while-idle: true
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
