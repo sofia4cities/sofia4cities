@@ -63,4 +63,10 @@ public interface NotebookService {
 
 	public ResponseEntity<String> runParagraph(String zeppelinId, String paragraphId)
 			throws ClientProtocolException, URISyntaxException, IOException;
+
+	public ResponseEntity<String> runAllParagraphs(String zeppelinId)
+			throws ClientProtocolException, URISyntaxException, IOException;
+
+	public ResponseEntity<String> getParagraphResult(String zeppelinId, String paragraphId)
+			throws ClientProtocolException, URISyntaxException, IOException;
 }

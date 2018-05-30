@@ -311,7 +311,7 @@ public class NotebookServiceImpl implements NotebookService {
 	public boolean hasUserPermissionForNotebook(String zeppelinId, String userId) {
 		Notebook nt = this.notebookRepository.findByIdzep(zeppelinId);
 		if (nt != null)
-			this.hasUserPermissionInNotebook(nt, userId);
+			return this.hasUserPermissionInNotebook(nt, userId);
 		return false;
 	}
 
@@ -319,15 +319,26 @@ public class NotebookServiceImpl implements NotebookService {
 	public ResponseEntity<String> runParagraph(String zeppelinId, String paragraphId)
 			throws ClientProtocolException, URISyntaxException, IOException {
 		ResponseEntity<String> responseEntity;
-		Notebook nt = this.notebookRepository.findByIdzep(zeppelinId);
-
 		responseEntity = sendHttp("/api/notebook/run/".concat(zeppelinId).concat("/").concat(paragraphId),
 				HttpMethod.POST, "");
 		if (responseEntity.getStatusCode() == HttpStatus.OK) {
-			responseEntity = sendHttp("/api/notebook/run/".concat(zeppelinId).concat("/paragraph/").concat(paragraphId),
-					HttpMethod.POST, "");
+			responseEntity = sendHttp("/api/notebook/".concat(zeppelinId).concat("/paragraph/").concat(paragraphId),
+					HttpMethod.GET, "");
 		}
 		return responseEntity;
+	}
+
+	@Override
+	public ResponseEntity<String> runAllParagraphs(String zeppelinId)
+			throws ClientProtocolException, URISyntaxException, IOException {
+		return sendHttp("/api/notebook/job/".concat(zeppelinId), HttpMethod.POST, "");
+	}
+
+	@Override
+	public ResponseEntity<String> getParagraphResult(String zeppelinId, String paragraphId)
+			throws ClientProtocolException, URISyntaxException, IOException {
+		return sendHttp("/api/notebook/".concat(zeppelinId).concat("/paragraph/").concat(paragraphId), HttpMethod.GET,
+				"");
 	}
 
 }
