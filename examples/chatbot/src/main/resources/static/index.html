@@ -1,19 +1,11 @@
 <!DOCTYPE HTML>
-<!--
-	Launcher by freehtml5.co
-	Twitter: http://twitter.com/fh5co
-	URL: http://freehtml5.co
--->
 <html>
 	<head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Launcher &mdash; Free Website Template, Free HTML5 Template by FreeHTML5.co</title>
+	<title>ChatBot S4C demo</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="Free HTML5 Website Template by FreeHTML5.co" />
-	<meta name="keywords" content="free website templates, free html5, free template, free bootstrap, free website template, html5, css3, mobile first, responsive" />
-	<meta name="author" content="FreeHTML5.co" />
-
+	
   	<!-- Facebook and Twitter integration -->
 	<meta property="og:title" content=""/>
 	<meta property="og:image" content=""/>
@@ -35,6 +27,9 @@
 	<link rel="stylesheet" href="css/bootstrap.css">
 	<!-- Theme style  -->
 	<link rel="stylesheet" href="css/style.css">
+	
+	<!-- chat theme -->
+	 <link rel="stylesheet" href="css/chat.css" rel="stylesheet" id="chat-css"/>
 
 	<!-- Modernizr JS -->
 	<script src="js/modernizr-2.6.2.min.js"></script>
@@ -48,7 +43,20 @@
 	<div class="fh5co-loader"></div>
 
 	<aside id="fh5co-aside" role="sidebar" class="text-center" style="background-image: url(images/img_bg_1_gradient.jpg);">
-		<h1 id="fh5co-logo"><a href="index.html">launcher</a></h1>
+		<h1 id="fh5co-logo"><a href="index.html">S4C ChatBot</a></h1>
+		 <div class="col-md-10 col-sm-offset-1 frame">
+        	<ul></ul>
+           <!--  <div>            	
+                <div class="msj-rta macro">                        
+                    <div class="text text-r" style="background:whitesmoke !important">
+                        <input class="mytext" placeholder="Type a message"/>
+                    </div> 
+                </div>
+                <div style="padding:10px;">
+                    <span class="glyphicon glyphicon-share-alt"></span>
+                </div>              
+            </div>    -->         
+        </div> 
 	</aside>
 
 	<div id="fh5co-main-content">
@@ -59,22 +67,23 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="row">
-							<div class="col-lg-7">
+							<div class="col-lg-12">
 								<div class="fh5co-intro animate-box">
-									<h2>Launcher Launching Soon!</h2>
-									<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+									<h2>S4C Launching Soon!</h2>
+									<p>We are on some Maintenance Task, mainwhile you can talk with our S4ChatBot.</p>
 								</div>
 							</div>
 							
-							<div class="col-lg-7 animate-box">
+							<div class="col-lg-12 animate-box">
 								<form action="#" id="fh5co-subscribe">
 									<div class="form-group">
-										<input type="text" class="form-control" placeholder="Enter your email">
-										<input type="submit" value="Send" class="btn btn-primary">
-										<p class="tip">Please enter your email address for early access.</p>
+										<input type="text" class="mytext form-control" placeholder="Enter your inquiry">
+										<input type="button" id="sendChat" value="Send" class="btn btn-primary">
+										<p class="tip">Please enter Hi to interact, or See your "orders" or ask for weather...</p>
 									</div>
 								</form>
 							</div>
+							<div class="col-lg-12 animate-box bot-orders"></div> 
 						</div>
 					</div>
 				</div>
@@ -84,7 +93,7 @@
 
 		<div id="fh5co-footer">
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-5">
 					<ul id="fh5co-social">
 						<li><a href="#"><i class="icon-facebook"></i></a></li>
 						<li><a href="#"><i class="icon-twitter"></i></a></li>
@@ -93,8 +102,8 @@
 						<li><a href="#"><i class="icon-pinterest-square"></i></a></li>
 					</ul>
 				</div>
-				<div class="col-md-6 fh5co-copyright">
-					<p>Designed by <a href="http://freehtml5.co/" target="_blank">FreeHTML5.co</a> Demo Images: <a href="http://unsplash.com" target="_blank">Unsplash</a></p>
+				<div class="col-md-7">
+					<p>Designed by <a href="http://www.indracompany.com/" target="_blank">Indra Company</a> ChatBot S4C Demo.</p>
 				</div>
 			</div>
 		</div>
@@ -113,6 +122,8 @@
 	<script src="js/simplyCountdown.js"></script>
 	<!-- Main -->
 	<script src="js/main.js"></script>
+	<!-- chat -->
+	<script src="js/chat.js"></script>
 
 	</body>
 </html>

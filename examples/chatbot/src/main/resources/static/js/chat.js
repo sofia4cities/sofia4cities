@@ -1,5 +1,5 @@
 var me = {};
-me.avatar = "images/user.jpg";
+me.avatar = "images/contact.png";
 
 var you = {};
 you.avatar = "images/city.png";
@@ -86,7 +86,7 @@ $(".mytext").on("keydown", function(e){
     }
 });
 
-$('body > div > div > div:nth-child(2) > span').click(function(){
+$('#sendChat').click(function(){
     $(".mytext").trigger({type: 'keydown', which: 13, keyCode: 13});
 })
 

@@ -54,15 +54,15 @@ body > div > div > div.msj-rta.macro{
     margin:auto;margin-left:1%;
 }
 ul {
-    width:100%;
-    list-style-type: none;
-    padding:18px;
-    position:absolute;
-    bottom:47px;
-    display:flex;
-    flex-direction: column;
-    top:0;
-    overflow-y:scroll;
+    width: 100%;
+list-style-type: none;
+padding: 18px;
+position: absolute;
+bottom: -10px;
+display: flex;
+flex-direction: column;
+top: 0;
+overflow-y: scroll;
 }
 .msj:before{
     width: 0;
@@ -101,19 +101,22 @@ input:focus{
 :-moz-placeholder { /* Firefox 18- */
     color: #d4d4d4;
 }  
-.pressed {
-  padding: 15px 25px;
-  font-size: 24px;
-  text-align: center;
-  cursor: pointer;
-  outline: none;
-  color: #fff;
-  background-color: #333;
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 9px #999;
-  display: block;
-  margin-bottom: 15px;
+
+ .pressed {
+    padding: 10px 25px;
+    font-size: 15px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background-color: #333;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #455fd1;
+    display: inline;
+    margin-bottom: 15px;
+    margin-right: 10px;
+
 }
 .pressed:hover {
 	background-color: #444
