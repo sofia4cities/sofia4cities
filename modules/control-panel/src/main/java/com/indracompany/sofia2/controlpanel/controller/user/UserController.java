@@ -13,12 +13,15 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.user;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -102,54 +105,53 @@ public class UserController {
 		return "users/create";
 	}
 
-	@ResponseBody
-	@PostMapping("/deleteSimpleData")
-	public String deleteSimpleData(HttpServletRequest request, RedirectAttributes redirect, @RequestBody String data) {
+	@PostMapping(value = "/deleteSimpleData", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody Map<String, String> deleteSimpleData(RedirectAttributes redirect,
+			@RequestBody OntologyRemoveRevokeDto data) {
 
 		try {
-			String[] ontologiesToDelete = request.getParameterValues("ontologiesDelete[]");
 
-			if (ontologiesToDelete == null) {
-				return "/users/update/" + this.utils.getUserId() + "/true";
+			if (data.getOntologies() == null) {
+				return Collections.singletonMap("url", "/users/update/" + data.getUserId() + "/true");
 			}
-			for (String ontToDelete : ontologiesToDelete) {
-				System.out.println("remove: " + ontToDelete + " \n");
-				entityDeleteService.deleteOntology(ontToDelete, this.utils.getUserId());
+			for (String ontToDelete : data.getOntologies()) {
+				log.debug("remove: " + ontToDelete + " \n");
+				entityDeleteService.deleteOntology(ontToDelete, data.getUserId());
 			}
 
-			return "/users/update/" + this.utils.getUserId() + "/false";
+			return Collections.singletonMap("url", "/users/update/" + data.getUserId() + "/true");
 
 		} catch (UserServiceException e) {
 			log.debug("Cannot update  data user");
 			utils.addRedirectMessage("user.remove.data.error", redirect);
-			return "/users/show/" + this.utils.getUserId();
+			return Collections.singletonMap("url", "/users/show/" + data.getUserId());
 		}
 	}
 
-	@ResponseBody
-	@PostMapping("/revokeSimpleData")
-	public String revokeSimpleData(HttpServletRequest request, RedirectAttributes redirect, @RequestBody String data) {
+	@PostMapping(value = "/revokeSimpleData", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody Map<String, String> revokeSimpleData(RedirectAttributes redirect,
+			@RequestBody OntologyRemoveRevokeDto data) {
 
 		try {
-			String[] ontologiesToRevoke = request.getParameterValues("ontologiesRevoke[]");
+
 			Ontology ont;
 
-			if (ontologiesToRevoke == null) {
-				return "/users/update/" + this.utils.getUserId() + "/true";
+			if (data.getOntologies() == null) {
+				return Collections.singletonMap("url", "/users/update/" + data.getUserId() + "/true");
 			}
-			for (String ontToRevoke : ontologiesToRevoke) {
-				System.out.println("revoke: " + ontToRevoke + " \n");
+			for (String ontToRevoke : data.getOntologies()) {
+				log.debug("revoke: " + ontToRevoke + " \n");
 
-				ont = ontologyService.getOntologyById(ontToRevoke, this.utils.getUserId());
+				ont = ontologyService.getOntologyById(ontToRevoke, data.getUserId());
 				entityDeleteService.revokeAuthorizations(ont);
 			}
 
-			return "/users/update/" + this.utils.getUserId() + "/false";
+			return Collections.singletonMap("url", "/users/update/" + data.getUserId() + "/true");
 
 		} catch (UserServiceException e) {
 			log.debug("Cannot update  data user");
 			utils.addRedirectMessage("user.remove.data.error", redirect);
-			return "/users/show/" + this.utils.getUserId();
+			return Collections.singletonMap("url", "/users/show/" + data.getUserId());
 
 		}
 
@@ -365,20 +367,23 @@ public class UserController {
 	public String forgetDataUser(Model model, RedirectAttributes redirect, @PathVariable(name = "userId") String userId,
 			@PathVariable boolean forgetMe) {
 
-		if (forgetMe) {
-			try {
-				this.userService.deleteUser(userId);
+		try {
+
+			this.userService.deleteUser(userId);
+
+			if (utils.isAdministrator()) {
+				return "redirect:/users/list";
+			} else if (forgetMe) {
 				return "redirect:/logout";
-
-			} catch (UserServiceException e) {
-				log.debug("Cannot deleted  data user");
-				utils.addRedirectMessage("user.remove.data.error", redirect);
+			} else {
 				return "redirect:/users/show/" + this.utils.getUserId();
-
 			}
 
-		} else
+		} catch (UserServiceException e) {
+			log.debug("Cannot deleted  data user");
+			utils.addRedirectMessage("user.remove.data.error", redirect);
 			return "redirect:/users/show/" + this.utils.getUserId();
+		}
 
 	}
 }

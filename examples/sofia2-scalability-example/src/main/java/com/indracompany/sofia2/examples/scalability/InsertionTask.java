@@ -67,7 +67,13 @@ public class InsertionTask implements Runnable{
 					client.insertInstance(ontology, data);
 					Date end = new Date();
 					long time = end.getTime() - ini.getTime();
-					timespent = timespent + time;											
+					timespent = timespent + time;
+					
+					//automatic stop after 10 minutes
+					if ( 600000 < (end.getTime() - this.start.getTime()) ) {
+						this.stop = true;
+					}
+					
 				} catch (Exception e) {
 					log.error("Error inserting data", e);
 					errors++;
@@ -86,6 +92,12 @@ public class InsertionTask implements Runnable{
 	public void stop() {
 		synchronized(lock) {
 			this.stop = true;
+		}
+	}
+	
+	public boolean isStopped() {
+		synchronized(lock) {
+			return stop;
 		}
 	}
 	

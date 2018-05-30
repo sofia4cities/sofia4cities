@@ -14,7 +14,6 @@ var DigitalTwinCreateController = function() {
 	var jsonProperties = [];
 	var jsonActions = [];
 	var jsonEvents = [];
-	var AceEditor;
 	var editor;
 	var AllActionsLogic = [];
 	var mountablePropModel = $('#properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
@@ -309,7 +308,22 @@ var DigitalTwinCreateController = function() {
 		window.location.href = url; 
 	}
 	
-	
+	// INIT CODEMIRROR
+	var handleCodeMirror = function () {
+		logControl ? console.log('handleCodeMirror() on -> logicEditor') : '';	
+		
+        var myTextArea = document.getElementById('logicEditor');
+        var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
+        	mode: "text/javascript",
+            lineNumbers: false,
+            foldGutter: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            theme:"material",         
+
+        });
+		myCodeMirror.setSize("100%", 350);
+    }
 	
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{
@@ -321,7 +335,7 @@ var DigitalTwinCreateController = function() {
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
-			
+			handleCodeMirror();
 			// PROTOTYPEs
 			// ARRAY PROTOTYPE FOR CHECK UNIQUE PROPERTIES.
 			Array.prototype.unique = function() {
@@ -535,19 +549,18 @@ var DigitalTwinCreateController = function() {
 						}			
 					});
 				}
-				editor.setMode("text");
+				
 				editor.setText(digitalTwinCreateJson.json);
 				editor.setMode("tree");
 				
 				
-				AceEditor = ace.edit("aceEditor");
-			
 				var logica = digitalTwinCreateJson.logic;
 					
 				if(logica.charAt(0) === '\"'){
 					logica = logica.substr(1, logica.length-2);
 				}
-				AceEditor.setValue(logica);
+				var editorLogic = $('.CodeMirror')[0].CodeMirror;
+				editorLogic.setValue(logica)
 			}
 		},
 		
@@ -582,9 +595,10 @@ var DigitalTwinCreateController = function() {
 		         .appendTo("#digitaltwintype_create_form");
 		        
 		     });
-			 
+			var editorLogic = $('.CodeMirror')[0].CodeMirror;
+			
 			$("#json").val(JSON.stringify(editor.get()));
-			$("#logic").val(JSON.stringify(ace.edit("aceEditor").getValue()));
+			$("#logic").val(JSON.stringify(editorLogic.getValue()));
 			$("#digitalType").val($("#type").val());
 			
 			$("#digitaltwintype_create_form").submit();
@@ -593,12 +607,13 @@ var DigitalTwinCreateController = function() {
 		// ADD ACTION LOGIC
 		addActionLogic: function(obj){
 			logControl ? console.log(LIB_TITLE + ': addActionLogic()') : '';
+			var editor = $('.CodeMirror')[0].CodeMirror;
 			if(!AllActionsLogic.includes(obj.value)){
 				
-				AceEditor = ace.edit("aceEditor");
-				var js = AceEditor.getValue();
+				var js = editor.getValue();
 				js = js + "\nvar onAction"+obj.value.substring(0,1).toUpperCase() + obj.value.substring(1)+"=function(data){ }";
-				AceEditor.setValue(js);
+				
+				editor.setValue(js);
 				
 				AllActionsLogic.push(obj.value);
 			}
@@ -701,10 +716,7 @@ jQuery(document).ready(function() {
 	
 	DigitalTwinCreateController.load(digitalTwinCreateJson);
 	
-	AceEditor = ace.edit("aceEditor");
-	AceEditor.setTheme("ace/theme/monokai");
-	AceEditor.session.setMode("ace/mode/javascript");
-	AceEditor.setValue("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();\nfunction init(){}\nfunction main(){}");
+	$("#logicEditor").val("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();\nfunction init(){}\nfunction main(){}");
 	
 	DigitalTwinCreateController.init();
 });

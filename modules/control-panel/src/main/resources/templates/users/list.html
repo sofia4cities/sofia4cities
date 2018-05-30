@@ -202,7 +202,7 @@
 																	<span th:if="(${#authentication.name} == ${user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/show/${user.userId}|} + '\');'"><i class="fa fa-eye"></i></span>
 																	
 																	<!-- EDIT -->
-																	<span th:if="(${#authentication.name} == ${user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')"  class="btn  btn-sm  btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/update/${user.userId}|} + '\');'"><i class="fa fa-edit"></i></span>
+																	<span th:if="(${#authentication.name} == ${user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')"  class="btn  btn-sm  btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/update/${user.userId}|} + '/true\');'"><i class="fa fa-edit"></i></span>
 																</div>
 															</td>
 														</tr>
