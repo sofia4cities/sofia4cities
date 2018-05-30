@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Notebook Rest App</title>
+		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+		<meta content="" name="description" />
+		<meta content="" name="author" />
+		<!-- BEGIN GLOBAL MANDATORY STYLES -->
+		<link href="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+		<link href="addons/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+		<link href="css/style.css" rel="stylesheet" type="text/css"/>
+
+		<!-- PLUGINS -->
+		<link rel="stylesheet" type="text/css" media="all" href="addons/codemirror/lib/codemirror.css"/>
+		<link rel="stylesheet" type="text/css" media="all" href="addons/codemirror/theme/neat.css"/>
+		<link rel="stylesheet" type="text/css" media="all" href="addons/codemirror/theme/ambiance.css"/>
+		<link rel="stylesheet" type="text/css" media="all" href="addons/codemirror/theme/material.css"/>
+		<link rel="stylesheet" type="text/css" media="all" href="addons/codemirror/theme/neo.css"/>
+	</head>
+
+	<body>
+	<div class="container" id="login">
+	    <div class="row">
+	        <div class="col-md-offset-5 col-md-3">
+	            <div class="form-login">
+	            <h4>Login</h4>
+	            <input type="text" id="userName" class="form-control input-sm chat-input" placeholder="username" />
+	            </br>
+	            <input type="password" id="userPassword" class="form-control input-sm chat-input" placeholder="password" />
+	            </br>
+		            <div class="wrapper">
+			            <span class="group-btn">     
+			                <button type="text" id="btn-login" class="btn btn-primary">Login</a>
+			            </span>
+		            </div>
+	            </div>
+	        
+	        </div>
+	    </div>
+	</div>
+	<div class="container" id="execute-nt" style="display: none">
+		<div class="row">
+			<div class="button-execute">
+				<label>Notebook ID</label>
+				<input type="text" id="ntId" value="2DGST475K" class="form-control input-sm chat-input" placeholder="Notebook ID" />
+	            </br>
+				<button  id="execute" type="button" class="btn btn-square btn-primary"  ><span > Run Notebook</span></button>	
+			</div>
+		</div>
+	</div>
+	<div id="main-content" style="display:none">
+		<div class="container">
+			
+			<div class="row">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<div class="form-group">
+						<label>JSON Result</label>														
+						<textarea id="json" class="form-control" rows="5" data-min-rows='5'></textarea>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+		<div class="container map">
+			<div id="map">
+
+			</div>
+		</div>
+	</div>
+	</body>
+	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="js/bubbleMap.js"></script>
+	<script src="js/app.js"></script>
+	<!-- CODEMIRROR -->
+	<script src="addons/codemirror/lib/codemirror.js"> </script>
+	<script src="addons/codemirror/mode/javascript/javascript.js"></script>
+	<script src="addons/codemirror/addon/edit/matchbrackets.js" ></script>
+	<script src="addons/codemirror/addon/edit/closebrackets.js" ></script>
+	<script src="addons/codemirror/addon/selection/active-line.js" ></script>
+	<script src="addons/codemirror/addon/comment/comment.js"></script>
+	<script src="addons/codemirror/addon/comment/continuecomment.js" ></script>
+	<!-- BEAUTIFIER -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.5/beautify.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.5/beautify-css.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.5/beautify-html.js"></script>
+	<script>
+
+	var handleCodeMirror = function () {
+		
+        var myTextArea = document.getElementById('json');
+        editor = CodeMirror.fromTextArea(myTextArea, {
+        	mode: "application/ld+json",
+        	autoCloseBrackets: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            theme:"material",
+            lineWrapping: true
+
+        });
+    };
+
+	$(document).ready(function(){
+		//loadBubbleMap(json);
+		handleCodeMirror();
+
+		
+	});
+	</script>
+</html>
