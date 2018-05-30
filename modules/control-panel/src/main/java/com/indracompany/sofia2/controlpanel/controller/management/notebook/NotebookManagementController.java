@@ -3,6 +3,7 @@ package com.indracompany.sofia2.controlpanel.controller.management.notebook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,7 +28,7 @@ public class NotebookManagementController extends NotebookOpsRestServices {
 
 	@ApiOperation(value = "Runs paragraph synchronously")
 	@PostMapping(value = "/run/notebook/{notebookZepId}/paragraph/{paragraphId}")
-	public ResponseEntity<?> authorize(
+	public ResponseEntity<?> runParagraph(
 			@ApiParam(value = "Notebook Zeppelin Id", required = true) @PathVariable("notebookZepId") String notebookZepId,
 			@ApiParam(value = "Paragraph Id", required = true) @PathVariable(name = "paragraphId") String paragraphId,
 			@RequestHeader("Authorization") String authorization) {
@@ -38,6 +39,49 @@ public class NotebookManagementController extends NotebookOpsRestServices {
 		if (authorized) {
 			try {
 				return this.notebookService.runParagraph(notebookZepId, paragraphId);
+			} catch (Exception e) {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+
+		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+	}
+
+	@ApiOperation(value = "Runs all paragraphs synchronously")
+	@PostMapping(value = "/run/notebook/{notebookZepId}")
+	public ResponseEntity<?> runAllParagraphs(
+			@ApiParam(value = "Notebook Zeppelin Id", required = true) @PathVariable("notebookZepId") String notebookZepId,
+			@RequestHeader("Authorization") String authorization) {
+
+		String userId = this.jwtService.getAuthentication(authorization.split(" ")[1]).getName();
+		boolean authorized = this.notebookService.hasUserPermissionForNotebook(notebookZepId, userId);
+
+		if (authorized) {
+			try {
+				return this.notebookService.runAllParagraphs(notebookZepId);
+			} catch (Exception e) {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+
+		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+	}
+
+	@ApiOperation(value = "Get the results of a paragraph")
+	@GetMapping(value = "/result/notebook/{notebookZepId}/paragraph/{paragraphId}")
+	public ResponseEntity<?> getParagraphResult(
+			@ApiParam(value = "Notebook Zeppelin Id", required = true) @PathVariable("notebookZepId") String notebookZepId,
+			@ApiParam(value = "Paragraph Id", required = true) @PathVariable(name = "paragraphId") String paragraphId,
+			@RequestHeader("Authorization") String authorization) {
+
+		String userId = this.jwtService.getAuthentication(authorization.split(" ")[1]).getName();
+		boolean authorized = this.notebookService.hasUserPermissionForNotebook(notebookZepId, userId);
+
+		if (authorized) {
+			try {
+				return this.notebookService.getParagraphResult(notebookZepId, paragraphId);
 			} catch (Exception e) {
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}

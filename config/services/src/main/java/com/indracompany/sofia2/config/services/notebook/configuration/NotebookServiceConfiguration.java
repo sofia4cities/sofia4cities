@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.config.services.notebook.configuration;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -45,8 +46,10 @@ public class NotebookServiceConfiguration {
 	private String restUsername;
 	@Value("${sofia2.analytics.notebook.restPass:#{null}}")
 	private String restPass;
+	@Value("${sofia2.analytics.notebook.zeppelinGlobalTimeout:#{120000}}")
+	private String globalTimeout;
 	private String baseURL;
-	
+
 	@PostConstruct
 	public void init() {
 		baseURL = String.format("%s://%s:%s/%s", zeppelinProtocol, zeppelinHostname, zeppelinPort, zeppelinPathname);
