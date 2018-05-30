@@ -227,7 +227,7 @@ function connect() {
 }
 
 function disconnect() {
-	$("#devices").remoteAttr("disabled");
+	$("#devices").removeAttr("disabled");
     if (stompClient !== null) {
         stompClient.disconnect();
     }
