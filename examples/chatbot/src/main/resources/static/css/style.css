@@ -105,11 +105,11 @@ h1, h2, h3, h4, h5, h6, figure {
   padding-right: 70px; }
   @media screen and (max-width: 768px) {
     #fh5co-main-content {
-      margin-left: 0;
-      padding-left: 15px;
-      padding-right: 15px;
-      padding-top: 30px;
-      padding-bottom: 15px; } }
+     margin-left: 0;
+padding-left: 70px;
+padding-right: 15px;
+padding-top: 360px;
+padding-bottom: 15px; } }
 
 .dt {
   display: table; }
@@ -202,10 +202,10 @@ h1, h2, h3, h4, h5, h6, figure {
         box-shadow: none !important;
         background: #2fcef5; }
     #fh5co-subscribe .form-group .tip {
-      margin-top: 10px;
-      margin-left: 30px;
-      font-size: 12px;
-      color: #bdbdbd; }
+    margin-top: 10px;
+margin-left: 30px;
+font-size: 14px;
+color: #999; }
 
 .fh5co-loader {
   position: fixed;
@@ -217,11 +217,15 @@ h1, h2, h3, h4, h5, h6, figure {
   background: url(../images/loader.gif) center no-repeat #fff; }
 
 #fh5co-footer {
-  position: absolute;
-  bottom: 20px;
-  left: 70px;
-  right: 70px;
-  padding-top: 50px; }
+ position: relative;
+
+bottom: 20px;
+
+left: 0px;
+
+right: 70px;
+
+padding-top: 100px; }
   @media screen and (max-width: 768px) {
     #fh5co-footer {
       left: 15px;

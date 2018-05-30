@@ -103,20 +103,19 @@ input:focus{
 }  
 
  .pressed {
-    padding: 10px 25px;
-    font-size: 15px;
-    text-align: center;
-    cursor: pointer;
-    outline: none;
-    color: #fff;
-    background-color: #333;
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 9px #455fd1;
-    display: inline;
-    margin-bottom: 15px;
-    margin-right: 10px;
-
+padding: 8px 16px;
+font-size: 15px;
+text-align: center;
+cursor: pointer;
+outline: none;
+color: #fff;
+background-color: #333;
+border: none;
+border-radius: 8px;
+box-shadow: 0 6px #455fd1;
+display: inline;
+margin-bottom: 10px;
+margin-right: 10px;
 }
 .pressed:hover {
 	background-color: #444

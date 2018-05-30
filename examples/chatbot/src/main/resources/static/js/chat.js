@@ -2,7 +2,7 @@ var me = {};
 me.avatar = "images/contact.png";
 
 var you = {};
-you.avatar = "images/city.png";
+you.avatar = "images/bot.jpg";
 
 function formatAMPM(date) {
     var hours = date.getHours();
@@ -17,6 +17,7 @@ function formatAMPM(date) {
 
 //-- No use time. It is a javaScript effect.
 function insertChat(who, text, time){
+	console.log('inserting message...');
     if (time === undefined){
         time = 0;
     }
@@ -24,9 +25,9 @@ function insertChat(who, text, time){
     var date = formatAMPM(new Date());
     
     if (who == "me"){
-        control = '<li style="width:100%">' +
+        control = '<li style="width:100%; margin: 10px;">' +
                         '<div class="msj macro">' +
-                        '<div class="avatar"><img class="img-circle" style="width:100%;" src="'+ me.avatar +'" /></div>' +
+                        '<div class="avatar"><img class="img-circle" style="width:100%; opacity: 0.4;" src="'+ me.avatar +'" /></div>' +
                             '<div class="text text-l">' +
                                 '<p>'+ text +'</p>' +
                                 '<p><small>'+date+'</small></p>' +
@@ -34,7 +35,7 @@ function insertChat(who, text, time){
                         '</div>' +
                     '</li>';                    
     }else{
-        control = '<li style="width:100%;">' +
+        control = '<li style="width:100%; margin: 10px auto;">' +
                         '<div class="msj-rta macro">' +
                             '<div class="text text-r">' +
                                 '<p>'+text+'</p>' +
@@ -45,7 +46,7 @@ function insertChat(who, text, time){
     }
     setTimeout(
         function(){                        
-        $("ul").append(control).scrollTop($("ul").prop('scrollHeight'));
+        $("ul.chatbot").append(control).scrollTop($("ul.chatbot").prop('scrollHeight'));
         }, time);
     
 }
@@ -55,6 +56,7 @@ function resetChat(){
 }
 
 function buttonPressed(msg){
+	console.log('button pressed Order: ' + msg);
     insertChat("me",msg);
     sendMsg(msg); 
 }
