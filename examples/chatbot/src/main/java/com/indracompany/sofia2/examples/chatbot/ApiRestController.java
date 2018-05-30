@@ -1,5 +1,9 @@
 package com.indracompany.sofia2.examples.chatbot;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -28,7 +32,7 @@ public class ApiRestController {
     	LOG.info("MSG RECIEVED: " +  msgReceived);
     	//String msg = processMsg(msgRecieved);
     	
-    	String msg = postMsg(msgReceived);
+    	String msg = processMsg(msgReceived);
     	
     	return msg;
     }
@@ -45,5 +49,54 @@ public class ApiRestController {
     	System.out.println(answer);
     	return answer;
     }
+    
+	private String processMsg(String msgRecieved) {
+		String msg;
+		List<String> buttons = new ArrayList<String>();
+		
+		switch (msgRecieved) {
+		case "Hi":
+		case "hi":
+		case "HI":
+			msg = "Hi! I swear I will not kill anyone. Trust me.";
+			break;
+		case "orders":
+			msg = "These are things that I can never do";
+			buttons.add("Order 1");
+			buttons.add("Order 2");
+			break;
+		default:
+			msg = "zzz";
+			break;
+	}
+	StringBuilder json = new StringBuilder();
+		json.append("{");
+		json.append('"');
+		json.append("msg");
+		json.append('"');
+		json.append(':');
+		json.append('"');
+		json.append(msg);
+		json.append('"');
+		json.append(',');
+		json.append('"');
+		json.append("buttons");
+		json.append('"');
+		json.append(':');
+		json.append('[');
+		Iterator<String> it = buttons.iterator();
+		while (it.hasNext()) {
+			json.append('"');
+			json.append(it.next());
+			json.append('"');
+			if (it.hasNext()) {
+				json.append(',');
+			}
+		}
+		json.append(']');
+		json.append("}");
+		
+		return json.toString();
+	}
 
 }
