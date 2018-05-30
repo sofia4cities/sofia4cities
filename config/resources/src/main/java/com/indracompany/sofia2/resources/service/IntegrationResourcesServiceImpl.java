@@ -160,13 +160,12 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 	public Map<String, String> getSwaggerUrls() {
 		Map<String, String> map = new HashMap<>();
 		String base = this.urls.getDomain().getBase();
-		String controlpanel = base.endsWith("/") ? base.concat("/controlpanel")
-				: base.concat("/").concat("/controlpanel");
-		String iotbroker = base.endsWith("/") ? base.concat("/iotbroker") : base.concat("/").concat("/iotbroker");
-		String apimanager = base.endsWith("/") ? base.concat("/apimanager") : base.concat("/").concat("/apimanager");
-		String router = base.endsWith("/") ? base.concat("/router") : base.concat("/").concat("/router");
-		String digitalTwinBroker = base.endsWith("/") ? base.concat("/digitaltwinbroker")
-				: base.concat("/").concat("/digitaltwinbroker");
+		String controlpanel = base.endsWith("/") ? base.concat("controlpanel") : base.concat("/controlpanel");
+		String iotbroker = base.endsWith("/") ? base.concat("iotbroker") : base.concat("/iotbroker");
+		String apimanager = base.endsWith("/") ? base.concat("api-manager") : base.concat("/api-manager");
+		String router = base.endsWith("/") ? base.concat("router") : base.concat("/router");
+		String digitalTwinBroker = base.endsWith("/") ? base.concat("digitaltwinbroker")
+				: base.concat("/digitaltwinbroker");
 		if (base.contains(LOCALHOST)) {
 			controlpanel = this.urls.getControlpanel().getBase();
 			iotbroker = this.urls.getIotbroker().getBase();
