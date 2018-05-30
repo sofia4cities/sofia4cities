@@ -134,7 +134,6 @@ spring: ## General Config
          test-on-borrow: true
          validation-query: SELECT 1
          test-while-idle: true
-         test-on-borrow: true
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
