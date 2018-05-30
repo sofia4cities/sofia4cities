@@ -17,51 +17,52 @@ The app features two different behaviors depending on the end-user profile. For 
 
 ## User guide: citizenHealth
 
-1. After the welcome screen, the user will log in with the S4C credentials:
+- After the welcome screen, the user will log in with the S4C credentials:
 
 ![](./Screenshots/image004.png) 
+<img src="./Screenshots/image004.png"  width="120" height="120">
 
-2. Then the main menu app appears, with all the options available
+- Then the main menu app appears, with all the options available
 
 ![](./Screenshots/image006.png) 
 
-3. First command refers to data logging via a form. The citizen will fill it with personal data and store it on S4C Platform
+- First command refers to data logging via a form. The citizen will fill it with personal data and store it on S4C Platform
 
 ![](./Screenshots/image007.png) 
 
-4. Second command from the main menu serves as a tool to visualize all historical data logged by the user
+- Second command from the main menu serves as a tool to visualize all historical data logged by the user
 
 ![](./Screenshots/image008.png) 
 
-5. Last command opens a new screen for all specialist related actions
+- Last command opens a new screen for all specialist related actions
 
 ![](./Screenshots/image009.png) 
 
-6. First of all, the citizen can request feedback from an specialist (only one is available at the moment). This operation requires patient's consent to share the personal data with the only purpose of getting medical feedback.
+- First of all, the citizen can request feedback from an specialist (only one is available at the moment). This operation requires patient's consent to share the personal data with the only purpose of getting medical feedback.
 
 ![](./Screenshots/image010.png) 
 
 ![](./Screenshots/image011.png) 
 
-7. Second button opens up the citizen inbox where the medical feedbacks appear. 
+- Second button opens up the citizen inbox where the medical feedbacks appear. 
 
 ![](./Screenshots/image012.png) 
 
-By clicking on any medical record, the user can revoke data access to the specialist, since the info exchange has already been finished.
+-By clicking on any medical record, the user can revoke data access to the specialist, since the info exchange has already been finished.
 
 ![](./Screenshots/image014.png) 
 
 ## User guide: specialistHealth
 
-1. After the welcome screen, the user will log in with the S4C credentials:
+- After the welcome screen, the user will log in with the S4C credentials:
 
 ![](./Screenshots/image015.png) 
 
-2. Then the mailbox appears with anonymous patient identifiers:
+- Then the mailbox appears with anonymous patient identifiers:
 
 ![](./Screenshots/image016.png) 
 
-3. Tapping on one of the request will access the patient data, and by pressing the feedback button the specialist can compose the feedback message
+- Tapping on one of the request will access the patient data, and by pressing the feedback button the specialist can compose the feedback message
 
 ![](./Screenshots/image017.png) 
 
