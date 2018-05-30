@@ -1297,33 +1297,6 @@
         var newLayer = {};
         //newLayer.options = JSON.parse(JSON.stringify(ed.dashboard.pages[0].layers[0].options));
         newLayer.gridboard = [
-          {
-            cols: 8,
-            rows: 7,
-            y: 0,
-            x: 0,
-            id: "1",
-            type: "livehtml",
-            content: "<h1> LiveHTML Text </h1>",
-            header: {
-              enable: true,
-              title: {
-                icon: "",
-                iconColor: "none",
-                text: "Leaflet Map Gadget test",
-                textColor: "none"
-              },
-              backgroundColor: "none",
-              height: 25
-            },
-            backgroundColor: "initial",
-            padding: 0,
-            border: {
-              color: "hsl(232, 1%, 82%)",
-              width: 1,
-              radius: 5
-            }
-          }
         ];
         newLayer.title = "baseLayer";
         newPage.title = angular.copy($scope.title);
@@ -1682,12 +1655,14 @@
       //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
       function getGadgetsSourcesInDashboard(){
         var gadgets = [];
-        var page = $scope.dashboard.pages[$scope.selectedpage];       
+        for(var p=0;p<$scope.dashboard.pages.length;p++){
+          var page = $scope.dashboard.pages[p];       
           for (var i = 0; i < page.layers.length; i++) {
-          var layer = page.layers[i];
-          var gadgetsAux = layer.gridboard.filter(function(gadget){return typeGadgetList.indexOf(gadget.type) != -1});
-          if(gadgetsAux.length){
-            gadgets = gadgets.concat(gadgetsAux);
+            var layer = page.layers[i];
+            var gadgetsAux = layer.gridboard.filter(function(gadget){return typeGadgetList.indexOf(gadget.type) != -1});
+            if(gadgetsAux.length){
+              gadgets = gadgets.concat(gadgetsAux);
+            }
           }
         }
         return gadgets;
@@ -1696,12 +1671,14 @@
       //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
       function getGadgetsInDashboard(){
         var gadgets = [];
-        var page = $scope.dashboard.pages[$scope.selectedpage];      
+        for(var p=0;p<$scope.dashboard.pages.length;p++){
+          var page = $scope.dashboard.pages[p];
           for (var i = 0; i < page.layers.length; i++) {
-          var layer = page.layers[i];
-          var gadgetsAux = layer.gridboard.filter(function(gadget){return typeof gadget.id != "undefined"});
-          if(gadgetsAux.length){
-            gadgets = gadgets.concat(gadgetsAux);
+            var layer = page.layers[i];
+            var gadgetsAux = layer.gridboard.filter(function(gadget){return typeof gadget.id != "undefined"});
+            if(gadgetsAux.length){
+              gadgets = gadgets.concat(gadgetsAux);
+            }
           }
         }
         return gadgets;
