@@ -92,7 +92,7 @@
 								</div>
 								<div  class="col-md-4">
 									<label for="kafka-url">KAFKA URL:</label>
-									<input class="form-control kafka-url url" name="kafka-url" value="rancher.sofia4cities.com:9093"/>
+									<input class="form-control kafka-url url" name="kafka-url" value="rancher.sofia4cities.com:9095"/>
 								</div>
 								<div class="clearfix"></div>
 								<div class="col-md-12">
@@ -149,7 +149,7 @@
 							</select>
 							
 							<label for="delay" style="margin-left:10px">Delay:</label>
-							<input id="delay" class="form-control input-small clientPlatformInstance" name="delay" value="0" style="width: 55px;"/>
+							<input id="delay" class="form-control input-small clientPlatformInstance" name="delay" value="100" style="width: 55px;"/>
 						</div>
 					</div>
 					<div class="col-md-12">
@@ -484,7 +484,7 @@
 			var averageResponseTimeData = totalGraph.map(e => e.averageResponseTime).join(",").split(",");
 			
 			// check if greater than 25 steps (125segs.)
-			if (throughputPeriodData.length >= 15){
+			if (throughputPeriodData.length >= 25){
 			
 				lastLabel = myChart.data.labels[myChart.data.labels.length-1]+5;
 				lastThroughput = throughputPeriodData[throughputPeriodData.length-1];
@@ -610,7 +610,7 @@
 		
 		
 		// chart 
-		graphData = JSON.parse("{\"labels\":[0],\"datasets\":[{\"data\":[0],\"label\":\"Throughput\",\"id\": \"y-axis-0\",\"borderColor\":\"#3e95cd\",\"fill\":false},{\"data\":[0],\"label\":\"Average ResponseTime\",\"id\": \"y-axis-1\",\"borderColor\":\"#8e5ea2\",\"fill\":false}]}");
+		graphData = JSON.parse("{\"labels\":[0],\"datasets\":[{\"data\":[0],\"label\":\"Throughput\",\"yAxisID\": \"y-axis-0\",\"borderColor\":\"#3e95cd\",\"fill\":false},{\"data\":[0],\"label\":\"Average ResponseTime\",\"yAxisID\": \"y-axis-1\",\"borderColor\":\"#8e5ea2\",\"fill\":false}]}");
 				
 		var myChart = new Chart(document.getElementById("line-chart"), {
 			type: 'line',
@@ -643,7 +643,10 @@
 						position: "right",					   
 						id: "y-axis-1",
 						ticks: {
-								beginAtZero: true
+								beginAtZero: true,
+								min: 0,
+								max: 0.5,
+								stepSize: 0.1
 							},
 						scaleLabel: {
 							display: true,

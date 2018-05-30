@@ -17,55 +17,56 @@ The app features two different behaviors depending on the end-user profile. For 
 
 ## User guide: citizenHealth
 
-1. After the welcome screen, the user will log in with the S4C credentials:
+- After the welcome screen, the user will log in with the S4C credentials:
 
-![](./Screenshots/image004.png) 
+<img src="./Screenshots/image004.png"  width="300" height="550">
 
-2. Then the main menu app appears, with all the options available
+- Then the main menu app appears, with all the options available
 
-![](./Screenshots/image006.png) 
+<img src="./Screenshots/image006.png"  width="300" height="550"> 
 
-3. First command refers to data logging via a form. The citizen will fill it with personal data and store it on S4C Platform
+- First command refers to data logging via a form. The citizen will fill it with personal data and store it on S4C Platform
 
-![](./Screenshots/image007.png) 
+<img src="./Screenshots/image007.png"  width="300" height="550"> 
 
-4. Second command from the main menu serves as a tool to visualize all historical data logged by the user
+- Second command from the main menu serves as a tool to visualize all historical data logged by the user
 
-![](./Screenshots/image008.png) 
+<img src="./Screenshots/image008.png"  width="300" height="550"> 
 
-5. Last command opens a new screen for all specialist related actions
+- Last command opens a new screen for all specialist related actions
 
-![](./Screenshots/image009.png) 
+<img src="./Screenshots/image009.png"  width="300" height="550">
 
-6. First of all, the citizen can request feedback from an specialist (only one is available at the moment). This operation requires patient's consent to share the personal data with the only purpose of getting medical feedback.
+- First of all, the citizen can request feedback from an specialist (only one is available at the moment). This operation requires patient's consent to share the personal data with the only purpose of getting medical feedback.
 
-![](./Screenshots/image010.png) 
+<img src="./Screenshots/image010.png"  width="300" height="550">
 
-![](./Screenshots/image011.png) 
+<img src="./Screenshots/image011.png"  width="300" height="550">
 
-7. Second button opens up the citizen inbox where the medical feedbacks appear. 
+- Second button opens up the citizen inbox where the medical feedbacks appear. 
 
-![](./Screenshots/image012.png) 
+<img src="./Screenshots/image012.png"  width="300" height="550">
 
-By clicking on any medical record, the user can revoke data access to the specialist, since the info exchange has already been finished.
+-By clicking on any medical record, the user can revoke data access to the specialist, since the info exchange has already been finished.
 
-![](./Screenshots/image014.png) 
+<img src="./Screenshots/image014.png"  width="300" height="550">
 
 ## User guide: specialistHealth
 
-1. After the welcome screen, the user will log in with the S4C credentials:
+- After the welcome screen, the user will log in with the S4C credentials:
 
-![](./Screenshots/image015.png) 
+<img src="./Screenshots/image015.png"  width="300" height="550">
 
-2. Then the mailbox appears with anonymous patient identifiers:
+- Then the mailbox appears with anonymous patient identifiers:
 
-![](./Screenshots/image016.png) 
+<img src="./Screenshots/image016.png"  width="300" height="550">
 
-3. Tapping on one of the request will access the patient data, and by pressing the feedback button the specialist can compose the feedback message
+- Tapping on one of the request will access the patient data, and by pressing the feedback button the specialist can compose the feedback message
 
-![](./Screenshots/image017.png) 
 
-![](./Screenshots/image018.png) 
+<img src="./Screenshots/image017.png"  width="300" height="550">
+
+<img src="./Screenshots/image018.png"  width="300" height="550">
 
 
 

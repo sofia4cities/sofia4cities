@@ -1,0 +1,11 @@
+{
+	"title":"Digital Twin Web",
+	"technologies":"HTML",
+	"description":".",
+	"detailedDescription":".",
+	"functionality":"",
+	"webProjectId":"SenseHatDemo",
+	"id_endpoint_webproject":"https://rancher.sofia4cities.com/web/SenseHatDemo/SenseHatDemo/index.html",
+	"description_webproject":"DigitalTwin example with a SenseHat"
+}
+

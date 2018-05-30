@@ -41,8 +41,11 @@ import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel.EventTy
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterDigitalTwinService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
 @EnableAutoConfiguration
+@Slf4j
 public class EventActionProcessorDelegate implements EventProcessor, ActionProcessor {
 
 	@Autowired
@@ -253,6 +256,7 @@ public class EventActionProcessorDelegate implements EventProcessor, ActionProce
 
 			OperationResultModel result = routerDigitalTwinService.updateShadow(compositeModel);
 			if (!result.isStatus()) {
+				log.info("EventActionProcessorDelegate -- getErrorCode: " + result.getErrorCode());
 				return new EventResponseMessage(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
 			}
 

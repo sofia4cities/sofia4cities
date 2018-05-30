@@ -531,7 +531,7 @@ var OntologyCreateController = function() {
 			required_by_default: true,
 			modes: ['code', 'text', 'tree', 'view'], // allowed modes
 			error: function (err) {
-				//$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
+				$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
 				return false;
 			},
 			onChange: function(){
