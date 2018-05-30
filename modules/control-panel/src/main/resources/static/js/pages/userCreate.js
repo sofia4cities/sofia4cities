@@ -263,13 +263,40 @@ var UserCreateController = function() {
 		// no Id no fun!
 		if ( !userId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO USER-FORM SELECTED!'}); return false; }
 		
-		// No dateDeleted no fun!
-		if ( !$('#datedeleted').val() ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: userCreateReg.validation_dates}); return false; }
+		console.log('deleteUserConfirmation() -> ID: ' + userId);
 		
-		logControl ? console.log('deleteUserConfirmation() -> formAction: ' + $('.delete-user').attr('action') + ' ID: ' + $('.delete-user').attr('userId')) : '';
+		// i18 labels
+		var Remove = headerReg.btnEliminar;
+		var Close = headerReg.btnCancelar;
+		var	Content = headerReg.genericConfirm;
+		var Title = headerReg.titleConfirm + ':';
 		
 		// call user Confirm at header.
-		HeaderController.showConfirmDialogUsuario('delete_user_form');	
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn btn-sm btn-danger btn-outline',
+					action: function(){ 
+						navigateUrl("/controlpanel/users/forgetDataUser/" +userId+"/true");
+					}											
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});		
 	}
 
 	// CONTROLLER PUBLIC FUNCTIONS 
