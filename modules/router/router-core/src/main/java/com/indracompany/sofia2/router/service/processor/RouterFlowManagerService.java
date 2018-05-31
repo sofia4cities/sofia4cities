@@ -168,7 +168,7 @@ public class RouterFlowManagerService {
 			Entry<String, AdviceNotificationService> item = iterator.next();
 			AdviceNotificationService service = item.getValue();
 			List<AdviceNotificationModel> list = service.getAdviceNotificationModel(ontologyName, messageType);
-			if (list != null)
+			if (list != null && list.size()>0)
 				listNotifications.addAll(list);
 		}
 

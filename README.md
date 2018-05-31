@@ -8,7 +8,9 @@ Sofia4Cities Open-Source Platform [![Build Status](http://sofia2-devops.westeuro
 ============================
 
 Sofia4Cities is an multi-purpose, enterprise and open-source platform for building complete end-to-end solutions, connected applications, and smart products. 
-The platform provides an open toolkit for the IoT/Smart product development that reduces associated cost, risks, and time-to-market. 
+The platform provides an open toolkit for the IoT/Smart product development that reduces associated cost, risks, and time-to-market.
+If you want to have a quickview of what offers the platform you can see this video: [a View of the Capabilities of the Platform](http://sofia2.org/owncloud/public.php?service=files&t=15977406e85c0faf71977a29936026a0)
+![](docs/images/video_quickview.png)
 
 ## Project Roadmap
 
