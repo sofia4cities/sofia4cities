@@ -78,6 +78,8 @@ public class QueryAsTextMongoDBImpl implements QueryAsTextDBRepository {
 			if (query.indexOf(".createIndex(") != -1) {
 				manageRepo.createIndex(query);
 				return "Created index indicated in the query:" + query;
+			} else if (query.indexOf(".getIndexes(") != -1) {
+				return manageRepo.getIndexes(ontology);
 			} else if (query.indexOf(".insert(") != -1) {
 				return "Inserted row with id:" + mongoRepo.insert(ontology, "", queryContent);
 			} else if (query.indexOf(".update(") != -1) {
