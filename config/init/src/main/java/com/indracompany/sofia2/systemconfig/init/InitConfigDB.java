@@ -2178,6 +2178,10 @@ public class InitConfigDB {
 					MarketAsset.MarketAssetType.WEBPROJECT, MarketAsset.MarketAssetPaymentMode.FREE, true,
 					"market/details/IssueManagement.json", null, null, null, null);
 
+			createMarketAsset("17", "QuickviewPlatform", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.DOCUMENT, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/QuickviewPlatform.json", null, null, null, null);
+
 		}
 	}
 
