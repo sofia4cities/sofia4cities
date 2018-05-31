@@ -82,19 +82,9 @@ public class SpecialistActivity extends AppCompatActivity implements RequestAdap
             finish();
             return true;
         }
-        else if (id == R.id.action_settings) {
-            Intent mSettingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
-            startActivity(mSettingsIntent);
-            return true;
-        }
         return true;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
     @Override
     protected void onResume() {
         super.onResume();
