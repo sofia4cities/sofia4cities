@@ -19,7 +19,7 @@ var IssueController = function() {
 
 	var device= 'Web';
 	var config ={};
-	var queryAll= 'db.' + ontology + '.find()'
+	var queryAll= "db." + ontology + ".find({'contextData.timestampMillis': {$gte:1527063270064}})";
 	var queryType= 'NATIVE';
 	var isAuthenticated = false;
 	var states = ['PENDING','DONE','WORKING', 'STOPPED'];

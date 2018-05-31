@@ -7,7 +7,7 @@ var loadBubbleMap = function(data){
     chart = Highcharts.mapChart('map', {
 
         title: {
-            text: 'Flights from ICN'
+            text: 'Flights from ' + $('#srcId').val()
         },
 
         tooltip: {

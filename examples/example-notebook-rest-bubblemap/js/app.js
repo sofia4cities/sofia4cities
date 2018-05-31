@@ -21,6 +21,9 @@ var AppController = function(){
 		editor.setValue(js_beautify(editor.getValue()));
 	};
 	var executeNotebook = function() {
+		if(!$('.json-editor').hasClass('hide')){
+			$('.json-editor').addClass('hide')
+		}
 		var srcId = {
 			'params' :
 			{
