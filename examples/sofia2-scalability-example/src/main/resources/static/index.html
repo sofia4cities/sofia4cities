@@ -115,7 +115,7 @@
 		<!-- chart -->
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">Scalability Injection Demo:  Througthput vs. Average Response Time </h3>
+				<h3 class="panel-title">Scalability Injection Demo:  Inserts per second vs. Average Response Time </h3>
 			</div>
 			<div class="panel-body">
 				<span><h6 class="text-muted">Values updated every <b>5 seconds</b></h6></span>
@@ -232,7 +232,6 @@
 					sent: status.sent,
 					ok: status.sent - status.errors,
 					error: status.errors,
-					throughput: status.throughput,
 					timeAlive: status.timeAlive,
 					throughputPeriod: status.throughputPeriod,
 					averageResponseTime: 1 / status.throughputPeriod
@@ -439,17 +438,22 @@
 		        			number: 0,
 		        			averageResponseTime: 0
 		        	}
+		        	var rest = 0;
 		        	for (i = 0; i < response.length; i++) { 
 		        		var injector = $('.injector[id="inj-'+response[i].id+'"]');
 		        		updateInjector(injector, response[i]);
 		        		totals.sent = totals.sent + response[i].sent;
 		        		totals.errors = totals.errors + response[i].errors;
 		        		totals.ok = totals.ok + (totals.sent - totals.errors);
-		        		totals.throughput = totals.throughput + response[i].throughput;
-		        		totals.throughputPeriod = totals.throughputPeriod + response[i].throughputPeriod;
+		        		if (response[i].throughputPeriod) {
+		        			totals.throughputPeriod = totals.throughputPeriod + response[i].throughputPeriod;
+		        		} else {
+		        			rest++;
+		        		}
+		        		
 		        	}
-		        	totals.number = i;
-		        	totals.averageResponseTime = 1 / (totals.throughputPeriod / i);
+		        	totals.number = i - rest;
+		        	totals.averageResponseTime = 1 / (totals.throughputPeriod / totals.number);
 		        	updateTotals(totals);
 					
 					// updating values for graph
@@ -515,7 +519,6 @@
     		injector.find('.inj-cell-sent').text(status.sent);
     		injector.find('.inj-cell-error').text(status.errors);
     		injector.find('.inj-cell-ok').text(status.sent - status.errors);
-    		//injector.find('.inj-cell-throughput').text(Math.round(status.throughput * 100) / 100);
     		injector.find('.inj-cell-timeAlive').text(status.timeAlive/1000);
     		injector.find('.inj-cell-throughputPeriod').text(Math.round(status.throughputPeriod * 100) / 100);
     		injector.find('.inj-cell-averageResponseTime').text(Math.round((1 / status.throughputPeriod) * 1000000) / 1000000);
@@ -526,12 +529,11 @@
 			$('.inj-cell-total-sent').text(totals.sent);
     		$('.inj-cell-total-error').text(totals.errors);
     		$('.inj-cell-total-ok').text(totals.sent - totals.errors);
-    		//$('.inj-cell-total-throughput').text(Math.round(totals.throughput * 100) / 100);
     		$('.inj-cell-total-throughputPeriod').text(Math.round(totals.throughputPeriod * 100) / 100);
     		$('.inj-cell-total-averageResponseTime').text(Math.round(totals.averageResponseTime * 1000000) / 1000000);
 		}
 		
-		function createInjector(number, protocol, sent, ok, error, throughput, timeAlive, throughputPeriod){
+		function createInjector(number, protocol, sent, ok, error, timeAlive, throughputPeriod){
 			var injs = injectors.getInjectors();
 			var parent = $('<div class="injector inj-row" id="inj-'+number+'"></div>');
 			parent.append('<div class="inj-cell-name inj-cell">'+number+'</div>');
@@ -540,11 +542,9 @@
 			parent.append('<div class="inj-cell-sent inj-cell">'+sent+'</div>');
 			parent.append('<div class="inj-cell-ok inj-cell">'+ok+'</div>');
 			parent.append('<div class="inj-cell-error inj-cell">'+error+'</div>');
-			//parent.append('<div class="inj-cell-throughput inj-cell">'+Math.round(throughput * 100) / 100+'</div>');
 			parent.append('<div class="inj-cell-timeAlive inj-cell">'+timeAlive+'</div>');
 			parent.append('<div class="inj-cell-throughputPeriod inj-cell">'+Math.round(throughputPeriod * 100) / 100+'</div>');
 			parent.append('<div class="inj-cell-averageResponseTime inj-cell">'+Math.round((1/throughputPeriod) * 100) / 100+'</div>');
-			//parent.append('<button class="inj-cell" onClick="btnStart('+number+')">Start</button>');
 			parent.append('<button class="inj-cell btn btn-sm btn-sep btn-danger" onClick="btnRemove('+number+')">Remove</button>');			
 			return parent;
 		}
@@ -566,20 +566,24 @@
 		        			throughputPeriod: 0,
 		        			number: 0
 		        	}
+		        	var rest = 0;
 		        	for (i = 0; i < injs.length; i++) { 
 		        		totals.sent = totals.sent + injs[i].sent;
 		        		totals.ok = totals.ok + injs[i].ok;
 		        		totals.errors = totals.errors + injs[i].error;
-		        		totals.throughput = totals.throughput + injs[i].throughput;
-		        		totals.throughputPeriod = totals.throughputPeriod + injs[i].throughputPeriod;
-		        		var parent = createInjector(injs[i].name, injs[i].protocol, injs[i].sent, injs[i].ok, injs[i].error, injs[i].throughput, injs[i].timeAlive/1000, injs[i].throughputPeriod);		        		
+		        		if (injs[i].throughputPeriod) {
+		        			totals.throughputPeriod = totals.throughputPeriod + injs[i].throughputPeriod;
+		        		} else {
+		        			rest++;
+		        		}
+		        		var parent = createInjector(injs[i].name, injs[i].protocol, injs[i].sent, injs[i].ok, injs[i].error, injs[i].timeAlive/1000, injs[i].throughputPeriod);		        		
 		        		var status = parent.find(".inj-cell-status");
 		    			status.text("RUNNING");
 		    			status.css("color", "green");
 		    			$(".injectors").append(parent);
 		        	}
-		        	totals.number = i;
-		        	totals.averageResponseTime = 1 / (totals.throughputPeriod / i);
+		        	totals.number = i - rest;		        	
+		        	totals.averageResponseTime = 1 / (totals.throughputPeriod / totals.number);
 		        	updateTotals(totals);
 	            },
 	            error: function (xhr, ajaxOptions, thrownError) {
@@ -619,7 +623,7 @@
 			options:{
 				title: {
 				  display: true,
-				  text: 'Injection graph: Throughput Period vs. average Response Time'
+				  text: 'Injection graph: Inserts per second vs. average Response Time'
 				},
 				responsive:true,
 				maintainAspectRatio: false,
@@ -636,7 +640,7 @@
 						},
 						scaleLabel: {
 							display: true,
-							labelString: 'Throughput'
+							labelString: 'Inserts per seconds'
 						}
 					},
 					{						

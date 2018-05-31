@@ -28,7 +28,7 @@
 					<when>
 						<header>endpoints</header>
 						<log message="We have Postprocessing pending calls" loggingLevel="INFO" />
-						<to uri="hazelcast-queue:split-aggregate-calls" />
+						<to uri="direct:split-aggregate-calls" />
 					</when>
 					<otherwise>
 						<log message="We have not Postprocessing calls" loggingLevel="INFO" />
@@ -39,10 +39,8 @@
 		
 		<route id="split-aggregate-calls-route" errorHandlerRef="defaultEH">
 
-			<from uri="hazelcast-queue:split-aggregate-calls" />
-			<to uri="bean:convertHazelcastProcessor?method=process" />
-			
-				<log message="Context : Processing Advicers" />
+			<from uri="direct:split-aggregate-calls" />
+				<log message="Headers -> ${header.endpoints}" loggingLevel="INFO" />
 				<setHeader headerName="theBody"><simple>${body}</simple></setHeader>
 					<choice>
 						<when>
