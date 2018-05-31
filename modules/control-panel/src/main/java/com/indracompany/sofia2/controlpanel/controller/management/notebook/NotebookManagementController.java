@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,6 +32,7 @@ public class NotebookManagementController extends NotebookOpsRestServices {
 	public ResponseEntity<?> runParagraph(
 			@ApiParam(value = "Notebook Zeppelin Id", required = true) @PathVariable("notebookZepId") String notebookZepId,
 			@ApiParam(value = "Paragraph Id", required = true) @PathVariable(name = "paragraphId") String paragraphId,
+			@ApiParam(value = "Input parameters") @RequestBody(required = false) String parameters,
 			@RequestHeader("Authorization") String authorization) {
 
 		String userId = this.jwtService.getAuthentication(authorization.split(" ")[1]).getName();
@@ -38,7 +40,8 @@ public class NotebookManagementController extends NotebookOpsRestServices {
 
 		if (authorized) {
 			try {
-				return this.notebookService.runParagraph(notebookZepId, paragraphId);
+				return this.notebookService.runParagraph(notebookZepId, paragraphId,
+						parameters != null ? parameters : "");
 			} catch (Exception e) {
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}

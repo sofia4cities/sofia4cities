@@ -61,7 +61,7 @@ public interface NotebookService {
 
 	public boolean hasUserPermissionForNotebook(String zeppelinId, String userId);
 
-	public ResponseEntity<String> runParagraph(String zeppelinId, String paragraphId)
+	public ResponseEntity<String> runParagraph(String zeppelinId, String paragraphId, String bodyParams)
 			throws ClientProtocolException, URISyntaxException, IOException;
 
 	public ResponseEntity<String> runAllParagraphs(String zeppelinId)

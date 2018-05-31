@@ -2,6 +2,7 @@ var AppController = function(){
 	var baseURL = document.URL.split(window.location.pathname);
 	var apimanager = '/api-manager/oauth/token';
 	var notebookOpsBaseUrl = '/controlpanel/notebook-ops/';
+	var executedOnce = false;
 	if(baseURL.indexOf("localhost") > -1 || baseURL.indexOf("file://") > -1){
 		apimanager = "http://localhost:19100" + apimanager;
 		notebookOpsBaseUrl = "http://localhost:18000" + notebookOpsBaseUrl;
@@ -12,47 +13,92 @@ var AppController = function(){
 	
 	var authenticated = false;
 	var accessToken;
+	
 	var paragraphId = "20180530-084740_1247049587";
+	var paragraphWithParam ="20180528-194132_115834276";
 	var mapJson;
 	var beautify = function(){
 		editor.setValue(js_beautify(editor.getValue()));
 	};
 	var executeNotebook = function() {
+		var srcId = {
+			'params' :
+			{
+				'Depart Airport IATA' : $('#srcId').val()
+			}
+		}
 		var ntId = $('#ntId').val();
 		$('#runIcon').removeClass('icon icon-play').addClass('icon icon-refresh icon-spin');
-		$.ajax({
+		if(!executedOnce){
+			$.ajax({
 			'url' : notebookOpsBaseUrl + "run/notebook/" + ntId,
 			'type' : 'POST',
 			'dataType' : 'json',
 			'headers' : {
-				'Authorization' : accessToken
+				'Authorization' : accessToken,
+				
 			},
+			'data':srcId,
 			'success' : function(result) {
 				$.ajax({
-					'url' : notebookOpsBaseUrl + "result/notebook/" + ntId + "/paragraph/" + paragraphId,
-					'type' : 'GET',
+					'url' : notebookOpsBaseUrl + "run/notebook/" + ntId + "/paragraph/" + paragraphWithParam,
+					'type' : 'POST',
+					'contentType': 'application/json',
+					'dataType' : 'json',
+					'headers' : {
+						'Authorization' : accessToken
+					},
+					'data': JSON.stringify(srcId),
+					'success' : function(result) {				
+						$.ajax({
+					'url' : notebookOpsBaseUrl + "run/notebook/" + ntId + "/paragraph/" + paragraphId,
+					'type' : 'POST',
+					'contentType': 'application/json',
 					'dataType' : 'json',
 					'headers' : {
 						'Authorization' : accessToken
 					},
 					'success' : function(result) {				
-						$("#main-content").show();
-						$('#title').html('Notebook data <span class="badge" id="notebookLoaded">'+$('#ntId').val()+'</span');
-						mapJson = JSON.parse(result.body.results.msg[0].data);
-						$('#runIcon').removeClass('icon icon-refresh icon-spin').addClass('icon icon-play');
-						$('.json-editor').removeClass('hide');
-						$('#notebookLoaded').text(ntId);
-						editor.setValue(result.body.results.msg[0].data);
-						beautify();
-						loadBubbleMap(mapJson);
+						$.ajax({
+							'url' : notebookOpsBaseUrl + "result/notebook/" + ntId + "/paragraph/" + paragraphId,
+							'type' : 'GET',
+							'dataType' : 'json',
+							'headers' : {
+								'Authorization' : accessToken
+							},
+							'success' : function(result) {				
+								$("#main-content").show();
+								$('#title').html('Notebook data <span class="badge" id="notebookLoaded">'+$('#ntId').val()+'</span');
+								mapJson = JSON.parse(result.body.results.msg[0].data);
+								$('#runIcon').removeClass('icon icon-refresh icon-spin').addClass('icon icon-play');
+								$('.json-editor').removeClass('hide');
+								$('#notebookLoaded').text(ntId);
+								editor.setValue(result.body.results.msg[0].data);
+								beautify();
+								loadBubbleMap(mapJson);
+								executedOnce = true;
+							},
+							'error' : function(req, status, err) {
+								console.log('Could not get paragraph info ' + paragraphId,
+										req.responseText, status, err);
+							}
+
+						});
 					},
 					'error' : function(req, status, err) {
-						console.log('Could not get paragraph info ' + paragraphId,
+						console.log('Could not run paragraph ' + paragraphId,
 								req.responseText, status, err);
 					}
 
 				});
-				
+					},
+					'error' : function(req, status, err) {
+						console.log('Could not run paragraph ' + paragraphId,
+								req.responseText, status, err);
+					}
+
+				});
+
 			},
 			'error' : function(req, status, err) {
 				console.log('Could not execute notebook ' + ntId,
@@ -72,7 +118,66 @@ var AppController = function(){
 			}
 
 		});
-		
+		}else{
+			$.ajax({
+					'url' : notebookOpsBaseUrl + "run/notebook/" + ntId + "/paragraph/" + paragraphWithParam,
+					'type' : 'POST',
+					'contentType': 'application/json',
+					'dataType' : 'json',
+					'headers' : {
+						'Authorization' : accessToken
+					},
+					'data': JSON.stringify(srcId),
+					'success' : function(result) {				
+						$.ajax({
+					'url' : notebookOpsBaseUrl + "run/notebook/" + ntId + "/paragraph/" + paragraphId,
+					'type' : 'POST',
+					'contentType': 'application/json',
+					'dataType' : 'json',
+					'headers' : {
+						'Authorization' : accessToken
+					},
+					'success' : function(result) {				
+						$.ajax({
+							'url' : notebookOpsBaseUrl + "result/notebook/" + ntId + "/paragraph/" + paragraphId,
+							'type' : 'GET',
+							'dataType' : 'json',
+							'headers' : {
+								'Authorization' : accessToken
+							},
+							'success' : function(result) {				
+								$("#main-content").show();
+								$('#title').html('Notebook data <span class="badge" id="notebookLoaded">'+$('#ntId').val()+'</span');
+								mapJson = JSON.parse(result.body.results.msg[0].data);
+								$('#runIcon').removeClass('icon icon-refresh icon-spin').addClass('icon icon-play');
+								$('.json-editor').removeClass('hide');
+								$('#notebookLoaded').text(ntId);
+								editor.setValue(result.body.results.msg[0].data);
+								beautify();
+								loadBubbleMap(mapJson);
+								executedOnce = true;
+							},
+							'error' : function(req, status, err) {
+								console.log('Could not get paragraph info ' + paragraphId,
+										req.responseText, status, err);
+							}
+
+						});
+					},
+					'error' : function(req, status, err) {
+						console.log('Could not run paragraph ' + paragraphId,
+								req.responseText, status, err);
+					}
+
+				});
+					},
+					'error' : function(req, status, err) {
+						console.log('Could not run paragraph ' + paragraphId,
+								req.responseText, status, err);
+					}
+
+				});
+		}
 
 	}
 	var login = function (){
