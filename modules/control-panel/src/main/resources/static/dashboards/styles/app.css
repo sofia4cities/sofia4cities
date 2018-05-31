@@ -8,7 +8,96 @@ md-toolbar {
   -moz-box-shadow: 0 1px 15px 1px rgba(113,106,202,.3);
   box-shadow: 0 1px 15px 1px rgba(113,106,202,.3); 
 }
- 
+.toolbarButtons{ margin-top: 4px; }
+.md-button{ margin: 6px 4px; }
+.md-button.md-icon-button {
+  margin: 0px 3px 0px 0px;
+  height: 24px;
+  min-width: 0;
+  line-height: 24px;
+  padding: 0px;
+  width: 24px;
+  border-radius: 50%;
+}
+.md-button.md-fab.md-mini {
+  line-height: 35px;
+  width: 35px;
+  height: 35px;
+}
+
+.header-title{
+  font-family: Poppins, Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 23px;
+  letter-spacing: -0.8px;
+  text-shadow: 0px 2px 2px rgba(0, 0, 0, 0.4);
+}
+
+.header-page-title{
+  font-family: "Open sans", Roboto, sans-serif;
+  font-weight: normal;
+  font-size: 16px;
+  text-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+
+}
+
+.sidenav-page-title{
+  font-size: 13px;
+  font-family: "Open sans", sans-serif;
+  font-weight: bold;
+
+}
+
+.sidenav-page-icon{
+  color: white;
+    margin: 0px 6px 0px 0px !important;
+}
+
+.sidenav-subheader{
+  font-size: 18px;
+  font-weight: 400;
+  font-family: Poppins,"Open sans", sans-serif;
+  letter-spacing: -0.8px;
+  color: #555;
+
+}
+
+.bold { font-weight: bold; }
+
+ .addGadget-icon {
+  color: white;
+  font-size: 40px;
+  margin-left: -3px;
+ }
+
+ .addGadget-title-icon{
+  color: white;
+  font-size: 34px;
+  padding-right: 8px;
+  margin-bottom: 10px;
+ }
+
+ .addGadget-title{
+  font-family: Poppins,"Open sans", Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 23px;
+  letter-spacing: -0.4px;
+  text-shadow: 0px 2px 2px rgba(0, 0, 0, 0.4);
+  color: white;
+  text-transform: uppercase;
+
+ }
+ .addGadget-sheet{
+  background: #0F2027;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to top, #2C5364, #203A43, #0F2027);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to top, #60686b, #535c5f, #283940); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  color: wheat;
+  webkit-box-shadow: 0 1px 15px 1px rgba(113,106,202,.3);
+  -moz-box-shadow: 0 1px 15px 1px rgba(113,106,202,.3);
+  box-shadow: 0 1px 15px 1px rgba(113,106,202,.3);
+
+
+ }
 html, body {
   height: 100vh;
   margin: 0;
@@ -54,6 +143,7 @@ gridster-item .item-buttons{
 
 .widget-header{
   min-height: 0px !important;
+  box-shadow: 0 2px 10px 1px rgba(234, 233, 236, 0.7);
 }
 
 .destroy-button {
