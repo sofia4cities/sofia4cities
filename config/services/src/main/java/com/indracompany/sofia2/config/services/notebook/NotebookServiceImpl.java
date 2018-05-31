@@ -316,11 +316,11 @@ public class NotebookServiceImpl implements NotebookService {
 	}
 
 	@Override
-	public ResponseEntity<String> runParagraph(String zeppelinId, String paragraphId)
+	public ResponseEntity<String> runParagraph(String zeppelinId, String paragraphId, String body)
 			throws ClientProtocolException, URISyntaxException, IOException {
 		ResponseEntity<String> responseEntity;
 		responseEntity = sendHttp("/api/notebook/run/".concat(zeppelinId).concat("/").concat(paragraphId),
-				HttpMethod.POST, "");
+				HttpMethod.POST, body);
 		if (responseEntity.getStatusCode() == HttpStatus.OK) {
 			responseEntity = sendHttp("/api/notebook/".concat(zeppelinId).concat("/paragraph/").concat(paragraphId),
 					HttpMethod.GET, "");

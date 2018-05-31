@@ -47,18 +47,26 @@
 				<div class="form-group">   
 					<div class="input-group input-group-sm">
 						<input id="ntId" value="2DGCAXPZ4"  class="form-control chat-input popovers" data-container="body" data-trigger="hover" data-placement="right" data-content="Notebook ID (Identification of the notebook that will be executed)" data-original-title="Execute Notebooks" placeholder="Notebook ID" type="text">
+						
 						<span class="input-group-btn">
 							<button id="execute" type="button" class="btn btn-primary"><i id="runIcon" class="icon icon-play"></i> Run Notebook</button>
 						</span>
 					</div>				
 				<!-- /input-group -->
 				</div>
+				<div class="form-group">
+					<select id="srcId" class="form-control chat-input popovers" data-container="body" data-trigger="hover" data-placement="right" data-content="Acronym of the source airport" data-original-title="SRC Airport" placeholder="SRC Airport">
+						<option value="ICN">ICN</option>
+						<option value="GYD">GYD</option>
+						<option value="UUA">UUA</option>
+						<option value="BTK">BTK</option>
+						</select>
+				</div>
 			</div>
 			<div class="row json-editor hide">
 				<div class="col-md-4 col-sm-12 col-xs-12">
-					<h4 class="text-left">Notebook data <span class="badge" id="notebookLoaded">2DGCAXPZ4</span></h4>
+					<h4 id="title" class="text-left"></h4>
 					<div class="form-group">
-						<label>JSON Result</label>														
 						<textarea id="json" class="form-control" rows="5" data-min-rows='5'></textarea>
 					</div>
 					<div class="clearfix"></div>
@@ -88,5 +96,10 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.5/beautify.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.5/beautify-css.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.5/beautify-html.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js"></script>
+	<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+	<script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+	<script src="https://code.highcharts.com/mapdata/custom/world.js"></script>
+	<script src="https://cdn.rawgit.com/sdecima/javascript-detect-element-resize/master/jquery.resize.js"></script>
 	
 </html>

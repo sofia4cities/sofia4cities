@@ -18,13 +18,13 @@ import lombok.Getter;
 
 public class InjectorStatus {
 
-	@Getter private int id;
-	@Getter private int sent;
-	@Getter private int errors;
-	@Getter private float throughput;
-	@Getter private long timeAlive;
-	@Getter private float throughputPeriod;
-	@Getter private String protocol;
+	@Getter private final int id;
+	@Getter private final int sent;
+	@Getter private final int errors;
+	@Getter private final float throughput;
+	@Getter private final long timeAlive;
+	@Getter private final float throughputPeriod;
+	@Getter private final String protocol;
 	
 	public InjectorStatus(int id, int sent, int errors, float throughput, long timeAlive, float throughputPeriod, String protocol){
 		this.id = id;

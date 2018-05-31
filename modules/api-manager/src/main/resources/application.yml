@@ -95,6 +95,10 @@ spring: ## General Config
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update 
       properties.hibernate.enable_lazy_load_no_trans: true
+      show-sql: true
+      properties.hibernate.format_sql: true
+      
+      
    jmx:
     enabled: true
 spring.elasticsearch.jest.uris: ${sofia2.database.elasticsearch.sql.connector.http.endpoint}

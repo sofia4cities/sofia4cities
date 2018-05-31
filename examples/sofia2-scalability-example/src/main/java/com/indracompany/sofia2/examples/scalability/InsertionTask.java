@@ -15,10 +15,12 @@
 package com.indracompany.sofia2.examples.scalability;
 
 import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.examples.scalability.msgs.Injector;
 import com.indracompany.sofia2.examples.scalability.msgs.InjectorStatus;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,28 +35,30 @@ public class InsertionTask implements Runnable{
 	private final Client client;
 	private final String ontology;
 	private final String data;
-	private final int injector;
+	private final Injector injector;
 	private final Date start;
 	private final int delay;
+	private final long periodLimit = 5000l;
+	private final ConcurrentHashMap<Injector, InjectorStatus> statues;
 	
 	private volatile boolean stop = false;
 	private volatile int sent = 0;
 	private volatile int sentPeriod = 0;
 	private volatile int errors = 0;
 	private volatile int errorsPeriod = 0;
-	private volatile long timespent;
+	private volatile long timespent = 0;
 	private volatile long timespentPeriod = 0;
-	
-	
-	
-	
-	public InsertionTask(Client client, String ontology, String data, int injector, int delay) {
+	private volatile Date startPeriod;
+		
+	public InsertionTask(Client client, String ontology, String data, Injector injector, int delay, ConcurrentHashMap<Injector, InjectorStatus> statues) {
 		this.client = client;
 		this.ontology = ontology;
 		this.data = data;
 		this.injector = injector;
 		this.delay = delay;
 		start = new Date();
+		startPeriod = start;
+		this.statues = statues;
 	}
 	
 	@Override
@@ -63,11 +67,15 @@ public class InsertionTask implements Runnable{
 			synchronized (lock) {
 				try {		
 					sent++;
+					sentPeriod++;
 					Date ini = new Date();
 					client.insertInstance(ontology, data);
 					Date end = new Date();
 					long time = end.getTime() - ini.getTime();
 					timespent = timespent + time;
+					timespentPeriod = timespentPeriod + time;
+					
+					updateStatus();
 					
 					//automatic stop after 10 minutes
 					if ( 600000 < (end.getTime() - this.start.getTime()) ) {
@@ -77,6 +85,7 @@ public class InsertionTask implements Runnable{
 				} catch (Exception e) {
 					log.error("Error inserting data", e);
 					errors++;
+					errorsPeriod++;
 				}
 			}
 			try {
@@ -111,22 +120,23 @@ public class InsertionTask implements Runnable{
 		return time;
 	}
 	
-	public InjectorStatus getStatus() {
-		long timeSpentStatus;
+	private void updateStatus() {
 		Date now = new Date();
-		InjectorStatus status;
-		synchronized (lock) {
-			timeSpentStatus = timespent - timespentPeriod;
-			float time = timeSpentStatus / 1000f;
-			int sentThisPeriod = sent - sentPeriod;
-			int errorThisPeriod = errors - errorsPeriod;
-			float throughputPeriod = (sentThisPeriod - errorThisPeriod) / time;
-			status = new InjectorStatus(injector, sent, errors, getThroughput(), runningTime(now), throughputPeriod, client.getProtocol());
-			sentPeriod = sent;
-			errorsPeriod = errors;
-			timespentPeriod = timespent;
-		}
-		return status;
+		long period = now.getTime() - startPeriod.getTime();
+		if (periodLimit < period) {
+			//push new status
+			float time = timespentPeriod / 1000f;
+			float throughputPeriod = (sentPeriod - errorsPeriod) / time;
+			
+			InjectorStatus status = new InjectorStatus(injector.getInjector(), sent, errors, getThroughput(), runningTime(now), throughputPeriod, client.getProtocol());
+			statues.put(this.injector, status);
+			
+			//start a new Period
+			startPeriod = new Date();
+			sentPeriod = 0;
+			errorsPeriod = 0;
+			timespentPeriod = 0;
+		} 	
 	}
 	
 }

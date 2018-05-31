@@ -1,20 +1,25 @@
 var IssueController = function() {
 	
 	var client = new SofiaClient();
-	
-	//var apimanager = 'https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/oauth/token';
-	//var iotbroker = "https://s4citiespro.westeurope.cloudapp.azure.com/iotbroker/message";
-	var apimanager = 'https://rancher.sofia4cities.com/api-manager/oauth/token';
-	var iotbroker = "https://rancher.sofia4cities.com/iotbroker/message";
-	//var apimanager = 'https://rancher.sofia4cities.com/api-manager/oauth/token';
-	//var iotbroker = "https://rancher.sofia4cities.com/iotbroker/message";
+
+	var baseURL = document.URL.split(window.location.pathname);
+	var apimanager = '/api-manager/oauth/token';
+	var iotbroker = '/iotbroker/message';
+	if(baseURL.indexOf("localhost") > -1 || baseURL.indexOf("file://") > -1){
+		apimanager = "http://localhost:19100" + apimanager;
+		iotbroker = "http://localhost:19000" + iotbroker;
+	}else{
+		apimanager = baseURL[0] + apimanager;
+		iotbroker = baseURL[0] + iotbroker;
+	}
+
 	var ontology = 'Ticket';
 	var deviceTemplate = 'Ticketing App';
 	var token= '1c7954dd4c7c47e0916e8ea64e3c9967';
 
 	var device= 'Web';
 	var config ={};
-	var queryAll= 'db.' + ontology + '.find()'
+	var queryAll= "db." + ontology + ".find({'contextData.timestampMillis': {$gte:1527063270064}})";
 	var queryType= 'NATIVE';
 	var isAuthenticated = false;
 	var states = ['PENDING','DONE','WORKING', 'STOPPED'];
