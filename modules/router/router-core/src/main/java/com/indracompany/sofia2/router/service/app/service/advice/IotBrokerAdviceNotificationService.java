@@ -50,7 +50,9 @@ public class IotBrokerAdviceNotificationService implements AdviceNotificationSer
 		
 		try {
 			listNotifications = repository.findAllByOntologyName(ontologyName);
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		if (listNotifications !=null)
 		{
