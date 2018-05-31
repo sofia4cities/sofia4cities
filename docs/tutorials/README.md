@@ -19,3 +19,9 @@ This section includes a list of videotutorials explaining the core functionaliti
 
 ## Creating an API
 [Watch video](http://sofia2.org/owncloud/public.php?service=files&t=79ab9eec31ed4df1152f865f911cb8db)
+
+## Monitoring and processing
+[Watch video](http://sofia2.org/owncloud/public.php?service=files&t=b4edc94c6d1563b1d9fd902ca0953d80)
+
+## Digital Twin
+[Watch video](http://sofia2.org/owncloud/public.php?service=files&t=c54a0def97639abdcdc96e72d4e0a83e)

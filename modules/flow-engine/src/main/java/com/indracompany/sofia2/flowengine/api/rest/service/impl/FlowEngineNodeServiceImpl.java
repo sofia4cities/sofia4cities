@@ -250,13 +250,20 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		DecodedAuthentication decodedAuth = flowEngineValidationNodeService.decodeAuth(authentication);
 		User sofia2User = flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
 				decodedAuth.getPassword());
-
+		OperationType operationType = OperationType.QUERY;
 		QueryType type;
 
 		if ("sql".equals(queryType.toLowerCase())) {
 			type = QueryType.SQLLIKE;
+			// NOT ALLOWED YET
+			/*
+			 * if (query.trim().toUpperCase().startsWith("DELETE ")) {
+			 * operationType = OperationType.DELETE; }
+			 */
 		} else if ("native".equals(queryType)) {
 			type = QueryType.NATIVE;
+			if (query.trim().startsWith("db." + ontology + ".remove"))
+				operationType = OperationType.DELETE;
 		} else {
 			log.error("Invalid value {} for queryType. Possible values are: SQL, NATIVE.", queryType);
 			throw new IllegalArgumentException(
@@ -264,8 +271,8 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		}
 
 		OperationModel operationModel = OperationModel
-				.builder(ontology, OperationType.QUERY, sofia2User.getUserId(), OperationModel.Source.FLOWENGINE)
-				.body(query).queryType(type).build();
+				.builder(ontology, operationType, sofia2User.getUserId(), OperationModel.Source.FLOWENGINE).body(query)
+				.queryType(type).build();
 
 		OperationResultModel result = null;
 		try {
@@ -280,7 +287,6 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 					"Error executing query. Ontology=" + ontology + ", QueryType =" + queryType + ", Query = " + query
 							+ ". Cause = " + e.getCause() + ", Message = " + e.getMessage() + ".");
 		}
-		// TODO: Check response state
 		return result.getResult();
 	}
 
