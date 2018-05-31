@@ -5,7 +5,7 @@ var IssueController = function() {
 	var baseURL = document.URL.split(window.location.pathname);
 	var apimanager = '/api-manager/oauth/token';
 	var iotbroker = '/iotbroker/message';
-	if(baseURL.indexOf("localhost") > -1 || baseURL.indexOf("file") > -1){
+	if(baseURL.indexOf("localhost") > -1 || baseURL.indexOf("file://") > -1){
 		apimanager = "http://localhost:19100" + apimanager;
 		iotbroker = "http://localhost:19000" + iotbroker;
 	}else{
