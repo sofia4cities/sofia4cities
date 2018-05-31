@@ -42,12 +42,9 @@ public class InsertionTask implements Runnable{
 	private volatile int sentPeriod = 0;
 	private volatile int errors = 0;
 	private volatile int errorsPeriod = 0;
-	private volatile long timespent;
+	private volatile long timespent = 0;
 	private volatile long timespentPeriod = 0;
-	
-	
-	
-	
+		
 	public InsertionTask(Client client, String ontology, String data, int injector, int delay) {
 		this.client = client;
 		this.ontology = ontology;
