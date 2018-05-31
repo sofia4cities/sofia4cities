@@ -12,36 +12,20 @@
 			
 			<to uri="bean:routerFlowManagerService?method=executeCrudOperations" />
 			<log message="Context : before WireTape to Process Background" />
-			<setHeader headerName="theBody"><simple>${body}</simple></setHeader>	
-			<to uri="hazelcast-queue:get-scripts-and-nodereds" />		
+			<setHeader headerName="theBody"><simple>${body}</simple></setHeader>
+			<wireTap uri="seda:get-scripts-and-nodereds"/>
 			<setBody><simple>${in.header.theBody}</simple></setBody>
 		</route>
 		
 		<route id="get-scripts-and-nodereds-route" errorHandlerRef="defaultEH">
-			<from uri="hazelcast-queue:get-scripts-and-nodereds" />
-			<to uri="bean:convertHazelcastProcessor?method=process" />
-
+			<from uri="seda:get-scripts-and-nodereds" />
 			<log message="Context : Preprocessing Advicers" />
 			<to uri="bean:routerFlowManagerService?method=getScriptsAndNodereds" />
-			
-			<choice>
-					<when>
-						<header>endpoints</header>
-						<log message="We have Postprocessing pending calls" loggingLevel="INFO" />
-						<to uri="hazelcast-queue:split-aggregate-calls" />
-					</when>
-					<otherwise>
-						<log message="We have not Postprocessing calls" loggingLevel="INFO" />
-					</otherwise>
-				</choice>
-			
+			<to uri="seda:split-aggregate-calls"/>
 		</route>
 		
 		<route id="split-aggregate-calls-route" errorHandlerRef="defaultEH">
-
-			<from uri="hazelcast-queue:split-aggregate-calls" />
-			<to uri="bean:convertHazelcastProcessor?method=process" />
-			
+			<from uri="seda:split-aggregate-calls" />
 				<log message="Context : Processing Advicers" />
 				<setHeader headerName="theBody"><simple>${body}</simple></setHeader>
 					<choice>
