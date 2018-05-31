@@ -23,7 +23,7 @@
 
     ed.$onInit = function () {
       ed.selectedlayer = 0;
-      ed.selectedpage = ed.selectedpage();
+      //ed.selectedpage = ed.selectedpage;
       ed.icons = [
         "3d_rotation",
         "ac_unit",
@@ -1017,7 +1017,7 @@
         closeTo: '.toolbarButtons',
         locals: {
           dashboard: ed.dashboard,
-          selectedpage: ed.selectedpage,
+          selectedpage: ed.selectedpage(),
           selectedlayer: ed.selectedlayer
         }
       })
@@ -1040,7 +1040,7 @@
         closeTo: '.toolbarButtons',
         locals: {
           dashboard: ed.dashboard,
-          selectedpage: ed.selectedpage
+          selectedpage: ed.selectedpage()
         }
       })
       .then(function(page) {
@@ -1104,7 +1104,7 @@
         closeTo: '.toolbarButtons',
         locals: {
           dashboard: ed.dashboard,
-          selectedpage: ed.selectedpage
+          selectedpage: ed.selectedpage()
         }
       })
       .then(function(page) {
@@ -1655,14 +1655,12 @@
       //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
       function getGadgetsSourcesInDashboard(){
         var gadgets = [];
-        for(var p=0;p<$scope.dashboard.pages.length;p++){
-          var page = $scope.dashboard.pages[p];       
-          for (var i = 0; i < page.layers.length; i++) {
-            var layer = page.layers[i];
-            var gadgetsAux = layer.gridboard.filter(function(gadget){return typeGadgetList.indexOf(gadget.type) != -1});
-            if(gadgetsAux.length){
-              gadgets = gadgets.concat(gadgetsAux);
-            }
+        var page = $scope.dashboard.pages[$scope.selectedpage];
+        for (var i = 0; i < page.layers.length; i++) {
+          var layer = page.layers[i];
+          var gadgetsAux = layer.gridboard.filter(function(gadget){return typeGadgetList.indexOf(gadget.type) != -1});
+          if(gadgetsAux.length){
+            gadgets = gadgets.concat(gadgetsAux);
           }
         }
         return gadgets;
@@ -1671,26 +1669,26 @@
       //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
       function getGadgetsInDashboard(){
         var gadgets = [];
-        for(var p=0;p<$scope.dashboard.pages.length;p++){
-          var page = $scope.dashboard.pages[p];
-          for (var i = 0; i < page.layers.length; i++) {
-            var layer = page.layers[i];
-            var gadgetsAux = layer.gridboard.filter(function(gadget){return typeof gadget.id != "undefined"});
-            if(gadgetsAux.length){
-              gadgets = gadgets.concat(gadgetsAux);
-            }
+        var page = $scope.dashboard.pages[$scope.selectedpage];
+        for (var i = 0; i < page.layers.length; i++) {
+          var layer = page.layers[i];
+          var gadgetsAux = layer.gridboard.filter(function(gadget){return typeof gadget.id != "undefined"});
+          if(gadgetsAux.length){
+            gadgets = gadgets.concat(gadgetsAux);
           }
         }
         return gadgets;
       }
 
       function findGadgetInDashboard(gadgetId){
-        var page = $scope.dashboard.pages[$scope.selectedpage];      
+        for(var p=0;p<$scope.dashboard.pages.length;p++){
+          var page = $scope.dashboard.pages[p];       
           for (var i = 0; i < page.layers.length; i++) {
-          var layer = page.layers[i];
-          var gadgets = layer.gridboard.filter(function(gadget){return gadget.id === gadgetId});
-          if(gadgets.length){
-            return gadgets[0];
+            var layer = page.layers[i];
+            var gadgets = layer.gridboard.filter(function(gadget){return gadget.id === gadgetId});
+            if(gadgets.length){
+              return gadgets[0];
+            }
           }
         }
         return null;
@@ -1739,7 +1737,7 @@
 
     $scope.$on('deleteElement',function (event, item) {
       var dashboard = $scope.ed.dashboard;
-      var page = dashboard.pages[$scope.ed.selectedpage];
+      var page = dashboard.pages[$scope.ed.selectedpage()];
       var layer = page.layers[page.selectedlayer];
       layer.gridboard.splice(layer.gridboard.indexOf(item), 1);
       $scope.$applyAsync();
