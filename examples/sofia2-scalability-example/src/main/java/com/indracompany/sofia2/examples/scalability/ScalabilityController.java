@@ -15,10 +15,7 @@
 package com.indracompany.sofia2.examples.scalability;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.BeanFactory;
@@ -50,7 +47,7 @@ public class ScalabilityController {
 	private Object lock = new Object();
 
 	private ConcurrentHashMap<Injector, InsertionTask> tasks = new ConcurrentHashMap<Injector, InsertionTask>();
-
+	private ConcurrentHashMap<Injector, InjectorStatus> statues = new ConcurrentHashMap<Injector, InjectorStatus>();
 	private Connection connection;
 
 	@Autowired
@@ -87,7 +84,7 @@ public class ScalabilityController {
 			@RequestParam String protocol, @RequestParam int delay, @RequestBody String data) throws IOException {
 
 		Client client;
-		Injector inject;
+		Injector inject = null;
 		InsertionTask task;
 
 		int appliedDelay = delay;
@@ -112,14 +109,19 @@ public class ScalabilityController {
 				}
 				client.connect(connection.getToken(), connection.getClientPlatform(),
 						connection.getClientPlatformInstance() + "-" + injector, true);
-				task = beanFactory.getBean(InsertionTask.class, client, connection.getOntology(), data, injector, appliedDelay);
+				inject = new Injector(injector, data);
+				task = beanFactory.getBean(InsertionTask.class, client, connection.getOntology(), data, inject, appliedDelay, statues);
+				tasks.putIfAbsent(inject, task);
+				InjectorStatus emptyStatus = new InjectorStatus(injector, 0, 0, 0.0f, 0l, 0.0f, protocol);
+				statues.putIfAbsent(inject, emptyStatus);
 			} catch (Exception e) {
-				log.error("Error connectiong with the server", e);
+				log.error("Error connectiong with the server", e);				
+				if (inject != null) {
+					tasks.remove(inject);
+					statues.remove(inject);
+				}
 				return new ResponseEntity<Injector>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-
-			inject = new Injector(injector, data);
-			tasks.putIfAbsent(inject, task);
 			taskExecutor.execute(task);
 		}
 
@@ -127,20 +129,9 @@ public class ScalabilityController {
 	}
 
 	@GetMapping(value = "/status", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseEntity<List<InjectorStatus>> getStatus() {
-		ArrayList<InjectorStatus> statues = new ArrayList<InjectorStatus>();
-		Iterator<Entry<Injector, InsertionTask>> it = tasks.entrySet().iterator();
-	    while (it.hasNext()) {
-	    	Entry<Injector, InsertionTask> pair = (Entry<Injector, InsertionTask>)it.next();
-	        InsertionTask task = pair.getValue();
-	        if (task.isStopped()) {
-				it.remove();
-			} else {
-				InjectorStatus status = task.getStatus();
-				statues.add(status);
-			}
-	    }
-		return new ResponseEntity<List<InjectorStatus>>(statues, HttpStatus.OK);
+	public @ResponseBody ResponseEntity<Collection<InjectorStatus>> getStatus() {
+		Collection<InjectorStatus> values = statues.values();
+		return new ResponseEntity<Collection<InjectorStatus>>(values, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/getDataConnection", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -158,6 +149,7 @@ public class ScalabilityController {
 			task.stop();
 		}
 		tasks.remove(inj);
+		statues.remove(inj);
 		BasicMsg msg = new BasicMsg("Injector Removed");
 		return new ResponseEntity<BasicMsg>(msg, HttpStatus.OK);
 	}
