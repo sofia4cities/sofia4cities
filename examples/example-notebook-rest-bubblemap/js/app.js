@@ -1,7 +1,14 @@
 var AppController = function(){
-	// cambiar por las URL de rancher.
-	var apimanager = 'http://localhost:19100/api-manager/oauth/token';
-	var notebookOpsBaseUrl = 'http://localhost:18000/controlpanel/notebook-ops/';
+	var baseURL = document.URL.split(window.location.pathname);
+	var apimanager = '/api-manager/oauth/token';
+	var notebookOpsBaseUrl = '/controlpanel/notebook-ops/';
+	if(baseURL.indexOf("localhost") > -1 || baseURL.indexOf("file://") > -1){
+		apimanager = "http://localhost:19100" + apimanager;
+		notebookOpsBaseUrl = "http://localhost:18000" + notebookOpsBaseUrl;
+	}else{
+		apimanager = baseURL[0] + apimanager;
+		notebookOpsBaseUrl = baseURL[0] + notebookOpsBaseUrl;
+	}
 	
 	var authenticated = false;
 	var accessToken;
@@ -14,7 +21,7 @@ var AppController = function(){
 		var ntId = $('#ntId').val();
 		$('#runIcon').removeClass('icon icon-play').addClass('icon icon-refresh icon-spin');
 		$.ajax({
-			'url' : notebookOpsBaseUrl + "/run/notebook/" + ntId,
+			'url' : notebookOpsBaseUrl + "run/notebook/" + ntId,
 			'type' : 'POST',
 			'dataType' : 'json',
 			'headers' : {
@@ -22,7 +29,7 @@ var AppController = function(){
 			},
 			'success' : function(result) {
 				$.ajax({
-					'url' : notebookOpsBaseUrl + "/result/notebook/" + ntId + "/paragraph/" + paragraphId,
+					'url' : notebookOpsBaseUrl + "result/notebook/" + ntId + "/paragraph/" + paragraphId,
 					'type' : 'GET',
 					'dataType' : 'json',
 					'headers' : {
@@ -30,6 +37,7 @@ var AppController = function(){
 					},
 					'success' : function(result) {				
 						$("#main-content").show();
+						$('#title').html('Notebook data <span class="badge" id="notebookLoaded">'+$('#ntId').val()+'</span');
 						mapJson = JSON.parse(result.body.results.msg[0].data);
 						$('#runIcon').removeClass('icon icon-refresh icon-spin').addClass('icon icon-play');
 						$('.json-editor').removeClass('hide');
