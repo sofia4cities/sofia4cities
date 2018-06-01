@@ -128,10 +128,15 @@
 													<div id="technologies-icons" style="display: inline"></div>
 													<!-- public and payment method -->
 													 <div class="pull-right" style="margin-top: -8px;">
-													 	<span th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" th:text="#{marketasset.state.__*{state}__}" th:class="${marketasset.state.name()== 'REJECTED'} ? 'btn btn-md red-sunglo' : 'btn btn-md grey-mint'" th:title="${marketasset.state.name()== 'REJECTED'? marketasset.rejectionReason : marketasset.state.name()}">STATE</span>
+													 
+														<button th:if="(${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR') AND (${marketasset.id} != null) AND (${marketasset.state.name()}== 'PENDING')" id="approveBtn" type="button" class="btn btn-sm btn-outline grey-mint" name="approveBtn" onclick="updateState('APPROVED')"><i class="fa fa-times"></i> <span th:text="#{marketasset.approve}"> Approve</span></button>
+														<button th:if="(${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR') AND (${marketasset.id} != null) AND (${marketasset.state.name()}== 'PENDING')" id="rejectBtn" type="button" class="btn btn-sm btn-outline red-sunglo" name="rejectBtn" onclick="openRejectDialog()"><i class="fa fa-times"></i> <span th:text="#{marketasset.reject}"> Reject</span></button>
+							 
+													 
+													 	<span th:if="(${#authentication.name} == ${marketasset.user.userId})" th:text="#{marketasset.state.__*{state}__}" th:class="${marketasset.state.name()== 'REJECTED'} ? 'btn btn-md red-sunglo' : 'btn btn-md grey-mint'" th:title="${marketasset.state.name()== 'REJECTED'? marketasset.rejectionReason : marketasset.state.name()}">STATE</span>
 											 													
-														<span th:if="*{public}" class="btn btn-md blue-hoki ">PUBLIC</span>
-														<span th:if="!*{public}" class="btn btn-md red-haze ">PRIVATE</span>
+														<span th:if="*{public}" class="btn btn-md blue-hoki">PUBLIC</span>
+														<span th:if="!*{public}" class="btn btn-md red-haze">PRIVATE</span>
 														<span class="btn btn-md green-haze" th:text="#{marketasset.paymentmode.__*{paymentMode}__}">payment</span>
 													</div>
 												</div>												
@@ -241,7 +246,7 @@
 												<h3 class="marketasset-sidebar-title uppercase" th:text="#{marketasset.recent.assets}">Recent Market Assets</h3>
 												<ul>
 													<li th:each="asset : ${fiveAssets}">
-														<a href="javascript:;" th:text="${asset.title}"></a>
+														<a th:href="@{|/marketasset/show/${asset.id}|}" th:text="${asset.title}"></a>
 													</li>
 												</ul>
 											</div>
@@ -293,6 +298,25 @@
          				<input type="hidden" name="id_document" id="id_document"/>
       				</form>				
 				</div><!-- END MAIN ROW -->
+				<div id="dialog-reject" title="CustomSql" th:title="#{marketasset.reject.dialog}" tabindex="-1" role="dialog" class="modal fade" style="display: none;">
+					<div class="modal-dialog">
+					    <!-- Modal content-->
+					    <div class="modal-content">					
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title"></h4>
+							</div>
+							<div class="modal-body">
+				                <label class="reason" th:text="#{marketasset.reject.reason}"></label>
+				                <textarea class="element textarea small form-control" id="rejection" th:required="true" name="rejection" maxlength="512"></textarea>
+							</div>					
+							<div class="modal-footer">
+						        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						        <button type="button" id="rejectionButton" class="btn btn-primary" style="float:right;" onclick="updateState('REJECTED', $('rejection').val())">Save changes</button>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div><!-- END CONTENT BODY -->
 		</div><!-- END CONTENT page-content-wrapper -->		
 	</div>
@@ -337,6 +361,9 @@
 	
 	var error = "";
 	var currentLanguage = [[${lang}]];
+	var urlMarket = [[@{/marketasset}]];
+	var actionMode = [[${marketasset.id}]];
+	var marketAssetmanager_identification_error = [[#{marketasset.identification.error}]];
 	
 	// REDIRECT URL
 	var navigateUrl = function(url){ window.location.href = url; }
@@ -440,6 +467,34 @@
 		$('#comment').val($('#commentInput').val());
 		document.forms["form_marketasset_comment"].submit();
 	}
+    
+    var openRejectDialog = function(){
+       	$('#rejection').val("");
+       	$("#rejectionButton").css("display", "block");
+        $('#dialog-reject').modal('toggle');
+	}
+    
+    var updateState = function(state, reason){
+    	var url =  urlMarket + "/updateState";
+	    if ($('#marketassetType').val() != '') {
+	        url = url + '/' + actionMode + '/' + state;
+	    }
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: JSON.stringify({"rejectionReason": $('#rejection').val()}),
+            dataType: 'text',
+            contentType: 'text/plain',
+            mimeType: 'text/plain',
+            success: function(data) {
+            	navigateUrl(urlMarket + '/show/' + actionMode);
+            },
+            error: function(data,status,er) {
+            	showGenericErrorDialog('Error', marketAssetmanager_identification_error);
+            }
+        });
+	}
+	
 	</script>	
 
 </body>

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>5.1.0-rc2</version>
+		<version>5.2.0-rc1</version>
 		<relativePath>../..</relativePath>
 	</parent>
 
@@ -69,8 +69,9 @@
 		<dependency>
 			<groupId>io.searchbox</groupId>
 			<artifactId>jest</artifactId>
-			<version>2.0.4</version>
+			<version>5.3.3</version>
 		</dependency>
+
 
 	</dependencies>
 

@@ -4,8 +4,8 @@ Sofia4Cities Java Client Library
 ## Compile and use the library:
 
 To use this library you need to:
-1. Compile the platform, this generates en your local Maven Repository: \com\indracompany\sofia2\sofia2-ssap\5.0.0-SNAPSHOT\sofia2-ssap-5.0.0-SNAPSHOT.jar
-2. Compile the client library, this generates \com\indracompany\sofia2\sofia2-java-clients\5.0.0-SNAPSHOT\sofia2-java-clients-5.0.0-SNAPSHOT.jar
+1. Compile the platform, this generates en your local Maven Repository: \com\indracompany\sofia2\sofia2-ssap\5.2.0-rc1\sofia2-ssap-5.2.0-rc1.jar
+2. Compile the client library, this generates \com\indracompany\sofia2\sofia2-java-clients\5.2.0-rc1\sofia2-java-clients-5.2.0-rc1.jar
 3.   Add following dependency to your project:
 ```
 <dependency>

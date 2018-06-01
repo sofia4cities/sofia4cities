@@ -66,7 +66,7 @@ public class HazelcastCacheConfiguration {
 				//.setInstanceName("sofia2-s4c-hazelcast-instance")
                 .setNetworkConfig(networkConfig)
 				.addMapConfig(new MapConfig().setName("queries")
-						.setMaxSizeConfig(new MaxSizeConfig(200, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
+						.setMaxSizeConfig(new MaxSizeConfig(2000, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
 						.setEvictionPolicy(EvictionPolicy.LRU).setTimeToLiveSeconds(20));
 	}
 }

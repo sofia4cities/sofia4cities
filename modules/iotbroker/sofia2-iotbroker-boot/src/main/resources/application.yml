@@ -4,26 +4,52 @@ management.security.enabled: false
 
 ## Config Web Server
 server:
-   port: 8081
+   port: 19000
    contextPath: /iotbroker
 spring:
   application.name: sofia2-iot-broker
   datasource:
-    url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/sofia2_s4c?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root
-    password: 
+    password: changeIt!
+    driver-class-name: com.mysql.jdbc.Driver    
+    tomcat:
+      # Number of ms to wait before throwing an exception if no connection is available.
+      max-wait: 10000
+      # Maximum number of active connections that can be allocated from this pool at the same time.
+      max-active: 50
+      validation-query: SELECT 1
+      # Validate the connection before borrowing it from the pool.
+      test-on-borrow: true
+      test-while-idle: true
     jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update
+      hibernate.show_sql: true
+      properties:
+         hibernate:
+           show_sql: true
+           cache:
+             use_second_level_cache: true
+             use_query_cache: true
+             region.factory_class: com.hazelcast.hibernate.HazelcastCacheRegionFactory
+             hazelcast:
+                use_native_client: true
+                native_client_address: localhost               
+          
   boot.admin: #Spring Boot Admin Config    
-    url: http://localhost:19000
+    url: http://localhost:18100
     username: operations
     password: changeIt!
     client.metadata.user.name: ${spring.boot.admin.username}
     client.metadata.user.password: ${spring.boot.admin.password} 
+
+spring.elasticsearch.jest.uris: ${sofia2.database.elasticsearch.sql.connector.http.endpoint}
+spring.elasticsearch.jest.read-timeout: ${sofia2.database.elasticsearch.sql.connectionTimeout.millis}
+
     
 sofia2: #Config Sofia2 specific
   database.elasticsearch:
@@ -54,7 +80,8 @@ sofia2: #Config Sofia2 specific
     tools.mongoimport.path: mongoimport
     tools.mongoshell.path: mongo
     tools.useSequentialOps: true
- 
+    
+  iotbroker.audit.enabled: true
   iotbroker.plugable:
     gateway:
       stomp:
@@ -78,12 +105,31 @@ sofia2: #Config Sofia2 specific
         
       rest:
         enable: true
-        swaggerhost: localhost:8081    
+        swaggerhost: localhost:19000    
+      kafka:
+        enable: false
+        host: localhost
+        port: 9095
+        user: admin
+        password: admin-secret
+        partitions: 1
+        replication: 1
+        prefix: ontology_
+        group: ontologyGroup
+        topic.pattern: ontology.*
+        router.topic: router
+        consumer.consumersCount : 10
+        consumer.seekTo : beginning 
+        consumer.group : kafkaGroup
+        consumer.maxPollRecords : 50
+        consumer.maxAge : 5000
+        
         
 ## LOGGING CONF
 logging:
    path: ./target/ 
    file: ${spring.application.name}
    level:
-      com.indra: DEBUG   
+      com.indra: DEBUG 
+
   

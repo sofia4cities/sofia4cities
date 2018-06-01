@@ -304,8 +304,6 @@ public class ODataDTO implements Serializable{
 			return "\""+key+"\""+":{ $lt: "+value+" }";
 		}else if(operator.equalsIgnoreCase("le")){
 			return "\""+key+"\""+":{ $lte: "+value+" }";
-		}else if(operator.equalsIgnoreCase("gt")){
-			return "\""+key+"\""+":{ $gt: "+value+" }";
 		}else{
 			throw new Exception("Error en el operador del filter");
 		}			

@@ -21,4 +21,5 @@ public interface RouterDigitalTwinService {
 	public OperationResultModel insertEvent(DigitalTwinCompositeModel compositeModel);
 	public OperationResultModel insertLog(DigitalTwinCompositeModel compositeModel);
 	public OperationResultModel updateShadow(DigitalTwinCompositeModel compositeModel);
+	public OperationResultModel insertAction(DigitalTwinCompositeModel compositeModel);
 }

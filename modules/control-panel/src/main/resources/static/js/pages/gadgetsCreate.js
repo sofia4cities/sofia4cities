@@ -8,6 +8,11 @@ var GadgetsCreateController = function() {
 	var currentLanguage = ''; // loaded from template.	
 	var internalLanguage = 'en';	
 	
+	
+	// REDIRECT URL
+	var navigateUrl = function(url) {
+		window.location.href = url;
+	}
 	// CONTROLLER PRIVATE FUNCTIONS	
 	// FORM VALIDATION
 	var handleValidation = function() {

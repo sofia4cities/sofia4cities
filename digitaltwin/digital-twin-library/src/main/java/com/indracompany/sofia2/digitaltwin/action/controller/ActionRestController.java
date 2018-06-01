@@ -33,28 +33,29 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping(value = "/actions")
 public class ActionRestController {
-	
+
 	@Autowired
 	private TransactionManager transactionManager;
-	
+
 	@Autowired
 	private ActionExecutor actionExecutor;
-	
+
 	@RequestMapping(method = RequestMethod.POST)
-	public  void setProperty(@RequestBody String action, HttpServletRequest request) {
+	public void executeAction(@RequestBody String action, HttpServletRequest request) {
 		try {
+			log.info("Received action request");
 			JSONObject actionJSON = new JSONObject(action);
 			String idTransaction = request.getHeader("Transaction-Id");
 			String actionName = actionJSON.getString("name");
-			
-			if(idTransaction!=null && idTransaction!="") {//Action Finish transaction
-				//First executing set properties
+
+			if (idTransaction != null && idTransaction != "") {// Action Finish transaction
+				// First executing set properties
 				transactionManager.completeTransaction(idTransaction, actionName);
-				
-			}else {//Action without transactcion, executes it inmediately
+
+			} else {// Action without transactcion, executes it inmediately
 				actionExecutor.executeAction(actionName);
 			}
-			
+
 		} catch (JSONException e) {
 			log.error("Invalid JSON action: " + action, e);
 		}

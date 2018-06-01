@@ -158,6 +158,35 @@ public class GeoSpatialOpsService {
 		return basicOpsFacade.queryNative(ontology, query);
 	}
 	
+	public String getQuery(GeoQueries type, String ontology, String field, String latitude, String longitude, String maxDistance) throws IOException {
+		Map<String, Object> context = new HashMap<>();
+		context.put("ontology", ontology);
+		context.put("field", field);
+		context.put("maxDistance",maxDistance);
+		context.put("latitude",latitude);
+		context.put("longitude",longitude);
+		
+		
+		Mustache m = getTemplate(ontology,type);
+		String query = MustacheUtil.executeTemplate(m, context);
+		return query;
+	}
+	
+	public String getQuery(GeoQueries type, String ontology, String field, String partial) throws IOException {
+		Map<String, Object> context = new HashMap<>();
+		context.put("ontology", ontology);
+		context.put("field", field);
+		
+		
+		String convertedPartial = convertGeoJsonPartialtoNativeWithOntology(partial,ontology);
+		
+		context.put("partial",convertedPartial);
+		
+		Mustache m = getTemplate(ontology,type);
+		String query = MustacheUtil.executeTemplate(m, context);
+		return query;
+	}
+	
 	class Geometry {
 	    GeometryData geometry;
 
@@ -175,6 +204,9 @@ public class GeoSpatialOpsService {
 	        return "GeometryData [type=" + type + ", coordinates=" + ArrayUtils.toString(coordinates) + "]";
 	    }
 	}
+	
+	
+	
 
 
 }

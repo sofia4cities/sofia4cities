@@ -50,9 +50,9 @@ public class QueryToolController {
 	@GetMapping("show")
 	public String show(Model model) {
 		List<Ontology> ontologies = null;
-		
+
 		ontologies = this.ontologyService.getOntologiesByUserId(utils.getUserId());
-		
+
 		model.addAttribute("ontologies", ontologies);
 
 		return "querytool/show";
@@ -63,9 +63,9 @@ public class QueryToolController {
 	public String runQuery(Model model, @RequestParam String queryType, @RequestParam String query,
 			@RequestParam String ontologyIdentification) throws JsonProcessingException {
 		String queryResult = null;
-		
+
 		Ontology ontology = ontologyService.getOntologyByIdentification(ontologyIdentification, utils.getUserId());
-		
+
 		try {
 			if (ontologyService.hasUserPermissionForQuery(utils.getUserId(), ontology)) {
 				if (queryType.toUpperCase().equals(QUERY_SQL)) {
@@ -75,7 +75,7 @@ public class QueryToolController {
 
 				} else if (queryType.toUpperCase().equals(QUERY_NATIVE)) {
 					queryResult = queryToolService.queryNativeAsJson(utils.getUserId(), ontologyIdentification, query);
-					model.addAttribute("queryResult", utils.getAsObject(queryResult));
+					model.addAttribute("queryResult", queryResult);
 					return "querytool/show :: query";
 				} else {
 					return utils.getMessage("querytool.querytype.notselected", "Please select queryType Native or SQL");
@@ -101,7 +101,8 @@ public class QueryToolController {
 	public String getOntologyFields(Model model, @RequestParam String ontologyIdentification)
 			throws JsonProcessingException, IOException {
 
-		model.addAttribute("fields", this.ontologyService.getOntologyFieldsQueryTool(ontologyIdentification, utils.getUserId()));
+		model.addAttribute("fields",
+				this.ontologyService.getOntologyFieldsQueryTool(ontologyIdentification, utils.getUserId()));
 		return "querytool/show :: fields";
 
 	}

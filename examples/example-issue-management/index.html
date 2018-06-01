@@ -254,10 +254,7 @@
 						</div>
 						<div class="col-md-4 col-sm-4">
 							<div class="form-group">
-								<label for="requesttype" class="sr-only">Answer Method</label>
-								<input id="requesttype" class="form-control" type="text" readonly="true" value="Email"/>
-
-
+								<label for="requesttype" class="sr-only">Notifications will be delivered by email</label>
 							</div>
 						</div>
 						<div class="col-md-4 col-sm-4">
@@ -297,13 +294,13 @@
 						<div class="col-md-12 col-sm-12">
 							<div class="form-group">
 								<label for="description" class="sr-only">Description</label>
-								<textarea width="100%" id="description" name="description" class="form-control">Your Issue description</textarea>
+								<textarea width="100%" id="description" name="description" class="form-control" placeholder="Your Issue description"></textarea>
 							</div>
 						</div>
 						<div class="col-md-12 col-sm-12">
 							<div class="form-group"  style="margin:25px auto;">
                                 <label for="exampleInputFile" style="color:white;">Issue Images:</label>
-                                <input type="file" id="file" accept="image/gif, image/jpeg, image/png"  class="demo" data-jpreview-container="#demo-1-container">
+                                <input type="file" id="file" accept="image/gif, image/jpeg, image/png"  class="demo" data-jpreview-container="#demo-1-container" multiple>
                                 <div id="b64"></div>
                                 <div id="demo-1-container" class="jpreview-container"></div>
 				        	</div>
@@ -359,7 +356,7 @@
 			</div>
 			<div class="row animate-box  fadeInUp animated-fast">
 				<div class="col-md-12" style="margin: 30px 10px;">
-					<div class="table-scrollable">
+					<div class="table-scrollable table-responsive">
 						<table id="tableAllIssues" class="table table-issue table-hover ">
 							<thead>
 								<tr>

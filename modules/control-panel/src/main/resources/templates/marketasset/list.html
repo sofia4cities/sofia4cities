@@ -112,7 +112,8 @@
 												<div class="list-inline text-left cd-filters">
 													<a href="#0" data-type="0" data-filter="ALL" class="btn btn-outline grey-gallery btn-sm margin-bottom-5 padding-both-10"><i class="la la-table font-lg hidden-xs"></i><span>ALL</span></a>
 													<a th:each="marketassettype, row :${marketassettypes}" th:href="@{'#' + ${row.index}}" th:attr="data-filter=${marketassettype},data-type=${row.index}" class="btn btn-outline blue-chambray btn-sm margin-bottom-5  padding-both-10"> <span th:text="#{marketasset.type.__${marketassettype}__}"> Tipo de Proyecto</span></a>
-													<a th:each="marketassetstate, row :${marketassetstates}" th:href="@{'#' + ${row.index}}" th:attr="data-filter=${marketassetstate},data-type=${row.index}" class="btn btn-outline blue-chambray btn-sm margin-bottom-5  padding-both-10" style="float:right;margin-left: 5px;"> <span th:text="#{marketasset.state.__${marketassetstate}__}"> Estado</span></a>												
+													<a href="#0" data-type="0" data-filter="ALL" class="btn btn-outline grey-gallery btn-sm margin-bottom-5 padding-both-10" style="float:right;margin-left: 5px;"><i class="la la-table font-lg hidden-xs"></i><span>ALL</span></a>
+													<a th:each="marketassetstate, row :${marketassetstates}" th:href="@{'#' + ${row.index}}" th:attr="data-filter=${marketassetstate},data-type=${row.index}" class="btn btn-outline blue-chambray btn-sm margin-bottom-5  padding-both-10" style="float:right;margin-left: 5px;"> <span th:text="#{marketasset.state.__${marketassetstate}__}"> Estado</span></a>
 												</div>
 											</div>											
 										</div>													
@@ -122,7 +123,7 @@
 										<!-- ASSET CONTAINER class="project-container col-md-4 col-sm-6 col-xs-12 + project_type + proyect state" -->
 										<div th:each="marketasset : ${marketAssets}" th:class="'project-container col-md-3 col-sm-6 col-xs-12 ' + ${#strings.replace(marketasset.marketAssetType,' ','')} + ' '  + ${#strings.replace(marketasset.state,' ','')}">
 											<!-- ASSET PANEL va con fondo blanco, tocar panel-defautl para hacer un panel-white -->
-											<div class="panel panel-white effect-1">
+											<div class="panel panel-white effect-1" th:onclick="'javascript:navigateUrl(\'' + @{|/marketasset/show/${marketasset.id}|} + '\');'">
 												<div class="panel-heading ">																						  
 												
 													<a th:href="@{|/marketasset/show/${marketasset.id}|}"><div class="uppercase no-wrap text-truncate-md project-title" th:title="${marketasset.title}" th:text="${marketasset.title}" >Identification</div></a>
@@ -257,10 +258,10 @@
 		
 		// INICIALIZACIÓN DE BUSCADORES LIVE-SEARCH FALTA CAMBIAR SOBRE QUE LO HACE PARA QUE LO HAGA SOBRE PROYECTOS
 		$('.btn-search-proyect').keyup(function() {
-		
+			
 			var searchValue = $(this).val().toLowerCase();
 			// selector para coger todos los span donde están los títulos de los proyectos.
-			var Proyectos = $('div.project-container > div.panel.panel-white > div.panel-heading > span.project-title');			
+			var Proyectos = $('div.project-container > div.panel.panel-white > div.panel-heading > a > div.project-title');			
 			
 			// live-search 
 			var matchProjects = '';

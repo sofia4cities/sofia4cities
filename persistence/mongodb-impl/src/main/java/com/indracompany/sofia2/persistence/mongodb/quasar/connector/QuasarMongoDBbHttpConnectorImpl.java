@@ -33,16 +33,13 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component
-@Lazy
 @Slf4j
+@Deprecated
 public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnector {
 
 	public final static String ACCEPT_TEXT_CSV = "text/csv; columnDelimiter=|&rowDelimiter=;&quoteChar='&escapeChar=\\\\";

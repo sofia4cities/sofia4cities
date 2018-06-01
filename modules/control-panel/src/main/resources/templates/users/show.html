@@ -149,8 +149,8 @@
 													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  value="Create" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + 'create' + '\');'" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													
 													<!-- MODIFY TO-DO: == and != has the same onClick? check! -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} != ${user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/update/} + ${user.userId} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/update/} + ${user.userId} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} != ${user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{|/users/update/${user.userId}/false|} + '\');'"><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{|/users/update/${user.userId}/false|} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													<button sec:authorize=" hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													
 													<!-- REMOVE TO-DO: caducado -->
@@ -165,11 +165,6 @@
 											</div>											
 										</form>
 										
-										<!-- AUXILIAR FORM TO DELETE USER -->
-										<form id="delete_user_form" class="delete-user hide"  action=""  method="post">
-											<input type="hidden" name="_method" value="DELETE"/>
-											<input type="hidden" name="userId" th:value="*{userId}"/>
-										</form>
 									</div>									
 								</div>
 							</div>
@@ -205,13 +200,41 @@
 		// no Id no fun!
 		if ( !userId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO USER-FORM SELECTED!'}); return false; }
 		
-		// set action and userId to the form
-		$('.delete-user').attr('userId',userId);
-		$('.delete-user').attr('action','/controlpanel/users/' + userId);
-		console.log('deleteUserConfirmation() -> formAction: ' + $('.delete-user').attr('action') + ' ID: ' + $('.delete-user').attr('userId'));
+		console.log('deleteUserConfirmation() -> ID: ' + userId);
+		
+		// i18 labels
+		var Remove = headerReg.btnEliminar;
+		var Close = headerReg.btnCancelar;
+		var	Content = headerReg.genericConfirm;
+		var Title = headerReg.titleConfirm + ':';
 		
 		// call user Confirm at header.
-		HeaderController.showConfirmDialogUsuario('delete_user_form');	
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn btn-sm btn-danger btn-outline',
+					action: function(){ 
+						navigateUrl("/controlpanel/users/forgetDataUser/" +userId+"/true");
+					}											
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});	
+		
 	}
 	
 	

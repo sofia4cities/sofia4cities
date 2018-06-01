@@ -29,13 +29,12 @@ import com.indracompany.sofia2.persistence.elasticsearch.api.ESDeleteService;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESInsertService;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESNativeService;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESUpdateService;
-import com.indracompany.sofia2.persistence.elasticsearch.sql.connector.ElasticSearchSQLDbHttpConnector;
+import com.indracompany.sofia2.persistence.elasticsearch.sql.connector.ElasticSearchSQLDbHttpImpl;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 
 import lombok.extern.slf4j.Slf4j;
-
 
 @Component("ElasticSearchBasicOpsDBRepository")
 @Scope("prototype")
@@ -55,49 +54,50 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Autowired
 	private ESUpdateService eSUpdateService;
 	@Autowired
-	private ElasticSearchSQLDbHttpConnector elasticSearchSQLDbHttpConnector;
-	
+	private ElasticSearchSQLDbHttpImpl elasticSearchSQLDbHttpConnector;
+
 	@Autowired
 	private ESNativeService eSNativeService;
-	
-	
+
 	@Override
-	public String insert(String ontology, String instance) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
-		log.info(String.format("ElasticSearchBasicOpsDBRepository : Loading content: %s into elasticsearch  %s", instance, ontology));
-		List<BulkWriteResult> output=null;
+	public String insert(String ontology, String schema, String instance) throws DBPersistenceException {
+		ontology = ontology.toLowerCase();
+		log.info(String.format("ElasticSearchBasicOpsDBRepository : Loading content: %s into elasticsearch  %s",
+				instance, ontology));
+		List<BulkWriteResult> output = null;
 		try {
 			List<String> instances = new ArrayList<String>();
 			instances.add(instance);
 			output = eSInsertService.load(ontology, ontology, instances);
 			return output.get(0).getId();
 		} catch (Exception e) {
-			throw new DBPersistenceException("Error inserting instance :"+instance+" into :"+ontology,e);
+			throw new DBPersistenceException("Error inserting instance :" + instance + " into :" + ontology, e);
 		}
-		
+
 	}
 
 	@Override
-	public List<BulkWriteResult> insertBulk(String ontology, List<String> instances, boolean order, boolean includeIds)
-			throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+	public List<BulkWriteResult> insertBulk(String ontology, String schema, List<String> instances, boolean order,
+			boolean includeIds) throws DBPersistenceException {
+		ontology = ontology.toLowerCase();
 		try {
 			return eSInsertService.load(ontology, ontology, instances);
 		} catch (Exception e) {
-			throw new DBPersistenceException("Error inserting instances :"+instances.size()+" into :"+ontology,e);
+			throw new DBPersistenceException("Error inserting instances :" + instances.size() + " into :" + ontology,
+					e);
 		}
 	}
 
 	@Override
 	@Deprecated
 	public long updateNative(String ontology, String updateStmt) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+		ontology = ontology.toLowerCase();
 		log.info(String.format("ElasticSearchBasicOpsDBRepository :Update Native"));
-		SearchResponse output=null;
+		SearchResponse output = null;
 		try {
 			output = eSNativeService.updateByQuery(ontology, ontology, updateStmt);
 		} catch (Exception e) {
-			throw new DBPersistenceException("Error in operation ES updateNative : "+e.getMessage(),e);
+			throw new DBPersistenceException("Error in operation ES updateNative : " + e.getMessage(), e);
 		}
 		return output.getHits().totalHits;
 	}
@@ -105,32 +105,32 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	@Deprecated
 	public long updateNative(String collection, String query, String data) throws DBPersistenceException {
-		collection=collection.toLowerCase();
-		SearchResponse output=null;
+		collection = collection.toLowerCase();
+		SearchResponse output = null;
 		try {
 			output = eSNativeService.updateByQueryAndFilter(collection, collection, data, query);
 		} catch (Exception e) {
-			throw new DBPersistenceException("Error in operation ES updateNative : "+e.getMessage(),e);
+			throw new DBPersistenceException("Error in operation ES updateNative : " + e.getMessage(), e);
 		}
 		return output.getHits().totalHits;
 	}
 
 	@Override
 	public long deleteNative(String ontology, String query) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+		ontology = ontology.toLowerCase();
 		return eSDeleteService.deleteByQuery(ontology, ontology, query);
 	}
 
 	@Override
 	public List<String> queryNative(String ontology, String query) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+		ontology = ontology.toLowerCase();
 		return eSDataService.findQueryData(query, ontology);
 	}
 
 	@Override
 	public List<String> queryNative(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+		ontology = ontology.toLowerCase();
 		return eSDataService.findAllByType(ontology, query, offset, limit);
 	}
 
@@ -142,114 +142,120 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
-		String output = eSDataService.findAllByTypeAsJson(ontology, offset,limit);
+		ontology = ontology.toLowerCase();
+		String output = eSDataService.findAllByTypeAsJson(ontology, offset, limit);
 		return output;
 	}
 
 	@Override
 	public String findById(String ontology, String objectId) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
-		String getResponse =  eSDataService.findByIndex(ontology, ontology, objectId);
+		ontology = ontology.toLowerCase();
+		String getResponse = eSDataService.findByIndex(ontology, ontology, objectId);
 		return getResponse;
-		
+
 	}
 
 	@Override
 	public String querySQLAsJson(String ontology, String query) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+		ontology = ontology.toLowerCase();
 		return elasticSearchSQLDbHttpConnector.queryAsJson(query, 200);
 	}
 
-	//TODO IMPLEMENT
+	// TODO IMPLEMENT
 	@Override
 	public String querySQLAsTable(String ontology, String query) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+		ontology = ontology.toLowerCase();
 		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 	}
 
 	@Override
 	public String querySQLAsJson(String ontology, String query, int offset) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+		ontology = ontology.toLowerCase();
 		return elasticSearchSQLDbHttpConnector.queryAsJson(query, offset);
 	}
 
-	//TODO IMPLEMENT
+	// TODO IMPLEMENT
 	@Override
 	public String querySQLAsTable(String ontology, String query, int offset) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+		ontology = ontology.toLowerCase();
 		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 	}
 
 	@Override
 	public String findAllAsJson(String ontology) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
-		String output = eSDataService.findAllByTypeAsJson(ontology,200);
+		ontology = ontology.toLowerCase();
+		String output = eSDataService.findAllByTypeAsJson(ontology, 200);
 		return output;
 	}
 
 	@Override
 	public String findAllAsJson(String ontology, int limit) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
-		String output = eSDataService.findAllByTypeAsJson(ontology,limit);
+		ontology = ontology.toLowerCase();
+		String output = eSDataService.findAllByTypeAsJson(ontology, limit);
 		return output;
 	}
 
 	@Override
 	public List<String> findAll(String ontology) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+		ontology = ontology.toLowerCase();
 		List<String> output = eSDataService.findAllByType(ontology);
 		return output;
 	}
 
 	@Override
 	public List<String> findAll(String ontology, int limit) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
-		List<String> output = eSDataService.findAllByType(ontology,limit);
+		ontology = ontology.toLowerCase();
+		List<String> output = eSDataService.findAllByType(ontology, limit);
 		return output;
 	}
 
 	@Override
 	public long count(String ontology) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
-		return eSCountService.getMatchAllQueryCountByType(ontology,ontology);
+		ontology = ontology.toLowerCase();
+		return eSCountService.getMatchAllQueryCountByType(ontology, ontology);
 	}
 
 	@Override
 	public long delete(String ontology) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+		ontology = ontology.toLowerCase();
 		long count = count(ontology);
 		boolean all = eSDeleteService.deleteAll(ontology, ontology);
-		if (all) return count;
-		else return -1;
+		if (all)
+			return count;
+		else
+			return -1;
 	}
 
 	@Override
 	public long countNative(String ontology, String jsonQueryString) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
+		ontology = ontology.toLowerCase();
 		return eSCountService.getQueryCount(jsonQueryString, ontology);
 	}
 
 	@Override
 	public long deleteNativeById(String ontologyName, String objectId) throws DBPersistenceException {
-		ontologyName=ontologyName.toLowerCase();
+		ontologyName = ontologyName.toLowerCase();
 		boolean all = eSDeleteService.deleteById(ontologyName, ontologyName, objectId);
-		if (all) return 1;
-		else return -1;
+		if (all)
+			return 1;
+		else
+			return -1;
 	}
 
 	@Override
 	public long updateNativeByObjectIdAndBodyData(String ontologyName, String objectId, String body)
 			throws DBPersistenceException {
-		ontologyName=ontologyName.toLowerCase();
-		
-		 try {
-			 boolean  response = eSUpdateService.updateIndex(ontologyName,ontologyName,objectId,body);
-			 
-			 if (response==true) return 1;
-			 else return -1;
+		ontologyName = ontologyName.toLowerCase();
+
+		try {
+			boolean response = eSUpdateService.updateIndex(ontologyName, ontologyName, objectId, body);
+
+			if (response == true)
+				return 1;
+			else
+				return -1;
 		} catch (Exception e) {
-			throw new DBPersistenceException("Error in Update Native:"+e.getMessage(),e);
+			throw new DBPersistenceException("Error in Update Native:" + e.getMessage(), e);
 		}
 
 	}

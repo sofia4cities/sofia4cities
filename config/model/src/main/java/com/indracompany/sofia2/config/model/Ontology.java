@@ -55,7 +55,26 @@ public class Ontology extends AuditableEntityWithUUID {
 	private static final long serialVersionUID = 1L;
 
 	public enum RtdbDatasource {
-		Mongo, ElasticSearch
+		Mongo, ElasticSearch, Kudu
+	}
+
+	public enum RtdbCleanLapse {
+		OneDay(24 * 60 * 60 * 1000), TwoDays(2 * 24 * 60 * 60 * 1000), ThreeDays(3 * 24 * 60 * 60 * 1000), FiveDays(
+				5 * 24 * 60 * 60 * 1000), OneWeek(7 * 24 * 60 * 60 * 1000), TwoWeeks(
+						2 * 7 * 24 * 60 * 60 * 1000), OneMonth(4 * 7 * 24 * 60 * 60 * 1000), ThreeMonths(
+								3 * 4 * 7 * 24 * 60 * 60 * 1000), SixMonths(6 * 4 * 7 * 24 * 60 * 60 * 1000), OneYear(
+										12 * 4 * 7 * 24 * 60 * 60 * 1000), Never(0);
+
+		private long milliseconds;
+
+		private RtdbCleanLapse(long milliseconds) {
+			this.milliseconds = milliseconds;
+		}
+
+		public long getMilliseconds() {
+			return this.milliseconds;
+		}
+
 	}
 
 	@Column(name = "JSON_SCHEMA", nullable = false)
@@ -110,6 +129,12 @@ public class Ontology extends AuditableEntityWithUUID {
 	@Setter
 	private boolean rtdbClean;
 
+	@Column(name = "RTDBCLEAN_LAPSE")
+	@Enumerated(EnumType.STRING)
+	@Getter
+	@Setter
+	private RtdbCleanLapse rtdbCleanLapse;
+
 	@Column(name = "RTDBHDB", nullable = false)
 	@NotNull
 	@Getter
@@ -149,12 +174,23 @@ public class Ontology extends AuditableEntityWithUUID {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private RtdbDatasource rtdbDatasource = Ontology.RtdbDatasource.Mongo;
-	
+
 	@Column(name = "ALLOW_CYPHER_FIELD", nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	private boolean allowsCypherFields;
+
+	@Column(name = "ALLOW_CREATE_TOPIC", nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private boolean allowsCreateTopic;
+
+	@Column(name = "TOPIC", length = 256)
+	@Getter
+	@Setter
+	private String topic;
 
 	public void addOntologyUserAccess(OntologyUserAccess ontologyUserAccess) {
 		ontologyUserAccess.setOntology(this);

@@ -37,14 +37,12 @@ public interface DataModelRepository extends JpaRepository<DataModel, String> {
 
 	long countByType(String type);
 
-	@Query("SELECT o "
-			+ "FROM DataModel AS o "
-			+ "WHERE o.id LIKE %:id% OR "
-			+ 		"o.name LIKE %:name% OR "
-			+ 		"o.description LIKE %:description%")
-	List<DataModel> findByIdOrNameOrDescription(
-			@Param(value = "id") String id, 
-			@Param(value = "name") String name, 
-			@Param(value = "description") String description
-	);
+	@Query("SELECT o " + "FROM DataModel AS o " + "WHERE o.id LIKE %:id% OR " + "o.name LIKE %:name% OR "
+			+ "o.description LIKE %:description%")
+	List<DataModel> findByIdOrNameOrDescription(@Param(value = "id") String id, @Param(value = "name") String name,
+			@Param(value = "description") String description);
+
+	@Query("SELECT o " + "FROM DataModel AS o " + "WHERE o.name LIKE %:name% ")
+	DataModel findDatamodelsByName(@Param(value = "name") String name);
+
 }

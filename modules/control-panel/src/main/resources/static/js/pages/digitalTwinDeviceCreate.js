@@ -16,8 +16,9 @@ var DigitalTwinCreateController = function() {
 	
 	
 	$("#createBtn").on('click',function(){
+		var editorLogic = $('.CodeMirror')[0].CodeMirror;
 		if($("#identification").val()!='' && $("#identification").val()!=undefined){
-			$("#logic").val(JSON.stringify(ace.edit("aceEditor").getValue().trim()));
+			$("#logic").val(JSON.stringify(editorLogic.getValue().trim()));
 			$("#typeSelected").val($("#typeDigitalTwin").val());
 			DigitalTwinCreateController.submitform();
 		}else{
@@ -26,9 +27,12 @@ var DigitalTwinCreateController = function() {
 		}
 	});
 	
+	
+	
 	$("#updateBtn").on('click',function(){
+		var editorLogic = $('.CodeMirror')[0].CodeMirror;
 		if($("#identification").val()!='' && $("#identification").val()!=undefined){
-			$("#logic").val(JSON.stringify(ace.edit("aceEditor").getValue().trim()));
+			$("#logic").val(JSON.stringify(editorLogic.getValue().trim()));
 			$("#typeSelected").val($("#typeDigitalTwin").val());
 			DigitalTwinCreateController.submitform();
 		}else{
@@ -88,18 +92,25 @@ var DigitalTwinCreateController = function() {
 		});
 	})
 	
+	$("#typeDigitalTwin").on('change',function(){
+		changeDigitalTwinType($("#typeDigitalTwin").val());
+	});
+	
 	var changeDigitalTwinType = function(type){
-		
+		var editorLogic = $('.CodeMirror')[0].CodeMirror;
 		$.ajax({
-			url : "/controlpanel/digitaltwindevices/getLogicFromType/"+type,
+			url : "/controlpanel/digitaltwindevices/getLogicFromType/"+type.trim(),
 			type : 'GET',
 			dataType: 'text',
 			contentType: 'text/plain',
 			mimeType: 'text/plain',
 			success : function(data) {
 				if (data!="" && data != undefined) {
-					AceEditor = ace.edit("aceEditor");
-					AceEditor.setValue(data);
+					
+					if(data.startsWith("\"") || data.startsWith("'")){
+						data.substring(1,data.length-1);
+					}
+					editorLogic.setValue(data);
 				} else {
 					$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'error'}); 
 				}
@@ -109,6 +120,24 @@ var DigitalTwinCreateController = function() {
 			}
 		});
 	}
+	
+	// INIT CODEMIRROR
+	var handleCodeMirror = function () {
+		logControl ? console.log('handleCodeMirror() on -> logicEditor') : '';	
+		
+        var myTextArea = document.getElementById('logicEditor');
+        var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
+        	mode: "text/javascript",
+            lineNumbers: false,
+            foldGutter: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            theme:"material",    
+            readOnly: true
+
+        });
+		myCodeMirror.setSize("100%", 350);
+    }
 
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{
@@ -122,6 +151,27 @@ var DigitalTwinCreateController = function() {
 		init: function(){
 			
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
+			handleCodeMirror();
+			// PROTOTYPEs
+			// ARRAY PROTOTYPE FOR CHECK UNIQUE PROPERTIES.
+			Array.prototype.unique = function() {
+				return this.filter(function (value, index, self) { 
+					return self.indexOf(value) === index;
+				});
+			};
+			
+			// ARRAY PROTROTYPE FOR REMOVE ELEMENT (not object) BY VALUE
+			Array.prototype.remove = function() {
+				var what, a = arguments, L = a.length, ax;				
+				while (L && this.length) {
+					what = a[--L];				
+					while ((ax = this.indexOf(what)) !== -1) {
+						console.log('AX: ' + ax);
+						this.splice(ax, 1);
+					}
+				}
+				return this;
+			};
 			
 			//LOAD DIGITAL TWIN TYPES 
 			logControl ? console.log('|---> Load Digital Twin Types') : '';
@@ -146,13 +196,13 @@ var DigitalTwinCreateController = function() {
 				var type = $("#typeDigital").val();
 				$("#typeDigitalTwin").val(type);
 				
-				AceEditor = ace.edit("aceEditor");
+				var editorLogic = $('.CodeMirror')[0].CodeMirror;
 				var logica = digitalTwinCreateJson.logic;
 					
 				if(logica.charAt(0) === '\"'){
 					logica = logica.substr(1, logica.length-2);
 				}
-				AceEditor.setValue(logica);
+				editorLogic.setValue(logica)
 			}
 			
 			
@@ -183,6 +233,6 @@ var DigitalTwinCreateController = function() {
 jQuery(document).ready(function() {
 	
 	DigitalTwinCreateController.load(digitalTwinCreateJson);
-	AceEditor = ace.edit("aceEditor");
+	
 	DigitalTwinCreateController.init();
 });

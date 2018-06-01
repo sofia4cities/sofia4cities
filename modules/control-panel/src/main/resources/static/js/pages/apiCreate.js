@@ -138,7 +138,7 @@ var ApiCreateController = function() {
     function createOperationsOntology () {
         $('#description_GET_label').text("/{id}");
         $('#description_POST_label').text("/");
-        $('#description_PUT_label').text("/");
+        $('#description_PUT_label').text("/{id}");
         $('#description_DELETEID_label').text("/{id}");
         $('#ontologyOperations input[type="text"]').val('').show();
     }
@@ -465,6 +465,8 @@ var ApiCreateController = function() {
             	var querystringsPUT = new Array();
             	var operationPUT = {identification: nameApi + "_PUT", description: $('#description_PUT').val() , operation:"PUT", path:$('#description_PUT_label').text(), querystrings: querystringsPUT};
 	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: ""};
+	            operationPUT.querystrings.push(querystringparameter);
+	            querystringparameter = {name: "id", dataType: "string", headerType: "path", description: ""};
 	            operationPUT.querystrings.push(querystringparameter);
                 if (!existOp(operationPUT.identification)){
                 	operations.push(operationPUT);

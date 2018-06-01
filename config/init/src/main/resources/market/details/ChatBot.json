@@ -1,0 +1,8 @@
+{
+	"title":"ChatBot Application",
+	"technologies":"Java",
+	"description":"Chatbot application.",
+	"functionality":"",
+	"id_endpoint":"http://rancher.sofia4cities.com/chatbotweb/chat.html",
+	"detailedDescription":"# Chatbot application\n\n\n\nThis application let the user interact with a chatbot to ask information about the airquality of Helsinki.\n\nIt lets obtain global air quality information of Helsinki and about some specific neighborhoods.\n\nThe chatbot also allows the user to make subscriptions to receive air quality alarms.\n\n"
+}

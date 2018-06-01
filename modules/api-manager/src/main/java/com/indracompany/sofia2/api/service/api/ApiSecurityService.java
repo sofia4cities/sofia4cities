@@ -27,6 +27,7 @@ import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserApi;
 import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -106,20 +107,13 @@ public class ApiSecurityService {
 			autorizado=true;
 		}else{
 			//No administrador, ni propietario pero está suscrito
-			List<ApiSuscription> lSuscripcionesApi=null;
+			UserApi suscriptionApi=null;
 			try{
-				lSuscripcionesApi=apiServiceRest.findApiSuscriptions(api, user);
+				suscriptionApi=apiServiceRest.findApiSuscriptions(api, user);
 			} catch (Exception e) {}
 			
-			if(lSuscripcionesApi!=null && lSuscripcionesApi.size()>0){
-				for(ApiSuscription suscripcion:lSuscripcionesApi){
-					if(suscripcion.getEndDate()==null){
-						autorizado=true;
-					}
-					if(suscripcion.getEndDate()!=null && suscripcion.getEndDate().after(new Date())){
-						autorizado=true;
-					}
-				}
+			if(suscriptionApi!=null){
+				autorizado=true;
 			}
 		}
 		
@@ -163,21 +157,34 @@ public class ApiSecurityService {
 			
 			for (OntologyUserAccess usuarioOntologia : uo){
 				if (usuarioOntologia.getOntology().getId().equals(ontology.getId())){
-					//If the user has full permissions to perform the operation permit
-					if (usuarioOntologia.getOntologyUserAccessType() !=null && usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.ALL.name())){
-						authorize=true;
-						break;
-						//In another case it is found that has the minimum permissions to perform the operation	
-					}else{
-						//If we insert permissions can perform any operation except query
-						if (insert && usuarioOntologia.getOntologyUserAccessType() !=null && usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.INSERT.name())){
-							authorize=true;
-							break;
-							//If they are readable and has read permission can perform the operation	
-						}else if (!insert && usuarioOntologia.getOntologyUserAccessType() !=null && usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.QUERY.name())){
+					
+					String name =  usuarioOntologia.getOntologyUserAccessType().getName();
+					
+					if (name!=null) {
+						
+						if (OntologyUserAccessType.Type.ALL.name().equalsIgnoreCase(name)) {
 							authorize=true;
 							break;
 						}
+						else if (OntologyUserAccessType.Type.INSERT.name().equalsIgnoreCase(name)) {
+							if (insert) {
+								authorize=true;
+								break;
+							}
+							else {
+								authorize=false;
+								break;
+							}
+						}
+						else if  (OntologyUserAccessType.Type.QUERY.name().equalsIgnoreCase(name)) {
+							authorize=true;
+							break;
+						}
+					}
+					
+					else {
+						authorize=false;
+						break;
 					}
 				}
 			}

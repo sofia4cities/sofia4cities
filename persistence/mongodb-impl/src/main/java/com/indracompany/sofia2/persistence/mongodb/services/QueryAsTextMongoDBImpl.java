@@ -31,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class QueryAsTextMongoDBImpl implements QueryAsTextDBRepository {
 
-	
 	@Autowired
 	@Qualifier("MongoBasicOpsDBRepository")
 	MongoBasicOpsDBRepository mongoRepo = null;
@@ -79,8 +78,10 @@ public class QueryAsTextMongoDBImpl implements QueryAsTextDBRepository {
 			if (query.indexOf(".createIndex(") != -1) {
 				manageRepo.createIndex(query);
 				return "Created index indicated in the query:" + query;
+			} else if (query.indexOf(".getIndexes(") != -1) {
+				return manageRepo.getIndexes(ontology);
 			} else if (query.indexOf(".insert(") != -1) {
-				return "Inserted row with id:" + mongoRepo.insert(ontology, queryContent);
+				return "Inserted row with id:" + mongoRepo.insert(ontology, "", queryContent);
 			} else if (query.indexOf(".update(") != -1) {
 				return "Updated " + mongoRepo.updateNative(ontology, queryContent) + " rows";
 			} else if (query.indexOf(".dropIndex(") != -1) {

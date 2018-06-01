@@ -42,12 +42,15 @@ import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepository;
+import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 @Service
 public class OntologyServiceImpl implements OntologyService {
 
+	@Autowired
+	EntityDeletionService deletionService;
 	@Autowired
 	private OntologyRepository ontologyRepository;
 	@Autowired
@@ -259,7 +262,10 @@ public class OntologyServiceImpl implements OntologyService {
 				} else if (jsonNode.path(property).get("type").asText().equals("array")) {
 					this.extractSubFieldsFromJson(fields, jsonNode, property, property, true, false);
 				} else {
-					fields.put(property, jsonNode.path(property).get("type").asText());
+					if (jsonNode.path(property).get("format") != null)
+						fields.put(property, "date");
+					else
+						fields.put(property, jsonNode.path(property).get("type").asText());
 				}
 
 			}
@@ -305,7 +311,10 @@ public class OntologyServiceImpl implements OntologyService {
 				} else if (jsonNode.path(property).get("type").asText().equals("array")) {
 					this.extractSubFieldsFromJson(fields, jsonNode, property, property, true, true);
 				} else {
-					fields.put(property, jsonNode.path(property).get("type").asText());
+					if (jsonNode.path(property).get("format") != null)
+						fields.put(property, "date");
+					else
+						fields.put(property, jsonNode.path(property).get("type").asText());
 				}
 
 			}
@@ -335,11 +344,13 @@ public class OntologyServiceImpl implements OntologyService {
 				ontologyDb.setDescription(ontology.getDescription());
 				ontologyDb.setIdentification(ontology.getIdentification());
 				ontologyDb.setRtdbClean(ontology.isRtdbClean());
+				ontologyDb.setRtdbCleanLapse(ontology.getRtdbCleanLapse());
 				ontologyDb.setRtdbToHdb(ontology.isRtdbToHdb());
 				if (!ontology.getUser().getUserId().equals(ontologyDb.getUser().getUserId()))
 					ontologyDb.setUser(this.userService.getUser(ontology.getUser().getUserId()));
 				ontologyDb.setJsonSchema(ontology.getJsonSchema());
-				ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
+				if (ontology.getDataModel() != null)
+					ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 				ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
 				ontologyDb.setMetainf(ontology.getMetainf());
 				ontologyDb.setAllowsCypherFields(ontology.isAllowsCypherFields());
@@ -354,7 +365,7 @@ public class OntologyServiceImpl implements OntologyService {
 	// TODO it should be checked that onotologies are assigned to the session
 	// user.
 	@Override
-	public void createOntology(Ontology ontology) {
+	public void createOntology(Ontology ontology) throws OntologyServiceException {
 		try {
 			if (ontologyRepository.findByIdentification(ontology.getIdentification()) == null) {
 
@@ -414,9 +425,13 @@ public class OntologyServiceImpl implements OntologyService {
 			} else {
 				if (subProperty.equals("$date"))
 					fields.put(parentField, "date");
-				else
-					fields.put(parentField + "." + subProperty, jsonNode.path(subProperty).get("type").asText());
+				else {
+					if (jsonNode.path(subProperty).get("format") != null)
+						fields.put(parentField + "." + subProperty, "date");
+					else
+						fields.put(parentField + "." + subProperty, jsonNode.path(subProperty).get("type").asText());
 
+				}
 			}
 		}
 
@@ -591,6 +606,16 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	public List<RtdbDatasource> getDatasources() {
 		return Arrays.asList(Ontology.RtdbDatasource.values());
+	}
+
+	@Override
+	public List<Ontology> getCleanableOntologies() {
+		return this.ontologyRepository.findByRtdbCleanTrue();
+	}
+
+	@Override
+	public void delete(Ontology ontology) {
+		deletionService.deleteOntology(ontology.getId(), ontology.getUser().getUserId());
 	}
 
 }

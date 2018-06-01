@@ -3,7 +3,7 @@
 
 
 server: ## Config Web Server
-   port: 18080
+   port: 18000
    contextPath: /controlpanel
    max-http-header-size: 10000000
    tomcat:
@@ -47,20 +47,64 @@ sofia2: #Config Sofia2 specific
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
       digitaltwin.database: digital_twin
+   database.hadoop.enabled: false
+   database.hdfs:
+      url: hdfs://127.0.0.1:8020
+      basePath: /user/hdfs
+   database.hive:
+      url: jdbc:hive2://localhost:10000/default
+      username: cloudera-scm
+      password: 
+      driverClassName: org.apache.hive.jdbc.HiveDriver
+   database.impala:
+      url: jdbc:hive2://localhost:21050/default;auth=noSasl
+   database.kudu:
+      numreplicas: 1
+      address: localhost:7051
    urls:
-    iotbroker: http://localhost:18080
-    iotbroker.services: http://localhost:8080/sib/services
+    iotbroker: http://localhost:19000
+    iotbroker.services: http://localhost:19000/sib/services
    paths:
       ssap: /ssap
    flowengine.services:
       request.timeout.ms: 5000
-      baseurl: http://localhost:8082/flowengine/admin   
+      baseurl: http://localhost:20100/flowengine/admin   
       proxyurl: http://localhost:5050/
    controlpanel.avoidsslverification: true
    webproject:
       rootfolder.path: /usr/local/webprojects/
-      baseurl: https://localhost:18080/web/   
- 
+      baseurl: https://localhost:18000/web/        
+   iotbroker.plugable:
+     gateway:
+      kafka:
+        enable: false
+        host: localhost
+        port: 9095  
+        user: admin
+        password: admin-secret 
+        partitions: 1
+        replication: 1      
+        prefix: ontology_
+        group: ontologyGroup
+        topic.pattern: ontology.*
+        router.topic: router
+        consumer.consumersCount : 10
+        consumer.group : kafkaGroup
+        consumer.maxPollRecords : 5000 
+   analytics.notebook:
+      zeppelinGlobalTimeout: 120000
+      zeppelinProtocol: http
+      zeppelinHostname: localhost
+      zeppelinPort: 8080
+      zeppelinPathname: 
+      shiroAdminUsername: admin
+      shiroAdminPass: password1
+      shiroUsername: user1
+      shiroPass: password2
+      restUsername: userrest
+      restPass: passrest
+      notebookInfoPath: /api/notebook/
+      restTimeout.millis: 10000
 spring: ## General Config  
    application.name: sofia2-control-panel
    thymeleaf: ## Thymeleaf Config
@@ -78,15 +122,19 @@ spring: ## General Config
       # template-resolver-order:
       # view-names:
    datasource: ## JPA Config
-      url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      url: jdbc:mysql://localhost:3306/sofia2_s4c?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-   #   password: root
-      # Number of ms to wait before throwing an exception if no connection is available.
-      tomcat.max-wait: 10000
-      # Maximum number of active connections that can be allocated from this pool at the same time.
-      tomcat.max-active: 50
-      # Validate the connection before borrowing it from the pool.
-      tomcat.test-on-borrow: true
+      password: changeIt!
+      driver-class-name: com.mysql.jdbc.Driver
+      tomcat:
+         # Number of ms to wait before throwing an exception if no connection is available.
+         max-wait: 10000
+         # Maximum number of active connections that can be allocated from this pool at the same time.
+         max-active: 50
+         # Validate the connection before borrowing it from the pool.
+         test-on-borrow: true
+         validation-query: SELECT 1
+         test-while-idle: true
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
@@ -95,7 +143,7 @@ spring: ## General Config
       hibernate.ddl-auto: update
       hibernate.temp.use_jdbc_metadata_defaults: false
    boot.admin: #Spring Boot Admin Config    
-      url: http://localhost:19000/
+      url: http://localhost:18100/
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
@@ -104,13 +152,20 @@ spring: ## General Config
       multipart:
          max-file-size: 200Mb
          max-request-size: 200Mb
-      
+
+spring.elasticsearch.jest.uris: ${sofia2.database.elasticsearch.sql.connector.http.endpoint}
+spring.elasticsearch.jest.read-timeout: ${sofia2.database.elasticsearch.sql.connectionTimeout.millis}
+
+        
 quartz:      
    datasource:
-      url: jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      url: "@sofia2.quartzURL@"
       username: root
-    #  password: root
+      password: changeIt!
       driver-class-name: com.mysql.jdbc.Driver
+      test-while-idle: true
+      test-on-borrow: true
+      validation-query: SELECT 1
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
@@ -133,3 +188,15 @@ logging:
 digitaltwin:
    temp.dir: /tmp
    maven.exec.path: /usr/share/maven/bin/mvn
+   
+build.version: "@project.version@"   
+
+
+#oauth configurations
+security:
+  signing-key: s1f41234pwqdqkl4l12ghg9853123sds1f41234pwqdqkl4l12ghg9853123sd
+  jwt:
+    client-id: sofia2_s4c
+    client-secret: sofia2_s4c
+    grant-type: authorization_code,refresh_token,password
+    scopes: openid

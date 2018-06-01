@@ -35,44 +35,53 @@ public class ContextData implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Getter private String clientPatform;
-	@Getter private String clientPatformInstance;
-	@Getter	private String clientConnection;
-	@Getter private String clientSession;
-	@Getter	final private String user;
-	@Getter final private String timezoneId;
-	@Getter final private String timestamp;
+	@Getter
+	private String deviceTemplate;
+	@Getter
+	private String device;
+	@Getter
+	private String clientConnection;
+	@Getter
+	private String clientSession;
+	@Getter
+	final private String user;
+	@Getter
+	final private String timezoneId;
+	@Getter
+	final private String timestamp;
+	@Getter
+	final private long timestampMillis;
 
 	public ContextData(JsonNode node) {
-			
-		JsonNode clientPlatform = node.findValue("clientPatform");
-		if (clientPlatform != null) {
-			this.clientPatform = clientPlatform.asText();
+
+		JsonNode deviceTemplate = node.findValue("deviceTemplate");
+		if (deviceTemplate != null) {
+			this.deviceTemplate = deviceTemplate.asText();
 		} else {
-			this.clientPatform = "";
+			this.deviceTemplate = "";
 		}
-		
-		JsonNode clientPatformInstance = node.findValue("clientPatformInstance");
-		if (clientPatformInstance != null) {
-			this.clientPatformInstance = clientPatformInstance.asText();
+
+		JsonNode device = node.findValue("device");
+		if (device != null) {
+			this.device = device.asText();
 		} else {
-			this.clientPatformInstance = "";
+			this.device = "";
 		}
-		
+
 		JsonNode clientConnection = node.findValue("clientConnection");
 		if (clientConnection != null) {
 			this.clientConnection = clientConnection.asText();
 		} else {
 			this.clientConnection = "";
 		}
-		
+
 		JsonNode clientSession = node.findValue("clientSession");
 		if (clientSession != null) {
 			this.clientSession = clientSession.asText();
 		} else {
 			this.clientSession = "";
 		}
-			
+
 		JsonNode user = node.findValue("user");
 		if (user != null) {
 			this.user = user.asText();
@@ -93,16 +102,23 @@ public class ContextData implements Serializable {
 		} else {
 			this.timestamp = Calendar.getInstance(TimeZone.getTimeZone(this.timezoneId)).getTime().toString();
 		}
+		JsonNode timestampMillis = node.findValue("timestampMillis");
+		if (timestampMillis != null) {
+			this.timestampMillis = timestampMillis.asLong();
+		} else {
+			this.timestampMillis = System.currentTimeMillis();
+		}
 	}
 
 	public ContextData(ContextData other) {
 		this.user = other.user;
-		this.clientPatform = other.clientPatform;
-		this.clientPatformInstance = other.clientPatformInstance;
+		this.deviceTemplate = other.deviceTemplate;
+		this.device = other.device;
 		this.clientConnection = other.clientConnection;
 		this.clientSession = other.clientSession;
 		this.timezoneId = other.timezoneId;
 		this.timestamp = other.timestamp;
+		this.timestampMillis = other.timestampMillis;
 	}
 
 	@Override
@@ -112,47 +128,49 @@ public class ContextData implements Serializable {
 		if (!(other instanceof ContextData))
 			return false;
 		ContextData that = (ContextData) other;
-		return Objects.equals(this.user, that.user)
-				&& Objects.equals(this.clientPatformInstance, that.clientPatformInstance)
-				&& Objects.equals(this.clientPatform, that.clientPatform)
+		return Objects.equals(this.user, that.user) && Objects.equals(this.device, that.device)
+				&& Objects.equals(this.deviceTemplate, that.deviceTemplate)
 				&& Objects.equals(this.clientConnection, that.clientConnection)
 				&& Objects.equals(this.clientSession, that.clientSession)
-				&& Objects.equals(this.timezoneId, that.timezoneId) && Objects.equals(this.timestamp, that.timestamp);
+				&& Objects.equals(this.timezoneId, that.timezoneId) && Objects.equals(this.timestamp, that.timestamp)
+				&& Objects.equals(this.timestampMillis, that.timestampMillis);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(user, clientPatform, clientPatformInstance, clientConnection, clientSession, timezoneId,
-				timestamp);
+		return Objects.hash(user, deviceTemplate, device, clientConnection, clientSession, timezoneId, timestamp);
 	}
-	
+
 	private ContextData(Builder build) {
 		this.user = build.user;
 		this.timezoneId = build.timezoneId;
 		this.timestamp = build.timestamp;
 		this.clientConnection = build.clientConnection;
-		this.clientPatform = build.clientPatform;
-		this.clientPatformInstance = build.clientPatformInstance;
+		this.deviceTemplate = build.deviceTemplate;
+		this.device = build.device;
 		this.clientSession = build.clientSession;
+		this.timestampMillis = build.timestampMillis;
 	}
-	
-	public static Builder builder(String user, String timezoneId, String timestamp) {
-        return new Builder(user, timezoneId, timestamp);
-    }
+
+	public static Builder builder(String user, String timezoneId, String timestamp, long timestampMillis) {
+		return new Builder(user, timezoneId, timestamp, timestampMillis);
+	}
 
 	public static class Builder {
-		private String clientPatform;
-		private String clientPatformInstance;
+		private String deviceTemplate;
+		private String device;
 		private String clientConnection;
 		private String clientSession;
 		private String user;
 		private String timezoneId;
 		private String timestamp;
-		
-		public Builder(String user, String timezoneId, String timestamp) {
+		private long timestampMillis;
+
+		public Builder(String user, String timezoneId, String timestamp, long timestampMillis) {
 			this.user = user;
 			this.timezoneId = timezoneId;
 			this.timestamp = timestamp;
+			this.timestampMillis = timestampMillis;
 		}
 
 		public ContextData build() {
@@ -169,13 +187,13 @@ public class ContextData implements Serializable {
 			return this;
 		}
 
-		public Builder clientPatformInstance(String clientPatformInstance) {
-			this.clientPatformInstance = clientPatformInstance;
+		public Builder device(String device) {
+			this.device = device;
 			return this;
 		}
 
-		public Builder clientPatform(String clientPatform) {
-			this.clientPatform = clientPatform;
+		public Builder deviceTemplate(String deviceTemplate) {
+			this.deviceTemplate = deviceTemplate;
 			return this;
 		}
 	}

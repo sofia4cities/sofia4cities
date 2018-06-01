@@ -13,7 +13,7 @@
     },
     "datos": {
         "description": "Info AirCOMeter",
-        "type": "object",S
+        "type": "object",
         "required": [
             "location",
             "measure",

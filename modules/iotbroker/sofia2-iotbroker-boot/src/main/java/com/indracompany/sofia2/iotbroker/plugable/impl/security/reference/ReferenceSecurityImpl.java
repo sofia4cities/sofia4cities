@@ -15,10 +15,13 @@ package com.indracompany.sofia2.iotbroker.plugable.impl.security.reference;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
+
+import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -27,12 +30,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.repository.IoTSessionRepository;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.config.services.user.UserService;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.SecurityPlugin;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
@@ -51,6 +55,8 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 	UserService userService;
 	@Autowired
 	OntologyService ontologyService;
+	@Autowired
+	IoTSessionRepository ioTSessionRepository;
 
 	ConcurrentHashMap<String, IoTSession> sessionList = new ConcurrentHashMap<>(200);
 
@@ -67,8 +73,8 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 			final IoTSession session = new IoTSession();
 			session.setClientPlatform(clientPlatform);
 			// TODO: What if the instance it is not provied
-			session.setClientPlatformInstance(clientPlatformInstance);
-			session.setExpiration(60 * 1000 * 1000l);
+			session.setDevice(clientPlatformInstance);
+			session.setExpiration(60 * 10 * 1000l);
 			session.setLastAccess(ZonedDateTime.now());
 			session.setToken(token);
 			session.setClientPlatformID(clientPlatformDB.getId());
@@ -83,7 +89,8 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 				session.setSessionKey(UUID.randomUUID().toString());
 			}
 
-			sessionList.put(session.getSessionKey(), session);
+			// sessionList.put(session.getSessionKey(), session);
+			this.ioTSessionRepository.save(session);
 
 			return Optional.of(session);
 		}
@@ -94,13 +101,14 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 
 	@Override
 	public boolean closeSession(String sessionKey) {
-		sessionList.remove(sessionKey);
+		this.ioTSessionRepository.delete(this.ioTSessionRepository.findBySessionKey(sessionKey));
+		// sessionList.remove(sessionKey);
 		return true;
 	}
 
 	@Override
 	public boolean checkSessionKeyActive(String sessionKey) {
-		final IoTSession session = sessionList.get(sessionKey);
+		final IoTSession session = this.ioTSessionRepository.findBySessionKey(sessionKey);
 
 		if (session == null) {
 			return false;
@@ -112,12 +120,13 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 		final long time = ChronoUnit.MILLIS.between(now, lastAccess);
 
 		if (time > session.getExpiration()) {
-			sessionList.remove(sessionKey);
+			this.ioTSessionRepository.delete(this.ioTSessionRepository.findBySessionKey(sessionKey));
 			return false;
 		} else {
 			// renew session on activity
 			session.setLastAccess(now);
-			sessionList.put(sessionKey, session);
+			// sessionList.put(sessionKey, session);
+			this.ioTSessionRepository.save(session);
 		}
 
 		return true;
@@ -131,10 +140,10 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 			return false;
 		}
 
-		final IoTSession session = sessionList.get(sessionKey);
+		final IoTSession session = this.ioTSessionRepository.findBySessionKey(sessionKey);
 
 		boolean clientHasAuthority = false;
-		//TODO: This checkings should done in a centralized place.
+		// TODO: This checkings should done in a centralized place.
 		try {
 			if (SSAPMessageTypes.INSERT.equals(messageType) || SSAPMessageTypes.UPDATE.equals(messageType)
 					|| SSAPMessageTypes.UPDATE_BY_ID.equals(messageType) || SSAPMessageTypes.DELETE.equals(messageType)
@@ -162,7 +171,7 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 		if (StringUtils.isEmpty(sessionKey)) {
 			return Optional.empty();
 		}
-		final IoTSession session = sessionList.get(sessionKey);
+		final IoTSession session = this.ioTSessionRepository.findBySessionKey(sessionKey);
 		if (session == null) {
 			return Optional.empty();
 		}
@@ -171,12 +180,21 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 
 	}
 
+	@PostConstruct
+	private void invalidateSessionsOnInit() {
+		this.invalidateExpiredSessions();
+	}
+
+	@Transactional
 	@Scheduled(fixedDelay = 60000)
 	private void invalidateExpiredSessions() {
 		final long now = System.currentTimeMillis();
-		final Predicate<IoTSession> delete = s -> now - s.getLastAccess().toInstant().toEpochMilli() >= s
-				.getExpiration();
-		sessionList.values().removeIf(delete);
+		List<IoTSession> sessions = this.ioTSessionRepository.findAll();
+		for (IoTSession s : sessions) {
+			if (now - s.getLastAccess().toInstant().toEpochMilli() >= s.getExpiration())
+				this.ioTSessionRepository.delete(s);
+		}
+
 		log.info("Deleting expired session");
 	}
 

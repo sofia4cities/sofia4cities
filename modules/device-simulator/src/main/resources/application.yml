@@ -1,5 +1,5 @@
 server: ## Config Web Server
-   port: 18061
+   port: 19200
    contextPath: /devicesimulator
 
 
@@ -9,7 +9,7 @@ management.security.enabled: false
 spring:
    application.name: sofia2-device-simulator
    boot.admin: #Spring Boot Admin Config   
-      url: http://localhost:19000
+      url: http://localhost:18100
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
@@ -19,10 +19,19 @@ spring:
   
    ## JPA Config
    datasource:
-      url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      url: jdbc:mysql://localhost:3306/sofia2_s4c?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password:
+      password: changeIt!
       driver-class-name: com.mysql.jdbc.Driver
+      tomcat:
+         # Number of ms to wait before throwing an exception if no connection is available.
+         max-wait: 10000
+         # Maximum number of active connections that can be allocated from this pool at the same time.
+         max-active: 50
+         # Validate the connection before borrowing it from the pool.
+         test-on-borrow: true
+         validation-query: SELECT 1
+         test-while-idle: true 
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
@@ -35,8 +44,11 @@ quartz:
       # This property has to be configured in a profile in the pom.xml. Currently, it is configured in the parent project.
       url: "@sofia2.quartzURL@"
       username: root
-      password:
+      password: changeIt!
       driver-class-name: com.mysql.jdbc.Driver
+      test-while-idle: true
+      test-on-borrow: true
+      validation-query: SELECT 1
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
@@ -49,7 +61,7 @@ quartz:
     
 sofia2: #Config Sofia2 specific
    iotbroker:
-      server: http://localhost:8081/iotbroker
+      server: http://localhost:19000/iotbroker
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin

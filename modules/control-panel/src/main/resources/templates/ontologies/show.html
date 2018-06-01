@@ -92,7 +92,9 @@
 								<!-- SECCIONES DE LA ONTOLOGIA TABS -->
 								<ul class="nav nav-tabs pull-left">
 									<li id="tab-datos" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false"><i class="flaticon-network font-grey-gallery"></i>	<span class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.show} + ' ' + ${ontology.identification}"> Ontology Identification</span></a></li>
-									<li id="tab-autorizaciones" class=""><a href="#tab_2" data-toggle="tab" th:classappend="${ontology?.id} == null ? disabled : ''" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" >AUTORIZACIONES </span></a></li>
+									<li id="tab-autorizaciones" class=""><a href="#tab_2" data-toggle="tab" th:classappend="${ontology?.id} == null ? disabled : ''" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.list.auth}">AUTORIZACIONES </span></a></li>
+									<li id="tab-advanced-options" class=""><a href="#tab_settings" data-toggle="tab" aria-expanded="true"><i class="flaticon-settings font-grey-gallery"></i> <span class="uppercase font-md" th:text="#{ontology.advancedsettings}" >Advanced Settings </span></a></li>
+								
 								</ul>
 								
 							</div>
@@ -162,15 +164,16 @@
 																	<p class="form-control-static-block bold" th:text="*{description}"> description </p>
 																</div>
 															</div>
-															<!-- <div class="col-md-3 col-sm-6 col-xs-12" >
+															<div class="col-md-3 col-sm-6 col-xs-12" >
 																<div class="form-group">
 																	<label class="control-label" th:text="#{ontology.rtdbclean} + '?'">rtdbclean</label>
 																	<p class="form-control-static-block form-control-static-no-border bold">
-																		<span th:if="*{rtdbClean}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
+																		<span th:if="*{rtdbClean}"  class="label label-sm label-success"><i  class="fa fa-check"></i></span>
 																		<span th:if="!*{rtdbClean}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
 																	</p>
 																</div>
 															</div>
+															<!-- 
 															<div class="col-md-3 col-sm-6 col-xs-12" >
 																<div class="form-group">
 																	<label class="control-label" th:text="#{ontology.rtdbtohdb} + '?'">rtdbtohdb</label>
@@ -271,6 +274,22 @@
 												</div>											
 											</div>
 										</div>
+									</div>
+									<!-- ONTOLOGY ADVANCED SETTINGS -->
+									<div class="tab-pane " id="tab_settings">
+										<div class="row">
+											<div class="col-md-6 col-sm-6 col-xs-12">
+												<div class="form-group">
+													<label class="control-label" th:text="#{ontology.rtdbinstance}">Rtdb instance</label>
+													<p class="form-control-static-block bold" th:text="${ontology.rtdbDatasource}"> Rtdb instance </p>
+												</div>
+												<div class="form-group">
+													<label class="control-label" th:text="#{ontology.clean.options}">Cleanse Options</label>
+													<p class="form-control-static-block bold" th:text="${ontology.rtdbCleanLapse}"> Rtdb instance </p>
+												</div>
+												
+											</div>								
+										</div>	
 									</div>
 								</div>
 								

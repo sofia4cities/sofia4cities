@@ -15,7 +15,7 @@
     });
 
   /** @ngInject */
-  function EditDashboardController($log, $scope, $mdSidenav, $mdDialog, $mdBottomSheet, sofia2HttpService, interactionService) {
+  function EditDashboardController($log, $window,__env, $scope, $mdSidenav, $mdDialog, $mdBottomSheet, sofia2HttpService, interactionService) {
     var ed = this;
 
     //Gadget source connection type list
@@ -23,7 +23,7 @@
 
     ed.$onInit = function () {
       ed.selectedlayer = 0;
-      ed.selectedpage = ed.selectedpage();
+      //ed.selectedpage = ed.selectedpage;
       ed.icons = [
         "3d_rotation",
         "ac_unit",
@@ -962,7 +962,7 @@
       ed.global = {
         style: {
           header:{
-            height: 64,
+            height: 25,
             enable: "initial",
             backgroundColor: "initial",
             title: {
@@ -1017,7 +1017,7 @@
         closeTo: '.toolbarButtons',
         locals: {
           dashboard: ed.dashboard,
-          selectedpage: ed.selectedpage,
+          selectedpage: ed.selectedpage(),
           selectedlayer: ed.selectedlayer
         }
       })
@@ -1040,7 +1040,7 @@
         closeTo: '.toolbarButtons',
         locals: {
           dashboard: ed.dashboard,
-          selectedpage: ed.selectedpage
+          selectedpage: ed.selectedpage()
         }
       })
       .then(function(page) {
@@ -1104,7 +1104,7 @@
         closeTo: '.toolbarButtons',
         locals: {
           dashboard: ed.dashboard,
-          selectedpage: ed.selectedpage
+          selectedpage: ed.selectedpage()
         }
       })
       .then(function(page) {
@@ -1151,6 +1151,116 @@
       //alert(JSON.stringify(ed.dashboard));
     };
 
+
+    ed.deleteDashboard = function (ev) {
+
+      var confirm = $mdDialog.confirm()
+      .title('Would you like to delete Dashboard?')
+      .textContent('If you delete the dashboard it will be permanent')
+      .ariaLabel('Delete dialog')
+      .targetEvent(ev)
+      .ok('Delete')
+      .cancel('Cancel');
+
+      $mdDialog.show(confirm).then(function() {
+          sofia2HttpService.deleteDashboard(ed.id()).then(
+            function(d){
+              if(d){
+                $mdDialog.show(
+                  $mdDialog.alert()
+                    .parent(angular.element(document.querySelector('document')))
+                    .clickOutsideToClose(true)
+                    .title('Dashboard Editor')
+                    .textContent('Your dashboard was successfully Deleted!')
+                    .ariaLabel('Delete dialog')
+                    .ok('OK')
+                    .targetEvent(ev)
+                ).finally(function(){
+                  $window.location.href=__env.endpointSofia2ControlPanel+'/dashboards/list';
+                })
+              }
+            }
+          ).catch(
+            function(d){
+              if(d){
+                console.log("Error: " + JSON.stringify(d))
+                $mdDialog.show(
+                  $mdDialog.alert()
+                    .parent(angular.element(document.querySelector('document')))
+                    .clickOutsideToClose(true)
+                    .title('Dashboard Editor: ERROR')
+                    .textContent('There was an error deleting your dashboard!')
+                    .ariaLabel('Delete dialog')
+                    .ok('OK')
+                    .targetEvent(ev)
+                )
+              }
+            }
+          );
+        
+        
+      }, function() {
+      
+      });
+
+    }
+
+    
+    ed.closeDashboard = function (ev) {
+
+      var confirm = $mdDialog.confirm()
+      .title('Would you like to save Dashboard before Close?')
+      .textContent('If you close without saving the changes will be lost')
+      .ariaLabel('Close dialog')
+      .targetEvent(ev)
+      .ok('Save')
+      .cancel('Exit');
+
+      $mdDialog.show(confirm).then(function() {
+        ed.dashboard.interactionHash = interactionService.getInteractionHash();
+        sofia2HttpService.saveDashboard(ed.id(), {"data":{"model":JSON.stringify(ed.dashboard),"id":"","identification":"a","customcss":"","customjs":"","jsoni18n":"","description":"a","public":ed.public}}).then(
+          function(d){
+            if(d){
+              $mdDialog.show(
+                $mdDialog.alert()
+                  .parent(angular.element(document.querySelector('document')))
+                  .clickOutsideToClose(true)
+                  .title('Dashboard Editor')
+                  .textContent('Your dashboard was successfully saved!')
+                  .ariaLabel('Save dialog')
+                  .ok('OK')
+                  .targetEvent(ev)
+              ).finally(function(){
+                $window.location.href=__env.endpointSofia2ControlPanel+'/dashboards/list';
+              })
+            }
+          }
+        ).catch(
+          function(d){
+            if(d){
+              console.log("Error: " + JSON.stringify(d))
+              $mdDialog.show(
+                $mdDialog.alert()
+                  .parent(angular.element(document.querySelector('document')))
+                  .clickOutsideToClose(true)
+                  .title('Dashboard Editor: ERROR')
+                  .textContent('There was an error saving your dashboard!')
+                  .ariaLabel('Save dialog')
+                  .ok('OK')
+                  .targetEvent(ev)
+              )
+            }
+          }
+        );
+        
+        
+      }, function() {
+        $window.location.href=__env.endpointSofia2ControlPanel+'/dashboards/list';
+      });
+
+    }
+
+
     ed.changedOptions = function changedOptions() {
       //main.options.api.optionsChanged();
     };
@@ -1187,33 +1297,6 @@
         var newLayer = {};
         //newLayer.options = JSON.parse(JSON.stringify(ed.dashboard.pages[0].layers[0].options));
         newLayer.gridboard = [
-          {
-            cols: 8,
-            rows: 7,
-            y: 0,
-            x: 0,
-            id: "1",
-            type: "livehtml",
-            content: "<h1> LiveHTML Text </h1>",
-            header: {
-              enable: true,
-              title: {
-                icon: "",
-                iconColor: "none",
-                text: "Leaflet Map Gadget test",
-                textColor: "none"
-              },
-              backgroundColor: "none",
-              height: 64
-            },
-            backgroundColor: "initial",
-            padding: 0,
-            border: {
-              color: "black",
-              width: 1,
-              radius: 5
-            }
-          }
         ];
         newLayer.title = "baseLayer";
         newPage.title = angular.copy($scope.title);
@@ -1549,7 +1632,9 @@
 
       //Get gadget JSON and return string info for UI
       $scope.prettyGadgetInfo = function(gadget){
-        return gadget.header.title.text + " (" + gadget.type + ")"
+       
+          return gadget.header.title.text + " (" + gadget.type + ")";
+        
       }
 
       $scope.generateGadgetInfo = function (gadgetId){
@@ -1570,8 +1655,8 @@
       //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
       function getGadgetsSourcesInDashboard(){
         var gadgets = [];
-        var page = $scope.dashboard.pages[$scope.selectedpage];       
-          for (var i = 0; i < page.layers.length; i++) {
+        var page = $scope.dashboard.pages[$scope.selectedpage];
+        for (var i = 0; i < page.layers.length; i++) {
           var layer = page.layers[i];
           var gadgetsAux = layer.gridboard.filter(function(gadget){return typeGadgetList.indexOf(gadget.type) != -1});
           if(gadgetsAux.length){
@@ -1584,10 +1669,10 @@
       //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
       function getGadgetsInDashboard(){
         var gadgets = [];
-        var page = $scope.dashboard.pages[$scope.selectedpage];      
-          for (var i = 0; i < page.layers.length; i++) {
+        var page = $scope.dashboard.pages[$scope.selectedpage];
+        for (var i = 0; i < page.layers.length; i++) {
           var layer = page.layers[i];
-          var gadgetsAux = layer.gridboard;
+          var gadgetsAux = layer.gridboard.filter(function(gadget){return typeof gadget.id != "undefined"});
           if(gadgetsAux.length){
             gadgets = gadgets.concat(gadgetsAux);
           }
@@ -1596,12 +1681,14 @@
       }
 
       function findGadgetInDashboard(gadgetId){
-        var page = $scope.dashboard.pages[$scope.selectedpage];      
+        for(var p=0;p<$scope.dashboard.pages.length;p++){
+          var page = $scope.dashboard.pages[p];       
           for (var i = 0; i < page.layers.length; i++) {
-          var layer = page.layers[i];
-          var gadgets = layer.gridboard.filter(function(gadget){return gadget.id === gadgetId});
-          if(gadgets.length){
-            return gadgets[0];
+            var layer = page.layers[i];
+            var gadgets = layer.gridboard.filter(function(gadget){return gadget.id === gadgetId});
+            if(gadgets.length){
+              return gadgets[0];
+            }
           }
         }
         return null;
@@ -1630,6 +1717,7 @@
     }
 
     ed.showListBottomSheet = function() {
+      $window.dispatchEvent(new Event("resize"));
       $mdBottomSheet.show({
         templateUrl: 'app/partials/edit/addWidgetBottomSheet.html',
         controller: AddWidgetBottomSheetController,
@@ -1649,7 +1737,7 @@
 
     $scope.$on('deleteElement',function (event, item) {
       var dashboard = $scope.ed.dashboard;
-      var page = dashboard.pages[$scope.ed.selectedpage];
+      var page = dashboard.pages[$scope.ed.selectedpage()];
       var layer = page.layers[page.selectedlayer];
       layer.gridboard.splice(layer.gridboard.indexOf(item), 1);
       $scope.$applyAsync();

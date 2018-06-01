@@ -17,11 +17,9 @@ package com.indracompany.sofia2.controlpanel.controller.digitaltwin.device.displ
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,8 +32,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.DigitalTwinType;
-import com.indracompany.sofia2.config.service.digitaltwin.device.DigitalTwinDeviceService;
-import com.indracompany.sofia2.config.service.digitaltwin.type.DigitalTwinTypeService;
+import com.indracompany.sofia2.config.services.digitaltwin.device.DigitalTwinDeviceService;
+import com.indracompany.sofia2.config.services.digitaltwin.type.DigitalTwinTypeService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel;
@@ -50,6 +48,7 @@ public class DigitalTwinDisplayController {
 	final static String LOG_COLLECTION = "TwinLogs";
 	final static String PROPERTIES_COLLECTION = "TwinProperties";
 	final static String EVENTS_COLLECTION = "TwinEvents";
+	final static String ACTIONS_COLLECTION = "TwinActions";
 
 	DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
@@ -87,7 +86,8 @@ public class DigitalTwinDisplayController {
 
 	@PostMapping("executeQuery")
 	public String executeQuery(Model model, @RequestParam String type, @RequestParam String device,
-			@RequestParam String offset, @RequestParam String operation, @RequestParam String eventName) {
+			@RequestParam String offset, @RequestParam String operation, @RequestParam String eventName,
+			@RequestParam String actionName) {
 		try {
 			List<String> results = new ArrayList<String>();
 			List<String> devices = new ArrayList<String>();
@@ -124,6 +124,9 @@ public class DigitalTwinDisplayController {
 							|| operation.equalsIgnoreCase(DigitalTwinModel.EventType.PING.name())) {
 
 						collection = EVENTS_COLLECTION;
+					} else if (operation.equalsIgnoreCase("action")) {
+
+						collection = ACTIONS_COLLECTION + t.substring(0, 1).toUpperCase() + t.substring(1);
 					}
 					if (operation.equalsIgnoreCase(DigitalTwinModel.EventType.CUSTOM.name()) && eventName != "") {
 						queryResult = mongoRepo.queryNativeAsJson(collection,
@@ -134,15 +137,19 @@ public class DigitalTwinDisplayController {
 						queryResult = mongoRepo.queryNativeAsJson(collection,
 								"db." + collection + ".find({deviceId:'" + d + "',event:'" + operation.toUpperCase()
 										+ "'}).sort({timestamp: -1}).limit(" + Integer.parseInt(offset) + ")");
+					} else if (collection.equalsIgnoreCase(ACTIONS_COLLECTION)) {
+						queryResult = mongoRepo.queryNativeAsJson(collection,
+								"db." + collection + ".find({deviceId:'" + d + "',action:'" + actionName
+										+ "'}).sort({timestamp: -1}).limit(" + Integer.parseInt(offset) + ")");
 					} else {
 						queryResult = mongoRepo.queryNativeAsJson(collection, "db." + collection + ".find({deviceId:'"
 								+ d + "'}).sort({timestamp: -1}).limit(" + Integer.parseInt(offset) + ")");
 					}
 
-					List<String> lResults = mapper.readValue(queryResult, List.class);
-					lResults = processData(lResults);
-					for (String r : lResults) {
-						results.add(r);
+					JSONArray arrayResult = new JSONArray(queryResult);
+
+					for (int i = 0; i < arrayResult.length(); i++) {
+						results.add(arrayResult.getJSONObject(i).toString());
 					}
 				}
 			}
@@ -152,30 +159,7 @@ public class DigitalTwinDisplayController {
 			log.error("Error getting shadow devices");
 			model.addAttribute("queryResult",
 					utils.getMessage("querytool.query.native.error", "Error malformed query"));
-			return null;
+			return "digitaltwindisplay/show :: query";
 		}
-	}
-
-	private List<String> processData(List<String> queryResult) {
-		List<String> results = new ArrayList<String>();
-		try {
-
-			for (String result : queryResult) {
-				JSONObject json = new JSONObject(result);
-				Long timeInMillisecons = json.getJSONObject("timestamp").getLong("$date");
-
-				Date date = new Date(timeInMillisecons);
-				String dateFormatted = formatter.format(date);
-
-				JSONObject timestamp = new JSONObject();
-				timestamp.put("$date", dateFormatted);
-				json.put("timestamp", timestamp);
-
-				results.add(json.toString());
-			}
-		} catch (JSONException e) {
-			log.error("Error parsing query Result. {}", e);
-		}
-		return results;
 	}
 }

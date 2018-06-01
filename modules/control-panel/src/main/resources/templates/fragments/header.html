@@ -21,10 +21,10 @@
 				<span></span>
 			</div>
 			<a th:href="@{/}">
-				<img alt="logo" class="logo-default" th:src="@{/static/images/logo_sofia2_bk_sm.png}"/>				
+				<img alt="logo" class="logo-default" th:src="@{/static/images/platform_logo.png}"/>				
 			</a>
-			<span class="text-logo-s4c" onclick="location.href='/controlpanel'" >S4Cities</span>
-			<span class="text-logo-panel" onclick="location.href='/controlpanel'" >CONTROL PANEL</span>			
+			<span class="text-logo-s4c" onclick="location.href='/controlpanel'" th:text="#{name.apptitle}">S4Cities</span>
+			<span class="text-logo-panel" onclick="location.href='/controlpanel'" th:text="#{name.appsubtitle}">CONTROL PANEL</span>			
 		</div>
 		<!-- END LOGO -->
 		
@@ -65,14 +65,34 @@
 					</a>
 				</li> -->
 				<!-- END {REST} -->
+				<!-- BEGIN APIS -->
+				<li class="dropdown dropdown-user-toggler">
+					<a class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Apis" style="padding-right:8px !important;" onclick="javascript:$('#modalApis').modal('show');">
+						<i class="flaticon-multimedia"></i><span class="hidden-xs" >APIS</span>
+					</a>
+					
+				</li>
+				<!-- END APIS -->
 				
 				<!-- BEGIN USER NO-PARTNER -->						
 				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-user-toggler">
-					<a th:href="@{'/users/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" th:attr="data-original-title=${#strings.concat(#authentication.name,' ',#strings.listJoin(#authentication.authorities,' '))}" style="padding-right:8px !important;">
+					<a th:href="@{'/users/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" th:attr="data-original-title=${#strings.concat(#authentication.name,' ',#strings.listJoin(#authentication.authorities,' '))}" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="padding-right:8px !important;">
 						<i class="flaticon-user"></i> <span class="user-rol" th:classappend="${#strings.toLowerCase(#strings.listJoin(#authentication.authorities,' '))}" th:text="${#authentication.name}"> user</span> <!--  <span class="hidden-xs" th:text="${#authentication.authorities}">rol</span>-->
+						<i class="fa fa-angle-down"></i>
 					</a>
+					<ul class="dropdown-menu dropdown-menu-default">
+						<li>
+							<!-- <spring:message code="global_language_switch" arguments="English" var="lang_label" htmlEscape="false" />-->
+							<a th:href="@{'/users/show/' + ${#authentication.name}}"><span>View Data</span></a>
+						</li>
+						<li>				
+							<a th:href=" @{'/users/update/'+ ${#authentication.name}+'/true'}" th:text="#{user.template.data.update}"  ><span>Privacy preferences</span></a> 
+						</li>	
+																		
+					</ul>
 				</li>
 				<!-- END USER NO-PARTNER -->
+
 				
 				<!-- BEGIN USER PARTNER -->						
 				<li  sec:authorize="hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-user-toggler">
@@ -132,6 +152,39 @@
 		<!-- END TOP NAVIGATION MENU -->
 	</div>
 	<!-- END HEADER INNER -->
+	<!-- Modal -->
+	<div id="modalApis" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	
+	    <!-- Modal content-->
+	    <div class="modal-content"  >
+	    	<div class="modal-header">
+	        	<button type="button" class="close" data-dismiss="modal">&times;</button>
+	        	<h4 class="modal-title" th:text="#{menu.modal.api}" >Modal Header</h4>
+	     	</div>
+	     	<div class="modal-body">
+		      	<div id="contenido" class="wrappercontenido container-fluid quitapadding">
+		      		<h3 th:text="#{menu.modal.oauthtoken}">Oauth Token</h3>
+		      		<a id="oauthTokenCopy"><p id="oauthToken" th:text="#{menu.modal.bearer}+' '+${session.oauthToken}" class="dont-break-out"></p></a>
+		      		<h3 th:text="#{menu.apis}">Apis</h3>
+		      		<h4 ><a target="_blank" th:text="#{menu.modal.controlpanel}" th:href="${session.apis?.controlpanel}">Control panel: oauth, management, notebooks</a></h4>
+		      		<h4 ><a target="_blank" th:text="#{menu.modal.iotbroker}" th:href="${session.apis?.iotbroker}">IoTBroker</a></h4>
+		      		<h4 ><a target="_blank" th:text="#{menu.modal.apimanager}" th:href="${session.apis?.apiManager}">Api Manager</a></h4>
+		      		<h4 ><a target="_blank" th:text="#{menu.modal.router}" th:href="${session.apis?.routerStandAlone}">Router</a></h4>
+		      		<h4 ><a target="_blank" th:text="#{menu.modal.digitaltwinbroker}" th:href="${session.apis?.digitalTwinBroker}">Digital Twin broker</a></h4>
+		      		
+		      		
+		      	</div>
+	      	</div>
+	        <div class="modal-footer">
+	        	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      	</div>
+	    </div>
+	 </div>
+	 <style>
+	 .modal-dialog { width: 50% !important;display: block;  margin-left: 25%; margin-rigth:25%;}
+	 </style>
+	</div> <!-- End modal -->
 	
 	<!-- MODAL SEARCH -->
 	<div class="modal fade bs-example-modal-lg"  id="modalDocs" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
@@ -176,6 +229,14 @@
 			
 	<!-- HEADER DATA TO SEND TO HEADER CONTROLLER  --> 
 	<script type="text/javascript" th:inline="javascript"> 
+		$('#oauthTokenCopy').on('click', function(){
+			var element = "#oauthToken";
+			var $temp = $("<input/>");
+			$("body").append($temp);
+			$temp.val($(element).text()).select();
+			document.execCommand("copy");
+			$temp.remove();
+		});
 		var errores = [[${message}]];
 		var informacion = [[${info}]];		
 		var headerJson = { 
@@ -190,7 +251,7 @@
 			"ontologyConfirm":[[#{ontology.delete.confirm}]],
 			"digitalTwinTypeConfirm":[[#{digitaltwintype.delete.confirm}]],
 			"digitalTwinDeviceConfirm":[[#{digitaltwindevice.delete.confirm}]],
-			"genericConfirm":[[#{dialogo_confirm_delete_text}]],
+			"genericConfirm":[[#{dialog.confirm.delete.text}]],
 			"configurationConfirm":[[#{configuration.del.confirm}]],
 			"gadgetDatasourceConfirm":[[#{datasources.del.confirm}]],
 			"gadgetConfirm":[[#{gadget.del.confirm}]],
@@ -201,6 +262,7 @@
 			"deviceSimulationConfirm" : [[#{simulation.delete.confirm}]],
 			"menu": [[${menu}]]
 		};
+
 		// LOAD DATA TO USE IN HEADERCONTROLLER
 		// HEADER CONTROLLER LOAD AND INIT ITSELF
 	</script>

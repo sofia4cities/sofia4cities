@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 
@@ -59,5 +60,12 @@ public class JWTServiceImpl implements JWTService {
 		
 		return principal;
 	}
-
+	
+	public Authentication getAuthentication(String tokenId) {
+		OAuth2Authentication  authentication = tokenServices.loadAuthentication(tokenId);
+		return authentication;
+	}
+	
+	
+	
 }

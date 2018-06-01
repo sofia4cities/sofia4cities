@@ -14,41 +14,39 @@
 # limitations under the License.
 #
 # ------------------------------------------------------------------------
+source config.properties
 
 buildImage()
 {
-	echo "Docker image generation with spotify plugin for Sofia2 module: "$1 
-	mvn clean package docker:build -Dmaven.test.skip=true
+	echo "Docker image generation with spotify plugin for Sofia2 module: "$2
+	#mvn clean package docker:build -Dmaven.test.skip=true
+	cp $1/target/*-exec.jar $1/docker/
+	docker build -t $USERNAME/$2:$3 .
+	rm $1/docker/*.jar
 }
 
 buildConfigDB()
 {
 	echo "ConfigDB image generation with Docker CLI: "
-	docker build -t sofia2/configdb:$1 .
+	docker build -t $USERNAME/configdb:$1 .
 }
 
 buildSchedulerDB()
 {
 	echo "SchedulerDB image generation with Docker CLI: "
-	docker build -t sofia2/schedulerdb:$1 .
+	docker build -t $USERNAME/schedulerdb:$1 .
 }
 
 buildRealTimeDB()
 {
 	echo "RealTimeDB image generation with Docker CLI: "
-	docker build -t sofia2/realtimedb:$1 .
-}
-
-buildElasticDB() 
-{
-	echo "ElasticDB image generation with Docker CLI: "
-	docker build -t sofia2/elasticdb:$1 .
+	docker build -t $USERNAME/realtimedb:$1 .
 }
 
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
-	docker build -t sofia2/nginx:$1 .		
+	docker build -t $USERNAME/nginx:$1 .		
 }
 
 buildQuasar()
@@ -58,7 +56,7 @@ buildQuasar()
 	wget https://github.com/quasar-analytics/quasar/releases/download/v14.2.6-quasar-web/quasar-web-assembly-14.2.6.jar
 	
 	echo "Step 2: build quasar image"
-	docker build -t sofia2/quasar:$1 .	
+	docker build -t $USERNAME/quasar:$1 .	
 	
 	rm quasar-web-assembly*.jar
 }
@@ -80,6 +78,37 @@ removeNodeRED()
 	rm nodered.zip		
 }
 
+buildPersistence()
+{
+	echo "++++++++++++++++++++ Persistence layer generation..."
+	
+	# Generates images only if they are not present in local docker registry
+	if [[ "$(docker images -q $USERNAME/configdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/configdb
+		buildConfigDB latest
+	fi
+	
+	if [[ "$(docker images -q $USERNAME/schedulerdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/schedulerdb
+		buildSchedulerDB latest
+	fi
+	
+	if [[ "$(docker images -q $USERNAME/realtimedb 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/realtimedb
+		buildRealTimeDB latest
+	fi
+	
+	if [[ "$(docker images -q $USERNAME/quasar 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/quasar
+		buildQuasar latest
+	fi
+	
+	if [[ "$(docker images -q $USERNAME/configinit 2> /dev/null)" == "" ]]; then
+		cd $homepath/../config/init/docker
+		buildImage $homepath/../config/init/ init latest
+	fi		
+}
+
 echo "##########################################################################################"
 echo "#                                                                                        #"
 echo "#   _____             _                                                                  #"              
@@ -99,55 +128,28 @@ homepath=$PWD
 # Only create persistence layer
 if [ -z "$1" ]; then
 	# Generates images only if they are not present in local docker registry
-	if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/control-panel/
-		buildImage "Control Panel"
+	if [[ "$(docker images -q $USERNAME/controlpanel 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/control-panel/docker
+		buildImage $homepath/../modules/control-panel controlpanel latest
 	fi	
 	
-	if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
-		buildImage "IoT Broker"
+	if [[ "$(docker images -q $USERNAME/iotbroker 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/docker	
+		buildImage $homepath/../modules/iotbroker/sofia2-iotbroker-boot iotbroker latest
 	fi
 	
-	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
-		cd $homepath/../modules/api-manager/	
-		buildImage "API Manager"
-	fi			
+	if [[ "$(docker images -q $USERNAME/apimanager 2> /dev/null)" == "" ]]; then	
+		cd $homepath/../modules/api-manager/docker
+		buildImage $homepath/../modules/api-manager apimanager latest
+	fi	
+	
+	# Persistence layer image generation
+	buildPersistence		
 fi
 
 if [ ! -z "$1" ]; then
-	echo "++++++++++++++++++++ Persistence layer generation..."
-	
-	# Generates images only if they are not present in local docker registry
-	if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/configdb
-		buildConfigDB latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/schedulerdb
-		buildSchedulerDB latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/realtimedb
-		buildRealTimeDB latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/quasar
-		buildQuasar latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/elasticsearch
-		buildElasticDB latest
-	fi	
-	
-	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
-		cd $homepath/../config/init/
-		buildImage "Config Init"
-	fi	
+	# Persistence layer image generation
+	buildPersistence
 fi
 
 echo "Docker images successfully generated!"

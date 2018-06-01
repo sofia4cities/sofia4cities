@@ -30,7 +30,7 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 
 		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND CODEMIRROR  -->
-		
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css}"/>		
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css}"/>
 		
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
@@ -135,7 +135,7 @@
 															<label class="" th:text="#{scheduledsearch.identification} + ':'">Identification</label>
 															<div class="input-icon ">
 																<i class="fa fa-credit-card"></i>
-																<input id="identificator" type="text"  th:required="true"  maxlength="100" th:field="*{identificator}" class="form-control no-remove" th:placeholder="#{user.id}"/>
+																<input id="identificator" type="text"  th:required="true"  maxlength="100" th:field="*{identificator}" class="form-control no-remove" th:placeholder="#{scheduledsearch.identification}"/>
 															</div>	
 														</div>
 													</div>	
@@ -146,17 +146,21 @@
 																<option th:each="configuration :${configurations}" th:value="${configuration.description}" th:text="${configuration.description}" ></option>										
 															</select>													
 														</div>
-													</div>													
-													<div class="col-md-5 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="control-label" th:text="#{scheduledsearch.topics} + ':'">Topics</label>
-															<div class="input-icon ">
-																<i class="fa"></i>
-																<input  id="userId" type="text"  th:required="true"  maxlength="100" th:field="*{topics}" class="form-control" th:placeholder="#{scheduledsearch.topics.rules}" th:value="${topics}"/>
-															</div>	
-														</div>
-													</div>												
+													</div>	
 												</div>
+												<div class="row">												
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															
+																<label class="control-label" th:text="#{scheduledsearch.topics} + ':'">Topics</label>
+															<div class="bootstrap-tagsinput">
+																<input  data-msg="Topics" th:tabindex="3" name="tags" data-role="tagsinput" class="form-control tagsinput" id="topics" type="text"  th:required="true"  data-minlength="2" pattern=".{2,}" th:field="*{topics}" th:value="${topics}"/>
+																
+															</div>
+														</div>
+													</div>
+												</div>												
+												
 												<!-- FROM,TO-->
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
@@ -322,6 +326,7 @@
 	<script th:src="@{/static/vendor/codemirror/mode/javascript/javascript.js}" />
 	<script th:src="@{/static/vendor/codemirror/addon/edit/matchbrackets.js}" />
 	<script th:src="@{/static/vendor/codemirror/addon/selection/active-line.js}" />
+	<script th:src="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.min.js}" type="text/javascript"></script>
 	
 	
 	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}" type="text/javascript"></script>

@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Service
 public class FieldRandomizerServiceImpl implements FieldRandomizerService {
-
+	private final static String PATH_PROPERTIES = "properties";
 	private static final String FIXED_NUMBER = "FIXED_NUMBER";
 	private static final String FIXED_STRING = "FIXED_STRING";
 	private static final String FIXED_DATE = "FIXED_DATE";
@@ -46,20 +46,27 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 	private static final String RANDOM_INTEGER = "RANDOM_INTEGER";
 	private static final String RANDOM_DATE = "RANDOM_DATE";
 	private static final String RANDOM_STRING = "RANDOM_STRING";
+	private static final String RANDOM_BOOLEAN = "RANDOM_BOOLEAN";
+	private static final String FIXED_BOOLEAN = "FIXED_BOOLEAN";
 	private static final String NULL = "NULL";
+	private static final String VALUE = "value";
 
 	@Override
 	public JsonNode randomizeFields(JsonNode json, JsonNode schema) {
 		ObjectMapper mapper = new ObjectMapper();
 
 		JsonNode map = schema;
-		String context = schema.fields().next().getKey();
+
 		Iterator<String> fields = json.fieldNames();
 		while (fields.hasNext()) {
 			String field = fields.next();
 			String function = json.path(field).get("function").asText();
 			String finalField = null;
-			String path = "/" + context;
+			String path = new String();
+			if (schema.size() == 1) {
+				String context = schema.fields().next().getKey();
+				path = "/" + context;
+			}
 
 			if (field.contains(".")) {
 				String array[] = field.split("\\.");
@@ -84,16 +91,16 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 			case FIXED_NUMBER:
 				if (map.at(path).isArray())
 					((ArrayNode) map.at(path)).insert(Integer.valueOf(finalField).intValue(),
-							json.path(field).get("value").asDouble());
+							json.path(field).get(VALUE).asDouble());
 				else
-					((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asDouble());
+					((ObjectNode) map.at(path)).put(finalField, json.path(field).get(VALUE).asDouble());
 				break;
 			case FIXED_INTEGER:
 				if (map.at(path).isArray())
 					((ArrayNode) map.at(path)).insert(Integer.parseInt(finalField),
-							json.path(field).get("value").asInt());
+							json.path(field).get(VALUE).asInt());
 				else
-					((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asInt());
+					((ObjectNode) map.at(path)).put(finalField, json.path(field).get(VALUE).asInt());
 				break;
 			case RANDOM_NUMBER:
 				if (map.at(path).isArray())
@@ -124,7 +131,7 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				((ObjectNode) map.at(path)).put(finalField, Math.sin(angleSin) * multiplierSin);
 				break;
 			case FIXED_STRING:
-				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asText());
+				((ObjectNode) map.at(path)).put(finalField, json.path(field).get(VALUE).asText());
 				break;
 			case RANDOM_STRING:
 				((ObjectNode) map.at(path)).put(finalField,
@@ -134,15 +141,17 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				Date date;
 				try {
 					DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-					date = df.parse(json.path(field).get("value").asText());
+					date = df.parse(json.path(field).get(VALUE).asText());
 				} catch (ParseException e) {
 					date = new Date();
 				}
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 				JsonNode dateJson = mapper.createObjectNode();
-				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-
-				((ObjectNode) dateJson).put("$date", df.format(date));
-				((ObjectNode) map.at(path)).set(finalField, dateJson);
+				if (!map.at(path).path(finalField).path("$date").isMissingNode()) {
+					((ObjectNode) dateJson).put("$date", df.format(date));
+					((ObjectNode) map.at(path)).set(finalField, dateJson);
+				} else
+					((ObjectNode) map.at(path)).put(finalField, df.format(date));
 
 				break;
 			case RANDOM_DATE:
@@ -158,10 +167,21 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				} catch (ParseException e) {
 					dateRandom = new Date();
 				}
+				df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 				JsonNode dateRandomJson = mapper.createObjectNode();
-				df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-				((ObjectNode) dateRandomJson).put("$date", df.format(dateRandom));
-				((ObjectNode) map.at(path)).set(finalField, dateRandomJson);
+				if (!map.at(path).path(finalField).path("$date").isMissingNode()) {
+					((ObjectNode) dateRandomJson).put("$date", df.format(dateRandom));
+					((ObjectNode) map.at(path)).set(finalField, dateRandomJson);
+				} else {
+					((ObjectNode) map.at(path)).put(finalField, df.format(dateRandom));
+				}
+
+				break;
+			case FIXED_BOOLEAN:
+				((ObjectNode) map.at(path)).put(finalField, json.path(field).get(VALUE).asBoolean(true));
+				break;
+			case RANDOM_BOOLEAN:
+				((ObjectNode) map.at(path)).put(finalField, this.randomizeBoolean());
 				break;
 			case NULL:
 
@@ -201,5 +221,11 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 		ThreadLocalRandom th = ThreadLocalRandom.current();
 		return new Date(th.nextLong(from.getTime(), to.getTime()));
 
+	}
+
+	public boolean randomizeBoolean() {
+
+		Random random = new Random();
+		return random.nextBoolean();
 	}
 }

@@ -44,19 +44,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel;
 import com.indracompany.sofia2.config.repository.SuscriptionModelRepository;
 import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
-import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
@@ -77,7 +73,7 @@ public class IndicationProcessorTest {
 	@Autowired
 	private WebApplicationContext wac;
 	private ResultActions resultAction;
-	private final String URL_BASE_PATH  = "/advice";
+	private final String URL_BASE_PATH = "/advice";
 	@Autowired
 	ObjectMapper mapper;
 
@@ -95,8 +91,8 @@ public class IndicationProcessorTest {
 	RouterSuscriptionService routerSuscriptionService;
 
 	//
-	//	@Autowired
-	//	MockMongoOntologies mockOntologies;
+	// @Autowired
+	// MockMongoOntologies mockOntologies;
 
 	@Autowired
 	SuscriptionModelRepository repositoy;
@@ -121,15 +117,16 @@ public class IndicationProcessorTest {
 	IotBrokerAuditableAspect iotBrokerAuditableAspect;
 
 	private void auditMocks() {
-		doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(), any(), any());
-		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
-		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
+		try {
+			doNothing().when(iotBrokerAuditableAspect).processTx(any(), any(), any(), any());
+			doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(), any(), any(), any(), any());
 
-		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, 10l,"formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
-		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
-
-
 
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
@@ -142,45 +139,43 @@ public class IndicationProcessorTest {
 
 	@Before
 	public void setUp() throws IOException, Exception {
-		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
+		// repositoy.deleteByOntologyName(Person.class.getSimpleName());
 		securityMocks();
 		auditMocks();
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
-		//		mockOntologies.createOntology(Person.class);
+		// mockOntologies.createOntology(Person.class);
 		//
-		ssapSbuscription = SSAPMessageGenerator.generateSubscriptionMessage(Person.class.getSimpleName(), session.getSessionKey(), SSAPQueryType.SQL, "select * from Person");
+		ssapSbuscription = SSAPMessageGenerator.generateSubscriptionMessage(Person.class.getSimpleName(),
+				session.getSessionKey(), SSAPQueryType.SQL, "select * from Person");
 		//
 		subject = PojoGenerator.generatePerson();
 		ssapInsertOperation = SSAPMessageGenerator.generateInsertMessage(Person.class.getSimpleName(), subject);
-
 
 		final List<SuscriptionNotificationsModel> value = new ArrayList<>();
 
 		final SuscriptionNotificationsModel sus = new SuscriptionNotificationsModel();
 		sus.setSessionKey(session.getSessionKey());
-		value.add(sus );
-		when(suscriptionModelRepository.findAllBySuscriptionId(any())).thenReturn(value );
+		value.add(sus);
+		when(suscriptionModelRepository.findAllBySuscriptionId(any())).thenReturn(value);
 
 	}
 
 	@After
 	public void tearDown() {
-		//		repositoy.deleteBySuscriptionId(subjectSubscriptionId);
-		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
-		//		mockOntologies.deleteOntology(Person.class);
+		// repositoy.deleteBySuscriptionId(subjectSubscriptionId);
+		// repositoy.deleteByOntologyName(Person.class.getSimpleName());
+		// mockOntologies.deleteOntology(Person.class);
 	}
 
-	//	@Ignore
+	// @Ignore
 	@Test
 	public void given_OneIndication_When_ItIsDelivered_Then_ItsProcessedAndDeliveredToClient() throws Exception {
 		final CompletableFuture<SSAPMessage<SSAPBodyIndicationMessage>> completableFuture = new CompletableFuture<>();
 		SSAPMessage<SSAPBodyIndicationMessage> indication = new SSAPMessage<>();
 
-		notifier.addSubscriptionListener("test_subscriptor",
-				m -> {
-					completableFuture.complete(m);
-				}
-				);
+		notifier.addSubscriptionListener("test_subscriptor", m -> {
+			completableFuture.complete(m);
+		});
 
 		ssapSbuscription.getBody().setQuery("db.Person.find({})");
 		ssapSbuscription.getBody().setQueryType(SSAPQueryType.NATIVE);
@@ -188,21 +183,22 @@ public class IndicationProcessorTest {
 		final OperationResultModel value = RouterServiceGenerator.generateSubscriptionOk(UUID.randomUUID().toString());
 		when(routerSuscriptionService.suscribe(any())).thenReturn(value);
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseSubscription = processor.process(ssapSbuscription, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseSubscription = processor.process(ssapSbuscription,
+				PojoGenerator.generateGatewayInfo());
 		final String subscriptionId = responseSubscription.getBody().getData().at("/subscriptionId").asText();
 		subjectSubscriptionId = subscriptionId;
 
-		final NotificationCompositeModel model = RouterServiceGenerator.generateNotificationCompositeModel(subscriptionId, subject, session);
+		final NotificationCompositeModel model = RouterServiceGenerator
+				.generateNotificationCompositeModel(subscriptionId, subject, session);
 
 		final String content = mapper.writeValueAsString(model);
-		resultAction = mockMvc.perform(MockMvcRequestBuilders.post(URL_BASE_PATH)
-				.accept(org.springframework.http.MediaType.APPLICATION_JSON)
-				.content(content)
-				.contentType(org.springframework.http.MediaType.APPLICATION_JSON));
+		resultAction = mockMvc.perform(
+				MockMvcRequestBuilders.post(URL_BASE_PATH).accept(org.springframework.http.MediaType.APPLICATION_JSON)
+						.content(content).contentType(org.springframework.http.MediaType.APPLICATION_JSON));
 
 		resultAction.andExpect(status().is2xxSuccessful());
-		final OperationResultModel result = mapper.readValue(resultAction.andReturn().getResponse().getContentAsString(),
-				OperationResultModel.class);
+		final OperationResultModel result = mapper
+				.readValue(resultAction.andReturn().getResponse().getContentAsString(), OperationResultModel.class);
 
 		indication = completableFuture.get(5, TimeUnit.SECONDS);
 		Assert.assertNotNull(indication);
@@ -213,23 +209,25 @@ public class IndicationProcessorTest {
 		Assert.assertTrue(indication.getBody().getData().size() == 1);
 	}
 
-	//TODO: Internal advice webservice it's not accesible in test context execution
+	// TODO: Internal advice webservice it's not accesible in test context execution
 	@Ignore
 	@Test
 	public void given_OneSubsctiptionToOntologyThenWhenAninsertOccursThenAnIndicationIsReceived() throws Exception {
 
-		//		final CompletableFuture<SSAPMessage<SSAPBodyIndicationMessage>> future = new CompletableFuture<>();
+		// final CompletableFuture<SSAPMessage<SSAPBodyIndicationMessage>> future = new
+		// CompletableFuture<>();
 
 		ssapSbuscription.getBody().setQuery("db.Person.find({})");
 		ssapSbuscription.getBody().setQueryType(SSAPQueryType.NATIVE);
-		final SSAPMessage<SSAPBodyReturnMessage> responseSubscription = processor.process(ssapSbuscription, PojoGenerator.generateGatewayInfo());
-
+		final SSAPMessage<SSAPBodyReturnMessage> responseSubscription = processor.process(ssapSbuscription,
+				PojoGenerator.generateGatewayInfo());
 
 		final String oid = UUID.randomUUID().toString();
-		final OperationResultModel value = RouterServiceGenerator.generateInserOk(oid );
+		final OperationResultModel value = RouterServiceGenerator.generateInserOk(oid);
 		when(routerService.insert(any())).thenReturn(value);
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseInsert = processor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseInsert = processor.process(ssapInsertOperation,
+				PojoGenerator.generateGatewayInfo());
 
 		try {
 			Thread.sleep(600000);
@@ -238,11 +236,6 @@ public class IndicationProcessorTest {
 			e.printStackTrace();
 		}
 
-
-
-
 	}
-
-
 
 }

@@ -168,6 +168,29 @@ public class ApiManagerService {
 		}
 
 		for (final ApiOperation operacion : operaciones) {
+			if (operacion.getIdentification().equals(opIdentifier)
+					|| opIdentifier.contains(operacion.getIdentification())) {
+				return operacion;
+			}
+		}
+		return null;
+	}
+
+	public ApiOperation getCustomSQLDefault(String pathInfo, Api api, String operation) {
+
+		final String apiIdentifier = this.getApiIdentifier(pathInfo);
+
+		String opIdentifier = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
+
+		final List<ApiOperation> operaciones = apiOperationRepository.findByApiOrderByOperationDesc(api);
+
+		String match = apiIdentifier + "_" + operation;
+
+		if (!opIdentifier.equals("")) {
+			match += "_" + opIdentifier;
+		}
+
+		for (final ApiOperation operacion : operaciones) {
 			if (operacion.getIdentification().equals(opIdentifier)) {
 				return operacion;
 			}
@@ -176,7 +199,7 @@ public class ApiManagerService {
 	}
 
 	public HashMap<String, String> getCustomParametersValues(HttpServletRequest request, String body,
-			HashSet<ApiQueryParameter> queryParametersCustomQuery) {
+			HashSet<ApiQueryParameter> queryParametersCustomQuery, ApiOperation customSQL) {
 
 		final HashMap<String, String> customqueryparametersvalues = new HashMap<>();
 		for (final ApiQueryParameter customqueryparameter : queryParametersCustomQuery) {
@@ -185,8 +208,25 @@ public class ApiManagerService {
 				if (customqueryparameter.getHeaderType().name()
 						.equalsIgnoreCase(ApiQueryParameter.HeaderType.body.name())) {
 					paramvalue = body;
+				} else if (customqueryparameter.getHeaderType().name()
+						.equalsIgnoreCase(ApiQueryParameter.HeaderType.path.name())) {
+					final String apiIdentifier = this.getApiIdentifier(request.getRequestURI());
+					String relativePath = request.getRequestURI()
+							.substring(request.getRequestURI().indexOf(apiIdentifier) + apiIdentifier.length());
+					String[] splittedParams = customSQL.getPath().split("/");
+
+					for (int i = 0; i < splittedParams.length; i++) {
+						if (splittedParams[i].contains(customqueryparameter.getName())) {
+							paramvalue = relativePath.split("/")[i + 1];
+						}
+
+					}
+
 				}
-			} else {
+
+			}
+
+			if (paramvalue != null) {
 				if (customqueryparameter.getDataType().name()
 						.equalsIgnoreCase(ApiQueryParameter.DataType.date.name())) {
 					try {
@@ -201,7 +241,7 @@ public class ApiManagerService {
 				} else if (customqueryparameter.getDataType().name()
 						.equalsIgnoreCase(ApiQueryParameter.DataType.string.name())) {
 					try {
-						//paramvalue.toString();
+						// paramvalue.toString();
 						paramvalue = "\"" + paramvalue + "\"";
 					} catch (final Exception e) {
 						final Object parametros[] = { "$" + customqueryparameter.getName(), "String" };
@@ -281,7 +321,7 @@ public class ApiManagerService {
 			}
 
 		} catch (final IOException e) {
-			log.error("Error reading payload",e);
+			log.error("Error reading payload", e);
 		}
 		return buffer.toString();
 	}

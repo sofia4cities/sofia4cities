@@ -308,8 +308,10 @@ public class InitElasticSearchDB {
 	}
 
 	public void createPostOperationsUser(User user) {
+		createPostOperationsUser(user, ServiceUtils.getAuditCollectionName(user.getUserId()));
+	}
 
-		String collectionAuditName = ServiceUtils.getAuditCollectionName(user.getUserId());
+	public void createPostOperationsUser(User user, String collectionAuditName) {
 
 		if (ontologyService.getOntologyByIdentification(collectionAuditName, user.getUserId()) == null) {
 			Ontology ontology = new Ontology();
@@ -329,9 +331,7 @@ public class InitElasticSearchDB {
 
 	}
 
-	private void update(User user, RtdbDatasource datasource) {
-
-		String collectionAuditName = ServiceUtils.getAuditCollectionName(user.getUserId());
+	private void update(User user, String collectionAuditName, RtdbDatasource datasource) {
 
 		Ontology ontology = ontologyService.getOntologyByIdentification(collectionAuditName, user.getUserId());
 		ontology.setRtdbDatasource(datasource);
@@ -341,15 +341,22 @@ public class InitElasticSearchDB {
 	}
 
 	public void createPostOntologyUser(User user) {
+		createPostOntologyUser(user, ServiceUtils.getAuditCollectionName(user.getUserId()));
+	}
 
-		String collectionAuditName = ServiceUtils.getAuditCollectionName(user.getUserId());
+	public void createPostOntologyUser(User user, String collectionAuditName) {
 
 		try {
 			manageFacade.createTable4Ontology(collectionAuditName, "{}");
 		} catch (Exception e) {
 			log.error("Audit ontology couldn't be created in ElasticSearch, so we need Mongo to Store Something");
-			update(user, RtdbDatasource.Mongo);
-			manageFacade.createTable4Ontology(collectionAuditName, "{}");
+			update(user, collectionAuditName, RtdbDatasource.Mongo);
+			try {
+				manageFacade.createTable4Ontology(collectionAuditName, "{}");
+			} catch (Exception ex) {
+				log.error("error creating ontology table", ex);
+			}
+
 		}
 
 	}
@@ -377,6 +384,9 @@ public class InitElasticSearchDB {
 
 		createPostOperationsUser(getUserOperations());
 		createPostOntologyUser(getUserOperations());
+		//
+		createPostOperationsUser(getUserAdministrator(), ServiceUtils.getAuditCollectionName("anonymous"));
+		createPostOntologyUser(getUserAdministrator(), ServiceUtils.getAuditCollectionName("anonymous"));
 
 	}
 

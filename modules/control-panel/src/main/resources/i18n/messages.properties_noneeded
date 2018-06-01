@@ -83,6 +83,7 @@ foot.sourcecode		= GitHub Sofia4Cities IoT Platform
 foot.legal			= Legal Terms and Use Conditions
 foot.license		= Licensed under Apache License 2.0
 foot.close			= Close
+build.version       = @project.version@
 
 # ----------------- FLOW MAIN --------
 flow.ontology						= MODEL THE DATA

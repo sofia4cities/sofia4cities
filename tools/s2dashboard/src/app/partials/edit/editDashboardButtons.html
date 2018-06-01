@@ -32,12 +32,12 @@
           Pages
         </md-button>
       </md-menu-item>
-      <md-menu-item>
+     <!-- <md-menu-item>
         <md-button aria-label="Page Layers" ng-click="ed.layersEdit()">
           <md-icon aria-label="Page layers">clear_all</md-icon>
           Page Layers
         </md-button>
-      </md-menu-item>
+      </md-menu-item>-->
       <md-menu-item>
         <md-button aria-label="Configure Dashboard" ng-click="ed.dashboardEdit()">
           <md-icon aria-label="Configure Dashboard">settings</md-icon>
@@ -55,5 +55,13 @@
   <md-button class="md-fab md-primary  md-mini md-hue-2 transparent-color" ng-click="ed.savePage()" aria-label="Save Dashboard">
     <md-tooltip md-direction="bottom">Save Dashboard</md-tooltip>
     <md-icon>save</md-icon>
+  </md-button>
+  <md-button class="md-fab md-primary  md-mini md-hue-2 transparent-color" ng-click="ed.deleteDashboard()" aria-label="Delete Dashboard">
+    <md-tooltip md-direction="bottom">Delete Dashboard</md-tooltip>
+    <md-icon>delete</md-icon>
+  </md-button>
+  <md-button class="md-fab md-primary  md-mini md-hue-2 transparent-color" ng-click="ed.closeDashboard()" aria-label="Close Dashboard Editor">
+    <md-tooltip md-direction="bottom">Close Dashboard Editor</md-tooltip>
+    <md-icon>close</md-icon>
   </md-button>
 </div>

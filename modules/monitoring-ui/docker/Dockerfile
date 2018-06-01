@@ -18,19 +18,27 @@ RUN addgroup -S sofia -g 433 && adduser -u 431 -S -g sofia -h /usr/local -s /sbi
 RUN chown -R sofia:sofia /usr/local && \
     chown -R sofia:sofia /var/log/logs-s4c && \
     chown -R sofia:sofia ./target && \    
-    chown sofia:sofia app.jar
+    chown sofia:sofia app.jar && \
+    chmod -R 777 ./target && \
+    chmod -R 777 /var/log && \
+    chmod -R 777 /usr/local
 
 # Copy certs
 COPY sofia4cities.crt /usr/local/
 COPY server.key /usr/local/
 
+COPY ocpserver.crt /usr/local/
+COPY ocpserver.key /usr/local/
+
 # Import certificates
 RUN keytool -noprompt -import -v -trustcacerts -alias rancherserver -file /usr/local/sofia4cities.crt \
 	-keystore /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts -keypass changeit -storepass changeit
+RUN keytool -noprompt -import -v -trustcacerts -alias openshiftserver -file /usr/local/ocpserver.crt \
+	-keystore /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts -keypass changeit -storepass changeit	
 	  
 USER sofia
 
-EXPOSE 19000
+EXPOSE 18100
 
 ENV JAVA_OPTS="" \
     SERVER_NAME=localhost

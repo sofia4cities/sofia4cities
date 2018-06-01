@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 20100
   contextPath: /flowengine
 
 # all access to actuator endpoints without security
@@ -9,9 +9,19 @@ spring:
   application.name: sofia2-flow-engine
   ## JPA Config
   datasource:
-    url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/sofia2_s4c?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root
-    password: 
+    password: changeIt!
+    driver-class-name: com.mysql.jdbc.Driver
+    tomcat:
+      # Number of ms to wait before throwing an exception if no connection is available.
+      max-wait: 10000
+      # Maximum number of active connections that can be allocated from this pool at the same time.
+      max-active: 50
+      validation-query: SELECT 1
+      # Validate the connection before borrowing it from the pool.
+      test-on-borrow: true
+      test-while-idle: true
   jpa:
     ## Hibernate Properties
     # The SQL dialect makes Hibernate generate better SQL for the chosen database
@@ -19,13 +29,13 @@ spring:
     # Hibernate ddl auto (create, create-drop, validate, update)
     hibernate.ddl-auto: update
   boot.admin: #Spring Boot Admin Config 
-    url: http://localhost:19000
+    url: http://localhost:18100
     username: operations
     password: changeIt!
     client.metadata.user.name: ${spring.boot.admin.username}
     client.metadata.user.password: ${spring.boot.admin.password}
-    service-base-url: http://localhost:8082
-    client.service-url: http://localhost:8082
+    service-base-url: http://localhost:20100
+    client.service-url: http://localhost:20100
     
 sofia2: #Config Sofia2 specific
    router.avoidsslverification: true
@@ -34,7 +44,8 @@ sofia2: #Config Sofia2 specific
          interval.sec: 30
          initial.delay.sec: 20
       admin.url: http://localhost:10000
-      node.path: node4
+      node.path: node
+      audit.enabled: true
       launcher:
          path: /opt/nodeRed/Flow-Engine-Manager/
          job: app.js
@@ -46,11 +57,11 @@ sofia2: #Config Sofia2 specific
          reboot.delay.seconds: 10
          port:
             domain:
-               min: 8000
-               max: 8500
+               min: 28000
+               max: 28500
             service:
-               min: 7000
-               max: 7500
+               min: 27000
+               max: 27500
       services:
          domain:
             status: /getDomainStatusMF

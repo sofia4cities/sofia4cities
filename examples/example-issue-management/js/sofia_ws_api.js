@@ -116,10 +116,10 @@ function SofiaClient() {
 							+ '"@type": "SSAPBodyJoinMessage",'
 							+ '"token":"'
 							+ this.config.token
-							+ '","clientPlatform":"'
-							+ this.config.clientPlatform
-							+ '","clientPlatformInstance":"'
-							+ this.config.clientPlatformInstance
+							+ '","deviceTemplate":"'
+							+ this.config.deviceTemplate
+							+ '","device":"'
+							+ this.config.device
 							+ '"'
 							+ '}'
 							+ '}';

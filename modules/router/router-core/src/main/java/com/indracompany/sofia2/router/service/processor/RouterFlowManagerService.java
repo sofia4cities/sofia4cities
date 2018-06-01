@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.router.service.processor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.router.client.RouterClientGateway;
 import com.indracompany.sofia2.router.service.ClientsConfigFactory;
@@ -61,6 +63,8 @@ public class RouterFlowManagerService {
 	@Autowired
 	private CamelContext camelContext;
 
+	ObjectMapper mapper = new ObjectMapper();
+
 	private String executeCrudOperationsRoute = "direct:execute-crud-operations";
 
 	public OperationResultModel startBrokerFlow(NotificationModel model, Exchange exchange) {
@@ -80,6 +84,26 @@ public class RouterFlowManagerService {
 			output.setMessage("Input Model Integrity Check Failed");
 			return output;
 		}
+	}
+
+	public void preProcessNotification(Exchange exchange) throws IOException {
+
+		String body = (String) exchange.getIn().getBody();
+
+		NotificationModel obj;
+		try {
+			obj = mapper.readValue(body, NotificationModel.class);
+			NotificationCompositeModel compositeModel = new NotificationCompositeModel();
+			compositeModel.setNotificationModel(obj);
+
+			ProducerTemplate t = camelContext.createProducerTemplate();
+			NotificationCompositeModel result = (NotificationCompositeModel) t.requestBody(executeCrudOperationsRoute,
+					compositeModel);
+		} catch (IOException e) {
+			log.error("Error Preprocessing input message from Kafka", e);
+			throw e;
+		}
+
 	}
 
 	public void executeCrudOperations(Exchange exchange) {
@@ -144,7 +168,7 @@ public class RouterFlowManagerService {
 			Entry<String, AdviceNotificationService> item = iterator.next();
 			AdviceNotificationService service = item.getValue();
 			List<AdviceNotificationModel> list = service.getAdviceNotificationModel(ontologyName, messageType);
-			if (list != null)
+			if (list != null && list.size()>0)
 				listNotifications.addAll(list);
 		}
 

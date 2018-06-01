@@ -6,7 +6,8 @@ LABEL module.maintainer "plataformasofia2@indra.es" \
 
 # Default hostname
 ENV SERVER_NAME=localhost \
-	ZEPPELIN_HOST=localhost
+	ZEPPELIN_HOST=localhost \
+	RESOLVER=localhost
 	
 # Create www-data user before start nginx comtainer
 RUN addgroup -g 1000 -S www-data \
@@ -29,5 +30,6 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 # Copy certs
 COPY sofia4cities.crt /etc/nginx/ssl/
 COPY server.key /etc/nginx/ssl/
-				
-CMD /bin/sh -c "envsubst '\$SERVER_NAME \$ZEPPELIN_HOST' < /etc/nginx/nginx_template.conf > /etc/nginx/nginx.conf && nginx -g 'daemon off;' || cat /etc/nginx/nginx.conf"
+
+COPY docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["docker-entrypoint.sh"]				

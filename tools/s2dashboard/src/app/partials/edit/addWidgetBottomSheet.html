@@ -1,73 +1,61 @@
-<md-bottom-sheet class="md-grid" layout="column">
-  <div layout="row" layout-align="center center" ng-cloak>
-    <h4>Drag&Drop your gadget to the grid panel</h4>
+<md-bottom-sheet class="md-grid addGadget-sheet" layout="column">
+  <div layout="row" style="margin-top: -25px;" layout-align="center center" ng-cloak>
+    <h5 class="addGadget-title">
+        <md-icon class="ng-scope material-icons addGadget-title-icon" role="img" aria-label="add_circle_outline" 
+    >add_circle_outline</md-icon> 
+     Drag&Drop your gadget to the grid panel</h5>
   </div>
   <div ng-cloak>
-    <md-list flex layout="row" layout-align="center center">
-      <md-list-item>
-        <div>
-          <md-button id="line" class="md-grid-item-content" draggable>
-            <md-icon>show_chart</md-icon>
-            <div class="md-grid-text"> Line Chart </div>
+
+      <div layout="row"  layout-align="center center" layout-wrap style="margin-bottom: 15px;  margin-top: -10px;">
+          <div flex="12">
+          <md-button id="line"  draggable>
+            <md-icon class="addGadget-icon">show_chart</md-icon>
+            <div class="md-grid-text bold"> Line Chart </div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="bar" class="md-grid-item-content" draggable>
-            <md-icon>insert_chart</md-icon>
-            <div class="md-grid-text"> Bar Chart </div>
+        <div flex="12">
+          <md-button id="bar"  draggable>
+            <md-icon class="addGadget-icon">insert_chart</md-icon>
+            <div class="md-grid-text bold"> Bar Chart </div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="pie" class="md-grid-item-content" draggable>
-            <md-icon>pie_chart</md-icon>
-            <div class="md-grid-text"> Pie Chart </div>
+        <div flex="12">
+          <md-button id="pie"  draggable>
+            <md-icon class="addGadget-icon">pie_chart</md-icon>
+            <div class="md-grid-text bold"> Pie Chart </div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="wordcloud" class="md-grid-item-content" draggable>
-            <md-icon>sort_by_alpha</md-icon>
-            <div class="md-grid-text">Wordcloud</div>
+        <div flex="12">
+          <md-button id="wordcloud"  draggable>
+            <md-icon class="addGadget-icon">sort_by_alpha</md-icon>
+            <div class="md-grid-text bold">Wordcloud</div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="map" class="md-grid-item-content" draggable>
-            <md-icon>map</md-icon>
-            <div class="md-grid-text"> Map </div>
+        <div flex="12">
+          <md-button id="map"  draggable>
+            <md-icon class="addGadget-icon">map</md-icon>
+            <div class="md-grid-text bold"> Map </div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="radar" class="md-grid-item-content" draggable>
-            <md-icon>track_changes</md-icon>
-            <div class="md-grid-text"> Radar </div>
+        <div flex="12">
+          <md-button id="radar"  draggable>
+            <md-icon class="addGadget-icon">track_changes</md-icon>
+            <div class="md-grid-text  bold"> Radar </div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="livehtml" class="md-grid-item-content" draggable>
-            <md-icon>art_track</md-icon>
-            <div class="md-grid-text"> Live HTML </div>
+        <div flex="12">
+          <md-button id="livehtml"  draggable>
+            <md-icon class="addGadget-icon">art_track</md-icon>
+            <div class="md-grid-text  bold"> Live HTML </div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="table" class="md-grid-item-content" draggable>
-            <md-icon>view_list</md-icon>
-            <div class="md-grid-text">Table </div>
+        <div flex="12">
+          <md-button id="table" draggable>
+            <md-icon class="addGadget-icon">view_list</md-icon>
+            <div class="md-grid-text bold">Table </div>
           </md-button>
+     
         </div>
-      </md-list-item>
-    </md-list>
   </div>
 </md-bottom-sheet>

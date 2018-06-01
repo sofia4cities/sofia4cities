@@ -69,6 +69,22 @@ buildNginx()
 	docker build -t sofia2/nginx:$1 .		
 }
 
+buildScalability() 
+{
+	echo "Scalability module example image generation with Docker CLI: "
+	cp $1/target/*-exec.jar $1/docker/
+	docker build -t sofia2/$2:$3 .
+	rm $1/docker/*.jar
+}
+
+buildChatbot()
+{
+	echo "Chatbot module example image generation with Docker CLI: "
+        cp $1/target/*-exec.jar $1/docker/
+        docker build -t sofia2/$2:$3 .
+        rm $1/docker/*.jar
+}
+
 buildQuasar()
 {
 	echo "Quasar image generation with Docker CLI: "
@@ -208,7 +224,7 @@ if [ -z "$1" ]; then
 	fi	
 	
 	echo "Pushing all images to Docker registry"
-	pushAllImages2Registry 5.1.0-rc2
+	pushAllImages2Registry latest
 
 fi
 
@@ -267,11 +283,25 @@ fi
 if [[ "$1" == "nginx" ]]; then
 	cd $homepath/../dockerfiles/nginx
 	buildNginx latest
+	pushImage2Registry nginx latest
 fi
 
 if [[ "$1" == "configinit" ]]; then
 	cd $homepath/../../config/init/
 	buildImage "Config Init"
+	pushImage2Registry configinit latest
+fi
+
+if [[ "$1" == "scalability" ]]; then
+	cd $homepath/../../examples/sofia2-scalability-example/docker
+	buildScalability $homepath/../../examples/sofia2-scalability-example scalability latest
+	pushImage2Registry scalability latest
+fi
+
+if [[ "$1" == "chatbot" ]]; then
+	cd $homepath/../../examples/chatbot/docker
+	buildChatbot $homepath/../../examples/chatbot chatbot latest
+	pushImage2Registry chatbot latest
 fi
 
 if [ "$1" == -1 ]; then
@@ -317,6 +347,8 @@ deleteImage monitoringui
 deleteImage flowengine
 deleteImage nginx
 deleteImage configinit
+deleteImage scalability
+deleteImage chatbot
 
 deleteUntaggedImages
 removeOrphanVolumes

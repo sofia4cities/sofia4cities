@@ -67,9 +67,9 @@ public class ApiFIQL {
 	public static final String API_PUBLICA = "PUBLIC";
 	public static final String API_PRIVADA = "PRIVATE";
 
-	static Locale locale = LocaleContextHolder.getLocale();
+	private  Locale locale = LocaleContextHolder.getLocale();
 
-	static DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+	private  DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
 	public List<ApiDTO> toApiDTO(List<Api> apis) {
 		List<ApiDTO> apisDTO = new ArrayList<ApiDTO>();
@@ -105,7 +105,7 @@ public class ApiFIQL {
 		apiDTO.setImageType(api.getImageType());
 		apiDTO.setStatus(api.getState());
 		apiDTO.setCreationDate(df.format(api.getCreatedAt()));
-		if (api.getUser() != null && !api.getUser().equals("")) {
+		if (api.getUser() != null) {
 			apiDTO.setUserId(api.getUser().getUserId());
 		}
 

@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>5.1.0-rc2</version>
+		<version>5.2.0-rc1</version>
 		<relativePath>../..</relativePath>
 	</parent>
 	<groupId>com.indracompany.sofia2</groupId>
@@ -240,7 +240,7 @@
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<configuration>
-					<imageName>sofia2/apimanager</imageName>
+					<imageName>${docker.image.username}/apimanager</imageName>
 					<imageTags>
 						<imageTag>${project.version}</imageTag>
 					</imageTags>

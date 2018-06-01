@@ -16,19 +16,49 @@ package com.indracompany.sofia2.config.services.dashboard;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.Dashboard;
+import com.indracompany.sofia2.config.model.DashboardUserAccess;
+import com.indracompany.sofia2.config.services.dashboard.dto.DashboardCreateDTO;
+import com.indracompany.sofia2.config.services.dashboard.dto.DashboardDTO;
 
 public interface DashboardService {
 
-	List<Dashboard> findAllDashboard();
-	List<Dashboard> findDashboardWithIdentificationAndDescription(String identification, String description, String user);
+	List<DashboardDTO> findDashboardWithIdentificationAndDescription(String identification, String description,
+			String user);
+
 	List<String> getAllIdentifications();
+
 	void deleteDashboard(String id, String userId);
+
 	void saveDashboard(String id, Dashboard dashboard, String userId);
+
 	Dashboard getDashboardById(String id, String userId);
+
 	String getCredentialsString(String userId);
-	String createNewDashboard(String identification, String userId);
+
+	String createNewDashboard(DashboardCreateDTO dashboard, String userId);
+
 	boolean hasUserPermission(String id, String userId);
+
 	boolean dashboardExists(String identification);
+
 	void saveDashboardModel(String id, String model, boolean visible, String userId);
-	
+
+	List<DashboardUserAccess> getDashboardUserAccesses(String dashboardId);
+
+	String saveUpdateAccess(DashboardCreateDTO dashboard, String userId);
+
+	String updatePublicDashboard(DashboardCreateDTO dashboard, String userId);
+
+	String cleanDashboardAccess(DashboardCreateDTO dashboard, String userId);
+
+	Dashboard getDashboardEditById(String id, String userId);
+
+	boolean hasUserEditPermission(String id, String userId);
+
+	boolean hasUserViewPermission(String id, String userId);
+
+	byte[] getImgBytes(String id);
+
+	String deleteDashboardAccess(String dashboardId, String userId);
+
 }

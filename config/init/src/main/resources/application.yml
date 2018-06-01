@@ -1,6 +1,6 @@
 
 server: #Tomcat Configuration
-   port: 18081
+   port: 21000
    contextPath: /systemconfig-init
    tomcat: 
       access_log_enabled: true
@@ -46,15 +46,19 @@ spring:
    application.name: systemconfig-init
    ## JPA Config
    datasource:
-      url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      url: jdbc:mysql://localhost:3306/sofia2_s4c?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password: 
+      password: changeIt!
       # Number of ms to wait before throwing an exception if no connection is available.
       tomcat.max-wait: 10000
       # Maximum number of active connections that can be allocated from this pool at the same time.
       tomcat.max-active: 50
       # Validate the connection before borrowing it from the pool.
       tomcat.test-on-borrow: true
+      driver-class-name: com.mysql.jdbc.Driver
+      test-while-idle: true
+      test-on-borrow: true
+      validation-query: SELECT 1      
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
@@ -70,7 +74,7 @@ logging:
       org.springframework: INFO
       com.example.boot.thymeleaf: INFO
       com.indracompany: DEBUG
-      org.hibernate: DEBUG
+      org.hibernate: INFO
 
 
  

@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -41,7 +42,9 @@ import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
+import com.indracompany.sofia2.config.model.DashboardUserAccessType;
 import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.DeviceSimulation;
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.EventsDigitalTwinType;
@@ -50,8 +53,8 @@ import com.indracompany.sofia2.config.model.FlowDomain;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
-import com.indracompany.sofia2.config.model.LogicDigitalTwinType;
 import com.indracompany.sofia2.config.model.MarketAsset;
+import com.indracompany.sofia2.config.model.Notebook;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyCategory;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
@@ -67,7 +70,9 @@ import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
+import com.indracompany.sofia2.config.repository.DashboardUserAccessTypeRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.DeviceSimulationRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.FlowDomainRepository;
@@ -75,6 +80,7 @@ import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.MarketAssetRepository;
+import com.indracompany.sofia2.config.repository.NotebookRepository;
 import com.indracompany.sofia2.config.repository.OntologyCategoryRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
@@ -103,7 +109,7 @@ public class InitConfigDB {
 	private static User userOperation = null;
 	private static Token tokenAdministrator = null;
 	private static Ontology ontologyAdministrator = null;
-	private static GadgetDatasource gadgetDatasourceAdministrator = null;
+	private static GadgetDatasource gadgetDatasourceDeveloper = null;
 	private static Gadget gadgetAdministrator = null;
 
 	@Autowired
@@ -134,6 +140,8 @@ public class InitConfigDB {
 	@Autowired
 	OntologyUserAccessTypeRepository ontologyUserAccessTypeRepository;
 	@Autowired
+	DashboardUserAccessTypeRepository dashboardUserAccessTypeRepository;
+	@Autowired
 	RoleRepository roleRepository;
 	@Autowired
 	TokenRepository tokenRepository;
@@ -157,6 +165,12 @@ public class InitConfigDB {
 	@Autowired
 	MarketAssetRepository marketAssetRepository;
 
+	@Autowired
+	NotebookRepository notebookRepository;
+
+	@Autowired
+	DeviceSimulationRepository simulationRepository;
+
 	@PostConstruct
 	@Test
 	public void init() {
@@ -168,7 +182,7 @@ public class InitConfigDB {
 			init_RoleUser();
 			log.info("OK init_RoleUser");
 			init_User();
-			log.info("OK init_UserCDB");
+			log.info("OK init_User");
 			//
 			init_DataModel();
 			log.info("OK init_DataModel");
@@ -184,7 +198,6 @@ public class InitConfigDB {
 			init_OntologyCategory();
 			log.info("OK init_OntologyCategory");
 
-
 			//
 			init_ClientPlatform();
 			log.info("OK init_ClientPlatform");
@@ -198,15 +211,18 @@ public class InitConfigDB {
 
 			init_UserToken();
 			log.info("OK USER_Token");
-			//
-			init_Dashboard();
-			log.info("OK init_Dashboard");
-			init_Gadget();
-			log.info("OK init_Gadget");
+
 			init_GadgetDatasource();
 			log.info("OK init_GadgetDatasource");
+			init_Gadget();
+			log.info("OK init_Gadget");
 			init_GadgetMeasure();
 			log.info("OK init_GadgetMeasure");
+
+			init_Dashboard();
+			log.info("OK init_Dashboard");
+			init_DashboardUserAccessType();
+			log.info("OK init_DashboardUserAccessType");
 
 			init_Menu_ControlPanel();
 			log.info("OK init_ConsoleMenu");
@@ -225,6 +241,29 @@ public class InitConfigDB {
 			init_market();
 			log.info("OK init_Market");
 
+			init_notebook();
+			log.info("OK init_Notebook");
+
+			init_simulations();
+			log.info("OK init_simulations");
+		}
+
+	}
+
+	private void init_simulations() {
+		DeviceSimulation simulation = this.simulationRepository.findByIdentification("Issue generator");
+		if (simulation == null) {
+			simulation = new DeviceSimulation();
+			simulation.setActive(false);
+			simulation.setCron("0/5 * * ? * * *");
+			simulation.setIdentification("Issue generator");
+			simulation.setInterval(5);
+			simulation.setJson(loadFromResources("simulations/DeviceSimulation_example1.json"));
+			simulation.setClientPlatform(this.clientPlatformRepository.findByIdentification("Ticketing App"));
+			simulation.setOntology(this.ontologyRepository.findByIdentification("Ticket"));
+			simulation.setToken(this.tokenRepository.findByClientPlatform(simulation.getClientPlatform()).get(0));
+			simulation.setUser(getUserDeveloper());
+			this.simulationRepository.save(simulation);
 		}
 
 	}
@@ -233,16 +272,58 @@ public class InitConfigDB {
 		log.info("init_DigitalTwinDevice");
 		if (this.digitalTwinDeviceRepository.count() == 0) {
 			DigitalTwinDevice device = new DigitalTwinDevice();
+
+			// Turbine example
+
 			device.setContextPath("/turbine");
 			device.setDigitalKey("f0e50f5f8c754204a4ac601f29775c15");
 			device.setIdentification("TurbineHelsinki");
-			device.setIp("localhost");
+			device.setIntrface("eth0");
+			device.setIpv6(false);
 			device.setLatitude("60.17688297979675");
 			device.setLongitude("24.92333816559176");
 			device.setPort(10000);
 			device.setUrlSchema("http");
 			device.setUrl("https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker");
-			device.setLogic(
+			device.setTypeId(this.digitalTwinTypeRepository.findByName("Turbine"));
+			device.setUser(getUserDeveloper());
+			this.digitalTwinDeviceRepository.save(device);
+
+			// Sensehat example
+
+			device = new DigitalTwinDevice();
+			device.setContextPath("/sensehat");
+			device.setDigitalKey("f0e50f5f8c754204a4ac601f29775c15");
+			device.setIdentification("SensehatHelsinki");
+			device.setIntrface("eth0");
+			device.setIpv6(false);
+			device.setLatitude("60.17688297979675");
+			device.setLongitude("24.92333816559176");
+			device.setPort(10000);
+			device.setUrlSchema("http");
+			device.setUrl("https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker");
+			device.setTypeId(this.digitalTwinTypeRepository.findByName("Sensehat"));
+			device.setUser(getUserDeveloper());
+			this.digitalTwinDeviceRepository.save(device);
+
+		}
+	}
+
+	private void init_DigitalTwinType() {
+		log.info("init_DigitalTwinType");
+
+		if (this.digitalTwinTypeRepository.count() == 0) {
+
+			// Turbine example
+
+			DigitalTwinType type = new DigitalTwinType();
+			type.setName("Turbine");
+			type.setType("thing");
+			type.setDescription("Wind Turbine for electricity generation");
+			type.setJson(
+					"{\"title\":\"Turbine\",\"links\":{\"properties\":\"thing/Turbine/properties\",\"actions\":\"thing/Turbine/actions\",\"events\":\"thing/Turbine/events\"},\"description\":\"Wind Turbine for electricity generation\",\"properties\":{\"rotorSpeed\":{\"type\":\"int\",\"units\":\"rpm\",\"direction\":\"out\",\"description\":\"Rotor speed\"},\"maxRotorSpeed\":{\"type\":\"int\",\"units\":\"rpm\",\"direction\":\"in_out\",\"description\":\"Max allowed speed for the rotor\"},\"power\":{\"type\":\"double\",\"units\":\"wat/h\",\"direction\":\"out\",\"description\":\"Current Power generated by the turbine\"},\"alternatorTemp\":{\"type\":\"double\",\"units\":\"celsius\",\"direction\":\"out\",\"description\":\"Temperature of the alternator\"},\"nacelleTemp\":{\"type\":\"double\",\"units\":\"celsius\",\"direction\":\"out\",\"description\":\"Temperature into the nacelle\"},\"windDirection\":{\"type\":\"int\",\"units\":\"degrees\",\"direction\":\"out\",\"description\":\"Wind direction\"}},\"actions\":{\"connectElectricNetwork\":{\"description\":\"Connect the turbine to the electric network to provide power\"},\"disconnectElectricNetwork\":{\"description\":\"Disconnect the turbine to the electric network to prevent problems\"},\"limitRotorSpeed\":{\"description\":\"Limits the rotor speed\"}},\"events\":{\"register\":{\"description\":\"Register the device into the plaform\"},\"updateshadow\":{\"description\":\"Updates the shadow in the plaform\"},\"ping\":{\"description\":\"Ping the platform to keepalive the device\"},\"log\":{\"description\":\"Log information in plaform\"}}}");
+			type.setUser(getUserDeveloper());
+			type.setLogic(
 					"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
 							+ System.getProperty("line.separator") + "function init(){"
 							+ System.getProperty("line.separator")
@@ -287,56 +368,139 @@ public class InitConfigDB {
 							+ System.getProperty("line.separator")
 							+ "var onActionDisconnectElectricNetwork=function(data){ }"
 							+ System.getProperty("line.separator") + "var onActionLimitRotorSpeed=function(data){ }");
-			device.setTypeId(this.digitalTwinTypeRepository.findByName("Turbine"));
-			device.setUser(getUserDeveloper());
-			this.digitalTwinDeviceRepository.save(device);
-		}
-	}
 
-	private void init_DigitalTwinType() {
-		log.info("init_DigitalTwinType");
-
-		if (this.digitalTwinTypeRepository.count() == 0) {
-			DigitalTwinType type = new DigitalTwinType();
-			type.setName("Turbine");
-			type.setType("thing");
-			type.setDescription("Wind Turbine for electricity generation");
-			type.setJson(
-					"{\"title\":\"Turbine\",\"links\":{\"properties\":\"thing/Turbine/properties\",\"actions\":\"thing/Turbine/actions\",\"events\":\"thing/Turbine/events\"},\"description\":\"Wind Turbine for electricity generation\",\"properties\":{\"rotorSpeed\":{\"type\":\"int\",\"units\":\"rpm\",\"direction\":\"out\",\"description\":\"Rotor speed\"},\"maxRotorSpeed\":{\"type\":\"int\",\"units\":\"rpm\",\"direction\":\"in_out\",\"description\":\"Max allowed speed for the rotor\"},\"power\":{\"type\":\"double\",\"units\":\"wat/h\",\"direction\":\"out\",\"description\":\"Current Power generated by the turbine\"},\"alternatorTemp\":{\"type\":\"double\",\"units\":\"celsius\",\"direction\":\"out\",\"description\":\"Temperature of the alternator\"},\"nacelleTemp\":{\"type\":\"double\",\"units\":\"celsius\",\"direction\":\"out\",\"description\":\"Temperature into the nacelle\"},\"windDirection\":{\"type\":\"int\",\"units\":\"degrees\",\"direction\":\"out\",\"description\":\"Wind direction\"}},\"actions\":{\"connectElectricNetwork\":{\"description\":\"Connect the turbine to the electric network to provide power\"},\"disconnectElectricNetwork\":{\"description\":\"Disconnect the turbine to the electric network to prevent problems\"},\"limitRotorSpeed\":{\"description\":\"Limits the rotor speed\"}},\"events\":{\"register\":{\"description\":\"Register the device into the plaform\"},\"updateshadow\":{\"description\":\"Updates the shadow in the plaform\"},\"ping\":{\"description\":\"Ping the platform to keepalive the device\"},\"log\":{\"description\":\"Log information in plaform\"}}}");
-			type.setUser(getUserDeveloper());
-
-			Set<PropertyDigitalTwinType> properties = createPropertiesDT(type);
-			Set<ActionsDigitalTwinType> actions = createActionsDT(type);
-			Set<EventsDigitalTwinType> events = createEventsDT(type);
-			Set<LogicDigitalTwinType> logics = createLogicDT(type);
+			Set<PropertyDigitalTwinType> properties = createTurbinePropertiesDT(type);
+			Set<ActionsDigitalTwinType> actions = createTurbineActionsDT(type);
+			Set<EventsDigitalTwinType> events = createTurbineEventsDT(type);
 
 			type.setPropertyDigitalTwinTypes(properties);
 			type.setActionDigitalTwinTypes(actions);
 			type.setEventDigitalTwinTypes(events);
-			type.setLogicDigitalTwinTypes(logics);
+
+			this.digitalTwinTypeRepository.save(type);
+
+			// Sensehat example
+			type = new DigitalTwinType();
+			type.setName("Sensehat");
+			type.setType("thing");
+			type.setDescription("Raspberry with Sensehat");
+			type.setJson(
+					"{\"title\": \"Sensehat\",\"links\": {\"properties\": \"thing/Sensehat/properties\",\"actions\": \"thing/Sensehat/actions\",\"events\": \"thing/Sensehat/events\"},\"description\": \"Raspberry - Sensehat\",\"properties\": {\"temperature\": {\"type\": \"double\",\"units\": \"degrees\",\"direction\": \"out\",\"description\": \"Temperature\"},\"humidity\": {\"type\": \"double\",\"units\": \"milibars\",\"direction\": \"out\",\"description\": \"Humidity\"},\"pressure\": {\"type\": \"double\",\"units\": \"%\",\"direction\": \"out\",\"description\": \"Pressure\"}},\"actions\": {\"joystickUp\": {\"description\": \"Joysctick action up\"},\"joystickRight\": {\"description\": \"Joystick action to the right\"},\"joystickDown\": {\"description\": \"Joystick action down\"},\"joystickLeft\": {\"description\": \"Joystick action to the left\"},\"joystickMiddle\": {\"description\": \"Joystick action to the middle\"}},\"events\": {\"ping\": {\"description\": \"Ping\"},\"register\": {\"description\": \"Register\"},\"log\": {\"description\": \"Log information in platform\"},\"joystickEventRigth\": {\"description\": \"Send joystick event to the right\"},\"joystickEventLeft\": {\"description\": \"Send joystick event to the left\"},\"joystickEventUp\": {\"description\": \"Send joystick event up\"},\"joystickEventDown\": {\"description\": \"Send joystick event down\"},\"joystickEventMiddle\": {\"description\": \"Send joystick event to the middle\"},\"updateShadow\": {\"description\": \"Send joystick event to the right\"}}}");
+			type.setUser(getUserDeveloper());
+			type.setLogic(
+					"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
+							+ System.getProperty("line.separator")
+							+ "var senseHatApi = Java.type('com.indracompany.sofia2.raspberry.sensehat.digitaltwin.api.SenseHatApi').getInstance();"
+							+ System.getProperty("line.separator") + "function init(){"
+							+ System.getProperty("line.separator")
+							+ "   senseHatApi.setJoystickUpListener('joystickEventUp');"
+							+ System.getProperty("line.separator")
+							+ "   senseHatApi.setJoystickDownListener('joystickEventDown')"
+							+ System.getProperty("line.separator")
+							+ "   senseHatApi.setJoystickLeftListener('joystickEventLeft');"
+							+ System.getProperty("line.separator")
+							+ "   senseHatApi.setJoystickRightListener('joystickEventRight');"
+							+ System.getProperty("line.separator")
+							+ "   senseHatApi.setJoystickMiddleListener('joystickEventMiddle');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Init SenseHatSpain shadow');"
+							+ System.getProperty("line.separator") + "   var sensorPress = senseHatApi.getPressure();"
+							+ System.getProperty("line.separator") + "   var sensorTemp = senseHatApi.getTemperature();"
+							+ System.getProperty("line.separator") + "   var sensorHum = senseHatApi.getHumidity();"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.setStatusValue('pressure', sensorPress);"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.setStatusValue('temperature', sensorTemp);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('humidity', sensorHum);"
+							+ System.getProperty("line.separator")
+							+ "    var temp = digitalTwinApi.getStatusValue('temperature');"
+							+ System.getProperty("line.separator")
+							+ "    var hum = digitalTwinApi.getStatusValue('humidity');"
+							+ System.getProperty("line.separator")
+							+ "    var pressure = digitalTwinApi.getStatusValue('pressure');"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.log('Temperature: ' + temp + ' - Humidity: ' + hum + ' - Pressure: '+ pressure);"
+							+ System.getProperty("line.separator") + "    digitalTwinApi.sendUpdateShadow();"
+							+ System.getProperty("line.separator") + "    digitalTwinApi.log('Send Update Shadow');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "function main(){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('New main execution');" + System.getProperty("line.separator")
+							+ "   var sensorPress = senseHatApi.getPressure();" + System.getProperty("line.separator")
+							+ "   var sensorTemp = senseHatApi.getTemperature();" + System.getProperty("line.separator")
+							+ "   var sensorHum = senseHatApi.getHumidity();" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.setStatusValue('pressure', sensorPress);"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.setStatusValue('temperature', sensorTemp);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('humidity', sensorHum);"
+							+ System.getProperty("line.separator") + "    digitalTwinApi.sendUpdateShadow();"
+							+ System.getProperty("line.separator") + "    digitalTwinApi.log('Send Update Shadow');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var joystickEventLeft=function(event){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick event to the left');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.sendCustomEvent('joystickEventLeft');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var joystickEventRight=function(event){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick event to the right');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.sendCustomEvent('joystickEventRight');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var joystickEventUp=function(event){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick event up');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.sendCustomEvent('joystickEventUp');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var joystickEventDown=function(event){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick event down');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.sendCustomEvent('joystickEventDown');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var joystickEventMiddle=function(event){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick event to the middle');"
+							+ System.getProperty("line.separator")
+							+ "   digitalTwinApi.sendCustomEvent('joystickEventMiddle');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix(event);"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var onActionJoystickRight=function(data){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick action to the right');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Right');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "function onActionJoystickLeft(data){\r\n"
+							+ "   digitalTwinApi.log('Received joystick action to the left');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Left');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var onActionJoystickUp=function(data){ " + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick action up');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Up');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var onActionJoystickDown=function(data){" + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick action down');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Down');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "var onActionJoystickMiddle=function(data){ " + System.getProperty("line.separator")
+							+ "   digitalTwinApi.log('Received joystick action to the middle');"
+							+ System.getProperty("line.separator") + "   senseHatApi.showTextLedMatrix('Middle');"
+							+ System.getProperty("line.separator") + "}");
+
+			Set<PropertyDigitalTwinType> propertiesSensehat = createSensehatPropertiesDT(type);
+			Set<ActionsDigitalTwinType> actionsSensehat = createSensehatActionsDT(type);
+			Set<EventsDigitalTwinType> eventsSensehat = createSensehatEventsDT(type);
+
+			type.setPropertyDigitalTwinTypes(propertiesSensehat);
+			type.setActionDigitalTwinTypes(actionsSensehat);
+			type.setEventDigitalTwinTypes(eventsSensehat);
 
 			this.digitalTwinTypeRepository.save(type);
 		}
 	}
 
-	private Set<LogicDigitalTwinType> createLogicDT(DigitalTwinType type) {
-		Set<LogicDigitalTwinType> logics = new HashSet<LogicDigitalTwinType>();
-		LogicDigitalTwinType logic = new LogicDigitalTwinType();
-		logic.setTypeId(type);
-		logic.setLogic(
-				"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
-						+ System.getProperty("line.separator") + "function init(){}"
-						+ System.getProperty("line.separator") + "function main(){}"
-						+ System.getProperty("line.separator") + "var onActionConnectElectricNetwork=function(data){  }"
-						+ System.getProperty("line.separator")
-						+ "var onActionDisconnectElectricNetwork=function(data){ }"
-						+ System.getProperty("line.separator") + "var onActionLimitRotorSpeed=function(data){ }");
-
-		logics.add(logic);
-		return logics;
-	}
-
-	private Set<EventsDigitalTwinType> createEventsDT(DigitalTwinType type) {
+	private Set<EventsDigitalTwinType> createTurbineEventsDT(DigitalTwinType type) {
 		Set<EventsDigitalTwinType> events = new HashSet<EventsDigitalTwinType>();
 		EventsDigitalTwinType event = new EventsDigitalTwinType();
 		event.setName("ping");
@@ -381,7 +545,7 @@ public class InitConfigDB {
 		return events;
 	}
 
-	private Set<ActionsDigitalTwinType> createActionsDT(DigitalTwinType type) {
+	private Set<ActionsDigitalTwinType> createTurbineActionsDT(DigitalTwinType type) {
 		Set<ActionsDigitalTwinType> actions = new HashSet<ActionsDigitalTwinType>();
 		ActionsDigitalTwinType action = new ActionsDigitalTwinType();
 		action.setName("disconnectElectricNetwork");
@@ -404,7 +568,7 @@ public class InitConfigDB {
 		return actions;
 	}
 
-	private Set<PropertyDigitalTwinType> createPropertiesDT(DigitalTwinType type) {
+	private Set<PropertyDigitalTwinType> createTurbinePropertiesDT(DigitalTwinType type) {
 		Set<PropertyDigitalTwinType> props = new HashSet<PropertyDigitalTwinType>();
 		PropertyDigitalTwinType prop = new PropertyDigitalTwinType();
 		prop.setName("alternatorTemp");
@@ -463,6 +627,150 @@ public class InitConfigDB {
 		return props;
 	}
 
+	private Set<EventsDigitalTwinType> createSensehatEventsDT(DigitalTwinType type) {
+		Set<EventsDigitalTwinType> events = new HashSet<EventsDigitalTwinType>();
+		EventsDigitalTwinType event = new EventsDigitalTwinType();
+		event.setName("ping");
+		event.setStatus(true);
+		event.setType(Type.PING);
+		event.setDescription("Ping the platform to keepalive the device");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("updateshadow");
+		event.setStatus(true);
+		event.setType(Type.UPDATE_SHADOW);
+		event.setDescription("Updates the shadow in the plaform");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("log");
+		event.setStatus(true);
+		event.setType(Type.LOG);
+		event.setDescription("Log information in plaform");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("register");
+		event.setStatus(true);
+		event.setType(Type.REGISTER);
+		event.setDescription("Register the device into the plaform");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("joystickEventMiddle");
+		event.setStatus(true);
+		event.setType(Type.OTHER);
+		event.setDescription("Send joystick event to the middle");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("joystickEventRight");
+		event.setStatus(true);
+		event.setType(Type.OTHER);
+		event.setDescription("Send joystick event to the right");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("joystickEventLeft");
+		event.setStatus(true);
+		event.setType(Type.OTHER);
+		event.setDescription("Send joystick event to the left");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("joystickEventUp");
+		event.setStatus(true);
+		event.setType(Type.OTHER);
+		event.setDescription("Send joystick event up");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("joystickEventDown");
+		event.setStatus(true);
+		event.setType(Type.OTHER);
+		event.setDescription("Send joystick event down");
+		event.setTypeId(type);
+		events.add(event);
+
+		return events;
+	}
+
+	private Set<ActionsDigitalTwinType> createSensehatActionsDT(DigitalTwinType type) {
+		Set<ActionsDigitalTwinType> actions = new HashSet<ActionsDigitalTwinType>();
+		ActionsDigitalTwinType action = new ActionsDigitalTwinType();
+		action.setName("joystickUp");
+		action.setDescription("Joystick action up");
+		action.setTypeId(type);
+		actions.add(action);
+
+		action = new ActionsDigitalTwinType();
+		action.setName("joystickDown");
+		action.setDescription("Joystick action down");
+		action.setTypeId(type);
+		actions.add(action);
+
+		action = new ActionsDigitalTwinType();
+		action.setName("joystickLeft");
+		action.setDescription("Joystick action to the left");
+		action.setTypeId(type);
+		actions.add(action);
+
+		action = new ActionsDigitalTwinType();
+		action.setName("joystickRight");
+		action.setDescription("Joystick action to the right");
+		action.setTypeId(type);
+		actions.add(action);
+
+		action = new ActionsDigitalTwinType();
+		action.setName("joystickMiddle");
+		action.setDescription("Joystick action to the middle");
+		action.setTypeId(type);
+		actions.add(action);
+
+		return actions;
+	}
+
+	private Set<PropertyDigitalTwinType> createSensehatPropertiesDT(DigitalTwinType type) {
+		Set<PropertyDigitalTwinType> props = new HashSet<PropertyDigitalTwinType>();
+		PropertyDigitalTwinType prop = new PropertyDigitalTwinType();
+		prop.setName("temperature");
+		prop.setType("double");
+		prop.setUnit("degrees");
+		prop.setDirection(Direction.OUT);
+		prop.setDescription("Temperature");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		prop = new PropertyDigitalTwinType();
+		prop.setName("humidity");
+		prop.setType("double");
+		prop.setUnit("%");
+		prop.setDirection(Direction.OUT);
+		prop.setDescription("Humidity");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		prop = new PropertyDigitalTwinType();
+		prop.setName("pressure");
+		prop.setType("double");
+		prop.setUnit("milibars");
+		prop.setDirection(Direction.OUT);
+		prop.setDescription("Pressure");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		return props;
+	}
+
 	private void init_FlowDomain() {
 		log.info("init_FlowDomain");
 		// Domain for administrator
@@ -508,6 +816,14 @@ public class InitConfigDB {
 			config.setSuffix("lmgracia");
 			config.setDescription("Twitter");
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
+			this.configurationRepository.save(config);
+			//
+			config = new Configuration();
+			config.setType(Configuration.Type.SchedulingConfiguration);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment("default");
+			config.setDescription("RtdbMaintainer config");
+			config.setYmlConfig(loadFromResources("SchedulingConfiguration_default.yml"));
 			this.configurationRepository.save(config);
 			//
 
@@ -638,7 +954,13 @@ public class InitConfigDB {
 			client.setEncryptionKey(UUID.randomUUID().toString());
 			client.setDescription("Platform client for issues and ticketing");
 			clientPlatformRepository.save(client);
-
+			client = new ClientPlatform();
+			client.setId("4");
+			client.setUser(getUserDeveloper());
+			client.setIdentification("Device Master");
+			client.setEncryptionKey(UUID.randomUUID().toString());
+			client.setDescription("Device template for testing");
+			clientPlatformRepository.save(client);
 		}
 
 	}
@@ -682,6 +1004,26 @@ public class InitConfigDB {
 		} catch (Exception e) {
 			log.error("Error adding menu for role USER");
 		}
+		try {
+			log.info("Adding menu for role ANALYTIC");
+			ConsoleMenu menu = new ConsoleMenu();
+			menu.setId("4");
+			menu.setJson(loadFromResources("menu/menu_analytic.json"));
+			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_DATASCIENTIST.toString()));
+			this.consoleMenuRepository.save(menu);
+		} catch (Exception e) {
+			log.error("Error adding menu for role ANALYTIC");
+		}
+		try {
+			log.info("Adding menu for role DATAVIEWER");
+			ConsoleMenu menu = new ConsoleMenu();
+			menu.setId("5");
+			menu.setJson(loadFromResources("menu/menu_dataviewer.json"));
+			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_DATAVIEWER.toString()));
+			this.consoleMenuRepository.save(menu);
+		} catch (Exception e) {
+			log.error("Error adding menu for role DATAVIEWER");
+		}
 	}
 
 	private String loadFromResources(String name) {
@@ -719,16 +1061,25 @@ public class InitConfigDB {
 		if (dashboards.isEmpty()) {
 			log.info("No dashboards...adding");
 			Dashboard dashboard = new Dashboard();
-			dashboard.setIdentification("TempDashboard");
-			dashboard.setDescription("Dashboard show temperatures around the country");
+			dashboard.setIdentification("TempDeveloperDashboard");
+			dashboard.setDescription("Dashboard analytics restaurants");
 			dashboard.setJsoni18n("");
 			dashboard.setCustomcss("");
 			dashboard.setCustomjs("");
+			dashboard.setModel(
+					"{\"header\":{\"title\":\"My new s4c Dashboard\",\"enable\":true,\"height\":56,\"logo\":{\"height\":48},\"backgroundColor\":\"hsl(220, 23%, 20%)\",\"textColor\":\"hsl(0, 0%, 100%)\",\"iconColor\":\"hsl(0, 0%, 100%)\",\"pageColor\":\"hsl(0, 0%, 100%)\"},\"navigation\":{\"showBreadcrumbIcon\":true,\"showBreadcrumb\":true},\"pages\":[{\"title\":\"New Page\",\"icon\":\"apps\",\"background\":{\"file\":[]},\"layers\":[{\"gridboard\":[{\"$$hashKey\":\"object:64\"},{\"x\":0,\"y\":0,\"cols\":20,\"rows\":7,\"id\":\""
+							+ getGadget().getId()
+							+ "\",\"content\":\"bar\",\"type\":\"bar\",\"header\":{\"enable\":true,\"title\":{\"icon\":\"\",\"iconColor\":\"hsl(220, 23%, 20%)\",\"text\":\"My Gadget\",\"textColor\":\"hsl(220, 23%, 20%)\"},\"backgroundColor\":\"hsl(0, 0%, 100%)\",\"height\":\"25\"},\"backgroundColor\":\"white\",\"padding\":0,\"border\":{\"color\":\"#c7c7c7de\",\"width\":1,\"radius\":5},\"$$hashKey\":\"object:107\"}],\"title\":\"baseLayer\",\"$$hashKey\":\"object:23\"}],\"selectedlayer\":0,\"combinelayers\":false,\"$$hashKey\":\"object:4\"}],\"gridOptions\":{\"gridType\":\"fit\",\"compactType\":\"none\",\"margin\":3,\"outerMargin\":true,\"mobileBreakpoint\":640,\"minCols\":20,\"maxCols\":100,\"minRows\":20,\"maxRows\":100,\"maxItemCols\":5000,\"minItemCols\":1,\"maxItemRows\":5000,\"minItemRows\":1,\"maxItemArea\":25000,\"minItemArea\":1,\"defaultItemCols\":4,\"defaultItemRows\":4,\"fixedColWidth\":250,\"fixedRowHeight\":250,\"enableEmptyCellClick\":false,\"enableEmptyCellContextMenu\":false,\"enableEmptyCellDrop\":true,\"enableEmptyCellDrag\":false,\"emptyCellDragMaxCols\":5000,\"emptyCellDragMaxRows\":5000,\"draggable\":{\"delayStart\":100,\"enabled\":true,\"ignoreContent\":true,\"dragHandleClass\":\"drag-handler\"},\"resizable\":{\"delayStart\":0,\"enabled\":true},\"swap\":false,\"pushItems\":true,\"disablePushOnDrag\":false,\"disablePushOnResize\":false,\"pushDirections\":{\"north\":true,\"east\":true,\"south\":true,\"west\":true},\"pushResizeItems\":false,\"displayGrid\":\"none\",\"disableWindowResize\":false,\"disableWarnings\":false,\"scrollToNewItems\":true,\"api\":{}},\"interactionHash\":{\"1\":[],\"livehtml_1526292431685\":[],\"b163b6e4-a8d2-4c3b-b964-5efecf0dd3a0\":[]}}");
 			dashboard.setPublic(true);
-			dashboard.setUser(getUserAdministrator());
+			dashboard.setUser(getUserDeveloper());
 
 			dashboardRepository.save(dashboard);
 		}
+	}
+
+	private Gadget getGadget() {
+		List<Gadget> gadgets = this.gadgetRepository.findAll();
+		return gadgets.get(0);
 	}
 
 	private User getUserDeveloper() {
@@ -785,17 +1136,10 @@ public class InitConfigDB {
 		return ontologyAdministrator;
 	}
 
-	private GadgetDatasource getGadgetDatasourceAdministrator() {
-		if (gadgetDatasourceAdministrator == null)
-			gadgetDatasourceAdministrator = this.gadgetDatasourceRepository.findAll().get(0);
-		return gadgetDatasourceAdministrator;
-	}
-
-	private Gadget getGadgetAdministrator() {
-		if (gadgetAdministrator == null)
-			gadgetAdministrator = this.gadgetRepository.findAll().get(0);
-		return gadgetAdministrator;
-
+	private GadgetDatasource getGadgetDatasourceDeveloper() {
+		if (gadgetDatasourceDeveloper == null)
+			gadgetDatasourceDeveloper = this.gadgetDatasourceRepository.findAll().get(0);
+		return gadgetDatasourceDeveloper;
 	}
 
 	public void init_DataModel() {
@@ -819,6 +1163,15 @@ public class InitConfigDB {
 			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Audit.json"));
 			dataModel.setDescription("Base Audit");
 			dataModel.setLabels("Audit,General,IoT");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("DeviceLog");
+			dataModel.setTypeEnum(DataModel.MainType.IoT);
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_DeviceLog.json"));
+			dataModel.setDescription("Data model for device logging");
+			dataModel.setLabels("General,IoT,Log");
 			dataModel.setUser(getUserAdministrator());
 			dataModelRepository.save(dataModel);
 			//
@@ -1033,13 +1386,13 @@ public class InitConfigDB {
 		if (gadgets.isEmpty()) {
 			log.info("No gadgets ...");
 			Gadget gadget = new Gadget();
-
 			gadget.setIdentification("My Gadget");
-			gadget.setPublic(true);
-			gadget.setDescription("This is my new RT gadget for temperature evolution");
-			gadget.setType("Area");
-			gadget.setConfig("");
-			gadget.setUser(getUserAdministrator());
+			gadget.setPublic(false);
+			gadget.setDescription("gadget cousin score");
+			gadget.setType("bar");
+			gadget.setConfig(
+					"{\"scales\":{\"yAxes\":[{\"id\":\"#0\",\"display\":true,\"type\":\"linear\",\"position\":\"left\",\"scaleLabel\":{\"labelString\":\"\",\"display\":true}}]}}");
+			gadget.setUser(getUserDeveloper());
 			gadgetRepository.save(gadget);
 		}
 	}
@@ -1051,16 +1404,15 @@ public class InitConfigDB {
 		if (gadgetDatasource.isEmpty()) {
 			log.info("No gadget querys ...");
 			GadgetDatasource gadgetDatasources = new GadgetDatasource();
-			gadgetDatasources.setId("1");
 			gadgetDatasources.setIdentification("DsRawRestaurants");
-			gadgetDatasources.setMode("Query");
-			gadgetDatasources.setQuery("select * from Restaurants limit 100");
+			gadgetDatasources.setMode("query");
+			gadgetDatasources.setQuery("select * from Restaurants");
 			gadgetDatasources.setDbtype("RTDB");
 			gadgetDatasources.setRefresh(0);
 			gadgetDatasources.setOntology(null);
 			gadgetDatasources.setMaxvalues(150);
 			gadgetDatasources.setConfig("[]");
-			gadgetDatasources.setUser(getUserAdministrator());
+			gadgetDatasources.setUser(getUserDeveloper());
 			gadgetDatasourceRepository.save(gadgetDatasources);
 		}
 
@@ -1073,11 +1425,10 @@ public class InitConfigDB {
 		if (gadgetMeasures.isEmpty()) {
 			log.info("No gadget measures ...");
 			GadgetMeasure gadgetMeasure = new GadgetMeasure();
-			// inicializo el id?
-			// gadgetMeasure.setId("1");
-			gadgetMeasure.setDatasource(getGadgetDatasourceAdministrator());
-			gadgetMeasure.setConfig("'field':'temperature','transformation':''}],'name':'Avg. Temperature'");
-			gadgetMeasure.setGadget(getGadgetAdministrator());
+			gadgetMeasure.setDatasource(getGadgetDatasourceDeveloper());
+			gadgetMeasure.setConfig(
+					"{\"fields\":[\"cuisine\",\"grades[0].score\"],\"name\":\"score\",\"config\":{\"backgroundColor\":\"#000000\",\"borderColor\":\"#000000\",\"pointBackgroundColor\":\"#000000\",\"yAxisID\":\"#0\"}}");
+			gadgetMeasure.setGadget(getGadget());
 			gadgetMeasureRepository.save(gadgetMeasure);
 		}
 
@@ -1102,9 +1453,11 @@ public class InitConfigDB {
 
 		log.info("init Ontology");
 		List<Ontology> ontologies = this.ontologyRepository.findAll();
-		if (ontologies.isEmpty()) {
-			log.info("No ontologies..adding");
-			Ontology ontology = new Ontology();
+		List<DataModel> dataModels;
+
+		log.info("No ontologies..adding");
+		Ontology ontology = new Ontology();
+		if (this.ontologyRepository.findByIdentification("OntologyMaster") == null) {
 			ontology.setId("1");
 			ontology.setJsonSchema("{}");
 			ontology.setIdentification("OntologyMaster");
@@ -1116,7 +1469,8 @@ public class InitConfigDB {
 			ontology.setUser(getUserDeveloper());
 			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
-
+		}
+		if (this.ontologyRepository.findByIdentification("Ticket") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_Ticket.json"));
 			ontology.setDescription("Ontology created for Ticketing");
@@ -1125,10 +1479,26 @@ public class InitConfigDB {
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
+			ontology.setDataModel(this.dataModelRepository.findByName("EmptyBase").get(0));
 			ontology.setUser(getUserDeveloper());
 			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
-
+		}
+		if (this.ontologyRepository.findByIdentification("ContPerf") == null) {
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_ContPerf.json"));
+			ontology.setDescription("Ontology created for performance testing");
+			ontology.setIdentification("ContPerf");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setDataModel(this.dataModelRepository.findByName("EmptyBase").get(0));
+			ontology.setUser(getUserAdministrator());
+			ontology.setAllowsCypherFields(false);
+			ontologyRepository.save(ontology);
+		}
+		if (this.ontologyRepository.findByIdentification("HelsinkiPopulation") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_HelsinkiPopulation.json"));
 			ontology.setDescription("Ontology HelsinkiPopulation for testing");
@@ -1140,13 +1510,14 @@ public class InitConfigDB {
 			ontology.setUser(getUserDeveloper());
 			ontology.setAllowsCypherFields(false);
 
-			List<DataModel> dataModels = dataModelRepository.findByName("EmptyBase");
+			dataModels = dataModelRepository.findByName("EmptyBase");
 			if (!dataModels.isEmpty()) {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
 
-
+		}
+		if (this.ontologyRepository.findByIdentification("TweetSentiment") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_TweetSentiment.json"));
 			ontology.setDescription("TweetSentiment");
@@ -1163,7 +1534,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("GeoAirQuality") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_GeoAirQuality.json"));
 			ontology.setDescription("Air quality retrieved from https://api.waqi.info/search");
@@ -1180,7 +1552,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("CityPopulation") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_CityPopulation.json"));
 			ontology.setDescription(
@@ -1198,7 +1571,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("AirQuality_gr2") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirQuality_gr2.json"));
 			ontology.setDescription("AirQuality_gr2");
@@ -1215,7 +1589,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("AirQuality") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirQuality.json"));
 			ontology.setDescription("AirQuality");
@@ -1232,7 +1607,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("AirCOMeter") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirCOMeter.json"));
 			ontology.setDescription("AirCOMeter");
@@ -1250,10 +1626,7 @@ public class InitConfigDB {
 				ontologyRepository.save(ontology);
 			}
 		}
-
 	}
-
-
 
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
@@ -1288,6 +1661,27 @@ public class InitConfigDB {
 			type.setName("INSERT");
 			type.setDescription("Todos los permisos");
 			this.ontologyUserAccessTypeRepository.save(type);
+		}
+
+	}
+
+	public void init_DashboardUserAccessType() {
+
+		log.info("init DashboardUserAccessType");
+		List<DashboardUserAccessType> types = this.dashboardUserAccessTypeRepository.findAll();
+		if (types.isEmpty()) {
+			log.info("No user access types found...adding");
+			DashboardUserAccessType type = new DashboardUserAccessType();
+			type.setId(1);
+			type.setName("EDIT");
+			type.setDescription("view and edit access");
+			this.dashboardUserAccessTypeRepository.save(type);
+			type = new DashboardUserAccessType();
+			type.setId(2);
+			type.setName("VIEW");
+			type.setDescription("view access");
+			this.dashboardUserAccessTypeRepository.save(type);
+
 		}
 
 	}
@@ -1354,6 +1748,12 @@ public class InitConfigDB {
 				typeSon.setRoleParent(typeParent);
 				roleRepository.save(typeSon);
 
+				type = new Role();
+				type.setIdEnum(Role.Type.ROLE_DATAVIEWER);
+				type.setName("DataViewer");
+				type.setDescription("DataViewer User of the Platform");
+				roleRepository.save(type);
+
 			} catch (Exception e) {
 				log.error("Error initRoleType:" + e.getMessage());
 				roleRepository.deleteAll();
@@ -1382,6 +1782,12 @@ public class InitConfigDB {
 			hashSetTokens.add(token);
 			client.setTokens(hashSetTokens);
 			tokenRepository.save(token);
+
+			client = this.clientPlatformRepository.findByIdentification("Device Master");
+			token = new Token();
+			token.setClientPlatform(client);
+			token.setToken("a16b9e7367734f04bc720e981fcf483f");
+			tokenRepository.save(token);
 		}
 
 	}
@@ -1391,22 +1797,24 @@ public class InitConfigDB {
 		log.info("init user token");
 		List<UserToken> tokens = this.userTokenRepository.findAll();
 		if (tokens.isEmpty()) {
+			List<User> userList = this.userCDBRepository.findAll();
 
-			try {
-				User user = this.userCDBRepository.findAll().get(0);
+			for (Iterator<User> iterator = userList.iterator(); iterator.hasNext();) {
+				User user = (User) iterator.next();
+
 				UserToken userToken = new UserToken();
 
-				userToken.setToken("acbca01b-da32-469e-945d-05bb6cd1552e");
+				userToken.setToken(UUID.randomUUID().toString().replaceAll("-", ""));
 				userToken.setUser(user);
 				userToken.setCreatedAt(Calendar.getInstance().getTime());
 
-				userTokenRepository.save(userToken);
-			} catch (Exception e) {
-				log.info("Could not create user token");
+				try {
+					userTokenRepository.save(userToken);
+				} catch (Exception e) {
+					log.info("Could not create user token for user " + user.getUserId());
+				}
 			}
-
 		}
-
 	}
 
 	public void init_User() {
@@ -1433,7 +1841,15 @@ public class InitConfigDB {
 				type.setEmail("developer@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
-
+				userCDBRepository.save(type);
+				//
+				type = new User();
+				type.setUserId("demo_developer");
+				type.setPassword("changeIt!");
+				type.setFullName("Demo Developer of the Platform");
+				type.setEmail("demo_developer@sofia2.com");
+				type.setActive(true);
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -1443,7 +1859,15 @@ public class InitConfigDB {
 				type.setEmail("user@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.ROLE_USER.toString()));
-
+				userCDBRepository.save(type);
+				//
+				type = new User();
+				type.setUserId("demo_user");
+				type.setPassword("changeIt!");
+				type.setFullName("Demo User of the Platform");
+				type.setEmail("demo_user@sofia2.com");
+				type.setActive(true);
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_USER.toString()));
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -1485,6 +1909,15 @@ public class InitConfigDB {
 				type.setRole(this.roleRepository.findById(Role.Type.ROLE_OPERATIONS.toString()));
 				userCDBRepository.save(type);
 				//
+				type = new User();
+				type.setUserId("dataviewer");
+				type.setPassword("changeIt!");
+				type.setFullName("DataViewer User of the Platform");
+				type.setEmail("dataviewer@sofia2.com");
+				type.setActive(true);
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_DATAVIEWER.toString()));
+				userCDBRepository.save(type);
+				//
 			} catch (Exception e) {
 				log.error("Error UserCDB:" + e.getMessage());
 				userCDBRepository.deleteAll();
@@ -1499,9 +1932,9 @@ public class InitConfigDB {
 		if (marketAssets.isEmpty()) {
 			log.info("No market Assets...adding");
 			MarketAsset marketAsset = new MarketAsset();
-			
+
 			// Getting Started Guide
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("1");
@@ -1520,9 +1953,9 @@ public class InitConfigDB {
 			marketAsset.setImageType("jpg");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// Sofia4Cities Architecture
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("2");
@@ -1541,9 +1974,9 @@ public class InitConfigDB {
 			marketAsset.setImageType("jpg");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// SOFIA4CITIES WITH DOCKER
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("3");
@@ -1562,9 +1995,9 @@ public class InitConfigDB {
 			marketAsset.setImageType("png");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// API JAVA
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("4");
@@ -1574,21 +2007,21 @@ public class InitConfigDB {
 
 			marketAsset.setPublic(true);
 			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
-			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.APPLICATION);
 			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
 
 			marketAsset.setJsonDesc(loadFromResources("market/details/JavaAPI.json"));
 
 			marketAsset.setImage(loadFileFromResources("market/img/jar-file.jpg"));
 			marketAsset.setImageType("jpg");
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/java-client.zip"));
-			marketAsset.setContentId("java-client.jar");
+			marketAsset.setContentId("java-client.zip");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// DIGITAL TWIN
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("5");
@@ -1598,21 +2031,21 @@ public class InitConfigDB {
 
 			marketAsset.setPublic(true);
 			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
-			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.APPLICATION);
 			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
 
 			marketAsset.setJsonDesc(loadFromResources("market/details/DigitalTwin.json"));
 
-			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
+			marketAsset.setImage(loadFileFromResources("market/img/gears.png"));
 			marketAsset.setImageType("png");
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/TurbineHelsinki.zip"));
 			marketAsset.setContentId("TurbineHelsinki.zip");
 
 			marketAssetRepository.save(marketAsset);
 
 			// API NodeRED
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("6");
@@ -1627,16 +2060,16 @@ public class InitConfigDB {
 
 			marketAsset.setJsonDesc(loadFromResources("market/details/API NodeRED.json"));
 
-			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
+			marketAsset.setImage(loadFileFromResources("market/img/gears.png"));
 			marketAsset.setImageType("png");
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/API NodeRED sofia4cities.zip"));
 			marketAsset.setContentId("API NodeRED sofia4cities.zip");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// OAUTH2 Authentication
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("7");
@@ -1650,12 +2083,135 @@ public class InitConfigDB {
 			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
 
 			marketAsset.setJsonDesc(loadFromResources("market/details/Oauth2Authentication.json"));
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/oauth2-authentication.zip"));
 			marketAsset.setContentId("oauth2-authentication.zip");
 
 			marketAssetRepository.save(marketAsset);
+
+			// Device simulator Jar
+
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("8");
+			marketAsset.setIdentification("Device Simulator");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.APPLICATION);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setImage(loadFileFromResources("market/img/jar-file.jpg"));
+			marketAsset.setImageType("jpg");
+			marketAsset.setJsonDesc(loadFromResources("market/details/DeviceSimulator.json"));
+
+			marketAsset.setContent(loadFileFromResources("market/docs/device-simulator.zip"));
+			marketAsset.setContentId("device-simulator.zip");
+
+			marketAssetRepository.save(marketAsset);
+
+			// JSON document example for Data import tool
+
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("9");
+			marketAsset.setIdentification("Countries JSON");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/details/Countries.json"));
+
+			marketAsset.setImage(loadFileFromResources("market/img/json.png"));
+			marketAsset.setImageType("png");
+			marketAsset.setContent(loadFileFromResources("market/docs/countries.json"));
+			marketAsset.setContentId("countries.json");
+
+			marketAssetRepository.save(marketAsset);
+
+			// Stress Application
+			createMarketAsset("10", "StressApplication", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.URLAPPLICATION, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/StressApplication.json", null, null, null, null);
+			// Chat bot
+			createMarketAsset("11", "ChatBot", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.URLAPPLICATION, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/ChatBot.json", null, null, null, null);
+
+			// Chat bot telegram
+			/*
+			 * createMarketAsset("12", "ChatBotTelegram",
+			 * MarketAsset.MarketAssetState.APPROVED, MarketAsset.MarketAssetType.DOCUMENT,
+			 * MarketAsset.MarketAssetPaymentMode.FREE, true,
+			 * "market/details/ChatBotTelegram.json", null, null,
+			 * "market/docs/countries.json", "countries.json");
+			 */
+			// Digital Twin Web
+			createMarketAsset("12", "SenseHatDemo", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.WEBPROJECT, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/SenseHatDemo.json", null, null, null, null);
+
+			// Digital Twin Sense Hat
+			createMarketAsset("13", "DigitalTwinSenseHat", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.APPLICATION, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/DigitalTwinSenseHat.json", "market/img/jar-file.jpg", "jpg",
+					"market/docs/SensehatHelsinki.zip", "SensehatHelsinki.zip");
+
+			// videos
+			createMarketAsset("14", "Tutorials", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.DOCUMENT, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/Tutorials.json", null, null, null, null);
+
+			// Health Check Android Application
+			createMarketAsset("15", "HealthCheckAndroidApplication", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.APPLICATION, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/HealthCheckApplication.json", null, null, "market/docs/HealthCheckApp.zip",
+					"HealthCheckApp.zip");
+
+			createMarketAsset("16", "management", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.WEBPROJECT, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/IssueManagement.json", null, null, null, null);
+
+			createMarketAsset("17", "QuickviewPlatform", MarketAsset.MarketAssetState.APPROVED,
+					MarketAsset.MarketAssetType.DOCUMENT, MarketAsset.MarketAssetPaymentMode.FREE, true,
+					"market/details/QuickviewPlatform.json", null, null, null, null);
+
 		}
+	}
+
+	private void createMarketAsset(String id, String identification, MarketAsset.MarketAssetState state,
+			MarketAsset.MarketAssetType assetType, MarketAsset.MarketAssetPaymentMode paymentMode, boolean isPublic,
+			String jsonDesc, String image, String imageType, String content, String contentId) {
+
+		MarketAsset marketAsset = new MarketAsset();
+
+		marketAsset.setId(id);
+		marketAsset.setIdentification(identification);
+
+		marketAsset.setUser(getUserAdministrator());
+
+		marketAsset.setPublic(isPublic);
+		marketAsset.setState(state);
+		marketAsset.setMarketAssetType(assetType);
+		marketAsset.setPaymentMode(paymentMode);
+
+		marketAsset.setJsonDesc(loadFromResources(jsonDesc));
+		if (image != null) {
+			marketAsset.setImage(loadFileFromResources(image));
+			marketAsset.setImageType(imageType);
+		}
+
+		if (content != null) {
+			marketAsset.setContent(loadFileFromResources(content));
+			marketAsset.setContentId(contentId);
+		}
+		marketAssetRepository.save(marketAsset);
 	}
 
 	/*
@@ -1687,4 +2243,24 @@ public class InitConfigDB {
 	 * } }
 	 */
 
+	public void init_notebook() {
+		log.info("init notebook");
+		List<Notebook> notebook = this.notebookRepository.findAll();
+		if (notebook.isEmpty()) {
+
+			try {
+				User user = getUserAnalytics();
+				Notebook n = new Notebook();
+
+				n.setUser(user);
+				n.setIdentification("Analytics s4c notebook tutorial");
+				// Default zeppelin notebook tutorial ID
+				n.setIdzep("2A94M5J1Z");
+				notebookRepository.save(n);
+			} catch (Exception e) {
+				log.info("Could not create notebook");
+			}
+
+		}
+	}
 }

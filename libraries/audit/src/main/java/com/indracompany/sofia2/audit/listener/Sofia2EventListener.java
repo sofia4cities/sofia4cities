@@ -29,10 +29,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditError;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuthAuditEvent;
 import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
 import com.indracompany.sofia2.audit.notify.EventRouter;
@@ -48,9 +49,9 @@ public class Sofia2EventListener {
 
 	@Async
 	@EventListener
-	void handleAsync(Sofia2AuditEvent event) throws JsonProcessingException {
-		log.info("Default Event Processing detected : thread '{}' handling '{}' async event", event.getType(),
-				event.getMessage());
+	void handleAsync(Sofia2AuditError event) throws JsonProcessingException {
+		log.info("Sofia2EventListener :: Default Event Processing detected : thread '{}' handling '{}' async event",
+				event.getType(), event.getMessage());
 		eventRouter.notify(event.toJson());
 	}
 
@@ -59,7 +60,7 @@ public class Sofia2EventListener {
 	public void handleAuthenticationSuccessEvent(AuthenticationSuccessEvent event) {
 		log.info("Authentication success event for user " + event.getAuthentication().getPrincipal().toString());
 
-		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY,
+		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.builder().build().createAuditAuthEvent(EventType.SECURITY,
 				"Login Success for User : " + event.getAuthentication().getPrincipal().toString());
 
 		Object source = event.getSource();
@@ -69,7 +70,7 @@ public class Sofia2EventListener {
 		s2event.setOperationType(OperationType.LOGIN.name());
 		s2event.setOtherType(AuthenticationSuccessEvent.class.getName());
 		s2event.setUser((String) event.getAuthentication().getPrincipal());
-
+		s2event.setResultOperation(ResultOperationType.SUCCESS);
 		if (event.getAuthentication().getDetails() != null) {
 			Object details = event.getAuthentication().getDetails();
 			setAuthValues(details, s2event);
@@ -86,11 +87,16 @@ public class Sofia2EventListener {
 		String message = "Login Failed (Incorrect Credentials) for User: "
 				+ event.getAuthentication().getPrincipal().toString();
 
-		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY, message);
+		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.builder().build().createAuditAuthEvent(EventType.SECURITY,
+				message);
 
 		s2event.setOperationType(OperationType.LOGIN.name());
 		s2event.setUser((String) event.getAuthentication().getPrincipal());
 		s2event.setOtherType(AuthorizationFailureEvent.class.getName());
+
+		s2event.setResultOperation(ResultOperationType.ERROR);
+		// Sofia2EventFactory.setErrorDetails(s2event,
+		// errorEvent.getAccessDeniedException());
 
 		if (event.getAuthentication().getDetails() != null) {
 			Object details = event.getAuthentication().getDetails();
@@ -105,13 +111,15 @@ public class Sofia2EventListener {
 	public void handleAuthorizationFailureEvent(AuthorizationFailureEvent errorEvent) {
 		log.info("authorization failure  event for user " + errorEvent.getAuthentication().getPrincipal().toString());
 
-		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY,
+		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.builder().build().createAuditAuthEvent(EventType.SECURITY,
 				"Login Failed (AuthorizationFailure) for User: "
 						+ errorEvent.getAuthentication().getPrincipal().toString());
 
 		s2event.setOperationType(OperationType.LOGIN.name());
 		s2event.setUser((String) errorEvent.getAuthentication().getPrincipal());
 		s2event.setOtherType(AuthorizationFailureEvent.class.getName());
+
+		s2event.setResultOperation(ResultOperationType.ERROR);
 
 		if (errorEvent.getAuthentication().getDetails() != null) {
 			Object details = errorEvent.getAuthentication().getDetails();

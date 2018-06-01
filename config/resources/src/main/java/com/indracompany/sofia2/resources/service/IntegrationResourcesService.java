@@ -14,13 +14,15 @@
  */
 package com.indracompany.sofia2.resources.service;
 
+import java.util.Map;
+
 import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
-
-
 public interface IntegrationResourcesService {
-	
+
 	String getUrl(Module module, ServiceUrl service);
+
+	Map<String, String> getSwaggerUrls();
 
 }

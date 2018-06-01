@@ -17,14 +17,12 @@ package com.indracompany.sofia2.config.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
@@ -70,11 +68,22 @@ public class DigitalTwinDevice extends AuditableEntityWithUUID {
 	@NotNull
 	private String DigitalKey;
 
-	@Column(name = "IP", length = 512, nullable = false)
+	@Column(name = "INTERFACE", length = 512, nullable = false)
 	@Getter
 	@Setter
 	@NotNull
+	private String intrface;
+
+	@Column(name = "IP", length = 512)
+	@Getter
+	@Setter
 	private String ip;
+
+	@Column(name = "IPV6", length = 512, nullable = false)
+	@Getter
+	@Setter
+	@NotNull
+	private Boolean ipv6;
 
 	@Column(name = "PORT", nullable = false)
 	@Getter
@@ -97,13 +106,6 @@ public class DigitalTwinDevice extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String longitude;
-
-	@Column(name = "LOGIC")
-	@Lob
-	@Type(type = "org.hibernate.type.TextType")
-	@Getter
-	@Setter
-	private String logic;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)

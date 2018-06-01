@@ -18,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
-import com.indracompany.sofia2.audit.producer.Sofia2EventProducer;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,19 +27,21 @@ public class EventSenderImpl implements EventRouter {
 
 	@Autowired
 	private HazelcastInstance instance;
-	
+
 	@Override
 	public void notify(String event) {
-		log.info("EventSenderImpl :: thread '{}' handling '{}' Notify to Router The Event: ", Thread.currentThread(), event);
+		log.info("EventSenderImpl :: thread '{}' handling '{}' Notify to Router The Event: ", Thread.currentThread(),
+				event);
 		instance.getQueue("audit").offer(event);
 
 	}
-
-	@Override
-	public void notify(Sofia2AuditEvent event) {
-		log.info("EventSenderImpl :: thread '{}' handling '{}' Notify to Router The Event: ", Thread.currentThread(), event.getMessage());
-		instance.getQueue("audit").offer(event.toJson());
-		
-	}
+	/*
+	 * @Override public void notify(Sofia2AuditEvent event) { log.
+	 * info("EventSenderImpl :: thread '{}' handling '{}' Notify to Router The Event: "
+	 * , Thread.currentThread(), event.getMessage());
+	 * instance.getQueue("audit").offer(event.toJson());
+	 * 
+	 * }
+	 */
 
 }

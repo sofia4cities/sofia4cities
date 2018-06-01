@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+        <parent>
+                <groupId>com.indracompany.sofia2</groupId>
+                <artifactId>sofia2-parent</artifactId>
+                <version>5.2.0-rc1</version>
+                <relativePath>../..</relativePath>
+        </parent>
+
+        <properties>
+            <license.dir>${project.parent.basedir}</license.dir>
+        </properties>
+
+        <groupId>com.indracompany.sofia2</groupId>
+        <artifactId>sofia2-select4cities-theme</artifactId>
+        <packaging>jar</packaging>
+
+        <name>onesait platform Select4Cities theme</name>
+        <description>A theme for Select4Cities project</description>
+        
+</project>

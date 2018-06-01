@@ -16,8 +16,8 @@ package com.indracompany.sofia2.iotbroker.mock.pojo;
 import java.util.UUID;
 
 import com.github.javafaker.Faker;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 
 public class PojoGenerator {
 	public static Person generatePerson() {
@@ -33,7 +33,7 @@ public class PojoGenerator {
 		final IoTSession session = new IoTSession();
 		session.setUserID("valid_user_id");
 		session.setClientPlatform(Faker.instance().chuckNorris().fact());
-		session.setClientPlatformInstance(Faker.instance().chuckNorris().fact());
+		session.setDevice(Faker.instance().chuckNorris().fact());
 		session.setSessionKey(UUID.randomUUID().toString());
 		return session;
 	}

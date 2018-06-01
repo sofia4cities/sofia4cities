@@ -1,24 +1,29 @@
 var IssueController = function() {
 	
 	var client = new SofiaClient();
-	
-	//var apimanager = 'https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/oauth/token';
-	//var iotbroker = "https://s4citiespro.westeurope.cloudapp.azure.com/iotbroker/message";
-	//var apimanager = 'http://localhost:19090/api-manager/oauth/token';
-	//var iotbroker = "http://localhost:8081/iotbroker/message";
-	var apimanager = 'https://rancher.sofia4cities.com/api-manager/oauth/token';
-	var iotbroker = "https://rancher.sofia4cities.com/iotbroker/message";
+
+	var baseURL = document.URL.split(window.location.pathname);
+	var apimanager = '/api-manager/oauth/token';
+	var iotbroker = '/iotbroker/message';
+	if(baseURL.indexOf("localhost") > -1 || baseURL.indexOf("file://") > -1){
+		apimanager = "http://localhost:19100" + apimanager;
+		iotbroker = "http://localhost:19000" + iotbroker;
+	}else{
+		apimanager = baseURL[0] + apimanager;
+		iotbroker = baseURL[0] + iotbroker;
+	}
+
 	var ontology = 'Ticket';
-	var device = 'Ticketing App';
-	var token= 'e7ef0742d09d4de5a3687f0cfdf7f626';
-	//var token= '1c7954dd4c7c47e0916e8ea64e3c9967';
-	var deviceInstance = 'Ticketing App: Web';
+	var deviceTemplate = 'Ticketing App';
+	var token= '1c7954dd4c7c47e0916e8ea64e3c9967';
+
+	var device= 'Web';
 	var config ={};
-	var queryAll= 'db.' + ontology + '.find()'
+	var queryAll= "db." + ontology + ".find({'contextData.timestampMillis': {$gte:1527063270064}})";
 	var queryType= 'NATIVE';
 	var isAuthenticated = false;
 	var states = ['PENDING','DONE','WORKING', 'STOPPED'];
-
+	var filesToUpload=[];
 
 	var comboSelect;
 
@@ -52,7 +57,12 @@ var IssueController = function() {
 		data['Ticket']['Description']=$('#description').val();;
 		
 		if($("#b64").val() != "") {
-			media['data'] = $("#b64").val();
+			for (var i = filesToUpload.length - 1; i >= 0; i--) {
+				media['data']= media['data'] + filesToUpload[i];
+				if(i!=0) {
+					media['data'] = media['data'] +";";
+				}
+			}
 			media['media']['name'] = document.getElementById('file').files[0].name;
 			media['media']['storageArea'] = 'SERIALIZED'
 			media['media']['binaryEncoding'] = 'Base64';
@@ -93,8 +103,17 @@ var IssueController = function() {
 					htmlStatus = status;
 				}
 				if(issue.Ticket.File != null) {
-					var htmlImage = '<div class="jpreview-image img-responsive thumbnail" style="background-image: url(data:'
-						+ issue.Ticket.File.media.mime + ';' + issue.Ticket.File.media.binaryEncoding + ',' + issue.Ticket.File.data + ')" ></div>'
+					var allFiles = issue.Ticket.File.data.split(";");
+					var htmlImage="";
+					for (var j = allFiles.length - 1; j >= 0; j--) {
+						
+						htmlImage = htmlImage + '<div class="jpreview-image img-responsive thumbnail" style="background-image: url(data:'
+						+ issue.Ticket.File.media.mime + ';' + issue.Ticket.File.media.binaryEncoding + ',' + allFiles[j] + ')" ></div>'
+					}
+					//var htmlImage = '<div class="jpreview-image img-responsive thumbnail" style="background-image: url(data:'
+					//	+ issue.Ticket.File.media.mime + ';' + issue.Ticket.File.media.binaryEncoding + ',' + issue.Ticket.File.data + ')" ></div>'
+					
+
 					$('#tableAllIssues tbody').append('<tr id="'+issue._id.$oid+'"><td>'+i+'</td><td>'
 							+issue._id.$oid+'</td><td>'
 							+issue.Ticket.Identification+'</td><td>'
@@ -124,20 +143,21 @@ var IssueController = function() {
 	};
 	
 	var readFile = function() {
-		  
-		  if (this.files && this.files[0]) {
-		    
-		    var FR= new FileReader();
-		    
-		    FR.addEventListener("load", function(e) {
-		      //document.getElementById("img").src= e.target.result;
-		    	var base64 = e.target.result.split(",")[1];
-		      $("#b64").val(base64);
-		    }); 
-		    
-		    FR.readAsDataURL( this.files[0] );
-		  }
-		  
+		  for (var i = 0; i < this.files.length; i++) { //for multiple files          
+		    (function(file) {
+		        var name = file.name;
+		        var reader = new FileReader();  
+		        reader.onload = function(e) {  
+		           	var base64 = e.target.result.split(",")[1];
+				    $("#b64").val(base64);
+				    filesToUpload.push(base64);
+			
+		        }
+		        console.log(file.name +" loaded");
+		        reader.readAsDataURL( file );
+		    })(this.files[i]);
+		}
+		 
 		}
 	
 	var queryForIssue = function (response) {
@@ -168,8 +188,8 @@ var IssueController = function() {
 
 			config['url'] = iotbroker;
 			config['token'] = token;
-			config['clientPlatform'] = device;
-			config['clientPlatformInstance'] = deviceInstance;
+			config['deviceTemplate'] = deviceTemplate;
+			config['device'] = device;
 			client.configure(config);
 			client.connect();
 			
@@ -188,6 +208,7 @@ var IssueController = function() {
 			$('.btn-list').on('click',function(){
 				if(isAuthenticated == true){
 					client.query(ontology, queryAll, queryType,  function(response){queryFor(response)});
+					document.querySelector('.scrolltosearch').scrollIntoView({ behavior: 'smooth' , block: 'start'});
 				}else {
 					$('#issueForm').addClass('hide');
 					$('#issueList').addClass('hide');

@@ -98,4 +98,8 @@ public interface OntologyService {
 
 	List<Ontology.RtdbDatasource> getDatasources();
 
+	List<Ontology> getCleanableOntologies();
+
+	void delete(Ontology ontology);
+
 }

@@ -66,7 +66,7 @@ public final class QueryParameterFIQL {
 		if (apiqueryparamDTO.getName() == null || apiqueryparamDTO.getName().equals("")) {
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamNameRequired");
 		}
-		if (apiqueryparamDTO.getDataType() == null || apiqueryparamDTO.getDataType().equals("")) {
+		if (apiqueryparamDTO.getDataType() == null || apiqueryparamDTO.getDataType().name().equals("")) {
 			Object parametros[] = { apiqueryparamDTO.getName() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamDataTypeRequired");
 		}
@@ -74,17 +74,12 @@ public final class QueryParameterFIQL {
 			Object parametros[] = { apiqueryparamDTO.getName() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongDataType");
 		}
-		if (apiqueryparamDTO.getHeaderType() == null || apiqueryparamDTO.getHeaderType().equals("")) {
+		if (apiqueryparamDTO.getHeaderType() == null || apiqueryparamDTO.getHeaderType().name().equals("")) {
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamConditionRequired");
 		}
 		if (!isValidHeaderType(apiqueryparamDTO.getHeaderType().name())) {
 			Object parametros[] = { apiqueryparamDTO.getName() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongCondition");
-		}
-		if (!isValidTypeValue(apiqueryparamDTO.getDataType().name(), apiqueryparamDTO.getValue())) {
-			Object parametros[] = { apiqueryparamDTO.getValue(), apiqueryparamDTO.getName(),
-					apiqueryparamDTO.getDataType() };
-			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongDataTypeValue");
 		}
 		
 

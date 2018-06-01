@@ -86,7 +86,9 @@
 								<div class="actions margin-right-20">
 									<div class="btn-group">										
 										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
-										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" id="createDashboardButton" ><i class="fas fa-chart-line"></i> <span th:text="#{gen.create}">New </span></button>
+										<!-- <button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" id="createDashboardButton" ><i class="fas fa-chart-line"></i> <span th:text="#{gen.create}">New </span></button>-->
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" id="createDashboardButton" onclick="location.href='/controlpanel/dashboards/create'"><i class="fas fa-chart-line"></i> <span th:text="#{gen.create}">New </span></button>
+										
 									</div>										
 								</div>
 							</div>
@@ -167,16 +169,24 @@
 																<div class="grupo-iconos text-center">
 																	<!-- VIEW -->		
 																														
-																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/view/${dashboard.id}|} + '\');'"><i class="fa fa-eye"></i></span>
-																																																			
-																	<!-- EDIT -->
-																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editor/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/view/${dashboard.id}|} + '\');'"><i class="fa fa-eye"></i></span>																																																			
 																	
 																	<!-- Full EDIT -->
-																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit} + ' FullScreen'" th:data-original-title="#{gen.edit} + ' FullScreen'" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editfull/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-book"></i></span>
+																	<span sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit} " th:data-original-title="#{gen.edit} + ' FullScreen'" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editfull/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-book"></i></span>
+																	
+																	<!-- EDIT ACCESS-->
+																	<span sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" th:if="${dashboard.userAccessType=='EDIT'}" class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{dashboards.auth.title} " th:data-original-title="#{dashboards.auth.title} " th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/dashboardconf/${dashboard.id}|} + '\');'"><i class="fa fa-cog"></i></span>
+																	
 																	
 																	<!-- URL -->
 																	<span  class="btn btn-sm green-haze sbold tooltips" data-container="body" data-placement="bottom" title="URL Dashboard" data-original-title="URL Dashboard" th:onclick="'javascript:showDashboardURLDialog(\'' + @{|/dashboards/view/${dashboard.id}} + '\');'"><i class="fa fa-link"></i></span>
+																
+																    <!-- DELETE -->
+																    <span sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" th:if="${dashboard.userAccessType=='EDIT'}" class="btn btn-sm btn-danger sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.deleteBtn} " th:data-original-title="#{gen.deleteBtn} " th:onclick="'deleteDashboardConfirmation(\''+${dashboard.id}+'\');'"><i class="fa fa-trash"></i></span>
+																	
+																	
+																	
+																
 																</div>
 															</td>
 														</tr>
@@ -221,6 +231,10 @@
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
 	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	
+
+	
+	
 	
 	
 	<script type="text/javascript" th:inline="javascript">	
@@ -271,6 +285,55 @@
 	
 	function navigateUrl(url){  window.location.href = url;	}
 	
+	var  deleteDashboardConfirmation = function (id){
+	
+		showConfirmDeleteDialog(id);	
+	} 
+	
+	
+	var showConfirmDeleteDialog = function(id){	
+
+		//i18 labels
+		var Close = headerReg.btnCancelar;
+		var Remove = headerReg.btnEliminar;
+		var Content = [[#{dashboards.del.confirm}]];
+		var Title = headerReg.titleConfirm + ':';
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn btn-sm btn-danger btn-outline',
+					action: function(){ 
+						console.log(id);
+						$.ajax({
+						    url: '/controlpanel/dashboards/'+id,
+						    type: 'DELETE',						  
+						    success: function(result) {
+						    	navigateUrl('/controlpanel/dashboards/list');
+						    }
+						});
+					}											
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+	}	
+
 	// MAIN WHEN READY
 	$( document ).ready(function() {
 	
@@ -316,7 +379,7 @@
 				"/controlpanel/dashboards/create", 
 				{identification : name}
 			).done(function(id){
-				navigateUrl("/controlpanel/dashboards/editor/" + id)}
+				navigateUrl("/controlpanel/dashboards/editfull/" + id)}
 			).fail(
 				function(e){
 					console.log("Error creating dashboard, message detail: " + e.responseText);
@@ -357,7 +420,7 @@
 			});
 		}
 		
-		$("#createDashboardButton").on("click", createDashboardDialog);
+		/*$("#createDashboardButton").on("click", createDashboardDialog);*/
 		// SEARCH FORM
 		$('#search_dashboard').on('click',function(){ $('#form_dashboard')[0].submit(); });
 		
@@ -373,7 +436,7 @@
 		$('#dataTable-vis-toggle').removeClass('hide');
 		
 		// HIDE COLUMNS (DeESCRIPTION,  CREATEDAT)		
-		$.each([ 2,4 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
+		$.each([1],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
 		
 	});	
 	

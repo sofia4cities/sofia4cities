@@ -14,10 +14,8 @@
  */
 package com.indracompany.sofia2.audit.notify;
 
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
-
 public interface EventRouter {
-	
-	public void notify(Sofia2AuditEvent event);
+
+	// public void notify(Sofia2AuditEvent event);
 	public void notify(String event);
 }

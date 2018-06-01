@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -37,78 +36,77 @@ public class ServiceUtils {
 
 	@Autowired
 	private MessageSource messageSource;
-	
+
 	public static final String AUDIT_COLLECTION_NAME = "Audit_";
-	
+
 	public Authentication getAuthentication() {
-		return  SecurityContextHolder.getContext().getAuthentication();
+		return SecurityContextHolder.getContext().getAuthentication();
 	}
-	
+
 	public String getUserId() {
 		Authentication auth = getAuthentication();
-		if (auth==null) return null;
+		if (auth == null)
+			return null;
 		return auth.getName();
 	}
-	
+
 	public String getRole() {
 		Authentication auth = getAuthentication();
-		if (auth==null) return null;
+		if (auth == null)
+			return null;
 		return auth.getAuthorities().toArray()[0].toString();
 	}
 
-	public String getMessage(String key,String valueDefault){
-		try{
+	public String getMessage(String key, String valueDefault) {
+		try {
 			return messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
-		}catch (Exception e){
-			log.debug("Key:"+key+" not found. Returns:"+valueDefault);
+		} catch (Exception e) {
+			log.debug("Key:" + key + " not found. Returns:" + valueDefault);
 			return valueDefault;
 		}
 	}
-	
-	public void setSessionAttribute(HttpServletRequest request, String name,Object o)
-	{
+
+	public void setSessionAttribute(HttpServletRequest request, String name, Object o) {
 		WebUtils.setSessionAttribute(request, name, o);
 	}
-	
-	public String jsonStringToString(String json)
-	{
-		
+
+	public String jsonStringToString(String json) {
+
 		ObjectMapper objectMapper = new ObjectMapper();
-		String formattedJson=null;
-		
+		String formattedJson = null;
+
 		try {
-			JsonNode tree = objectMapper.readValue(json,JsonNode.class);
+			JsonNode tree = objectMapper.readValue(json, JsonNode.class);
 			formattedJson = tree.toString();
+			return formattedJson;
 		} catch (Exception e) {
-			log.error("Exception reached "+e.getMessage(),e);
-		}
-		
-		return formattedJson;
-	}
-	
-	public static User getUser(){
-		User user=null;
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if(auth instanceof AnonymousAuthenticationToken){
+			log.error("Exception reached " + e.getMessage(), e);
 			return null;
 		}
-		/*if (auth!=null){
-			if (auth.getDetails()!=null){
-			if (auth instanceof SocialAuthenticationToken){
-					user = (User)((SocialAuthenticationToken)auth).getPrincipal();
-				}else{
-					user = ((AuthenticationContainer)((UsernamePasswordAuthenticationToken)auth).getDetails()).getUserDetail();
-					if (user==null){
-						user = User.findUser((((AuthenticationContainer)((UsernamePasswordAuthenticationToken)auth).getDetails()).getUserDetail()).getId());
-					}
-				}
-			}
-		}*/
-		
+
+	}
+
+	public static User getUser() {
+		User user = null;
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth instanceof AnonymousAuthenticationToken) {
+			return null;
+		}
+		/*
+		 * if (auth!=null){ if (auth.getDetails()!=null){ if (auth instanceof
+		 * SocialAuthenticationToken){ user =
+		 * (User)((SocialAuthenticationToken)auth).getPrincipal(); }else{ user =
+		 * ((AuthenticationContainer)((UsernamePasswordAuthenticationToken)auth).
+		 * getDetails()).getUserDetail(); if (user==null){ user =
+		 * User.findUser((((AuthenticationContainer)((
+		 * UsernamePasswordAuthenticationToken)auth).getDetails()).getUserDetail()).
+		 * getId()); } } } }
+		 */
+
 		return null;
 	}
-	
-	public static String getAuditCollectionName (String userId) {		
+
+	public static String getAuditCollectionName(String userId) {
 		return AUDIT_COLLECTION_NAME + userId;
 	}
 }

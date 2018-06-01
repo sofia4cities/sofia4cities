@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-router</artifactId>
-		<version>5.1.0-rc2</version>
+		<version>5.2.0-rc1</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.indracompany.sofia2</groupId>
@@ -115,6 +115,18 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-hazelcast</artifactId>
+			<version>${version.camel}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-kafka</artifactId>
+			<version>${version.camel}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-stream</artifactId>
 			<version>${version.camel}</version>
 		</dependency>
 

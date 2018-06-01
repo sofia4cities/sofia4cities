@@ -5,7 +5,7 @@
   	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-iotbroker</artifactId>
-		<version>5.1.0-rc2</version>
+		<version>5.2.0-rc1</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -20,6 +20,11 @@
 	<dependency>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-ssap</artifactId>
+		<version>${sofia2.version}</version>
+	</dependency>	
+	<dependency>
+		<groupId>com.indracompany.sofia2</groupId>
+		<artifactId>sofia2-config-model</artifactId>
 		<version>${sofia2.version}</version>
 	</dependency>	
 	<dependency>

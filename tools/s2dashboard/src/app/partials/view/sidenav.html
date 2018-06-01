@@ -7,12 +7,12 @@
   </header>
 
   <md-content flex="" role="navigation" class="_md flex">
-    <md-subheader class="md-no-sticky">Pages</md-subheader>
+    <md-subheader class="md-no-sticky sidenav-subheader">Dashboard Pages</md-subheader>
     <md-list class="md-hue-2">
       <span ng-repeat="page in vm.dashboard.pages">
         <md-list-item md-colors="{background: ($index===vm.selectedpage ? 'primary' : 'grey-A100')}" ng-click="vm.setIndex($index)" flex>
-            <md-icon>{{page.icon}}</md-icon>
-            <p>{{page.title}}</p>
+            <md-icon ng-class="{{page.icon}} === '' ? 'ng-hide' : 'sidenav-page-icon'">{{page.icon}}</md-icon>
+            <p class="sidenav-page-title">{{page.title}}</p>
         </md-list-item>
       </span>
     </md-list>
