@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>5.2.0-rc1</version>
+		<version>5.2.0</version>
 		<relativePath>../..</relativePath>
 	</parent>
 	
