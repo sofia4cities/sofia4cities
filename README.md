@@ -7,10 +7,6 @@
 Sofia4Cities 
 ============================
 
-Sofia4Cities is an multi-purpose, enterprise and open-source platform for building complete end-to-end solutions, connected applications, and smart products. 
-The platform provides an open toolkit for the IoT/Smart product development that reduces associated cost, risks, and time-to-market.
-
-
 Sofia4Cities (powered by onesait Platform) is the Internet-of-Everything platform with which minsait has attended the Select4Cities contest.
 Sofia4Cities is one of the 3 platforms that have reached the final stage: https://www.select4cities.eu/phase-3-winners
 
