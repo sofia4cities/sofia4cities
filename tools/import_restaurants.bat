@@ -1,1 +1,0 @@
-.\bin\mongoimport --db sofia2_s4c --collection restaurants --drop --file .\examples\primer-dataset.json

@@ -1,8 +1,0 @@
-{
-	"title":"OAuth2 y JWT Authentication Example",
-	"technologies":"java,Oauth2,html",
-	"description":"An Example that shows how easily can connect with operations from the Platform's API manager through OAUTH2 Security protocol",
-	"detailedDescription":"**OAuth2 y JWT Authentication Example**\n\nThis example shows how easily you can connect with operations from the Platform's API manager through OAUTH2 Security protocol that is implemented and deployed in the API Manager itself.\n\nIt assumes requests to the API manager need to be authenticated even if the published API is public. So, at first instance we need at least a \"connection token\" to operate with those APIs..\n\nSecond, if we have an user or we were authorized to manage operations we can use the OAUTH2 protocol (OpenID standard protocol).\n\nIn this example, we only need and username and password and a API published and associated with our user in S4C platform, so let’s take \"administrator\" for instance and put the current password.\n",
-	"installation":"Download the zip file and read the OAuth2-JWT-Example.pdf.",
-	"functionality":""
-}

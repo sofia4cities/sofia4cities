@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.indracompany.sofia2.config.services.ServicesStarterAutoConfig

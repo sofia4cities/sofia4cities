@@ -17,6 +17,8 @@ synergies between both communities and that the efforts of both projects come to
 You can access the project repository in the repo sof sofia4cities https://github.com/onesaitplatform/onesait-cloud-platform
 
 You can also access the CloudLab environment of the Sofia4Cities platform in one of these URLs:
-CloudLab for Antwerp city: https://antwerp4cities.onesaitplatform.com/controlpanel/login
+CloudLab for Antwerp city: https://antwerp4cities.onesaitplatform.com/controlpanel/
+
 CloudLab for Helsinki city: http://helsinki4cities.onesaitplatform.com/controlpanel/
+
 
