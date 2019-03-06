@@ -4,7 +4,7 @@
   </a>
 </p>
 
-Sofia4Cities Open-Source Platform [![Build Status](http://sofia2-devops.westeurope.cloudapp.azure.com/jenkins/buildStatus/icon?job=select4cities/develop)](http://sofia2-devops.westeurope.cloudapp.azure.com/jenkins/view/SELECT4CITIES/job/select4cities/job/develop/)
+Sofia4Cities Platform 
 ============================
 
 Sofia4Cities is an multi-purpose, enterprise and open-source platform for building complete end-to-end solutions, connected applications, and smart products. 
@@ -12,9 +12,9 @@ The platform provides an open toolkit for the IoT/Smart product development that
 If you want to have a quickview of what offers the platform you can see this video: [a View of the Capabilities of the Platform](http://sofia2.org/owncloud/public.php?service=files&t=15977406e85c0faf71977a29936026a0)
 ![](docs/images/video_quickview.png)
 
-## Project Roadmap
+## Project Roadmap for 2018
 
-You can view the roadmap of the Platform here: [Roadmap](docs/roadmap/) 
+You can view the roadmap of the Platform for year 2018 here: [Roadmap](docs/roadmap/) 
 <p align="center">
   <a src='https://www.sofia4cities.com/'>
     <img src='docs/roadmap/Sofia4Cities-roadmap.png'/>
